@@ -1,0 +1,128 @@
+---
+title: "Step-by-step guide to work with the ICES' DATRAS database"
+output:
+    rmarkdown::html_vignette:
+    fig_caption: yes
+    number_sections: true
+    df_print: paged
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+vignette: >
+  %\VignetteIndexEntry{Step-by-step guide to work with the ICES' DATRAS database}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      cache = FALSE,
+                      warning = FALSE,
+                      eval = TRUE,
+                      error = FALSE,
+                      warning = FALSE,
+                      message = FALSE,
+                      include = TRUE,
+                      collapse = TRUE,
+                      comment = "#>",
+                      fig.show = "hold",
+                      fig.width=8, fig.height=7)
+```
+
+The goal of the DATRASextra is to provide useful additional functions to work
+with [DTU Aqua's *DATRAS* R package](https://github.com/DTUAqua/DATRAS) and
+[ICES' DATRAS
+database](https://www.ices.dk/data/data-portals/pages/datras.aspx). To get
+started, make sure to install the most recent package version from GitHub.
+
+**Outline:**
+
+1. Download DATRAS
+2. Read-in DATRAS
+3. Clean DATRAS
+4. Get Weight by haul
+5. Summary
+6. References
+
+
+The package is loaded into the R environment with:
+
+```{r}
+library(DATRASextra)
+```
+
+
+## *Download DATRAS*
+
+
+The `downloadDATRAS` function allows us to download information for any of these
+surveys. If the arguments `surveys` and `years` are not specified (`NULL`), all
+surveys and years are downloaded, wich can take a while. For demonstration
+purposes, we download year 2023 of the NS-IBTS survey into a temporary
+directory:
+
+```{r, fig.alt = ""}
+survey <- "SNS"
+tmp <- tempdir()
+downloadDATRAS(surveys = survey, years = 2023, dir = tmp)
+```
+
+If no directory (argument `dir`) is specified, the data is downloaded into the
+current working directory (`getwd()`). The function compresses downloaded data
+into "zip" archives. Note, that if a year is specified in which a specific
+survey did not operate, an empty file is created in the specified folder.
+However, the next function just reads in non-empty files.
+
+
+## *Read-in DATRAS*
+
+Next, we can read the downloaded survey information into R:
+
+```{r, fig.alt = ""}
+surv0 <- readDATRAS(file.path(tmp, survey))
+```
+
+The path can point to a specific file that you want to read in or to a whole
+directory with any number of files.
+
+
+## *Clean DATRAS*
+
+
+Now, the `surv0` object contains the survey information in the usual `DATRASraw`
+format of the *DATRAS* package. (TODO: Link to more information about this data
+type or provide more information here.) It make sense to clean the data and for
+example only use valid hauls. This can be done manually with the `subset()`
+function or by using some recommended cleaning steps with the `clean()`
+function. This function also allows us to make a relevant subset of the database
+based on our needs.
+
+```{r, fig.alt = ""}
+surv <- clean(surv0)
+```
+
+By default, this function also imputes missing depth information.
+
+
+We can plot the resulting survey information with:
+
+```{r, fig.alt = ""}
+plot(surv)
+```
+
+
+
+## *Get Weight by haul*
+
+
+
+
+## *Summary*
+
+This vignette introduced the main features and workflow of the *DATRASextra*
+package for ...
+
+
+
+## *References*

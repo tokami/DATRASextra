@@ -1,0 +1,61 @@
+---
+title: "Step-by-step guide to work with the ICES' DATRAS database"
+output:
+    rmarkdown::html_vignette:
+    fig_caption: yes
+    number_sections: true
+    df_print: paged
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+vignette: >
+  %\VignetteIndexEntry{Step-by-step guide to work with the ICES' DATRAS database}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      cache = FALSE,
+                      warning = FALSE,
+                      eval = TRUE,
+                      error = FALSE,
+                      warning = FALSE,
+                      message = FALSE,
+                      include = TRUE,
+                      collapse = TRUE,
+                      comment = "#>",
+                      fig.show = "hold",
+                      fig.width=8, fig.height=7)
+```
+
+This tutorial illustrates the application of the *DATRASextra* package to work
+with ICES' DATRAS database.
+
+**Outline:**
+
+1. Download DATRAS
+2. Read-in DATRAS
+3. Clean DATRAS
+4. Get Weight by haul
+5. Summary
+6. References
+
+
+The package is loaded into the R environment with:
+
+```{r, eval=TRUE, echo=TRUE}
+library(DATRASextra)
+```
+
+
+
+## *Summary*
+
+This vignette introduced the main features and workflow of the *DATRASextra*
+package for ...
+
+
+
+## *References*
