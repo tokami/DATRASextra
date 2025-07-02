@@ -1,0 +1,33 @@
+url: https://tokami.github.io/DATRASextra
+
+home:
+  title: Extra functions for DTU Aquas DATRAS R package
+
+authors:
+  Tobias Mildenberger:
+    href: https://github.com/tokami
+  Federico Maioli:
+    href: https://github.com/federico-maioli
+
+template:
+  bootstrap: 5
+  math-rendering: mathjax
+  light-switch: yes
+  bslib:
+    primary: '#0054AD'
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+    danger: '#A6081A'
+
+development:
+  mode: auto
+
+articles:
+- title: Tutorial
+  navbar: ~
+  contents: tutorial
+
+news:
+  releases:
+  - text: Version 0.0.0.9000
+    href: https://github.com/tokami/DATRASextra/blob/main/DATRASextra/NEWS.md

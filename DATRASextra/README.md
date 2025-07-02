@@ -1,0 +1,63 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# DATRASextra
+
+<!-- badges: start -->
+
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+<!-- badges: end -->
+
+## Overview
+
+*DATRASextra* is a new R package that provides useful additional
+functions to work with [DTU Aqua’s *DATRAS* R
+package](https://github.com/DTUAqua/DATRAS) and [ICES’ DATRAS
+database](https://www.ices.dk/data/data-portals/pages/datras.aspx).
+
+The current version of the package allows to follow described data
+processing protocols, estimate swept area indices and plot results.
+
+To get started with *DATRASextra*, install and load the package,
+download some survey information from DATRAS and start analyzing:
+
+``` r
+## remotes::install_github("tokami/DATRASextra/DATRASextra")
+library(DATRASextra)
+
+survey <- "SNS"
+tmp <- tempdir()
+downloadDATRAS(surveys = survey, years = 2023, dir = tmp)
+
+surv0 <- readDATRAS(file.path(tmp, survey))
+
+surv <- clean(surv0)
+
+plot(surv)
+```
+
+## More information
+
+More detailed examples and documentation for *DATRASextra* can be found
+at <https://tokami.github.io/DATRASextra/>. The *pkgdown* page includes
+links to articles, vignettes, functions descriptions, information to
+version updates, and much more. In case, your question is not answered
+by the package documentation and on the *pkgdown* pages, please write an
+email to the maintainer: [Tobias
+Mildenberger](mailto:t.k.mildenberger@gmail.com). In case you find bugs,
+please post an issue on
+[here](https://github.com/tokami/DATRASextra/issues).
+
+### Citation
+
+Please use the R command `citation("DATRASextra")` to receive
+information on how to cite this package.
+
+### Funding
+
+The development of *DATRASextra* was cofunded by the European Union.
+
+------------------------------------------------------------------------
+
+<img src="man/figures/EN_Co-fundedbytheEU_RGB_POS.png" width="250" />

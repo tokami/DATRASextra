@@ -77,10 +77,9 @@ purposes, we download year 2023 of the NS-IBTS survey into a temporary
 directory:
 
 ```{r, fig.alt = ""}
-survey <- "NS-IBTS"
-year <- 2023
+survey <- "SNS"
 tmp <- tempdir()
-downloadDATRAS(surveys = survey, years = year, dir = tmp)
+downloadDATRAS(surveys = survey, years = 2023, dir = tmp)
 ```
 
 If no directory (argument `dir`) is specified, the data is downloaded into the
@@ -92,7 +91,7 @@ However, the next function just reads in non-empty files.
 Next, we can read the downloaded survey information into R:
 
 ```{r, fig.alt = ""}
-surv0 <- readDATRAS(file.path(tmp, survey), years = year)
+surv0 <- readDATRAS(file.path(tmp, survey))
 ```
 
 The path can point to a specific file that you want to read in or to a whole
@@ -104,11 +103,10 @@ type or provide more information here.) It make sense to clean the data and for
 example only use valid hauls. This can be done manually with the `subset()`
 function or by using some recommended cleaning steps with the `clean()`
 function. This function also allows us to make a relevant subset of the database
-based on our needs. Here, we are interested in the quarter 1 survey and haddock:
+based on our needs.
 
 ```{r, fig.alt = ""}
-surv <- clean(surv0, years = 2023, quarters = 1,
-              aphias = "126437")
+surv <- clean(surv0)
 ```
 
 By default, this function also imputes missing depth information.
@@ -125,8 +123,3 @@ plot(surv)
 The [tutorial vignette](tutorial.html) provides a step-by-step guide to applying
 *DATRASextra* to download, read-in, and process ICES DATRAS database using [DTU
 Aqua's *DATRAS* R package](https://github.com/DTUAqua/DATRAS).
-
-
-## Matching environmental data to DATRAS
-
-link to vignette to come.
