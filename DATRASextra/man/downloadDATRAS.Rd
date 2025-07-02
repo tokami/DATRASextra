@@ -8,7 +8,8 @@ downloadDATRAS(
   surveys = NULL,
   years = NULL,
   download.missing.only = TRUE,
-  dir = NULL
+  dir = NULL,
+  verbose = TRUE
 )
 }
 \arguments{

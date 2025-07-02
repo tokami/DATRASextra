@@ -9,7 +9,11 @@ Authors@R:
     person("Federico", "Maioli",
            email = "fedma@aqua.dtu.dk",
            role = "aut",
-           comment = c(ORCID = "0000-0002-8305-1609")))
+           comment = c(ORCID = "0000-0002-8305-1609")),
+    person("Casper", "Berg",
+           email = "cwb@aqua.dtu.dk",
+           role = "aut",
+           comment = c(ORCID = "0000-0002-3812-5269")))
 Description: The DATRASextra package provides additional tools and helper
     functions to complement DTU Aquas DATRAS R package. It includes utilities for
     more flexible data processing, enhanced plotting, and simplified workflows when
@@ -28,7 +32,7 @@ Suggests:
 Imports:
     icesDatras
 Remotes:
-    tokami/DATRAS/DATRAS@empty_zip
+    DTUAqua/DATRAS/DATRAS
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
