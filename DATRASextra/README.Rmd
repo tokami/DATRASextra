@@ -77,4 +77,4 @@ The development of *DATRASextra* was cofunded by the European Union.
 
 ---
 
-![](man/figures/EN_Co-fundedbytheEU_RGB_POS.png){width=250px}
+![Co-funded by the EU logo](man/figures/EN_Co-fundedbytheEU_RGB_POS.png){width=250px}
