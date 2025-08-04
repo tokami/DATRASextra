@@ -28,6 +28,9 @@ articles:
 - title: Tutorial
   navbar: ~
   contents: tutorial
+- title: Prediction grid
+  navbar: ~
+  contents: survey_domain
 
 news:
   releases:
