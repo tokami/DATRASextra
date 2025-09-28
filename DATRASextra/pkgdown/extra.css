@@ -1,0 +1,8 @@
+/* pre code { */
+/*     font-size: 85%; */
+/*     line-height: 1.2; */
+/* } */
+
+pre.tiny-output code {
+    font-size: 40%;
+}

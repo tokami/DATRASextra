@@ -4,11 +4,40 @@
 \alias{readDATRAS}
 \title{Download DATRAS survey information}
 \usage{
-readDATRAS(paths, years = NULL)
+readDATRAS(
+  paths,
+  years = NULL,
+  min.file.size = 10000,
+  prune = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
+\item{years}{years}
+
+\item{min.file.size}{Minimum file size in bytes (default: 100KB). Files
+below this value will be removed as they will likely cause errors in the
+underlying DATRAS functions.}
+
+\item{prune}{logical; If \code{TRUE} only core columns are kept (see function
+prune which columns are removed).}
+
+\item{verbose}{print stuff}
+
 \item{surveys}{surveys}
 }
 \description{
 Download DATRAS survey information
+}
+\details{
+The zip archives downloaded with dowloadDATRAS are usually between
+700KB and 2.5MB dependent on the survey. 100KM is a conservative default
+file size to exclude files that might be empty or damaged zip archives.
+
+If the whole DATRAS data base is read into R, R might crash due to memory
+limitations when trying to merge the individual files from multiple surveys.
+The argument 'prune' allows to get rid of some columns which saves
+considerable memory before merging all DATRAS files. If some columns that
+prune removes should be kept consider overwriting prune with your own
+function code.
 }

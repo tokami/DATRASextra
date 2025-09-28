@@ -22,7 +22,7 @@ addSweptAreaFishGlob <- function(x){
                                              "CatCatchWgt", "LngtCode",
                                              "LngtClass", "HLNoAtLngt",
                                              "AphiaID")) ]
-         unique(surv)
+        unique(surv)
     }
 
     combineSurvey <- function(surv){
@@ -43,13 +43,13 @@ addSweptAreaFishGlob <- function(x){
     ## cases without GOV)
     ## TODO: review this (other surveys represented)
     x <- subset(x, !(x$Survey == "NS-IBTS" &
-          x$Gear %in% c('ABD', 'BOT', 'DHT', 'FOT', 'GRT',
-                             'H18', 'HOB', 'HT', 'KAB', 'VIN')) &
-        !(x$Survey == "BITS" &
-          x$Gear %in% c('CAM', 'CHP', 'DT', 'EGY', 'ESB',
-                             'EXP', 'FOT', 'GRT', 'H20', 'HAK',
-                             'LBT', 'SON')) &
-        !(x$Survey == "PT-IBTS" & x$Gear == 'CAR'))
+                     x$Gear %in% c('ABD', 'BOT', 'DHT', 'FOT', 'GRT',
+                                   'H18', 'HOB', 'HT', 'KAB', 'VIN')) &
+                   !(x$Survey == "BITS" &
+                     x$Gear %in% c('CAM', 'CHP', 'DT', 'EGY', 'ESB',
+                                   'EXP', 'FOT', 'GRT', 'H20', 'HAK',
+                                   'LBT', 'SON')) &
+                   !(x$Survey == "PT-IBTS" & x$Gear == 'CAR'))
 
 
     ## Re-estimate the wing/doorspread from linear model per survey
@@ -148,7 +148,7 @@ addSweptAreaFishGlob <- function(x){
 
             ## select data with ship information + SweepLngt
             addship <- subset(surv, surv$Ship %in% lm0$xlevels$Ship &
-                                      surv$SweepLngt >0)
+                                    surv$SweepLngt >0)
             ## select data without ship information
             noship  <- subset(surv, !(surv$haul.id %in% addship$haul.id))
 
@@ -156,7 +156,7 @@ addSweptAreaFishGlob <- function(x){
             pred0 <- predict(lm0, newdata=addship, interval='confidence', level=0.95)
             addship$fit <-pred0[,1]
             surv <- cbind(surv, addship[match(surv$haul.id,addship$hau.id),
-                                            c("fit")])
+                                        c("fit")])
             colnames(surv)[ncol(surv)] <- "door_fit"
 
             ## do the same for noship
@@ -164,7 +164,7 @@ addSweptAreaFishGlob <- function(x){
                              level=0.95)
             noship$fit <-pred0[,1]
             surv <- cbind(surv, noship[match(surv$haul.id,noship$haul.id),
-                                           c("fit")])
+                                       c("fit")])
             colnames(surv)[ncol(surv)] <- "door_fit2"
 
 
@@ -359,14 +359,19 @@ addSweptAreaFishGlob <- function(x){
     return(x)
 }
 
-##' @title Add Swept Area based on wing spread / beam width using a simple approach. 
+##' @title Add Swept Area based on wing spread / beam width using a simple approach.
 ##'
 ##' @param x a DATRASraw object.
 ##'
-##' @return DATRASraw object with two SweptArea indices: SweptArea and SweptArea.median. The latter assumes a fixed trawl width for each gear category (the median). 
+##' @return DATRASraw object with two SweptArea indices: SweptArea and SweptArea.median. The latter assumes a fixed trawl width for each gear category (the median).
 ##'
 ##' @export
-addSweptAreaSimple<-function(d,minSpeed=1,minDist=0,maxDistDev=0.2){
+addSweptAreaSimple <- function(d,
+                               minSpeed = 1,
+                               minDist = 0,
+                               maxDistDev = 0.2,
+                               impute.missing = FALSE) {
+
     d$GroundSpeed[ d$GroundSpeed < minSpeed ] <- NA
     d$Distance[ d$Distance < minDist ] <- NA
     d$WingSpread[ d$WingSpread<=0 ] <- NA
@@ -377,14 +382,17 @@ addSweptAreaSimple<-function(d,minSpeed=1,minDist=0,maxDistDev=0.2){
     badDist <- abs((d$Distance - Distance2)/d$Distance)>maxDistDev
     d$Distance[ badDist ] <- NA
 
+    d2 <- d[[2]]
+
     ## Impute missing wing spreads (median within gear)
-    wtab <- aggregate(WingSpread~Gear,data=d,FUN=median,na.rm=TRUE)
+    wtab <- aggregate(WingSpread ~ Gear, data=d2, FUN=median, na.rm=TRUE)
     for(i in 1:nrow(wtab)){
         sel <- which(d$Gear==wtab$Gear[i] & is.na(d$WingSpread))
         d$WingSpread[ sel ] <- wtab$WingSpread[i]
     }
+    d$WingSpread2 <- NULL
 
-
+    d$WingSpread[d$Gear == "BT12"]   <- 12
     d$WingSpread[d$Gear == "BT8"]    <- 8
     d$WingSpread[d$Gear == "BT4A"]   <- 4
     d$WingSpread[d$Gear == "BT7"]    <- 7
@@ -393,20 +401,21 @@ addSweptAreaSimple<-function(d,minSpeed=1,minDist=0,maxDistDev=0.2){
     d$WingSpread[d$Gear == "BT4P"]   <- 4
     d$WingSpread[d$Gear == "BT6"]    <- 6
     d$WingSpread[d$Gear == "BT3"]    <- 3
-    
+
     ## For Beam trawls, GearEx == "DB" means double beam, i.e. catches from two beam trawls added.
     d$BeamWidth[ !is.na(d$GearEx) & d$GearEx=="DB" ] <- d$BeamWidth[ !is.na(d$GearEx) & d$GearEx=="DB" ]*2
 
     ## There are probably errors in recorded in wing spread and unclear how CPUE correlates with wing spread.
-    ## It might therefore be a more robust assumption to use a fixed (median) Wingspread for each gear type. 
+    ## It might therefore be a more robust assumption to use a fixed (median) Wingspread for each gear type.
     d$WingSpread.median <- d$WingSpread
     for(i in 1:nrow(wtab)){
         sel <- which(d$Gear==wtab$Gear[i])
-        d$WingSpread.median[ sel ] <- wtab$WingSpread[i]   
+        d$WingSpread.median[ sel ] <- wtab$WingSpread[i]
     }
-    
+
     ## Impute missing ground speeds
-    stab <- aggregate(GroundSpeed~Gear,data=d,FUN=median,na.rm=TRUE)
+    d2 <- d[[2]]
+    stab <- aggregate(GroundSpeed~Gear,data=d2,FUN=median,na.rm=TRUE) ## TODO Gear + Survey?
     for(i in 1:nrow(stab)){
         if(!is.na(stab$GroundSpeed[i])){
             d$GroundSpeed[ is.na(d$GroundSpeed) & d$Gear==stab$Gear[i]  ] <- stab$GroundSpeed[i]
@@ -420,8 +429,9 @@ addSweptAreaSimple<-function(d,minSpeed=1,minDist=0,maxDistDev=0.2){
     ## Impute missing distances
     noDist <- which( is.na(d$Distance) )
     d$Distance[ noDist ] <- (d$HaulDur[noDist] / 60 * 1852 * d$GroundSpeed[noDist])
-       
+
     d$SweptArea <- d$WingSpread * d$Distance
     d$SweptArea.median <- d$WingSpread.median * d$Distance
-    d
+
+    return(d)
 }

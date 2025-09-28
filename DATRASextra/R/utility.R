@@ -258,3 +258,13 @@ getLongFormat <- function(x) {
 
     return(res)
 }
+
+
+
+map2bar <- function(value, midL, bar.x) {
+    if (length(midL) > 1) {
+        approx(midL, bar.x, xout = value, rule = 2)$y
+    } else {
+        midL
+    }
+}

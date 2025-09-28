@@ -67,7 +67,7 @@ information of more than 27 surveys. You can get some information in which years
 quarters the surveys operated with:
 
 ```{r, fig.alt = ""}
-listSurveys()
+knitr::kable(listSurveys()
 ```
 
 The `downloadDATRAS` function allows us to download information for any of these

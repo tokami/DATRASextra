@@ -8,6 +8,8 @@ writeExchange(x, zipfile = "DATRAS.zip")
 }
 \arguments{
 \item{x}{a DATRASraw object}
+
+\item{zipfile}{name of zip file}
 }
 \description{
 Write DATRASraw to Exchange

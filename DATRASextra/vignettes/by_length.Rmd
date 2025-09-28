@@ -1,0 +1,136 @@
+---
+title: "Numbers and weight by haul and length classes"
+output:
+    rmarkdown::html_vignette:
+    fig_caption: yes
+    number_sections: true
+    df_print: paged
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+vignette: >
+  %\VignetteIndexEntry{Numbers and weight by haul and length classes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      cache = FALSE,
+                      warning = FALSE,
+                      eval = TRUE,
+                      error = FALSE,
+                      warning = FALSE,
+                      message = FALSE,
+                      include = TRUE,
+                      collapse = TRUE,
+                      comment = "#>",
+                      fig.show = "hold",
+                      fig.width=8, fig.height=7)
+```
+
+The goal of this vignette is to demonstrate how to derive numbers and weight by
+haul and length classes based on the DATRAS database. This requires following
+steps:
+
+**Outline:**
+
+1. Create length spectrum
+2. Create weight spectrum
+3. Aggregated length classes
+4. Summary
+5. References
+
+
+The vignette uses the the *DATRASextra* package:
+
+```{r}
+library(DATRASextra)
+```
+
+and assumes that a cleaned *DATRAS* database is available (see tutorial
+vignette) for information on how to get a cleaned *DATRAS* file. Here, we use
+the
+
+```{r}
+data("dab")
+```
+
+
+## *Create length spectrum*
+
+```{r}
+lpars <- checkLength(dab)
+```
+
+
+
+```{r}
+dab <- addSpectrum(dab)
+```
+
+
+Alternatively, custom length breaks with e.g. maximum length threshold:
+
+
+```{r}
+l.cut.off <- lpars$lPars$median * 5  ## find good cut-off
+## or l.cut.off <- lpars$lPars$perc
+cm.breaks <- attr(lpars$N,"cm.breaks")
+nbyl <- colSums(lpars$N)[which(cm.breaks <= l.cut.off)]
+threshold <- cm.breaks[max(which(nbyl != 0))]
+```
+
+
+
+```{r}
+## add length data with custom breaks
+by <- DATRAS:::getAccuracyCM(dab)
+cm.breaks <- seq(lpars$lPars$min, threshold + by, by = by)
+LngtCode2cm <- c(. = 0.1, `0` = 0.5, `1` = 1, `2` = 2, `5` = 5)
+while (length(cm.breaks) > 100 && which(by == LngtCode2cm) != length(LngtCode2cm)) {
+    by <- LngtCode2cm[which(by == LngtCode2cm) + 1]
+    cm.breaks <- seq(lpars$lPars$min, threshold + by, by = by)
+}
+
+dab <- addSpectrum(dab, cm.breaks = cm.breaks, by = by)
+```
+
+
+
+
+## *Create weight spectrum*
+
+
+```{r}
+wpars <- checkWeight(dab)
+```
+
+
+```{r}
+dab <- addWeight(dab, maxL = threshold)
+```
+
+
+Alteratively, ...
+
+```{r}
+dab <- addWeightEmpirical(dab)
+```
+
+
+
+## *Aggregated length classes*
+
+If for example only 2 or 3 length classes: ....
+
+
+## *Summary*
+
+This vignette introduced the main features and workflow of the *DATRASextra*
+package for ...
+
+
+
+## *References*

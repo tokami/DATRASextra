@@ -34,9 +34,9 @@ The goal of this section is to demonstrate how to define a spatial survey domain
 
 ## *Disclaimer*
 
-This is just one approach for generating prediction grids for spatial modeling.  
-It is not necessarily the recommended or only method. 
-Decisions such as the grid resolution, boundary construction, and filtering out areas far from observations are **subjective** and depend on the specific study goals and ecological assumptions.  
+This is just one approach for generating prediction grids for spatial modeling.
+It is not necessarily the recommended or only method.
+Decisions such as the grid resolution, boundary construction, and filtering out areas far from observations are **subjective** and depend on the specific study goals and ecological assumptions.
 Users should carefully consider the implications of each step and tailor the process to their own data and objectives.
 
 ## *Libraries*
@@ -46,12 +46,13 @@ library(DATRASextra)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
+## requires also: remotes::install_github("ropensci/rnaturalearthhires")
 ```
 
 
 ## *Download DATRAS, read-in, clean, and get unique trawling events*
 
-We start by extracting unique trawl haul locations from the DATRAS data and converting them into spatial points. We use the [*BITS*](https://gis.ices.dk/geonetwork/srv/api/records/f2f6f003-4dec-41c2-95d1-29dd48876662) survey as an example. 
+We start by extracting unique trawl haul locations from the DATRAS data and converting them into spatial points. We use the [*BITS*](https://gis.ices.dk/geonetwork/srv/api/records/f2f6f003-4dec-41c2-95d1-29dd48876662) survey as an example.
 
 ```{r, fig.alt = "",results='hide'}
 survey <- "BITS"
@@ -88,7 +89,7 @@ land <- st_union(coastline)
 # Subtract land from boundary to get sea-only polygon
 survey_at_sea <- st_difference(boundary, land)
 
-# Plot it 
+# Plot it
 plot(survey_at_sea)
 ```
 
@@ -126,10 +127,10 @@ prediction_grid <- data.frame(
   lat = coords[, "Y"]
 )
 
-# Check dataframe 
+# Check dataframe
 head(prediction_grid)
 
-# Plot grid 
+# Plot grid
 plot(prediction_grid$lon, prediction_grid$lat,
      pch = 16, col = "blue", cex = 0.6,
      xlab = "Longitude", ylab = "Latitude")
@@ -143,6 +144,3 @@ legend("topleft",
        bty = "n")
 
 ```
-
-
-
