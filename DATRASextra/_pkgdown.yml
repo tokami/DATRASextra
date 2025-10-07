@@ -30,11 +30,9 @@ articles:
 - title: Tutorial
   navbar: ~
   contents: tutorial
+- title: By length
+  navbar: ~
+  contents: by_length
 - title: Prediction grid
   navbar: ~
   contents: survey_domain
-
-news:
-  releases:
-  - text: Version 0.0.0.9000
-    href: https://github.com/tokami/DATRASextra/blob/main/DATRASextra/NEWS.md

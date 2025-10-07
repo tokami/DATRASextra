@@ -49,20 +49,21 @@ library(rnaturalearthdata)
 ## requires also: remotes::install_github("ropensci/rnaturalearthhires")
 ```
 
-
 ## *Download DATRAS, read-in, clean, and get unique trawling events*
 
-We start by extracting unique trawl haul locations from the DATRAS data and converting them into spatial points. We use the [*BITS*](https://gis.ices.dk/geonetwork/srv/api/records/f2f6f003-4dec-41c2-95d1-29dd48876662) survey as an example.
+We start by extracting unique trawl haul locations from the DATRAS data and
+converting them into spatial points. We use observations dab in the
+[*NS-IBTS*](https://gis.ices.dk/geonetwork/srv/eng/catalog.search#/metadata/abe375f9-fcf0-4839-a842-1f28650c98d3)
+survey between 2020 and 2023 as an example.
 
 ```{r, fig.alt = "",results='hide'}
-survey <- "BITS"
-tmp <- tempdir()
-downloadDATRAS(surveys = survey, dir = tmp, years = c(2019:2021))
-bits <- readDATRAS(file.path(tmp, survey)) # avoid printing
-bits <- clean(bits)
-# Extract unique trawls (haul id, lon, lat, Depth)
-unique_trawls <- unique(bits[["HH"]][, c("haul.id", "lon", "lat")])
-# Convert to sf points (WGS84)
+## Load dab example data
+data("dab")
+
+## Extract unique trawls (haul id, lon, lat, Depth)
+unique_trawls <- unique(dab[["HH"]][, c("haul.id", "lon", "lat")])
+
+## Convert to sf points (WGS84)
 sf_points <- st_as_sf(unique_trawls, coords = c("lon", "lat"), crs = 4326)
 ```
 
@@ -71,25 +72,25 @@ sf_points <- st_as_sf(unique_trawls, coords = c("lon", "lat"), crs = 4326)
 Next, we create a boundary polygon that covers the survey area at sea by building a concave hull around the trawl points, buffering it by 10 km, and removing land areas using coastline data from Natural Earth.
 
 ```{r, fig.alt = ""}
-# Enable spherical geometry for accurate distance calculations
+## Enable spherical geometry for accurate distance calculations
 sf_use_s2(TRUE)
 
-# Concave hull + 10 km buffer
+## Concave hull + 10 km buffer
 boundary <- st_buffer(
   st_concave_hull(st_union(sf_points), ratio = 0.05),
   dist = 10000  # buffer in meters
 )
 
-# Get coastline data and prepare land polygon
+## Get coastline data and prepare land polygon
 coastline <- ne_countries(scale = 10, returnclass = "sf")
 coastline <- st_transform(coastline, crs = 4326)
 coastline <- st_make_valid(coastline)
 land <- st_union(coastline)
 
-# Subtract land from boundary to get sea-only polygon
+## Subtract land from boundary to get sea-only polygon
 survey_at_sea <- st_difference(boundary, land)
 
-# Plot it
+## Plot it
 plot(survey_at_sea)
 ```
 
@@ -99,48 +100,48 @@ To ensure predictions focus near actual trawl observations, we filter out grid c
 ```{r}
 grid_resolution <- 0.1
 
-# Create a regular grid of points (not polygons) covering bounding box of survey_at_sea
+## Create a regular grid of points (not polygons) covering bounding box of survey_at_sea
 bbox <- st_bbox(survey_at_sea)
 
-# Create sequences of lon and lat (x and y) at regular intervals
+## Create sequences of lon and lat (x and y) at regular intervals
 x_seq <- seq(bbox["xmin"], bbox["xmax"], by = grid_resolution)
 y_seq <- seq(bbox["ymin"], bbox["ymax"], by = grid_resolution)
 
-# Create all combinations (full rectangular grid)
+## Create all combinations (full rectangular grid)
 grid_points <- expand.grid(lon = x_seq, lat = y_seq)
 
-# Convert regular grid of points to sf object
+## Convert regular grid of points to sf object
 grid_sf <- st_as_sf(grid_points, coords = c("lon", "lat"), crs = 4326)
 
-# Filter: keep only points inside the sea polygon
+## Filter: keep only points inside the sea polygon
 grid_sf <- grid_sf[st_within(grid_sf, survey_at_sea, sparse = FALSE)[,1], ]
 
-# Filter: keep only points within max_distance of any trawl point
-max_distance <- 20000  # 20 km
+## Filter: keep only points within max_distance of any trawl point
+max_distance <- 20000  ## 20 km
 close_to_trawl <- st_is_within_distance(grid_sf, sf_points, dist = max_distance)
 grid_sf <- grid_sf[lengths(close_to_trawl) > 0, ]
 
-# Final prediction grid: dataframe with lon and lat
+## Final prediction grid: dataframe with lon and lat
 coords <- st_coordinates(grid_sf)
 prediction_grid <- data.frame(
   lon = coords[, "X"],
   lat = coords[, "Y"]
 )
 
-# Check dataframe
+## Check dataframe
 head(prediction_grid)
 
-# Plot grid
+## Plot grid
 plot(prediction_grid$lon, prediction_grid$lat,
-     pch = 16, col = "blue", cex = 0.6,
+     pch = 16, col = "lightblue", cex = 0.6,
      xlab = "Longitude", ylab = "Latitude")
 plot(st_geometry(sf_points), add = TRUE, col = "red", pch = 20)
 plot(land, add = TRUE, col = "grey80", border = NA)
-legend("topleft",
+legend("topright",
        legend = c("Prediction grid", "Trawl observations"),
        col = c("lightblue", "red"),
+       bg = "white",
        pch = 20,
-       pt.cex = 1,
-       bty = "n")
-
+       pt.cex = 1)
+box(lwd = 1.5)
 ```

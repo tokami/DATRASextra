@@ -7,7 +7,8 @@ bibentry(
   title = "DATRASextra: Extra functions for DTU Aqua's DATRAS R package",
   author = c(
       person(c("Tobias", "K."), "Mildenberger"),
-      person("Federico", "Maioli")
+      person("Federico", "Maioli"),
+      person(c("Casper", "W."), "Berg")
   ),
   year = "2025",
   note = "In preparation",

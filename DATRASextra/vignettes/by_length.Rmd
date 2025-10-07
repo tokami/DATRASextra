@@ -116,14 +116,59 @@ dab <- addWeight(dab, maxL = threshold)
 Alteratively, ...
 
 ```{r}
-dab <- addWeightEmpirical(dab)
+# dab <- addWeightEmpirical(dab)
 ```
+
 
 
 
 ## *Aggregated length classes*
 
 If for example only 2 or 3 length classes: ....
+
+```{r}
+cuts <- c(0, 10, 20, 30, Inf)
+by <- diff(attr(dab, "cm.breaks"))
+midL <- attr(dab, "cm.breaks")[-length(attr(dab, "cm.breaks"))] + by/2
+ind <- as.integer(cut(midL, cuts, right = TRUE, include.lowest = TRUE))
+nbins <- length(cuts) - 1
+nNew <- wNew <- matrix(0, nrow = nrow(dab$N), ncol = nbins)
+for (j in seq_len(nbins)) {
+    cols.in.bin <- which(ind == j)
+    if (length(cols.in.bin) > 0) {
+        nNew[, j] <- rowSums(dab$N[, cols.in.bin, drop = FALSE])
+        wNew[, j] <- rowSums(dab$Wgt[, cols.in.bin, drop = FALSE])
+    }
+}
+colnames(nNew) <- colnames(wNew) <- paste0("(",cuts[-length(cuts)], "-", cuts[-1],"]")
+
+dab$HaulN <- nNew
+dab$HaulWgt <- wNew
+```
+
+
+Plot:
+
+
+```{r}
+par(mfrow = n2mfrow(ncol(nNew), asp = 2),
+    mar = c(3,3,2,2), oma = c(2,2,0,0))
+for (i in 1:ncol(nNew)) {
+    plot(dab[[2]]$lon, dab[[2]]$lat,
+         ty = "n",
+         xlab = "", ylab = "",
+         main = colnames(dab[[2]]$HaulN)[i])
+    ind <- which(dab[[2]]$HaulN[,i] > 0)
+    points(dab[[2]]$lon[ind], dab[[2]]$lat[ind],
+           cex = dab[[2]]$HaulN[,i][ind] /
+               max(dab[[2]]$HaulN[,i][ind]) * 3,
+           col = i)
+}
+mtext("Longitude", 1, outer = TRUE)
+mtext("Latitude", 2, outer = TRUE)
+```
+
+
 
 
 ## *Summary*
