@@ -41,7 +41,7 @@ downloaded from github as follows.
 ::: .momo-release
 ```{r, eval = FALSE}
 # install.packages("remotes")
-remotes::install_github("tokami/DATRASextra/DATRASextra")
+remotes::install_github("tokami/DATRASextra")
 ```
 :::
 
@@ -49,7 +49,7 @@ remotes::install_github("tokami/DATRASextra/DATRASextra")
 
 <!-- ::: .momo-devel -->
 <!-- ```{r, eval = FALSE} -->
-<!-- remotes::install_github("tokami/DATRASextra/DATRASextra", ref = "dev") -->
+<!-- remotes::install_github("tokami/DATRASextra", ref = "dev") -->
 <!-- ``` -->
 <!-- ::: -->
 

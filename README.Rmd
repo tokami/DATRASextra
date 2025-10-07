@@ -16,7 +16,9 @@ knitr::opts_chunk$set(
 # DATRASextra
 
 <!-- badges: start -->
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Codecov test coverage](https://codecov.io/gh/tokami/DATRASextra/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tokami/DATRASextra)
 <!-- badges: end -->
 
 
@@ -35,7 +37,7 @@ To get started with *DATRASextra*, install and load the package, download some
 survey information from DATRAS and start analyzing:
 
 ```{r, eval = FALSE, echo = TRUE, fig.alt = "SNS survey in 2023"}
-## remotes::install_github("tokami/DATRASextra/DATRASextra")
+## remotes::install_github("tokami/DATRASextra")
 library(DATRASextra)
 
 survey <- "SNS"
