@@ -28,7 +28,8 @@ Suggests:
     mapdata,
     maps,
     mgcv,
-    multicore
+    multicore,
+    testthat (>= 3.0.0)
 Imports:
     icesDatras
 Remotes:
@@ -36,3 +37,4 @@ Remotes:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Config/testthat/edition: 3
