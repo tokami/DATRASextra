@@ -24,18 +24,23 @@ License: GPL (>= 3)
 Depends:
     R (>= 4.0),
     DATRAS
+Imports:
+    icesDatras,
+    mgcv
 Suggests:
     knitr,
     mapdata,
     maps,
-    mgcv,
     parallel,
     rmarkdown,
-    testthat (>= 3.0.0)
-Imports:
-    icesDatras
+    testthat (>= 3.0.0),
+    sf,
+    rnaturalearth,
+    rnaturalearthdata,
+    rnaturalearthhires
 Remotes:
     DTUAqua/DATRAS/DATRAS
+    ropensci/rnaturalearthhires
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

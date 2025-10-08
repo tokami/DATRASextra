@@ -76,7 +76,7 @@ surveys and years are downloaded, wich can take a while. For demonstration
 purposes, we download year 2023 of the NS-IBTS survey into a temporary
 directory:
 
-```{r, fig.alt = ""}
+```{r, fig.alt = "", eval = FALSE}
 survey <- "SNS"
 tmp <- tempdir()
 downloadDATRAS(surveys = survey, years = 2023, dir = tmp)
@@ -90,7 +90,7 @@ However, the next function just reads in non-empty files.
 
 Next, we can read the downloaded survey information into R:
 
-```{r, fig.alt = ""}
+```{r, fig.alt = "", eval = FALSE}
 surv0 <- readDATRAS(file.path(tmp, survey))
 ```
 
@@ -104,6 +104,12 @@ example only use valid hauls. This can be done manually with the `subset()`
 function or by using some recommended cleaning steps with the `clean()`
 function. This function also allows us to make a relevant subset of the database
 based on our needs.
+
+```{r, fig.alt = ""}
+data("dab")
+surv0 <- dab
+```
+
 
 ```{r, fig.alt = ""}
 surv <- clean(surv0)

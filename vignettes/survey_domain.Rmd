@@ -46,7 +46,8 @@ library(DATRASextra)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
-## requires also: remotes::install_github("ropensci/rnaturalearthhires")
+## remotes::install_github("ropensci/rnaturalearthhires")
+library(rnaturalearthhires)
 ```
 
 ## *Download DATRAS, read-in, clean, and get unique trawling events*
