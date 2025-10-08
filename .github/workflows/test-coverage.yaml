@@ -1,18 +1,18 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+name: test-coverage
+
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
 
-name: test-coverage
-
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
+
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
@@ -26,26 +26,17 @@ jobs:
           extra-packages: any::covr
           needs: coverage
 
-      - name: Install extras
-        run: |
-          install.packages("remotes")
-          remotes::install_github("tokami/DATRASextra")
-        shell: Rscript {0}
+      - name: Install package
+        run: R CMD INSTALL .
 
-      - name: Test coverage
-        run: |
-          covr::codecov(
-            quiet = FALSE,
-            clean = FALSE,
-            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
-          )
+      - name: Run test coverage
+        run: covr::codecov(quiet = FALSE)
         shell: Rscript {0}
 
       - name: Show testthat output
         if: always()
         run: |
-          ## --------------------------------------------------------------------
-          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+          find . -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
 
       - name: Upload test results
@@ -53,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-test-failures
-          path: ${{ runner.temp }}/package
+          path: .
