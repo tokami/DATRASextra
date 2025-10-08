@@ -8,6 +8,12 @@ checkWeight(d, maxL = NULL, maxW = NULL, plot = TRUE)
 }
 \arguments{
 \item{d}{DATRASraw object}
+
+\item{maxL}{x}
+
+\item{maxW}{x}
+
+\item{plot}{TRUE}
 }
 \value{
 Info

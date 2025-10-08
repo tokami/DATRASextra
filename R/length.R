@@ -2,7 +2,13 @@
 ##' Create and inspect length measurements (in HL)
 ##'
 ##' @title Create and inspect length spectrum
+##'
 ##' @param x DATRASraw object
+##' @param cm.breaks x
+##' @param by If NULL, most coarse accuracy is used (using DATRAS internal
+##'     function getAccuracyCM)
+##' @param length.percentile x
+##' @param plot TRUE
 ##'
 ##' @return N at length matrix
 ##'
@@ -11,9 +17,15 @@ checkLength <- function(x,
                         cm.breaks = seq(min(x[[3]]$LngtCm, na.rm = TRUE),
                                          max(x[[3]]$LngtCm, na.rm = TRUE) + by,
                                          by = by),
-                         by = DATRAS:::getAccuracyCM(x),
-                         length.percentile = 99.9999,
-                         plot = TRUE) {
+                        by = NULL,
+                        length.percentile = 99.9999,
+                        plot = TRUE) {
+
+    ## import internal function from DATRAS
+    getAccuracyCM <- getFromNamespace("getAccuracyCM", "DATRAS")
+
+    if (is.null(by))
+        by <- getAccuracyCM(x)
 
     stopifnot(class(x) == "DATRASraw")
     if (length(levels(x[[3]]$Species)) > 1)

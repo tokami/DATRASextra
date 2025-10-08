@@ -1,0 +1,82 @@
+#' DAB survey data (example dataset)
+#'
+#' Example ICES DATRAS data for *Limanda limanda* (dab) from survey NS-IBTS in
+#' years 2020-2023.
+#'
+#' @format A list of class 'DATRASraw' with 3 elements:
+#' \describe{
+#'   \item{CA}{Biological data}
+#'   \item{HH}{Survey level information}
+#'   \item{HL}{Length measurements}
+#' }
+#' @source ICES DATRAS database \url{https://datras.ices.dk}
+"dab"
+
+
+#' Species information lookup table
+#'
+#' A lookup table linking ICES species codes to names and ecological groups.
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'   \item{WoRMS_AphiaID}{Numeric AphiaID identifier from the World Register of Marine Species (WoRMS).}
+#'   \item{ScientificName_WoRMS}{Full scientific name of the species according to WoRMS.}
+#'   \item{genus}{Genus name of the species.}
+#'   \item{family}{Family name of the species.}
+#'   \item{order}{Taxonomic order of the species.}
+#'   \item{class}{Taxonomic class of the species.}
+#'   \item{rank}{Taxonomic rank of the record (e.g., species, genus).}
+#'   \item{habitat}{General habitat category (e.g., marine, brackish, freshwater).}
+#'   \item{bodyShape}{General body shape category (e.g., fusiform, elongate, flat).}
+#'   \item{maxL}{Maximum observed length (cm).}
+#'   \item{Lm}{Length at maturity (cm).}
+#'   \item{a}{Length–weight relationship parameter \(a\) (in \(W = a L^b\)).}
+#'   \item{b}{Length–weight relationship parameter \(b\) (in \(W = a L^b\)).}
+#'   \item{Loo}{Asymptotic length from the von Bertalanffy growth model (cm).}
+#'   \item{K}{Growth coefficient from the von Bertalanffy model (1/year).}
+#'   \item{to}{Theoretical age at zero length \(t_0\) from the von Bertalanffy model (years).}
+#'   \item{habitat2}{Alternative or refined habitat classification.}
+#'   \item{funcGroupFB}{Functional group according to FishBase.}
+#'   \item{funcGroupWalker}{Functional group following Walker et al. (2017).}
+#'   \item{funcGroupDenderen}{Functional group following van Denderen et al. (2020).}
+#'   \item{funcGroupMildenberger}{Functional group following Mildenberger et al. (2025).}
+#'   \item{funcGroupWalkerAll}{Unified or merged functional grouping combining multiple classification sources.}
+#' }
+#' @source ICES DATRAS species reference list.
+"speciesInfo"
+
+
+#' Survey information table
+#'
+#' Metadata for ICES bottom trawl surveys, including survey names, areas,
+#' and available time ranges.
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'   \item{survey}{Survey code (e.g. NS-IBTS)}
+#'   \item{years}{Years}
+#'   \item{quarters}{Quarters}
+#'   \item{description}{Description}
+#' }
+#' @source ICES DATRAS metadata.
+"surveyInfo"
+
+
+#' Full survey information table
+#'
+#' Extended version of `surveyInfo` with additional coverage and technical
+#' details for each DATRAS survey.
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'   \item{Survey}{Survey code (e.g. NS-IBTS)}
+#'   \item{Year}{Years}
+#'   \item{Quarter}{Quarters}
+#'   \item{Gear}{Gear}
+#'   \item{StatRec}{ICES Statistical rectangle}
+#'   \item{Hauls}{Number of hauls}
+#'   \item{lon}{Longitude}
+#'   \item{lat}{Latitude}
+#' }
+#' @source ICES DATRAS metadata.
+"surveyInfoFull"

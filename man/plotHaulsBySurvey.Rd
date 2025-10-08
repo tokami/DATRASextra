@@ -12,6 +12,17 @@ plotHaulsBySurvey(
   ylim = NULL
 )
 }
+\arguments{
+\item{plot.map}{TRUE}
+
+\item{fixed.scale}{TRUE}
+
+\item{col}{colours}
+
+\item{xlim}{NULL}
+
+\item{ylim}{NULL}
+}
 \description{
 Plot hauls by survey
 }

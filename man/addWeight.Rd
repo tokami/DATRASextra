@@ -10,6 +10,10 @@ addWeight(d, to1min = TRUE, maxL = NULL, maxW = NULL)
 \item{d}{DATRASraw object}
 
 \item{to1min}{divide by haul duration in minutes? (defaults to TRUE)}
+
+\item{maxL}{x}
+
+\item{maxW}{x}
 }
 \value{
 DATRASraw object

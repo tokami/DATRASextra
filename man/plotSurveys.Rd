@@ -13,6 +13,19 @@ plotSurveys(
   ylim = NULL
 )
 }
+\arguments{
+\item{plot.map}{TRUE}
+
+\item{fixed.axes}{TRUE}
+
+\item{overlay}{FALSE}
+
+\item{consider.quarter}{FALSE}
+
+\item{xlim}{NULL}
+
+\item{ylim}{NULL}
+}
 \description{
 Plot surveys
 }

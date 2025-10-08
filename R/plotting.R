@@ -1,11 +1,16 @@
 
 ##' @title Plot hauls
 ##'
+##' @param plot.map TRUE
+##' @param xlim NULL
+##' @param ylim NULL
+##'
 ##' @export
 plotHauls <- function(plot.map = TRUE,
-                      xlim = NULL, ylim = NULL){
+                      xlim = NULL,
+                      ylim = NULL) {
 
-    data("surveyInfoFull")
+    surveyInfoFull <- get("surveyInfoFull", envir = asNamespace("DATRASextra"))
 
     ok <- requireNamespace("maps", quietly = TRUE) &&
         requireNamespace("mapdata", quietly = TRUE)
@@ -62,13 +67,20 @@ plotHauls <- function(plot.map = TRUE,
 
 ##' @title Plot hauls by survey
 ##'
+##' @param plot.map TRUE
+##' @param fixed.scale TRUE
+##' @param col colours
+##' @param xlim NULL
+##' @param ylim NULL
+##'
 ##' @export
 plotHaulsBySurvey <- function(plot.map = TRUE,
                               fixed.scale = TRUE,
                               col = hcl.colors(12, "YlOrRd", rev = TRUE),
-                              xlim = NULL, ylim = NULL){
+                              xlim = NULL,
+                              ylim = NULL) {
 
-    data("surveyInfoFull")
+    surveyInfoFull <- get("surveyInfoFull", envir = asNamespace("DATRASextra"))
 
     ok <- requireNamespace("maps", quietly = TRUE) &&
         requireNamespace("mapdata", quietly = TRUE)
@@ -175,15 +187,22 @@ plotHaulsBySurvey <- function(plot.map = TRUE,
 
 ##' @title Plot surveys
 ##'
+##' @param plot.map TRUE
+##' @param fixed.axes TRUE
+##' @param overlay FALSE
+##' @param consider.quarter FALSE
+##' @param xlim NULL
+##' @param ylim NULL
+##'
 ##' @export
 plotSurveys <- function(plot.map = TRUE,
                         fixed.axes = TRUE,
                         overlay = FALSE,
                         consider.quarter = FALSE,
                         xlim = NULL,
-                        ylim = NULL){
+                        ylim = NULL) {
 
-    data("surveyInfoFull")
+    surveyInfoFull <- get("surveyInfoFull", envir = asNamespace("DATRASextra"))
 
     ok <- requireNamespace("maps", quietly = TRUE) &&
         requireNamespace("mapdata", quietly = TRUE)

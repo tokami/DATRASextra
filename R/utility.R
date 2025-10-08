@@ -8,7 +8,7 @@
 ##' @export
 listSurveys <- function() {
 
-    data("surveyInfo")
+    surveyInfoFull <- get("surveyInfo", envir = asNamespace("DATRASextra"))
 
     return(surveyInfo)
 }

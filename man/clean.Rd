@@ -16,6 +16,18 @@ clean(
 }
 \arguments{
 \item{x}{a DATRASraw object.}
+
+\item{aphias}{x}
+
+\item{years}{x}
+
+\item{quarters}{x}
+
+\item{gears}{x}
+
+\item{impute.missing.depth}{TRUE}
+
+\item{correct.species}{TRUE}
 }
 \value{
 Cleaned DATRASraw object.

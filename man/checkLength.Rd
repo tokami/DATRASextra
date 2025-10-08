@@ -8,13 +8,22 @@ checkLength(
   x,
   cm.breaks = seq(min(x[[3]]$LngtCm, na.rm = TRUE), max(x[[3]]$LngtCm, na.rm = TRUE) +
     by, by = by),
-  by = DATRAS:::getAccuracyCM(x),
+  by = NULL,
   length.percentile = 99.9999,
   plot = TRUE
 )
 }
 \arguments{
 \item{x}{DATRASraw object}
+
+\item{cm.breaks}{x}
+
+\item{by}{If NULL, most coarse accuracy is used (using DATRAS internal
+function getAccuracyCM)}
+
+\item{length.percentile}{x}
+
+\item{plot}{TRUE}
 }
 \value{
 N at length matrix

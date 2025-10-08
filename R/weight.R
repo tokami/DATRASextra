@@ -4,6 +4,9 @@
 ##' @title Check weight information (in CA)
 ##'
 ##' @param d DATRASraw object
+##' @param maxL x
+##' @param maxW x
+##' @param plot TRUE
 ##'
 ##' @return Info
 ##'
@@ -15,7 +18,7 @@ checkWeight <- function (d,
                          maxW = NULL,
                          plot = TRUE) {
 
-    DATRAS:::checkSpectrum(d)
+    DATRAS::checkSpectrum(d)
 
     x <- subset(d[[1]], IndWgt > 0)
     if (!is.null(maxL) && !is.na(maxL) && is.numeric(maxL)) {
@@ -111,17 +114,22 @@ checkWeight <- function (d,
 ##' Calculate weight by length classes and add to HH-records
 ##'
 ##' @title Calculate weight by length classes and add to HH-records
+##'
 ##' @param d DATRASraw object
 ##' @param to1min divide by haul duration in minutes? (defaults to TRUE)
+##' @param maxL x
+##' @param maxW x
+##'
 ##' @return DATRASraw object
 ##'
 ##' @importFrom DATRAS checkSpectrum
 ##'
 ##' @export
-addWeight <- function (d, to1min = TRUE,
+addWeight <- function (d,
+                       to1min = TRUE,
                        maxL = NULL,
                        maxW = NULL) {
-    DATRAS:::checkSpectrum(d)
+    DATRAS::checkSpectrum(d)
     x <- subset(d[[1]], IndWgt > 0)
     if (!is.null(maxL) && !is.na(maxL) && is.numeric(maxL)) {
         x <- x[x$LngtCm <= maxL,]
@@ -152,15 +160,18 @@ addWeight <- function (d, to1min = TRUE,
 ##'
 ##' @title Calculate weight by length classes using empirical a and b, and add
 ##'     to HH-records
+##'
 ##' @param d DATRASraw object
 ##' @param to1min divide by haul duration in minutes? (defaults to TRUE)
+##'
 ##' @return DATRASraw object
 ##'
 ##' @importFrom DATRAS checkSpectrum
 ##'
 ##' @export
-addWeightEmpirical <- function (d, to1min = TRUE) {
-    DATRAS:::checkSpectrum(d)
+addWeightEmpirical <- function (d,
+                                to1min = TRUE) {
+    DATRAS::checkSpectrum(d)
 
     aphia <- unique(d[[3]]$Valid_Aphia)
     if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in speciesInfo to use. Please run this function for each species separately.")
@@ -201,15 +212,18 @@ addWeightEmpirical <- function (d, to1min = TRUE) {
 ##' Calculate total biomass by haul using empirical a and b, and add to HH-records
 ##'
 ##' @title Calculate total biomass by haul using a and b, and add to HH-records
+##'
 ##' @param d DATRASraw object
 ##' @param to1min divide by haul duration in minutes? (defaults to TRUE)
+##'
 ##' @return DATRASraw object
 ##'
 ##' @importFrom DATRAS checkSpectrum
 ##'
 ##' @export
-addWeightByHaulEmpirical <- function (d, to1min = TRUE) {
-    DATRAS:::checkSpectrum(d)
+addWeightByHaulEmpirical <- function (d,
+                                      to1min = TRUE) {
+    DATRAS::checkSpectrum(d)
 
     aphia <- unique(d[[3]]$Valid_Aphia)
     if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in speciesInfo to use. Please run this function for each species separately.")

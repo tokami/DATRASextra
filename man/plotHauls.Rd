@@ -6,6 +6,13 @@
 \usage{
 plotHauls(plot.map = TRUE, xlim = NULL, ylim = NULL)
 }
+\arguments{
+\item{plot.map}{TRUE}
+
+\item{xlim}{NULL}
+
+\item{ylim}{NULL}
+}
 \description{
 Plot hauls
 }

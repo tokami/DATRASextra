@@ -13,7 +13,15 @@ downloadDATRAS(
 )
 }
 \arguments{
-\item{surveys}{surveys}
+\item{surveys}{NULL}
+
+\item{years}{NULL}
+
+\item{download.missing.only}{TRUE}
+
+\item{dir}{NULL}
+
+\item{verbose}{TRUE}
 }
 \description{
 Download DATRAS survey information

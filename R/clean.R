@@ -2,15 +2,25 @@
 ##' @title Clean data
 ##'
 ##' @param x a DATRASraw object.
+##' @param aphias x
+##' @param years x
+##' @param quarters x
+##' @param gears x
+##' @param impute.missing.depth TRUE
+##' @param correct.species TRUE
 ##'
 ##' @return Cleaned DATRASraw object.
 ##'
 ##' @importFrom mgcv gam s predict.gam
 ##'
 ##' @export
-clean <- function(x, aphias = NULL, years = NULL, quarters = NULL,
-                  gears = NULL, impute.missing.depth = TRUE,
-                  correct.species = TRUE){
+clean <- function(x,
+                  aphias = NULL,
+                  years = NULL,
+                  quarters = NULL,
+                  gears = NULL,
+                  impute.missing.depth = TRUE,
+                  correct.species = TRUE) {
 
 
     ## Minimum cleaning ------------------------

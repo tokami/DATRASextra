@@ -20,7 +20,6 @@ Description: The DATRASextra package provides additional tools and helper
     working with DATRAS survey data. The functions are designed to support common
     tasks in analysis and reporting that go beyond the core functionality of the
     main DATRAS package.
-License: GPL (>= 3)
 Depends:
     R (>= 4.0),
     DATRAS
@@ -41,6 +40,8 @@ Suggests:
 Remotes:
     DTUAqua/DATRAS/DATRAS,
     ropensci/rnaturalearthhires
+LazyData: true
+License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

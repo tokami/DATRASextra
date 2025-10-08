@@ -361,7 +361,11 @@ addSweptAreaFishGlob <- function(x){
 
 ##' @title Add Swept Area based on wing spread / beam width using a simple approach.
 ##'
-##' @param x a DATRASraw object.
+##' @param d a DATRASraw object.
+##' @param minSpeed x
+##' @param minDist x
+##' @param maxDistDev x
+##' @param impute.missing FALSE
 ##'
 ##' @return DATRASraw object with two SweptArea indices: SweptArea and SweptArea.median. The latter assumes a fixed trawl width for each gear category (the median).
 ##'

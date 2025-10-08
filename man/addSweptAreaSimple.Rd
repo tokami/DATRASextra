@@ -13,7 +13,15 @@ addSweptAreaSimple(
 )
 }
 \arguments{
-\item{x}{a DATRASraw object.}
+\item{d}{a DATRASraw object.}
+
+\item{minSpeed}{x}
+
+\item{minDist}{x}
+
+\item{maxDistDev}{x}
+
+\item{impute.missing}{FALSE}
 }
 \value{
 DATRASraw object with two SweptArea indices: SweptArea and SweptArea.median. The latter assumes a fixed trawl width for each gear category (the median).

@@ -1,7 +1,11 @@
 
 ##' @title Download DATRAS survey information
 ##'
-##' @param surveys surveys
+##' @param surveys NULL
+##' @param years NULL
+##' @param download.missing.only TRUE
+##' @param dir NULL
+##' @param verbose TRUE
 ##'
 ##' @return NULL
 ##'
@@ -106,14 +110,13 @@ downloadDATRAS <- function(surveys = NULL,
 
 ##' @title Download DATRAS survey information
 ##'
-##' @param surveys surveys
+##' @param paths paths
 ##' @param years years
 ##' @param min.file.size Minimum file size in bytes (default: 100KB). Files
 ##'     below this value will be removed as they will likely cause errors in the
 ##'     underlying DATRAS functions.
 ##' @param prune logical; If `TRUE` only core columns are kept (see function
 ##'     prune which columns are removed).
-##'
 ##' @param verbose print stuff
 ##'
 ##' @return NULL
@@ -136,7 +139,11 @@ readDATRAS <- function(paths,
                        years = NULL,
                        min.file.size = 1e4,
                        prune = FALSE,
-                       verbose = TRUE){
+                       verbose = TRUE) {
+
+    ## import internal function from DATRAS
+    c.DATRASraw <- getFromNamespace("c.DATRASraw", "DATRAS")
+
     paths0 <- paths
 
     if (any(dir.exists(paths))) {
@@ -199,7 +206,7 @@ readDATRAS <- function(paths,
 
             if(verbose) message("Combining files")
 
-            surv0 <- do.call(DATRAS:::c.DATRASraw, tmp)
+            surv0 <- do.call(c.DATRASraw, tmp)
 
         }else{
             invisible(capture.output({
@@ -236,7 +243,8 @@ readDATRAS <- function(paths,
 ##' @return NULL
 ##'
 ##' @export
-writeExchange <- function(x, zipfile = "DATRAS.zip") {
+writeExchange <- function(x,
+                          zipfile = "DATRAS.zip") {
     stopifnot(inherits(x, "DATRASraw"))
 
     td <- tempdir()
@@ -276,6 +284,7 @@ writeExchange <- function(x, zipfile = "DATRAS.zip") {
 
 removeExtraVariables <- function(x) {
     stopifnot(inherits(x, "DATRASraw"))
+
 
     ## Define the official names for each component
     CA_vars <- c(

@@ -13,6 +13,8 @@ readDATRAS(
 )
 }
 \arguments{
+\item{paths}{paths}
+
 \item{years}{years}
 
 \item{min.file.size}{Minimum file size in bytes (default: 100KB). Files
@@ -23,8 +25,6 @@ underlying DATRAS functions.}
 prune which columns are removed).}
 
 \item{verbose}{print stuff}
-
-\item{surveys}{surveys}
 }
 \description{
 Download DATRAS survey information
