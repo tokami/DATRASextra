@@ -36,25 +36,20 @@ database](https://www.ices.dk/data/data-portals/pages/datras.aspx).
 The current version of the package allows to follow described data
 processing protocols, estimate swept area indices and plot results.
 
-To get started with *DATRASextra*, install and load the package,
-download some survey information from DATRAS and start analyzing:
+To get started with *DATRASextra*, install and load the package:
 
 ``` r
-## remotes::install_github("tokami/DATRASextra")
+
+## Install the package
+remotes::install_github("tokami/DATRASextra")
+
+## Load the package into R
 library(DATRASextra)
-
-survey <- "SNS"
-tmp <- tempdir()
-downloadDATRAS(surveys = survey, years = 2023, dir = tmp)
-
-surv0 <- readDATRAS(file.path(tmp, survey))
-
-surv <- clean(surv0)
-
-plot(surv)
 ```
 
 ## Overview
+
+Overview over DATRASextra
 
 ## Getting help
 
@@ -75,7 +70,44 @@ information on how to cite this package.
 
 ## Basic use
 
+DATRASextra makes it easy to download survey data from ICES DATRAS
+database:
+
+``` r
+survey <- "SNS"
+tmp <- tempdir()
+downloadDATRAS(surveys = survey, years = 2023, dir = tmp)
+```
+
+This mainly uses the functionality of the DATRAS R package but allows a
+bit more flexibility, like specifying the path were the data should be
+installed to.
+
+Next, the data can be read into R with:
+
+``` r
+surv0 <- readDATRAS(file.path(tmp, survey))
+```
+
+Now, you can process, subset, modify and analyse the data:
+
+``` r
+surv <- clean(surv0)
+
+plot(surv)
+```
+
 ## Advanced use
+
+Demo of one advanced use case.
+
+``` r
+surv <- clean(surv0)
+
+plot(surv)
+```
+
+More advanced options are shown in the vignettes.
 
 ## Related software
 
@@ -87,6 +119,6 @@ The development of *DATRASextra* was cofunded by the European Union.
 
 <figure>
 <img src="man/figures/EN_Co-fundedbytheEU_RGB_POS.png" width="250"
-alt="Co-funded by the EU logo" />
-<figcaption aria-hidden="true">Co-funded by the EU logo</figcaption>
+alt="Logo: Co-funded by the EU" />
+<figcaption aria-hidden="true">Logo: Co-funded by the EU</figcaption>
 </figure>
