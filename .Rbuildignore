@@ -2,3 +2,4 @@
 ^README\.Rmd$
 ^doc$
 ^Meta$
+^\.github$

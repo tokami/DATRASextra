@@ -29,7 +29,7 @@ Suggests:
     mapdata,
     maps,
     mgcv,
-    multicore,
+    parallel,
     rmarkdown,
     testthat (>= 3.0.0)
 Imports:
