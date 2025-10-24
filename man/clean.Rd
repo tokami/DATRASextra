@@ -11,7 +11,8 @@ clean(
   quarters = NULL,
   gears = NULL,
   impute.missing.depth = TRUE,
-  correct.species = TRUE
+  correct.species = TRUE,
+  do.fishglob = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ clean(
 \item{impute.missing.depth}{TRUE}
 
 \item{correct.species}{TRUE}
+
+\item{do.fishglob}{FALSE}
 }
 \value{
 Cleaned DATRASraw object.

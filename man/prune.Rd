@@ -4,13 +4,15 @@
 \alias{prune}
 \title{Prune data}
 \usage{
-prune(x)
+prune(x, do.fishglob = FALSE)
 }
 \arguments{
 \item{x}{a DATRASraw object.}
+
+\item{do.fishglob}{FALSE}
 }
 \value{
-Cleaned DATRASraw object.
+Pruned DATRASraw object.
 }
 \description{
 Prune data
