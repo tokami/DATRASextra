@@ -12,7 +12,7 @@
 addSweptAreaFishGlob <- function(x){
 
     ## Adjusted from original script by Aurore Maureaud + Daniël van Denderen
-    ## TODO: include imputation code for other surveys
+    ## TODO: include imputation code for other surveys ## don't do -> FISHGLOB
 
     xin <- x
 
