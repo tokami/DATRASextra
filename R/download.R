@@ -175,9 +175,20 @@ readDATRAS <- function(paths,
                         return(NULL)
                     })
                 }))
+                if (is.null(tmp[[i]]) && verbose) {
+                    message(paste0("Error with: ", paths[i]))
+                }
                 if(verbose) setTxtProgressBar(pb, i)
             }
             if(verbose) close(pb)
+
+            idx <- which(sapply(tmp,is.null))
+            if (length(idx) > 0) {
+                if (verbose) {
+                    message("One or more loaded files are NULL. Removing these. Check your files!")
+                }
+                tmp <- tmp[-idx]
+            }
 
             removeDuplicatedHaulID <- function(args) {
                 x <- lapply(args, function(x) as.character(x$haul.id))
@@ -191,8 +202,7 @@ readDATRAS <- function(paths,
                                              collapse = "\n")))
                         message("Removing these hauls in order to continue. Please look into these surveys and hauls and find out why they are duplicated!")
                     }
-                    args <- lapply(args, function(x)
-                        subset(x, !haul.id %in% ids))
+                    args <- lapply(args, function(x) subset(x, !haul.id %in% ids))
                 }
                 return(args)
             }
