@@ -38,7 +38,7 @@ Suggests:
     rnaturalearthdata,
     rnaturalearthhires
 Remotes:
-    DTUAqua/DATRAS/DATRAS,
+    tokami/DATRAS/DATRAS@DATRASextra,
     ropensci/rnaturalearthhires
 LazyData: true
 License: GPL-3
