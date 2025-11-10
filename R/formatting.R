@@ -5,7 +5,8 @@
 ##' @return Dataframe in format x.
 ##'
 ##' @export
-format <- function(x) {
+##' @method format DATRASraw
+format.DATRASraw <- function(x) {
 
     res <- x
 

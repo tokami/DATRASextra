@@ -519,7 +519,8 @@ addWeightFishglob <- function (d, to1min = TRUE) {
 ##' @return Dataframe in format of FishGlob data set.
 ##'
 ##' @export
-formatFishglob <- function(x) {
+##' @method format DATRASraw
+formatFishglob.DATRASraw <- function(x) {
 
     res <- x
 

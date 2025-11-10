@@ -27,8 +27,10 @@ addSweptAreaSimple(
 DATRASraw object with two SweptArea indices: SweptArea and
 SweptArea.median. The latter assumes a fixed trawl width for each gear
 category (the median).
-In m^2.
 }
 \description{
 Add Swept Area based on wing spread / beam width using a simple approach.
+}
+\details{
+In m^2.
 }
