@@ -17,14 +17,23 @@
 ##' international boundaries? A global survey of scientific bottom trawl data.
 ##' Global change biology, 27(2), pp.220-236.
 ##'
-##' @return Cleaned DATRASraw object according to FisGlob workflow.
+##' @return Cleaned DATRASraw object according to FishGlob workflow.
 ##'
 ##' @export
 cleanFishglob <- function(x) {
 
     ## HaulVal (https://vocab.ices.dk/?ref=1)
-    x <- subset(x, HaulVal %in% "V")
+    x <- subset(
+        x,
+        HaulVal %in% "V",
+        !is.na(Valid_Aphia), # AphiaID in fishglob
+        SpecVal %in% c(1, 10, 4, 5, 6, 7, 8),
+        DataType %in% c("S", "R", "C"), 
+        StdSpecRecCode == 1 #L382
+    ) # from https://github.com/fishglob/FishGlob_data/blob/233d0f4c82114268ac2f8f58d340d11e7efb02c6/cleaning_codes/get_datras.R#L347
 
+    # @Tobi is this needed https://github.com/fishglob/FishGlob_data/blob/233d0f4c82114268ac2f8f58d340d11e7efb02c6/cleaning_codes/get_datras.R#L359 or is it coded somewhere else?
+    
     ## TODO
     ## ... (more fishglob cleaning)
 
@@ -45,8 +54,10 @@ cleanFishglob <- function(x) {
 
     ## Species correction -------------------------
     ## TODO check that this is the same as in fishglob,
+    ## Fede: checked, it's the same!
     ## if not: create do.fishglob flag?
     x <- correctSpecies(x)
+    
     ## https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/get_datras.R#L432
 
     return(x)
@@ -120,7 +131,7 @@ addSweptAreaFishGlob <- function(x){
         surv <- surv[ , !(names(surv) %in% c("TotalNo", "NoMeas",
                                              "CatCatchWgt", "LngtCode",
                                              "LngtClass", "HLNoAtLngt",
-                                             "AphiaID")) ]
+                                             "Valid_Aphia")) ]
         unique(surv)
     }
 
