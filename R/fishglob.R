@@ -81,19 +81,19 @@ pruneFishglob <- function(x) {
 
     ## TODO see what they keep
 
-    hh.cols <- c("RecordType","Survey","Quarter","Ship","Gear","Year","Month",
+    hh.cols <- c("RecordType",'Country',"Survey","Quarter","Ship","Gear","Year","Month",
                  "Day","TimeShot","HaulDur","DayNight", "StatRec","Depth",
                  "HaulVal","StdSpecRecCode","DataType", "Distance","DoorSpread",
-                 "WingSpread","GroundSpeed", "haul.id", "abstime", "timeOfYear",
+                 "WingSpread","GroundSpeed",'SweepLngt', "haul.id", "abstime", "timeOfYear",
                  "TimeShotHour", "lon","lat", "Roundfish")
 
-    hl.cols <- c("haul.id","RecordType","Survey","Quarter","Ship","Gear",
-                 "Year","SpecVal","Sex","TotalNo", ## "CatIdentifier", "NoMeas",
+    hl.cols <- c("haul.id","RecordType",'Country', "Survey","Quarter","Ship","Gear",
+                 "Year","SpecVal","Sex","TotalNo", 'SweepLngt',## "CatIdentifier", "NoMeas",
                  "SubFactor","SubWgt","CatCatchWgt","LngtCode","LngtClas",
                  "HLNoAtLngt", ## "LenMeasType",
-                 "Valid_Aphia","LngtCm","Species", "HaulDur","DataType","Count")
+                 "Valid_Aphia","ScientificName_WoRMS","LngtCm","Species", "HaulDur","DataType","Count")
 
-    x[["CA"]] <- NULL
+    #x[["CA"]] <- 0
     x[["HH"]] <- x[["HH"]][colnames(x[["HH"]]) %in% hh.cols]
     x[["HL"]] <- x[["HL"]][colnames(x[["HL"]]) %in% hl.cols]
 
@@ -122,10 +122,9 @@ pruneFishglob <- function(x) {
 ##'
 ##' @export
 addSweptAreaFishGlob <- function(x){
-
+    
     ## Adjusted from original script by Aurore Maureaud and Daniël van Denderen
-    xin <- x
-
+    
     subsetSurvey <- function(x, survey){
         surv <- subset(x[["HH"]], Survey == survey)
         surv <- surv[ , !(names(surv) %in% c("TotalNo", "NoMeas",
@@ -134,50 +133,54 @@ addSweptAreaFishGlob <- function(x){
                                              "Valid_Aphia")) ]
         unique(surv)
     }
-
+    
     combineSurvey <- function(surv){
         surv <- surv[, c("haul.id", "DoorSpread", "WingSpread")]
         names(surv)[names(surv) == "DoorSpread"] <- "DoorSpread2"
         names(surv)[names(surv) == "WingSpread"] <- "WingSpread2"
         surv
     }
-
-    x$WingSpread[x$WingSpread == 0] <- NA
-    x$DoorSpread[x$DoorSpread == 0] <- NA
-    x$Distance[x$Distance == 0] <- NA
-
+    
+    # Replace 0 with NA 
+    x[['HH']]$WingSpread[x[['HH']]$WingSpread == 0] <- NA
+    x[['HH']]$DoorSpread[x[['HH']]$DoorSpread == 0] <- NA
+    x[['HH']]$Distance[x[['HH']]$Distance == 0] <- NA
+    
     ## select only certain gears
     ## 1. summary of gears per survey
     ## ...
     ## 2. only select certain gears per survey (GOV and/or most dominant in
     ## cases without GOV)
     ## TODO: review this (other surveys represented)
-    x <- subset(x, !(x$Survey == "NS-IBTS" &
-                     x$Gear %in% c('ABD', 'BOT', 'DHT', 'FOT', 'GRT',
-                                   'H18', 'HOB', 'HT', 'KAB', 'VIN')) &
-                   !(x$Survey == "BITS" &
-                     x$Gear %in% c('CAM', 'CHP', 'DT', 'EGY', 'ESB',
-                                   'EXP', 'FOT', 'GRT', 'H20', 'HAK',
-                                   'LBT', 'SON')) &
-                   !(x$Survey == "PT-IBTS" & x$Gear == 'CAR'))
-
-
+    x <- subset(
+        x,
+        !(Survey == "NS-IBTS" &
+              Gear %in% c('ABD', 'BOT', 'DHT', 'FOT', 'GRT',
+                          'H18', 'HOB', 'HT', 'KAB', 'VIN')),
+        !(Survey == "BITS" &
+              Gear %in% c('CAM', 'CHP', 'DT', 'EGY', 'ESB',
+                          'EXP', 'FOT', 'GRT', 'H20', 'HAK',
+                          'LBT','LPT', 'SON', 'P20')),
+        !(Survey == "PT-IBTS" & Gear == "CAR"))
+    
+    
     ## Re-estimate the wing/doorspread from linear model per survey
     surveys <- unique(x[["HH"]]$Survey)
     area2.list <- vector("list", length(surveys))
     for(i in 1:length(surveys)){
-
-        surv <- subsetSurvey(x, surveys[i])
-        ## !is.na(x$Depth) (but we can intrapolate...) for NS-IBTS
-
-
+        
+        surv <- subsetSurvey(x, surveys[i]) 
+        surv <- droplevels(surv) # safer
+        
+        
+        
         ## Manual corrections --------------------------
         if(surveys[i] == "BITS"){
             surv$DoorSpread[surv$DoorSpread > 200] <- NA
             ## remove two outliers
         }
         if(surveys[i] == "EVHOE"){
-            surv$WingSpread[!(surv$Year %in% 2016:2018)] <- NA
+            surv$WingSpread[!(surv$Year %in% 2016:2018)] <- NA #remove for sake of example
         }
         if(surveys[i] == "FR-CGFS"){
             surv$WingSpread[surv$WingSpread %in% 10] <- NA
@@ -200,75 +203,75 @@ addSweptAreaFishGlob <- function(x){
             surv$cat[surv$Depth > 120] <- "deep"
             ## seems to be a break-point when plotting (wingspread~depth)
         }
-
-
+        
+        
         ## Doorspread --------------------------
         if (surveys[i] %in% c("EVHOE")) {
-
+            
             lm0 <- lm(DoorSpread ~ Depth * SweepLngt, data=surv)
-
+            
         } else if (surveys[i] %in% c("SP-ARSA")) {
-
+            
             lm0 <- lm(DoorSpread ~ log(Depth) * SweepLngt, data=surv)
-
+            
         } else if (surveys[i] %in% c("SP-NORTH","ROCKALL",
                                      "IE-IGFS","SWC")) {
-
-            lm0 <- lm(DoorSpread ~ log(Depth) + SweepLngt, data=surv)
-
+            
+            lm0 <- lm(DoorSpread ~ log(Depth) , data=surv) # this make no sense double check + SweepLngt
+            
         } else if (surveys[i] %in% c("SP-PORC","NIGFS","FR-CGFS")) {
-
+            
             lm0 <- lm(DoorSpread ~ log(Depth), data=surv)
-
+            
         } else if (surveys[i] %in% c("BITS")) {
-
+            
             lm0 <- lm(DoorSpread ~ log(Depth) + Country + Gear, data=surv)
             ## no country
             lm1 <- lm(DoorSpread ~ log(Depth) + Gear, data=surv)
-
+            
             ## select data with country x doorspread information
             addcountry <- subset(surv, surv$Country %in% lm0$xlevels$Country)
             ## select data without country x doorspread information
             nocountry <- subset(surv, !(surv$Country %in% lm0$xlevels$Country))
-
+            
             ## add prediction to addcountry
             pred0 <- predict(lm0, newdata=addcountry, interval='confidence', level=0.95)
             addcountry$fit <-pred0[,1]
             surv <- cbind(surv, addcountry[match(surv$haul.id,addcountry$haul.id), c("fit")])
             colnames(surv)[ncol(surv)] <- "door_fit"
-
+            
             ## do the same for nocountry
             pred0 <- predict(lm1, newdata=nocountry, interval='confidence', level=0.95)
             nocountry$fit <-pred0[,1]
             surv <- cbind(surv, nocountry[match(surv$haul.id,nocountry$haul.id), c("fit")])
             colnames(surv)[ncol(surv)] <- "door_fit2"
-
+            
             ## merge into one, remove door_fit2
             surv$door_fit <- ifelse(is.na(surv$door_fit), surv$door_fit2, surv$door_fit)
             surv$door_fit2 <- NULL
-
-
-
+            
+            
+            
         } else if (surveys[i] %in% c("NS-IBTS")) {
-
+            
             ## add ships/sweeplength
             lm0 <- lm(DoorSpread ~ log(Depth) + SweepLngt + Ship, data=surv)
             ## use country for hauls that miss sweeplength and/or ships x doorspr.
             lm1 <- lm(DoorSpread ~ log(Depth) + Country, data=surv)
-
+            
             ## select data with ship information + SweepLngt
             addship <- subset(surv, surv$Ship %in% lm0$xlevels$Ship &
-                                    surv$SweepLngt >0)
+                                  surv$SweepLngt >0)
             ## select data without ship information
             noship  <- subset(surv, !(surv$haul.id %in% addship$haul.id))
-
+            
             ## add prediction to addship
             pred0 <- predict(lm0, newdata=addship, interval='confidence', level=0.95)
             addship$fit <-pred0[,1]
             surv <- cbind(surv, addship[match(surv$haul.id,addship$hau.id),
                                         c("fit")])
             colnames(surv)[ncol(surv)] <- "door_fit"
-
+            
             ## do the same for noship
             pred0 <- predict(lm1, newdata=noship, interval='confidence',
                              level=0.95)
@@ -276,51 +279,55 @@ addSweptAreaFishGlob <- function(x){
             surv <- cbind(surv, noship[match(surv$haul.id,noship$haul.id),
                                        c("fit")])
             colnames(surv)[ncol(surv)] <- "door_fit2"
-
-
+            
+            
             surv$door_fit <- ifelse(is.na(surv$door_fit), surv$door_fit2, surv$door_fit)
             surv$door_fit2 <- NULL
-
+            
         }
-
-
+        
+        
         ## No Can-Mar or PT-IBTS
         if (surveys[i] %in% c("EVHOE","SP-ARSA","SP-NORTH","ROCKALL",
                               "IE-IGFS","SWC","SP-PORC","NIGFS",
                               "FR-CGFS")) {
-
-            pred0 <- predict.lm (object=lm0, newdata=surv,
-                                 interval='confidence', level=0.95)
+            
+            tryCatch({
+                pred0 <- predict(lm0, newdata=surv, interval='confidence', level=0.95)
+            }, warning = function(w){
+                message("Warning for survey: ", surveys[i])
+                message(w$message)
+            })
             surv$door_fit <- pred0[,1]
-
+            
         }
-
-
+        
+        
         ## Wingpread ---------------------------------
         if (surveys[i] == "EVHOE") {
-
+            
             lm0 <- lm(WingSpread ~ DoorSpread * SweepLngt, data=surv)
-
+            
         }else if(surveys[i] %in% c("ROCKALL","IE-IGFS")){
-
+            
             lm0 <- lm(WingSpread ~ DoorSpread + SweepLngt, data=surv)
-
+            
         }else if(surveys[i] %in% c("SP-ARSA","SP-PORC","SP-NORTH",
                                    "NIGFS","FR-CGFS","BITS")){
-
+            
             lm0 <- lm(WingSpread ~ DoorSpread, data=surv)
-
+            
         }else if(surveys[i] %in% c("SWC")){
-
+            
             lm0 <- lm(WingSpread ~ log(Depth) + DoorSpread , data=surv)
-
+            
         }else if(surveys[i] %in% c("NS-IBTS")){
-
+            
             lm0 <- lm(WingSpread ~ log(Depth) + Country + DoorSpread + SweepLngt,
                       data=surv) ## add sweeplngt
             lm1 <- lm(WingSpread ~ log(Depth) + Country + DoorSpread, data=surv)
             ## model for hauls without sweeplngt
-
+            
             surv[is.na(surv$DoorSpread),]$DoorSpread <-
                 surv[is.na(surv$DoorSpread),]$door_fit
             ## include the DoorSpread prediction
@@ -328,60 +335,60 @@ addSweptAreaFishGlob <- function(x){
             ## select data with SweepLngt information
             noship  <- subset(surv, !(surv$haul.id %in% addship$haul.id))
             ## select data without SweepLngt information
-
+            
             pred0 <- predict(lm0, newdata=addship, interval='confidence', level=0.95)
             ## add prediction to addship
             addship$fit <-pred0[,1]
             surv <- cbind(surv, addship[match(surv$haul.id,addship$haul.id), c("fit")])
             colnames(surv)[ncol(surv)] <- "wing_fit"
-
+            
             pred0 <- predict(lm1, newdata=noship, interval='confidence', level=0.95)
             ## do the same for noship
             noship$fit <-pred0[,1]
             surv <- cbind(surv, noship[match(surv$haul.id,noship$haul.id), c("fit")])
             colnames(surv)[ncol(surv)] <- "wing_fit2"
-
+            
             surv$wing_fit <- ifelse(is.na(surv$wing_fit), surv$wing_fit2, surv$wing_fit)
             surv$wing_fit2 <- NULL
-
+            
             surv[is.na(surv$WingSpread),]$WingSpread <-
                 surv[is.na(surv$WingSpread),]$wing_fit
-
+            
         } else if (surveys[i] %in% c("PT-IBTS")) {
-
+            
             lm0 <- lm(WingSpread ~ Depth * cat, data=surv)
-
+            
         }
-
+        
         if (surveys[i] %in% c("EVHOE","SP-ARSA","SP-NORTH","ROCKALL",
                               "IE-IGFS","SWC","SP-PORC","NIGFS",
                               "FR-CGFS","BITS","PT-IBTS")) {
-
+            
             if(all(!is.null(surv$door_fit))){
                 surv[is.na(surv$DoorSpread),]$DoorSpread <-
                     surv[is.na(surv$DoorSpread),]$door_fit
             }
-
+            
             pred0 <- predict.lm (object=lm0, newdata=surv,
                                  interval='confidence', level=0.95)
             surv$wing_fit <- pred0[,1]
             surv[is.na(surv$WingSpread),]$WingSpread <-
                 surv[is.na(surv$WingSpread),]$wing_fit
         }
-
+        
         ## If not DoorSpread information!
         if (surveys[i] %in% c("PT-IBTS")) {
             surv$DoorSpread <- surv$WingSpread / 0.3
             ## doorspread probably not needed, rough estimate
         }
-
+        
         ## Combine
         area2.list[[i]] <- combineSurvey(surv)
     }
-
+    
     area2 <- do.call(rbind, area2.list)
-
-
+    
+    
     ## Replace WingSpread and DoorSpread with imputed values if missing
     area2 <- unique(area2)
     x[["HH"]] <- merge(x[["HH"]], area2, by = "haul.id", all.x = TRUE)
@@ -389,13 +396,13 @@ addSweptAreaFishGlob <- function(x){
     x$WingSpread <- ifelse(is.na(x$WingSpread), x$WingSpread2, x$WingSpread)
     x$DoorSpread2 <- NULL
     x$WingSpread2 <- NULL
-
-
+    
+    
     ## Calculate Swept Area from WingSpread and DoorSpread
     dist <- unique(x[["HH"]][, c("haul.id", "Survey", "Year",
                                  "Ship", "Country", "Distance",
                                  "GroundSpeed", "HaulDur")])
-
+    
     ## plot(dist$Distance, dist$GroundSpeed*1.852*dist$HaulDur/60*1000)
     ## remove Distances at high end (seem wrong, see plot)
     dist$Distance[dist$Distance > 11000] <- NA
@@ -407,65 +414,65 @@ addSweptAreaFishGlob <- function(x){
     dist$Distance2 <- dist$GroundSpeed*1.852*dist$HaulDur/60*1000
     dist$Distance <- ifelse(is.na(dist$Distance), dist$Distance2, dist$Distance)
     dist$Distance2 <- NULL
-
+    
     ## NAs remaining missing speeds
     ## take average speed per survey, year, ship
     avgspeed <- aggregate(dist$GroundSpeed,
                           by=list(dist$Survey, dist$Year, dist$Ship),
                           FUN = mean, na.rm=T)
     colnames(avgspeed) <- c("Survey", "Year", "Ship","GroundSpeed2")
-
+    
     dist <- merge(dist, avgspeed, by = c("Survey", "Year", "Ship"), all.x = TRUE)
     dist$GroundSpeed <- ifelse(is.na(dist$GroundSpeed),
                                dist$GroundSpeed2, dist$GroundSpeed)
     dist$GroundSpeed2 <- NULL
-
+    
     ## take average speed per survey, year, country
     avgspeed <- aggregate(dist$GroundSpeed,
                           by=list(dist$Survey, dist$Year, dist$Country),
                           FUN = mean, na.rm=T)
     colnames(avgspeed) <- c("Survey", "Year", "Country","GroundSpeed2")
-
+    
     dist <- merge(dist, avgspeed, by = c("Survey", "Year", "Country"), all.x = TRUE)
     dist$GroundSpeed <- ifelse(is.na(dist$GroundSpeed),
                                dist$GroundSpeed2, dist$GroundSpeed)
     dist$GroundSpeed2 <- NULL
-
+    
     ## take average speed per survey, country
     avgspeed <- aggregate(dist$GroundSpeed, by=list(dist$Survey, dist$Country),
                           FUN = mean, na.rm=T)
     colnames(avgspeed) <- c("Survey", "Country", "GroundSpeed2")
-
+    
     dist <- merge(dist, avgspeed, by = c("Survey", "Country"), all.x = TRUE)
     dist$GroundSpeed <- ifelse(is.na(dist$GroundSpeed),
                                dist$GroundSpeed2, dist$GroundSpeed)
     dist$GroundSpeed2 <- NULL
-
+    
     ## take average speed
     dist$GroundSpeed2 <- mean(dist$GroundSpeed,na.rm=T)
     dist$GroundSpeed <- ifelse(is.na(dist$GroundSpeed),
                                dist$GroundSpeed2, dist$GroundSpeed)
     dist$GroundSpeed2 <- NULL
-
+    
     ## calculate 2nd distance
     dist$Distance2 <- dist$GroundSpeed*1.852*dist$HaulDur/60*1000
-
+    
     dist$Distance_pred <- ifelse(is.na(dist$Distance), dist$Distance2, dist$Distance)
     dist <- dist[ , !(names(dist) %in% c("Distance2", "Distance",
                                          "GroundSpeed",
                                          "HaulDur",
                                          "Survey", "Year", "Ship", "Country")) ]
-
+    
     x[["HH"]] <- merge(x[["HH"]], dist, by = "haul.id", all.x = TRUE)
-
-
+    
+    
     x[["HH"]]$Distance <- ifelse(is.na(x[["HH"]]$Distance),
                                  x[["HH"]]$Distance_pred, x[["HH"]]$Distance)
     x[["HH"]]$Distance_pred <- NULL
-
+    
     x[["HH"]]$SweptArea <- x[["HH"]]$Distance * 0.001 * x[["HH"]]$WingSpread * 0.001
     x[["HH"]]$DoorsArea <- x[["HH"]]$Distance * 0.001 * x[["HH"]]$DoorSpread * 0.001
-
+    
     return(x)
 }
 
@@ -484,44 +491,68 @@ addSweptAreaFishGlob <- function(x){
 ##' @importFrom DATRAS checkSpectrum
 ##'
 ##' @export
-addWeightFishglob <- function (d, to1min = TRUE) {
-    DATRAS::checkSpectrum(d)
+addWeightFishglob <- function (x, to1min = TRUE) {
+    #DATRAS::checkSpectrum(d) don't need spectrum
+ 
+    # basic check if DATRASraw object
+    if (!inherits(x, "DATRASraw"))
+        stop("Input must be a DATRASraw object.")
+    
+    HL <- x[['HL']]
+    HH <- x[['HH']]
+    
+    data(speciesInfo) # add check
 
-    aphia <- unique(d[[3]]$Valid_Aphia)
-    if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in speciesInfo to use. Please run this function for each species separately.")
-    if(length(aphia) == 0) stop("No Aphia ID found in d[[3]].")
+    # Select species present
+    aphias <- unique(HL$Valid_Aphia)
+    aphias <- aphias[!is.na(aphias)]
 
-    ## data("speciesInfo")
-    ind <- which(speciesInfo$WoRMS_AphiaID == aphia)
-    if(length(ind) > 1) stop("More than one matching Aphia ID found in speciesInfo. Did you modify speciesInfo? Please make sure to have unique Aphia IDs in speciesInfo")
-    if(length(ind) == 0) stop("Aphia ID could not be matched in speciesInfo. Please make sure your species is in speciesInfo.")
-
-    a <- speciesInfo$a[ind]
-    b <- speciesInfo$b[ind]
-
-    if(is.na(a) || !is.numeric(a)) stop("Matched a in speciesInfo is NA or not numeric! Please check the value!")
-    if(is.na(b) || !is.numeric(b)) stop("Matched b in speciesInfo is NA or not numeric! Please check the value!")
-
-    cm.breaks = attr(d, "cm.breaks")[-1] - 0.5
-    tmp = d[[1]][1:length(cm.breaks), ]
-    tmp$LngtCm = cm.breaks
-    tmp$Wgt = a * tmp$LngtCm ^ b
-    LW = tmp$Wgt
-
-    Wgt <- sweep(d[[2]]$N, 2, LW, "*")
-
-    if (to1min) {
-        Wgt <- Wgt/d[[2]]$HaulDur
+    if(length(aphias) == 0) stop("No Aphia ID found in x[['HL']].")
+    
+    # Merge HL with speciesInfo to get a and b per fish
+    HL2 <- merge(
+        HL,
+        speciesInfo,
+        by.x = c("Valid_Aphia", "ScientificName_WoRMS"), # maybe change this later
+        by.y = c("WoRMS_AphiaID", "ScientificName_WoRMS"),
+        all.x = TRUE
+    )
+    
+    # check on missing a and b
+    if (any(is.na(HL2$a)) || any(is.na(HL2$b))) {
+        missing <- unique(HL2$Valid_Aphia[is.na(HL2$a) | is.na(HL2$b)])
+        warning("Some species missing a/b parameters in speciesInfo: ",
+                paste(missing, collapse=", "))
     }
 
-    Wgt <- round(Wgt, 3)
-
-    d[[2]]$Wgt <- Wgt[as.character(d[[2]]$haul.id),,drop=FALSE]
-
-    return(d)
+    # Compute weight-at-length per individual length class
+    HL2$Wgt_indiv <- with(HL2, a * (LngtCm ^ b))
+    
+    # Total weight in each length class group
+    # HLNoAtLngt = count of fish in length class
+    HL2$Wgt_total <- HL2$Wgt_indiv * HL2$HLNoAtLngt
+    
+    # Convert to weight-per-minute if needed
+    if (to1min) {
+        HL2$Wgt_total <- HL2$Wgt_total / HL2$HaulDur
+    }
+    
+    # Round and return
+    HL2$Wgt_total <- round(HL2$Wgt_total, 3)
+    
+    # Put back into d object
+    x[['HL']]$Wgt <- HL2$Wgt_total[match(HL$haul.id, HL2$haul.id)]
+    x[['HL']]$Wgt <- HL2$Wgt_total[match(HL$haul.id, HL2$haul.id)]
+    x[['HL']]$Genus <- HL2$genus[match(HL$haul.id, HL2$haul.id)]
+    x[['HL']]$Family <- HL2$family[match(HL$haul.id, HL2$haul.id)]
+    x[['HL']]$Order <- HL2$order[match(HL$haul.id, HL2$haul.id)]
+    x[['HL']]$Class <- HL2$class[match(HL$haul.id, HL2$haul.id)]
+    x[['HL']]$Rank <- HL2$rank[match(HL$haul.id, HL2$haul.id)]
+    
+    return(x)
 }
 
-
+str(x)
 
 ##' @title Format DATRAS data to FishGlob data set
 ##'
@@ -533,8 +564,66 @@ addWeightFishglob <- function (d, to1min = TRUE) {
 ##' @method format DATRASraw
 formatFishglob.DATRASraw <- function(x) {
 
-    res <- x
+    HH <- x[['HH']]
+    HL <- x[['HL']]
 
+    HL2 <- HL %>% group_by(Survey,Quarter,Year,haul.id,Valid_Aphia, Species,Genus,Family ,Order,Class , Rank ) %>% summarise(wgt = sum(Wgt,na.rm = TRUE),num = sum(HLNoAtLngt,na.rm = TRUE))
+    
+    HH2 <- left_join(HH,HL2) %>% filter(!is.na(wgt) & !is.na(num))
+    
+
+    #https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/get_datras.R#L1023
+    survey4 <- survey3 %>%
+        rename(survey = Survey,
+               haul_id = HaulID,
+               stat_rec = StatRec,
+               year = Year,
+               month = Month,
+               quarter = Quarter,
+               #season = Season,
+               latitude = lat,
+               longitude = lon,
+               haul_dur = HaulDur,
+               #area_swept = Area.swept,
+               gear = Gear,
+               depth = Depth,
+               sbt = NA,
+               sst = NA,
+               verbatim_aphia_id = Valid_Aphia,
+               aphia_id = Valid_Aphia,
+               accepted_name = Species,
+               ) %>%
+        mutate(day = NA_integer_,
+               verbatim_name = NA_character_,
+               station = NA_character_,
+               stratum = NA_character_,
+               sub_area = NA_character_,
+               continent = "europe",
+               country = case_when(survey=="PT-IBTS" ~ "portugal",
+                                   survey=="EVHOE" ~ "france",
+                                   survey=="IE-IGFS" ~ "ireland",
+                                   survey %in% c("ROCKALL","SWC-IBTS","NIGFS") ~ "uk",
+                                   survey=="FR-CGFS" ~ "france",
+                                   survey %in% c("NS-IBTS","BITS") ~ "multi-countries",
+                                   survey %in% c("SP-NORTH","SP-ARSA") ~ "spain",
+                                   survey == "SP-PORC" ~ "multi-countries"),
+               num = numlencpue*area_swept,
+               num_cpue = numlenh,
+               num_cpua = numlencpue,
+               wgt = wgtlencpue*area_swept,
+               wgt_cpue = wgtlenh,
+               wgt_cpua = wgtlencpue,
+               haul_dur = haul_dur/60,
+               source = "DATRAS ICES",
+               timestamp = format(Sys.Date(), "%Y-%m"),
+               survey_unit = ifelse(survey %in% c("BITS","NS-IBTS","SWC-IBTS","SP-ARSA"),
+                                    paste0(survey,"-",quarter),survey),
+               survey_unit = ifelse(survey %in% c("NEUS","SEUS","SCS","GMEX"),
+                                    paste0(survey,"-",season),survey_unit)) %>%
+                                        # Final format
+        select(fishglob_data_columns$`Column name fishglob`)
+
+    
     ## TODO: select columns kept in FishGlob data set
 
     ## TODO integrate fishglob:
@@ -547,8 +636,8 @@ formatFishglob.DATRASraw <- function(x) {
     ##            month = Month,
     ##            quarter = Quarter,
     ##            season = Season,
-    ##            latitude = ShootLat,
-    ##            longitude = ShootLong,
+    ##            latitude = lat,
+    ##            longitude = lon,
     ##            haul_dur = HaulDur,
     ##            area_swept = Area.swept,
     ##            gear = Gear,
@@ -581,7 +670,7 @@ formatFishglob.DATRASraw <- function(x) {
     ##            wgt_cpua = wgtlencpue,
     ##            haul_dur = haul_dur/60,
     ##            source = "DATRAS ICES",
-    ##            timestamp = "2021-07",
+    ##            timestamp = format(Sys.Date(), "%Y-%m"),
     ##            survey_unit = ifelse(survey %in% c("BITS","NS-IBTS","SWC-IBTS","SP-ARSA"),
     ##                                 paste0(survey,"-",quarter),survey),
     ##            survey_unit = ifelse(survey %in% c("NEUS","SEUS","SCS","GMEX"),

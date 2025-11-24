@@ -50,3 +50,6 @@ rsconnect/
 inst/doc
 /doc/
 /Meta/
+
+# Temporary folder for testing Fishglob
+Temporary/
