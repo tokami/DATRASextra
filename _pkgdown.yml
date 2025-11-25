@@ -42,3 +42,8 @@ articles:
 - title: FishGlob
   contents:
   - articles/fishglob
+
+news:
+  releases:
+  - text: Version 0.0.0.9000
+    href: https://github.com/tokami/DATRASextra/blob/main/DATRASextra/NEWS.md
