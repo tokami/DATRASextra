@@ -4,6 +4,8 @@
 ##' @param surveys NULL
 ##' @param years NULL
 ##' @param download.missing.only TRUE
+##' @param download.ca TRUE
+##' @param use.php FALSE
 ##' @param dir NULL
 ##' @param verbose TRUE
 ##'
@@ -16,6 +18,8 @@
 downloadDATRAS <- function(surveys = NULL,
                            years = NULL,
                            download.missing.only = TRUE,
+                           download.ca = TRUE,
+                           use.php = FALSE,
                            dir = NULL,
                            verbose = TRUE){
 
@@ -44,7 +48,8 @@ downloadDATRAS <- function(surveys = NULL,
         setwd(file.path(dir, survey))
 
         ## TODO: check if php works on mac
-        if (.Platform$OS.type == "windows") {
+        ## if (.Platform$OS.type == "windows") {
+        if (!use.php) {
 
             years <- icesDatras::getSurveyYearList(survey)
             if (!is.null(yearsin)) {
@@ -58,14 +63,16 @@ downloadDATRAS <- function(surveys = NULL,
                     if (!file.exists(file.path(dir, survey,
                                                paste0(survey,"_",year,".zip")))) {
                         datras_raw <- getDatrasExchange(survey, year, quarters,
-                                                        strict = TRUE)
+                                                        strict = TRUE,
+                                                        download.ca = download.ca)
                         datras_clean <- removeExtraVariables(datras_raw)
                         writeExchange(datras_clean, file.path(dir, survey,
-                                                     paste0(survey,"_",year,".zip")))
+                                                              paste0(survey,"_",year,".zip")))
                     }
                 } else {
                     datras_raw <- getDatrasExchange(survey, year, quarters,
-                                                    strict = TRUE)
+                                                    strict = TRUE,
+                                                    download.ca = download.ca)
                     datras_clean <- removeExtraVariables(datras_raw)
                     writeExchange(datras_clean,
                                   file.path(dir, survey,
@@ -74,6 +81,8 @@ downloadDATRAS <- function(surveys = NULL,
             }
 
         } else {
+
+            if (!download.ca && verbose) writeLines("Note that this functionality is not yet implemented, php always downloads CA. Consider setting use.php to FALSE.")
 
             if (download.missing.only) {
                 years <- icesDatras::getSurveyYearList(survey)
