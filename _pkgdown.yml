@@ -36,3 +36,6 @@ articles:
 - title: Prediction grid
   navbar: ~
   contents: survey_domain
+- title: FishGlob
+  navbar: ~
+  contents: fishglob
