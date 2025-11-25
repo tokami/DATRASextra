@@ -1,7 +1,6 @@
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/tokami/DATRASextra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tokami/DATRASextra/actions/workflows/R-CMD-check.yaml)
-  [![Codecov test
-  coverage](https://codecov.io/gh/tokami/DATRASextra/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tokami/DATRASextra?branch=main)
+  [![codecov](https://codecov.io/gh/tokami/DATRASextra/graph/badge.svg?token=GLS9FJ47IP)](https://codecov.io/gh/tokami/DATRASextra)
   [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
