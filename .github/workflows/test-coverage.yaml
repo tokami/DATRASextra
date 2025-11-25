@@ -30,7 +30,11 @@ jobs:
         run: R CMD INSTALL .
 
       - name: Run test coverage
-        run: covr::codecov(quiet = FALSE)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          cat("Has token? ", nzchar(Sys.getenv("CODECOV_TOKEN")), "\n")
+          covr::codecov(token = Sys.getenv("CODECOV_TOKEN"), quiet = FALSE)
         shell: Rscript {0}
 
       - name: Show testthat output
