@@ -1,0 +1,30 @@
+# DATRASextra
+
+[![R-CMD-check](https://github.com/tokami/DATRASextra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tokami/DATRASextra/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/tokami/DATRASextra/graph/badge.svg?token=GLS9FJ47IP)](https://codecov.io/gh/tokami/DATRASextra)
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+  
+Makes working with ICES **DATRAS** **extra** easy.  
+
+------------------------------------------------------------------------
+
+**DATRASextra** is an R package that simplifies working with the [ICES
+DATRAS
+database](https://www.ices.dk/data/data-portals/pages/datras.aspx) by
+providing practical functions and detailed documentation.
+
+It builds on [DTU Aqua’s *DATRAS* R
+package](https://github.com/DTUAqua/DATRAS), which provides the core
+functionality to download and modify DATRAS data — commonly used to
+prepare abundance indices for ICES stock assessments.
+
+**DATRASextra** adds tools for: - Estimating spatial distributions and
+abundance indices across multiple surveys - Calculating catch rates by
+custom length classes for single species or aggregations - Streamlining
+the processing and preparation of *DATRAS* data for analysis
+
+------------------------------------------------------------------------
+
+## Table of contents
