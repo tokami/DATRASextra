@@ -4,10 +4,12 @@
 \alias{format.DATRASraw}
 \title{Format DATRAS data}
 \usage{
-\method{format}{DATRASraw}(x)
+\method{format}{DATRASraw}(x, ...)
 }
 \arguments{
 \item{x}{a DATRASraw object.}
+
+\item{...}{extra options}
 }
 \value{
 Dataframe in format x.

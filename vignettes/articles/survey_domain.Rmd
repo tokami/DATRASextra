@@ -9,10 +9,6 @@ output:
     toc_depth: 2
     toc_float:
       collapsed: false
-vignette: >
-  %\VignetteIndexEntry{Constructing a prediction grid within a survey domain}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}

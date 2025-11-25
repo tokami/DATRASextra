@@ -9,10 +9,6 @@ output:
     toc_depth: 2
     toc_float:
       collapsed: false
-vignette: >
-  %\VignetteIndexEntry{Numbers and weight by haul and length classes}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}

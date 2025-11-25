@@ -9,10 +9,6 @@ output:
     toc_depth: 2
     toc_float:
       collapsed: false
-vignette: >
-  %\VignetteIndexEntry{Guide to reproduce the FishGlob data set (DATRAS part)}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 

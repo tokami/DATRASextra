@@ -8,6 +8,8 @@ downloadDATRAS(
   surveys = NULL,
   years = NULL,
   download.missing.only = TRUE,
+  download.ca = TRUE,
+  use.php = FALSE,
   dir = NULL,
   verbose = TRUE
 )
@@ -18,6 +20,10 @@ downloadDATRAS(
 \item{years}{NULL}
 
 \item{download.missing.only}{TRUE}
+
+\item{download.ca}{TRUE}
+
+\item{use.php}{FALSE}
 
 \item{dir}{NULL}
 

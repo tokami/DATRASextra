@@ -7,15 +7,7 @@
 cleanFishglob(x)
 }
 \arguments{
-\item{x}{a DATRASraw object.}
-
-\item{aphias}{x}
-
-\item{years}{x}
-
-\item{quarters}{x}
-
-\item{gears}{x}
+\item{x}{a DATRASraw object}
 }
 \value{
 Cleaned DATRASraw object according to FishGlob workflow.

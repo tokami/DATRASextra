@@ -1,10 +1,6 @@
 ##' @title Clean data following FishGlob workflow
 ##'
-##' @param x a DATRASraw object.
-##' @param aphias x
-##' @param years x
-##' @param quarters x
-##' @param gears x
+##' @param x a DATRASraw object
 ##'
 ##' @description This function follows the workflow that was used to create the
 ##'     FishGlob data set (Maureaud et al. 2021). Adjusted from:
@@ -483,7 +479,7 @@ addSweptAreaFishGlob <- function(x) {
 ##' @title Calculate weight by length classes using empirical a and b, and add
 ##'     to HH-records
 ##'
-##' @param d DATRASraw object
+##' @param x DATRASraw object
 ##' @param to1min divide by haul duration in minutes? (defaults to TRUE)
 ##'
 ##' @return DATRASraw object
@@ -560,7 +556,6 @@ addWeightFishglob <- function (x, to1min = TRUE) {
 ##' @return Dataframe in format of FishGlob data set.
 ##'
 ##' @export
-##' @method format DATRASraw
 formatFishglob.DATRASraw <- function(x) {
 
     HH <- x[['HH']]

@@ -4,7 +4,7 @@
 \alias{formatFishglob.DATRASraw}
 \title{Format DATRAS data to FishGlob data set}
 \usage{
-\method{format}{DATRASraw}(x)
+formatFishglob.DATRASraw(x)
 }
 \arguments{
 \item{x}{a DATRASraw object.}

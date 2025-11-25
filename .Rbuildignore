@@ -5,3 +5,7 @@
 ^\.github$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^vignettes/articles/
+^vignettes/.*\.Rmd\.orig$
+^vignettes/.*/precompute\.R$
+^\.travis\.yml$

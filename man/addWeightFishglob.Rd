@@ -8,9 +8,9 @@ to HH-records}
 addWeightFishglob(x, to1min = TRUE)
 }
 \arguments{
-\item{to1min}{divide by haul duration in minutes? (defaults to TRUE)}
+\item{x}{DATRASraw object}
 
-\item{d}{DATRASraw object}
+\item{to1min}{divide by haul duration in minutes? (defaults to TRUE)}
 }
 \value{
 DATRASraw object

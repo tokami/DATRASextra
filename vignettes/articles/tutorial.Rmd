@@ -9,10 +9,6 @@ output:
     toc_depth: 2
     toc_float:
       collapsed: false
-vignette: >
-  %\VignetteIndexEntry{Step-by-step guide to work with the ICES' DATRAS database}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
