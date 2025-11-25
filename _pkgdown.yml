@@ -26,16 +26,19 @@ template:
 development:
   mode: auto
 
+navbar:
+  structure:
+    left:  [reference, articles, news]
+    right: [search, github]
+
 articles:
-- title: Tutorial
-  navbar: ~
-  contents: tutorial
-- title: By length
-  navbar: ~
-  contents: by_length
-- title: Prediction grid
-  navbar: ~
-  contents: survey_domain
+- title: Getting started
+  contents:
+  - articles/tutorial
+  - articles/survey_domain
+- title: Advanced
+  contents:
+  - articles/by_length
 - title: FishGlob
-  navbar: ~
-  contents: fishglob
+  contents:
+  - articles/fishglob

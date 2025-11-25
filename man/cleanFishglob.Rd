@@ -18,7 +18,7 @@ cleanFishglob(x)
 \item{gears}{x}
 }
 \value{
-Cleaned DATRASraw object according to FisGlob workflow.
+Cleaned DATRASraw object according to FishGlob workflow.
 }
 \description{
 This function follows the workflow that was used to create the

@@ -5,12 +5,12 @@
 \title{Calculate weight by length classes using empirical a and b, and add
 to HH-records}
 \usage{
-addWeightFishglob(d, to1min = TRUE)
+addWeightFishglob(x, to1min = TRUE)
 }
 \arguments{
-\item{d}{DATRASraw object}
-
 \item{to1min}{divide by haul duration in minutes? (defaults to TRUE)}
+
+\item{d}{DATRASraw object}
 }
 \value{
 DATRASraw object
