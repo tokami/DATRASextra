@@ -89,7 +89,6 @@ pruneFishglob <- function(x) {
                  "HLNoAtLngt", ## "LenMeasType",
                  "Valid_Aphia","ScientificName_WoRMS","LngtCm","Species", "HaulDur","DataType","Count")
 
-    #x[["CA"]] <- 0
     x[["HH"]] <- x[["HH"]][colnames(x[["HH"]]) %in% hh.cols]
     x[["HL"]] <- x[["HL"]][colnames(x[["HL"]]) %in% hl.cols]
 
@@ -473,78 +472,67 @@ addSweptAreaFishGlob <- function(x) {
 }
 
 
-##' Calculate weight by length classes using empirical a and b, and add to
-##' HH-records accoring to FishGlob workflow
+##' calculate weight by length classes using empirical a and b, and add to
+##' hh records according to fishglob workflow
 ##'
-##' @title Calculate weight by length classes using empirical a and b, and add
-##'     to HH-records
+##' @title calculate weight by length classes and add to hh records
 ##'
-##' @param x DATRASraw object
-##' @param to1min divide by haul duration in minutes? (defaults to TRUE)
+##' @param x a DATRASraw object
+##' @param to1min logical, if TRUE divides total weight by haul duration in minutes
 ##'
-##' @return DATRASraw object
+##' @return a DATRASraw object with hl table updated with weight fields
 ##'
-##' @importFrom DATRAS checkSpectrum
+##' @details
+##' - weight-at-length is calculated per individual using empirical a and b parameters
+##' - total weight per length class is computed as number at length * individual weight
+##' - optionally, weight can be divided by haul duration in minutes
+##' - final weight is returned in kg
 ##'
 ##' @export
-addWeightFishglob <- function (x, to1min = TRUE) {
-    #DATRAS::checkSpectrum(d) don't need spectrum
-
-    # basic check if DATRASraw object
-    if (!inherits(x, "DATRASraw"))
-        stop("Input must be a DATRASraw object.")
-
-    HL <- x[['HL']]
-    HH <- x[['HH']]
-
-    data(speciesInfo) # add check
-
-    # Select species present
-    aphias <- unique(HL$Valid_Aphia)
-    aphias <- aphias[!is.na(aphias)]
-
-    if(length(aphias) == 0) stop("No Aphia ID found in x[['HL']].")
-
-    # Merge HL with speciesInfo to get a and b per fish
-    HL2 <- merge(
-        HL,
-        speciesInfo,
-        by.x = c("Valid_Aphia", "ScientificName_WoRMS"), # maybe change this later
-        by.y = c("WoRMS_AphiaID", "ScientificName_WoRMS"),
-        all.x = TRUE
+addWeightFishglob <- function(x) {
+    ## --- input checks ---
+    if (!inherits(x, "DATRASraw")) stop("input must be a DATRASraw object")
+    if (!all(c("HL","HH") %in% names(x))) stop("DATRASraw object must contain HL and HH tables")
+    
+    hl <- x[["HL"]]
+    hh <- x[["HH"]]
+    
+    ## convert factors to character
+    hl[] <- lapply(hl, function(z) if (is.factor(z)) as.character(z) else z)
+    
+    ## check required columns
+    req_cols <- c("Valid_Aphia","ScientificName_WoRMS","HLNoAtLngt","LngtCm")
+    missing_cols <- req_cols[!req_cols %in% names(hl)]
+    if (length(missing_cols) > 0) stop("missing required HL columns: ", paste(missing_cols, collapse=", "))
+    
+    ## load species info
+    data(speciesInfo, envir = environment())
+    
+    ## merge with species info to get a and b parameters
+    hl2 <- merge(
+        hl,
+        speciesInfo[speciesInfo$class %in% c("Teleostei","Elasmobranchii","Petromyzonti","Myxini"), ],
+        by.x = c("Valid_Aphia","ScientificName_WoRMS"),
+        by.y = c("WoRMS_AphiaID","ScientificName_WoRMS"),
+        all.x = FALSE
     )
-
-    # check on missing a and b
-    if (any(is.na(HL2$a)) || any(is.na(HL2$b))) {
-        missing <- unique(HL2$Valid_Aphia[is.na(HL2$a) | is.na(HL2$b)])
-        warning("Some species missing a/b parameters in speciesInfo: ",
-                paste(missing, collapse=", "))
+    
+    ## warning if a/b missing
+    if (any(is.na(hl2$a)) || any(is.na(hl2$b))) {
+        missing <- unique(hl2$Valid_Aphia[is.na(hl2$a) | is.na(hl2$b)])
+        warning("some species missing a/b parameters in speciesInfo: ", paste(missing, collapse=", "))
     }
-
-    # Compute weight-at-length per individual length class
-    HL2$Wgt_indiv <- with(HL2, a * (LngtCm ^ b))
-
-    # Total weight in each length class group
-    # HLNoAtLngt = count of fish in length class
-    HL2$Wgt_total <- HL2$Wgt_indiv * HL2$HLNoAtLngt
-
-    # Convert to weight-per-minute if needed
-    if (to1min) {
-        HL2$Wgt_total <- HL2$Wgt_total / HL2$HaulDur
-    }
-
-    # Round and return
-    HL2$Wgt_total <- round(HL2$Wgt_total, 3)
-
-    # Put back into d object
-    x[['HL']]$Wgt <- HL2$Wgt_total[match(HL$haul.id, HL2$haul.id)]
-    x[['HL']]$Wgt <- HL2$Wgt_total[match(HL$haul.id, HL2$haul.id)]
-    x[['HL']]$Genus <- HL2$genus[match(HL$haul.id, HL2$haul.id)]
-    x[['HL']]$Family <- HL2$family[match(HL$haul.id, HL2$haul.id)]
-    x[['HL']]$Order <- HL2$order[match(HL$haul.id, HL2$haul.id)]
-    x[['HL']]$Class <- HL2$class[match(HL$haul.id, HL2$haul.id)]
-    x[['HL']]$Rank <- HL2$rank[match(HL$haul.id, HL2$haul.id)]
-
+    
+    ## calculate weights
+    hl2$Wgt_indiv <- with(hl2, a * (LngtCm ^ b))       # grams per individual
+    hl2$Wgt_total <- hl2$Wgt_indiv * hl2$HLNoAtLngt   # grams per length class group
+    
+    ## convert to kg
+    hl2$Wgt_total <- hl2$Wgt_total / 1000             # kg
+    
+    ## update hl table in DATRASraw object
+    x[["HL"]] <- hl2
+    
     return(x)
 }
 
@@ -554,127 +542,147 @@ addWeightFishglob <- function (x, to1min = TRUE) {
 ##' @param x a DATRASraw object.
 ##'
 ##' @return Dataframe in format of FishGlob data set.
+##' 
+##' @importFrom stats aggregate
 ##'
 ##' @export
 formatFishglob.DATRASraw <- function(x) {
-
-    HH <- x[['HH']]
-    HL <- x[['HL']]
-
-    res <- NULL
-
-    ## HL2 <- HL %>% group_by(Survey,Quarter,Year,haul.id,Valid_Aphia, Species,Genus,Family ,Order,Class , Rank ) %>% summarise(wgt = sum(Wgt,na.rm = TRUE),num = sum(HLNoAtLngt,na.rm = TRUE))
-
-    ## HH2 <- left_join(HH,HL2) %>% filter(!is.na(wgt) & !is.na(num))
-
-
-    ## #https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/get_datras.R#L1023
-    ## survey4 <- survey3 %>%
-    ##     rename(survey = Survey,
-    ##            haul_id = HaulID,
-    ##            stat_rec = StatRec,
-    ##            year = Year,
-    ##            month = Month,
-    ##            quarter = Quarter,
-    ##            #season = Season,
-    ##            latitude = lat,
-    ##            longitude = lon,
-    ##            haul_dur = HaulDur,
-    ##            #area_swept = Area.swept,
-    ##            gear = Gear,
-    ##            depth = Depth,
-    ##            sbt = NA,
-    ##            sst = NA,
-    ##            verbatim_aphia_id = Valid_Aphia,
-    ##            aphia_id = Valid_Aphia,
-    ##            accepted_name = Species,
-    ##            ) %>%
-    ##     mutate(day = NA_integer_,
-    ##            verbatim_name = NA_character_,
-    ##            station = NA_character_,
-    ##            stratum = NA_character_,
-    ##            sub_area = NA_character_,
-    ##            continent = "europe",
-    ##            country = case_when(survey=="PT-IBTS" ~ "portugal",
-    ##                                survey=="EVHOE" ~ "france",
-    ##                                survey=="IE-IGFS" ~ "ireland",
-    ##                                survey %in% c("ROCKALL","SWC-IBTS","NIGFS") ~ "uk",
-    ##                                survey=="FR-CGFS" ~ "france",
-    ##                                survey %in% c("NS-IBTS","BITS") ~ "multi-countries",
-    ##                                survey %in% c("SP-NORTH","SP-ARSA") ~ "spain",
-    ##                                survey == "SP-PORC" ~ "multi-countries"),
-    ##            num = numlencpue*area_swept,
-    ##            num_cpue = numlenh,
-    ##            num_cpua = numlencpue,
-    ##            wgt = wgtlencpue*area_swept,
-    ##            wgt_cpue = wgtlenh,
-    ##            wgt_cpua = wgtlencpue,
-    ##            haul_dur = haul_dur/60,
-    ##            source = "DATRAS ICES",
-    ##            timestamp = format(Sys.Date(), "%Y-%m"),
-    ##            survey_unit = ifelse(survey %in% c("BITS","NS-IBTS","SWC-IBTS","SP-ARSA"),
-    ##                                 paste0(survey,"-",quarter),survey),
-    ##            survey_unit = ifelse(survey %in% c("NEUS","SEUS","SCS","GMEX"),
-    ##                                 paste0(survey,"-",season),survey_unit)) %>%
-    ##                                     # Final format
-    ##     select(fishglob_data_columns$`Column name fishglob`)
-
-
-    ## TODO: select columns kept in FishGlob data set
-
-    ## TODO integrate fishglob:
-    ## https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/get_datras.R#L1023
-    ## survey4 <- survey3 %>%
-    ##     rename(survey = Survey,
-    ##            haul_id = HaulID,
-    ##            stat_rec = StatRec,
-    ##            year = Year,
-    ##            month = Month,
-    ##            quarter = Quarter,
-    ##            season = Season,
-    ##            latitude = lat,
-    ##            longitude = lon,
-    ##            haul_dur = HaulDur,
-    ##            area_swept = Area.swept,
-    ##            gear = Gear,
-    ##            depth = Depth,
-    ##            sbt = SBT,
-    ##            sst = SST,
-    ##            verbatim_aphia_id = AphiaID,
-    ##            aphia_id = worms_id,
-    ##            accepted_name = taxa,
-    ##            ) %>%
-    ##     mutate(day = NA_integer_,
-    ##            verbatim_name = NA_character_,
-    ##            station = NA_character_,
-    ##            stratum = NA_character_,
-    ##            sub_area = NA_character_,
-    ##            continent = "europe",
-    ##            country = case_when(survey=="PT-IBTS" ~ "portugal",
-    ##                                survey=="EVHOE" ~ "france",
-    ##                                survey=="IE-IGFS" ~ "ireland",
-    ##                                survey %in% c("ROCKALL","SWC-IBTS","NIGFS") ~ "uk",
-    ##                                survey=="FR-CGFS" ~ "france",
-    ##                                survey %in% c("NS-IBTS","BITS") ~ "multi-countries",
-    ##                                survey %in% c("SP-NORTH","SP-ARSA") ~ "spain",
-    ##                                survey == "SP-PORC" ~ "multi-countries"),
-    ##            num = numlencpue*area_swept,
-    ##            num_cpue = numlenh,
-    ##            num_cpua = numlencpue,
-    ##            wgt = wgtlencpue*area_swept,
-    ##            wgt_cpue = wgtlenh,
-    ##            wgt_cpua = wgtlencpue,
-    ##            haul_dur = haul_dur/60,
-    ##            source = "DATRAS ICES",
-    ##            timestamp = format(Sys.Date(), "%Y-%m"),
-    ##            survey_unit = ifelse(survey %in% c("BITS","NS-IBTS","SWC-IBTS","SP-ARSA"),
-    ##                                 paste0(survey,"-",quarter),survey),
-    ##            survey_unit = ifelse(survey %in% c("NEUS","SEUS","SCS","GMEX"),
-    ##                                 paste0(survey,"-",season),survey_unit)) %>%
-    ##                                     # Final format
-    ##     select(fishglob_data_columns$`Column name fishglob`)
-
-
-
-    return(res)
+    
+    # extract hh and hl
+    hh <- x[["HH"]]
+    hl <- x[["HL"]]
+    
+    # select grouping variables for aggregation
+    groups <- hl[, c(
+        "Survey","Quarter","Year","haul.id","Valid_Aphia",
+        "ScientificName_WoRMS","genus","family","order","class","rank"
+    )]
+    
+    # aggregate wgt and num
+    hl2 <- aggregate(
+        cbind(wgt = hl$Wgt_total, num = hl$HLNoAtLngt),
+        by = groups,
+        FUN = function(z) sum(z, na.rm = TRUE)
+    )
+    
+    # merge back to hh (left join)
+    hh2 <- merge(
+        hh, hl2,
+        by = intersect(names(hh), names(hl2)),
+        all.x = TRUE
+    )
+    
+    # remove rows without catch
+    hh2 <- hh2[!is.na(hh2$wgt) & !is.na(hh2$num), ]
+    
+    # convert haul duration minutes → hours
+    hh2$haul_dur_h <- hh2$HaulDur / 60
+    
+    # cpue and cpua
+    hh2$wgt_cpue <- hh2$wgt / hh2$haul_dur_h
+    hh2$wgt_cpua <- hh2$wgt / hh2$SweptArea
+    hh2$num_cpue <- hh2$num / hh2$haul_dur_h
+    hh2$num_cpua <- hh2$num / hh2$SweptArea
+    
+    # rename columns
+    names(hh2)[names(hh2) == "Survey"]      <- "survey"
+    names(hh2)[names(hh2) == "haul.id"]     <- "haul_id"
+    names(hh2)[names(hh2) == "StatRec"]     <- "stat_rec"
+    names(hh2)[names(hh2) == "Year"]        <- "year"
+    names(hh2)[names(hh2) == "Month"]       <- "month"
+    names(hh2)[names(hh2) == "Day"]         <- "day"
+    names(hh2)[names(hh2) == "Quarter"]     <- "quarter"
+    names(hh2)[names(hh2) == "lat"]         <- "latitude"
+    names(hh2)[names(hh2) == "lon"]         <- "longitude"
+    names(hh2)[names(hh2) == "HaulDur"]     <- "haul_dur"
+    names(hh2)[names(hh2) == "Depth"]       <- "depth"
+    names(hh2)[names(hh2) == "Gear"]        <- "gear"
+    names(hh2)[names(hh2) == "Valid_Aphia"] <- "aphia_id"
+    
+    # scientificname_worms kept for accepted_name
+    hh2$accepted_name <- hh2$ScientificName_WoRMS
+    
+    # new empty fields
+    hh2$verbatim_aphia_id <- NA_integer_
+    hh2$verbatim_name     <- NA_character_
+    hh2$station           <- NA_character_
+    hh2$stratum           <- NA_character_
+    hh2$sub_area          <- NA_character_
+    hh2$continent         <- "europe"
+    
+    # country classification
+    hh2$country <- NA_character_
+    hh2$country[hh2$survey == "PT-IBTS"] <- "portugal"
+    hh2$country[hh2$survey == "EVHOE"]   <- "france"
+    hh2$country[hh2$survey == "IE-IGFS"] <- "ireland"
+    hh2$country[hh2$survey %in% c("ROCKALL","SWC-IBTS","NIGFS")] <- "uk"
+    hh2$country[hh2$survey == "FR-CGFS"] <- "france"
+    hh2$country[hh2$survey %in% c("NS-IBTS","BITS")] <- "multi-countries"
+    hh2$country[hh2$survey %in% c("SP-NORTH","SP-ARSA")] <- "spain"
+    hh2$country[hh2$survey == "SP-PORC"] <- "multi-countries"
+    
+    # convert haul duration minutes → hours (final field)
+    hh2$haul_dur <- hh2$haul_dur / 60
+    
+    # metadata
+    hh2$source    <- "DATRAS ICES"
+    hh2$timestamp <- format(as.Date(Sys.time(), tz="UTC"), "%Y-%m")
+    
+    # survey units
+    hh2$survey_unit <- hh2$survey
+    hh2$survey_unit <- as.character(hh2$survey_unit)
+    idx <- hh2$survey %in% c("BITS","NS-IBTS","SWC-IBTS","SP-ARSA")
+    hh2$survey_unit[idx] <- paste0(hh2$survey[idx], "-", hh2$quarter[idx])
+    
+    idx2 <- hh2$survey %in% c("NEUS","SEUS","SCS","GMEX")
+    hh2$survey_unit[idx2] <- paste0(hh2$survey[idx2], "-", hh2$season[idx2])
+    
+    final_cols <- c(
+        "survey",
+        "source",
+        "timestamp",
+        "haul_id",
+        "country",
+        "sub_area",
+        "continent",
+        "stat_rec",
+        "station",
+        "stratum",
+        "year",
+        "month",
+        "day",
+        "quarter",
+        "season",
+        "latitude",
+        "longitude",
+        "haul_dur",
+        "area_swept",
+        "gear",
+        "depth",
+        "sbt",
+        "sst",
+        "num",
+        "num_cpue",
+        "num_cpua",
+        "wgt",
+        "wgt_cpue",
+        "wgt_cpua",
+        "verbatim_name",
+        "verbatim_aphia_id",
+        "accepted_name",
+        "aphia_id",
+        "SpecCode",
+        "kingdom",
+        "phylum",
+        "class",
+        "order",
+        "family",
+        "genus",
+        "rank",
+        "survey_unit"
+    )
+    
+    hh2 <- hh2[, intersect(final_cols, names(hh2)), drop = FALSE]
+    
+    return(hh2)
 }
