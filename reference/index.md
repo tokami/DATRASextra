@@ -52,6 +52,8 @@
   : Prune data according to FishGlob workflow
 - [`readDATRAS()`](https://tokami.github.io/DATRASextra/reference/readDATRAS.md)
   : Download DATRAS survey information
+- [`renameSurvey()`](https://tokami.github.io/DATRASextra/reference/renameSurvey.md)
+  : Rename surveys in DATRASraw
 - [`speciesInfo`](https://tokami.github.io/DATRASextra/reference/speciesInfo.md)
   : Species information lookup table
 - [`surveyInfo`](https://tokami.github.io/DATRASextra/reference/surveyInfo.md)
