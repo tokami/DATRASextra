@@ -15,8 +15,7 @@
   : Calculate weight by length classes using empirical a and b, and add
   to HH-records
 - [`addWeightFishglob()`](https://tokami.github.io/DATRASextra/reference/addWeightFishglob.md)
-  : Calculate weight by length classes using empirical a and b, and add
-  to HH-records
+  : calculate weight by length classes and add to hh records
 - [`checkLength()`](https://tokami.github.io/DATRASextra/reference/checkLength.md)
   : Create and inspect length spectrum
 - [`checkWeight()`](https://tokami.github.io/DATRASextra/reference/checkWeight.md)

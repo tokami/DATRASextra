@@ -1,7 +1,6 @@
 # DATRASextra [![DATRASextra logo](reference/figures/DATRASextra_logo.png)](https://github.com/tokami/DATRASextra)
 
-  
-Makes working with ICES **DATRAS** **extra** easy.  
+Makes working with ICES **DATRAS** **extra** easy.
 
 ------------------------------------------------------------------------
 
@@ -141,8 +140,7 @@ Logo: Co-funded by the EU
   : Calculate weight by length classes using empirical a and b, and add
   to HH-records
 - [`addWeightFishglob()`](https://tokami.github.io/DATRASextra/reference/addWeightFishglob.md)
-  : Calculate weight by length classes using empirical a and b, and add
-  to HH-records
+  : calculate weight by length classes and add to hh records
 - [`checkLength()`](https://tokami.github.io/DATRASextra/reference/checkLength.md)
   : Create and inspect length spectrum
 - [`checkWeight()`](https://tokami.github.io/DATRASextra/reference/checkWeight.md)

@@ -104,6 +104,16 @@ A data frame with columns:
   Unified or merged functional grouping combining multiple
   classification sources.
 
+- aFG:
+
+  Length–weight relationship parameter \\a\\ (in \\W = a L^b\\) used in
+  FishGlobe.
+
+- bFG:
+
+  Length–weight relationship parameter \\b\\ (in \\W = a L^b\\) used in
+  FishGlobe.
+
 ## Source
 
 ICES DATRAS species reference list.
