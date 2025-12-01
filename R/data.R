@@ -59,6 +59,8 @@
 #'   \item{funcGroupDenderen}{Functional group following van Denderen et al. (2020).}
 #'   \item{funcGroupMildenberger}{Functional group following Mildenberger et al. (2025).}
 #'   \item{funcGroupWalkerAll}{Unified or merged functional grouping combining multiple classification sources.}
+#'   \item{aFG}{Length–weight relationship parameter \(a\) (in \(W = a L^b\)) used in FishGlobe.}
+#'   \item{bFG}{Length–weight relationship parameter \(b\) (in \(W = a L^b\)) used in FishGlobe.}
 #' }
 #' @source ICES DATRAS species reference list.
 "speciesInfo"

@@ -2,20 +2,25 @@
 % Please edit documentation in R/fishglob.R
 \name{addWeightFishglob}
 \alias{addWeightFishglob}
-\title{Calculate weight by length classes using empirical a and b, and add
-to HH-records}
+\title{calculate weight by length classes and add to hh records}
 \usage{
-addWeightFishglob(x, to1min = TRUE)
+addWeightFishglob(x)
 }
 \arguments{
-\item{x}{DATRASraw object}
-
-\item{to1min}{divide by haul duration in minutes? (defaults to TRUE)}
+\item{x}{a DATRASraw object}
 }
 \value{
-DATRASraw object
+a DATRASraw object with hl table updated with weight fields
 }
 \description{
-Calculate weight by length classes using empirical a and b, and add to
-HH-records accoring to FishGlob workflow
+calculate weight by length classes using empirical a and b, and add to
+hh records according to fishglob workflow
+}
+\details{
+\itemize{
+\item weight-at-length is calculated per individual using empirical a and b parameters
+\item total weight per length class is computed as number at length * individual weight
+\item optionally, weight can be divided by haul duration in minutes
+\item final weight is returned in kg
+}
 }

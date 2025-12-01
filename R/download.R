@@ -11,7 +11,7 @@
 ##'
 ##' @return NULL
 ##'
-##' @importFrom DATRAS downloadExchange
+##' @importFrom DATRAS downloadExchange getDatrasExchange
 ##' @importFrom icesDatras getSurveyList getSurveyYearList
 ##'
 ##' @export

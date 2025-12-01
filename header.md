@@ -6,9 +6,7 @@
 
 <h1 style="border-bottom:none;">DATRASextra <a href='https://github.com/tokami/DATRASextra'><img src='man/figures/DATRASextra_logo.png' alt="DATRASextra logo" align="right" style="height:200px; margin-top:-40px;"/></a></h1>
 
-<br>
 Makes working with ICES **DATRAS** **extra** easy.
-<br>
 
 ---
 
