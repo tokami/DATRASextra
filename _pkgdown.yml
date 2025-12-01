@@ -1,7 +1,7 @@
 url: https://tokami.github.io/DATRASextra
 
 home:
-  title: Extra functions for DTU Aquas DATRAS R package
+  title: Extra functions for DATRAS R package
 
 authors:
   Tobias Mildenberger:
@@ -46,4 +46,4 @@ articles:
 news:
   releases:
   - text: Version 0.0.0.9000
-    href: https://github.com/tokami/DATRASextra/blob/main/DATRASextra/NEWS.md
+    href: https://github.com/tokami/DATRASextra/blob/main/NEWS.md
