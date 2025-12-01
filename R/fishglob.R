@@ -519,7 +519,7 @@ addWeightFishglob <- function(x) {
 
     ## calculate weights
     hl2$Wgt_indiv <- with(hl2, aFG * (LngtCm ^ bFG))  # grams per individual
-    hl2$Wgt_total <- hl2$Wgt_indiv * hl2$HLNoAtLngt   # grams per length class group
+    hl2$Wgt_total <- hl2$Wgt_indiv * hl2$Count   # grams per length class group
 
     ## convert to kg
     hl2$Wgt_total <- hl2$Wgt_total / 1000             # kg
@@ -554,7 +554,7 @@ formatFishglob.DATRASraw <- function(x) {
 
     # aggregate wgt and num
     hl2 <- aggregate(
-        cbind(wgt = hl$Wgt_total, num = hl$HLNoAtLngt),
+        cbind(wgt = hl$Wgt_total, num = hl$Count),
         by = groups,
         FUN = function(z) sum(z, na.rm = TRUE)
     )
