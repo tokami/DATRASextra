@@ -268,3 +268,23 @@ map2bar <- function(value, midL, bar.x) {
         midL
     }
 }
+
+##' @title Rename surveys in DATRASraw
+##'
+##' @param x a DATRASraw object.
+##' @param survNameOld Old survey name
+##' @param survNameNew New survey name
+##'
+##' @return DATRASraw with updated survey names
+renameSurvey <- function(x, survNameOld, survNameNew) {
+    for (i in c("HH","HL","CA")) {
+        if (!any(names(x) == i)) next()
+        if (survNameOld %in% levels(x[[i]]$Survey)) {
+            levels(x[[i]]$Survey)[levels(x[[i]]$Survey) == survNameOld] <- survNameNew
+            x[[i]]$haul.id <- factor(
+                gsub(survNameOld, survNameNew, x[[i]]$haul.id)
+            )
+        }
+    }
+    return(x)
+}

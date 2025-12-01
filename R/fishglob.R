@@ -18,51 +18,41 @@
 ##' @export
 cleanFishglob <- function(x) {
 
-    ## HaulVal (https://vocab.ices.dk/?ref=1)
+    ## General cleaning -------------------------
+    ## https://github.com/fishglob/FishGlob_data/blob/233d0f4c82114268ac2f8f58d340d11e7efb02c6/cleaning_codes/get_datras.R#L347
     x <- subset(
         x,
-        HaulVal %in% "V",
-        !is.na(Valid_Aphia), # AphiaID in fishglob
+        HaulVal %in% "V", ## HaulVal (https://vocab.ices.dk/?ref=1)
+        !is.na(Valid_Aphia), ## AphiaID in fishglob
         SpecVal %in% c(1, 10, 4, 5, 6, 7, 8),
-        DataType %in% c("S", "R", "C"),
-        StdSpecRecCode == 1 #L382
-    ) # from https://github.com/fishglob/FishGlob_data/blob/233d0f4c82114268ac2f8f58d340d11e7efb02c6/cleaning_codes/get_datras.R#L347
-
-    # @Tobi is this needed https://github.com/fishglob/FishGlob_data/blob/233d0f4c82114268ac2f8f58d340d11e7efb02c6/cleaning_codes/get_datras.R#L359 or is it coded somewhere else?
-
-    ## TODO
-    ## ... (more fishglob cleaning)
-
-    ## https://github.com/fishglob/FishGlob_data/blob/233d0f4c82114268ac2f8f58d340d11e7efb02c6/cleaning_codes/get_datras.R
-
-    ## Also use this here or in another function?
-    ## https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/get_datras.R#L347
+        DataType %in% c("S", "R", "C")
+        ## StdSpecRecCode == 1 ## L382  ## Line reference not correct for get_datras? where is this coming from?
+    )
 
 
-    ## Keep
-    ## hl.pt <- read.csv("/Volumes/Elements/fishglob data/Publicly available/DATRAS/hl.pt.csv") %>%
-    ##     dplyr::rename(Valid_Aphia = ValidAphiaID) %>%
-    ##     select(RecordType, Survey, Quarter, Country, Ship, Gear, SweepLngt, GearEx,
-    ##            DoorType, StNo, HaulNo, Year, SpecCodeType, SpecCode, SpecVal, Sex,
-    ##            TotalNo, CatIdentifier, NoMeas, SubFactor, SubWgt, CatCatchWgt, LngtCode,
-    ##            LngtClass, HLNoAtLngt, DevStage, LenMeasType, DateofCalculation,
-    ##            Valid_Aphia)
+    ## Rename surveys ---------------------------
+    ## https://github.com/fishglob/FishGlob_data/blob/233d0f4c82114268ac2f8f58d340d11e7efb02c6/cleaning_codes/get_datras.R#L380
+    ## SCOWCGFS -> SWC-IBTS
+    x <- renameSurvey(x, "SCOWCGFS", "SWC-IBTS")
+    ## SCOROC -> ROCKALL
+    x <- renameSurvey(x, "SCOROC", "ROCKALL")
 
-    ## Species correction -------------------------
-    ## TODO check that this is the same as in fishglob,
-    ## Fede: checked, it's the same!
-    ## if not: create do.fishglob flag?
-    x <- correctSpecies(x)
 
+    ## Account for by catch sampling ------------
+    ## Remove hauls were not all species were recorded
+    ## https://github.com/fishglob/FishGlob_data/blob/233d0f4c82114268ac2f8f58d340d11e7efb02c6/cleaning_codes/get_datras.R#L382
+    x[["HH"]] <- x[["HH"]][!(x[["HH"]]$Survey == "NS-IBTS" &
+                             x[["HH"]]$BySpecRecCode %in% c(0, 2, 3, 4, 5)) &
+                           !(x[["HH"]]$Survey == "BITS" &
+                             x[["HH"]]$BySpecRecCode == 0),]
+
+
+    ## Species correction -----------------------
     ## https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/get_datras.R#L432
+    x <- correctSpecies(x)
 
     return(x)
 }
-
-
-
-## TODO add weight function for fishglob?
-## https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/get_datras.R#L432
 
 
 
@@ -489,6 +479,11 @@ addSweptAreaFishGlob <- function(x) {
 ##'
 ##' @export
 addWeightFishglob <- function(x) {
+
+    ## TODO add weight function for fishglob?
+    ## https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/get_datras.R#L432
+
+
     ## --- input checks ---
     if (!inherits(x, "DATRASraw")) stop("input must be a DATRASraw object")
     if (!all(c("HL","HH") %in% names(x))) stop("DATRASraw object must contain HL and HH tables")
