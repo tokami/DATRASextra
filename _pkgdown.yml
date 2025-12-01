@@ -34,7 +34,7 @@ navbar:
 articles:
 - title: Getting started
   contents:
-  - articles/tutorial
+  - tutorial
   - articles/survey_domain
 - title: Advanced
   contents:

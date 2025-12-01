@@ -33,6 +33,7 @@ commonly used to prepare abundance indices for ICES stock assessments.
 
 - [Installation](#installation)
   - [Overview](#overview)
+- [Getting started](#getting-started)
 - [Getting help](#getting-help)
 - [Citation](#citation)
 - [Related software](#related-software)
@@ -75,31 +76,65 @@ summarises the main user-facing functions.
 | `plotHaulsBySurvey()`  | Plot haul locations by survey.                                                |
 | `plotSurveys()`        | Plot survey coverage and footprint.                                           |
 
+# Getting started
+
+A good way to start working with *DATRASextra* is the tutorial vignette.
+You can access it with:
+
+``` r
+vignette("tutorial")
+```
+
+The tutorial and other vignettes guide you through the full workflow:
+from downloading the complete DATRAS database (or selected subsets),
+through processing and cleaning the data following recommended
+good-practice guidelines, to calculating swept-area indices and biomass
+estimates per species and haul.
+
 # Getting help
 
-A good starting point to start working with *DATRASextra* is the
-tutorial vignette (`vignette("tutorial")`). More articles and help
-documentation for *DATRASextra* can be found at
-<https://tokami.github.io/DATRASextra/>.
+All functions in *DATRASextra* are documented and include example code.
+You can access the help pages with `help(function_name)` or
+`?function_name`, for example:
 
-In case, your question is not answered by the package documentation and
-on the *pkgdown* pages, please write an email to the maintainer: [Tobias
-Mildenberger](mailto:t.k.mildenberger@gmail.com). In case you find bugs,
-please post an issue on
-[here](https://github.com/tokami/DATRASextra/issues).
+``` r
+?checkLength
+```
+
+The package also includes several vignettes and articles that
+demonstrate common workflows and show how to use DATRAS data for your
+own research questions. To see all available vignettes, use:
+
+``` r
+browseVignettes("DATRASextra")
+```
+
+An overview of pkgdown articles is available at:
+<https://tokami.github.io/DATRASextra/>
+
+If your question is not answered by the package documentation or the
+pkgdown site, you are welcome to contact the maintainer, [Tobias
+Mildenberger](mailto:t.k.mildenberger@gmail.com). If you find a bug or
+would like to request a feature, please open an issue on GitHub:
+<https://github.com/tokami/DATRASextra/issues>
 
 # Citation
 
-Please use the R command `citation("DATRASextra")` to receive
-information on how to cite this package.
+To see how to cite *DATRASextra* in your work, run:
+
+``` r
+citation("DATRASextra")
+```
 
 # Related software
 
 The foundation of *DATRASextra* is the R package
-[*DATRAS*](https://github.com/DTUAqua/DATRAS). An alternative R package
-for working with the DATRAS data base is
-[*icesDATRAS*](https://github.com/ices-tools-prod/icesDatras) maintained
-by ICES.
+[*DATRAS*](https://github.com/DTUAqua/DATRAS), which provides the core
+tools for downloading and pre-processing DATRAS data.
+
+An alternative R package for working with the DATRAS database is
+[*icesDatras*](https://github.com/ices-tools-prod/icesDatras),
+maintained by ICES.
 
 # Funding
 
