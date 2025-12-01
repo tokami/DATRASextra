@@ -24,97 +24,115 @@ the processing and preparation of *DATRAS* data for analysis
 ## Table of contents
 
 - [Installation](#installation)
-- [Overview](#overview)
+  - [Overview](#overview)
+- [Getting started](#getting-started)
 - [Getting help](#getting-help)
 - [Citation](#citation)
-- [Basic use](#basic-use)
-- [Advanced use](#advanced-use)
 - [Related software](#related-software)
 - [Funding](#funding)
 
-## Installation
+# Installation
 
-The current version of the package allows to follow described data
-processing protocols, estimate swept area indices and plot results.
-
-To get started with *DATRASextra*, install and load the package:
+The current version of the package allows to follow recommended data
+processing protocols, reproduce the FishGlobe data set, estimate swept
+area indices, and plot results. *DATRASextra* can be installed from
+GitHub:
 
 ``` r
-
 ## Install the package
 remotes::install_github("tokami/DATRASextra")
-
-## Load the package into R
-library(DATRASextra)
 ```
 
 ## Overview
 
-Overview over DATRASextra
+*DATRASextra* provides a small set of functions that guide you through a
+typical workflow with the ICES DATRAS database: from discovering
+available surveys, to downloading, cleaning and checking the data, and
+finally making quick plots of survey coverage and hauls. The table below
+summarises the main user-facing functions.
 
-## Getting help
+| Function                                                                                       | Description                                                                   |
+|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`listSurveys()`](https://tokami.github.io/DATRASextra/reference/listSurveys.md)               | List available surveys in the ICES DATRAS database.                           |
+| [`downloadDATRAS()`](https://tokami.github.io/DATRASextra/reference/downloadDATRAS.md)         | Download the full DATRAS database or a filtered subset of it.                 |
+| [`readDATRAS()`](https://tokami.github.io/DATRASextra/reference/readDATRAS.md)                 | Read DATRAS data into R.                                                      |
+| [`clean()`](https://tokami.github.io/DATRASextra/reference/clean.md)                           | Clean and harmonise DATRAS data.                                              |
+| `check()`                                                                                      | Run general checks and flag potential outliers in DATRAS.                     |
+| [`prune()`](https://tokami.github.io/DATRASextra/reference/prune.md)                           | Prune DATRAS data by removing or filtering problematic records.               |
+| [`addSweptAreaSimple()`](https://tokami.github.io/DATRASextra/reference/addSweptAreaSimple.md) | Calculate swept area per haul using gear-specific median values by gear type. |
+| [`checkLength()`](https://tokami.github.io/DATRASextra/reference/checkLength.md)               | Check length information and identify suspicious length distributions.        |
+| [`checkWeight()`](https://tokami.github.io/DATRASextra/reference/checkWeight.md)               | Check weight information and length–weight consistency.                       |
+| [`plotHauls()`](https://tokami.github.io/DATRASextra/reference/plotHauls.md)                   | Plot haul locations.                                                          |
+| [`plotHaulsBySurvey()`](https://tokami.github.io/DATRASextra/reference/plotHaulsBySurvey.md)   | Plot haul locations by survey.                                                |
+| [`plotSurveys()`](https://tokami.github.io/DATRASextra/reference/plotSurveys.md)               | Plot survey coverage and footprint.                                           |
 
-More detailed examples and documentation for *DATRASextra* can be found
-at <https://tokami.github.io/DATRASextra/>. The *pkgdown* page includes
-links to articles, vignettes, functions descriptions, information to
-version updates, and much more. In case, your question is not answered
-by the package documentation and on the *pkgdown* pages, please write an
-email to the maintainer: [Tobias
-Mildenberger](mailto:t.k.mildenberger@gmail.com). In case you find bugs,
-please post an issue on
-[here](https://github.com/tokami/DATRASextra/issues).
+# Getting started
 
-## Citation
-
-Please use the R command `citation("DATRASextra")` to receive
-information on how to cite this package.
-
-## Basic use
-
-DATRASextra makes it easy to download survey data from ICES DATRAS
-database:
-
-``` r
-survey <- "SNS"
-tmp <- tempdir()
-downloadDATRAS(surveys = survey, years = 2023, dir = tmp)
-```
-
-This mainly uses the functionality of the DATRAS R package but allows a
-bit more flexibility, like specifying the path were the data should be
-installed to.
-
-Next, the data can be read into R with:
+A good way to start working with *DATRASextra* is the tutorial vignette.
+You can access it with:
 
 ``` r
-surv0 <- readDATRAS(file.path(tmp, survey))
+vignette("tutorial")
 ```
 
-Now, you can process, subset, modify and analyse the data:
+The tutorial and other vignettes guide you through the full workflow:
+from downloading the complete DATRAS database (or selected subsets),
+through processing and cleaning the data following recommended
+good-practice guidelines, to calculating swept-area indices and biomass
+estimates per species and haul.
+
+# Getting help
+
+All functions in *DATRASextra* are documented and include example code.
+You can access the help pages with `help(function_name)` or
+`?function_name`, for example:
 
 ``` r
-surv <- clean(surv0)
-
-plot(surv)
+?checkLength
 ```
 
-## Advanced use
-
-Demo of one advanced use case.
+The package also includes several vignettes and articles that
+demonstrate common workflows and show how to use DATRAS data for your
+own research questions. To see all available vignettes, use:
 
 ``` r
-surv <- clean(surv0)
-
-plot(surv)
+browseVignettes("DATRASextra")
 ```
 
-More advanced options are shown in the vignettes.
+An overview of pkgdown articles is available at:
+<https://tokami.github.io/DATRASextra/>
 
-## Related software
+If your question is not answered by the package documentation or the
+pkgdown site, you are welcome to contact the maintainer, [Tobias
+Mildenberger](mailto:t.k.mildenberger@gmail.com). If you find a bug or
+would like to request a feature, please open an issue on GitHub:
+<https://github.com/tokami/DATRASextra/issues>
 
-## Funding
+# Citation
 
-The development of *DATRASextra* was cofunded by the European Union.
+To see how to cite *DATRASextra* in your work, run:
+
+``` r
+citation("DATRASextra")
+```
+
+# Related software
+
+The foundation of *DATRASextra* is the R package
+[*DATRAS*](https://github.com/DTUAqua/DATRAS), which provides the core
+tools for downloading and pre-processing DATRAS data.
+
+An alternative R package for working with the DATRAS database is
+[*icesDatras*](https://github.com/ices-tools-prod/icesDatras),
+maintained by ICES.
+
+# Funding
+
+The development of *DATRASextra* was funded by the European Maritime and
+Fisheries Fund (EMFF) through the project: *FISHMAP - FISH distribution
+and its role in fisheries Management Advice and marine spatial Planning*
+(EFMVB-23-0031), which is co-financed by the EU through the Danish
+Maritime, Fisheries and Aquaculture Fund.
 
 ------------------------------------------------------------------------
 

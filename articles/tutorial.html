@@ -47,7 +47,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/DATRASextra/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
@@ -79,50 +79,146 @@
 
     
     
-<p>The goal of the DATRASextra is to provide useful additional functions
-to work with <a href="https://github.com/DTUAqua/DATRAS" class="external-link">DTU Aqua’s
-<em>DATRAS</em> R package</a> and <a href="https://www.ices.dk/data/data-portals/pages/datras.aspx" class="external-link">ICES’
-DATRAS database</a>. To get started, make sure to install the most
-recent package version from GitHub.</p>
+<p>The goal of the <strong>DATRASextra</strong> is to make it easy to
+work with <a href="https://www.ices.dk/data/data-portals/pages/datras.aspx" class="external-link">ICES’
+DATRAS database</a> by providing user-friendly, well-document functions,
+detailed vignettes, and building on the powerful <a href="https://github.com/DTUAqua/DATRAS" class="external-link"><em>DATRAS</em> R
+package</a>.</p>
+<p>This vignette sets you up for working with ICES DATRAS data base by
+taking you through the whole process from installing
+<em>DATRASextra</em> and downloading DATRAS, to summarizing and plotting
+observations from the scientific surveys.</p>
 <p><strong>Outline:</strong></p>
 <ol style="list-style-type: decimal">
-<li>Download DATRAS</li>
+<li>Install DATRASextra</li>
+<li>Download ICES DATRAS</li>
 <li>Read-in DATRAS</li>
 <li>Clean DATRAS</li>
 <li>Get Weight by haul</li>
 <li>Summary</li>
 <li>References</li>
 </ol>
-<p>The package is loaded into the R environment with:</p>
+<div class="section level2">
+<h2 id="install-datrasextra">
+<em>Install DATRASextra</em><a class="anchor" aria-label="anchor" href="#install-datrasextra"></a>
+</h2>
+<p>To get started, make sure to install the most recent package version
+from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">DATRASextra</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">## Install the package</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tokami/DATRASextra"</span><span class="op">)</span></span></code></pre></div>
+<p>The package can be loaded into the R environment:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Load the package into R</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">DATRASextra</span><span class="op">)</span></span></code></pre></div>
+</div>
 <div class="section level2">
 <h2 id="download-datras">
 <em>Download DATRAS</em><a class="anchor" aria-label="anchor" href="#download-datras"></a>
 </h2>
-<p>The <code>downloadDATRAS</code> function allows us to download
+<p>The DATRAS data base is a large compilation of the majority of
+scientific bottom-trawl surveys in the Northeast Atlantic. You can get
+an overview of included surveys with:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## List scientific surveys in DATRAS</span></span>
+<span><span class="fu"><a href="../reference/listSurveys.html">listSurveys</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       survey     years                  quarters</span></span>
+<span><span class="co">#&gt; 1       BITS 1991-2025 1(35), 2(10), 3(6), 4(34)</span></span>
+<span><span class="co">#&gt; 2        BTS 1985-2024              1(19), 3(40)</span></span>
+<span><span class="co">#&gt; 3  BTS-GSA17 2016-2023                      4(8)</span></span>
+<span><span class="co">#&gt; 4   BTS-VIII 2007-2024                     4(15)</span></span>
+<span><span class="co">#&gt; 5    Can-Mar 1970-2021         1(9), 3(52), 4(8)</span></span>
+<span><span class="co">#&gt; 6        DWS 2006-2009                3(3), 4(1)</span></span>
+<span><span class="co">#&gt; 7       DYFS 1985-2024              3(40), 4(40)</span></span>
+<span><span class="co">#&gt; 8      EVHOE 1997-2024                     4(28)</span></span>
+<span><span class="co">#&gt; 9    FR-CGFS 1988-2024                     4(37)</span></span>
+<span><span class="co">#&gt; 10  FR-WCGFS 2018-2024                      3(7)</span></span>
+<span><span class="co">#&gt; 11   IE-IAMS 2016-2024                1(9), 2(8)</span></span>
+<span><span class="co">#&gt; 12   IE-IGFS 2003-2024                     4(22)</span></span>
+<span><span class="co">#&gt; 13   IS-IDPS 2009-2009                      3(1)</span></span>
+<span><span class="co">#&gt; 14     NIGFS 2005-2024              1(20), 4(18)</span></span>
+<span><span class="co">#&gt; 15   NL-BSAS 2019-2024                3(6), 4(5)</span></span>
+<span><span class="co">#&gt; 16   NS-IBTS 1965-2025 1(61), 2(14), 3(34), 4(9)</span></span>
+<span><span class="co">#&gt; 17   NS-IDPS 2009-2016                1(1), 3(3)</span></span>
+<span><span class="co">#&gt; 18      NSSS 2008-2024                     4(17)</span></span>
+<span><span class="co">#&gt; 19   PT-IBTS 2002-2023                     4(19)</span></span>
+<span><span class="co">#&gt; 20   ROCKALL 1999-2009                      3(9)</span></span>
+<span><span class="co">#&gt; 21    SCOROC 2011-2024                     3(14)</span></span>
+<span><span class="co">#&gt; 22  SCOWCGFS 2011-2025              1(14), 4(14)</span></span>
+<span><span class="co">#&gt; 23  SE-SOUND 2011-2023         1(13), 3(7), 4(6)</span></span>
+<span><span class="co">#&gt; 24       SNS 1985-2024              3(36), 4(16)</span></span>
+<span><span class="co">#&gt; 25   SP-ARSA 1996-2024              1(22), 4(21)</span></span>
+<span><span class="co">#&gt; 26  SP-NORTH 1990-2024               3(9), 4(35)</span></span>
+<span><span class="co">#&gt; 27   SP-PORC 2001-2024               3(24), 4(5)</span></span>
+<span><span class="co">#&gt; 28  SWC-IBTS 1985-2010        1(26), 2(1), 4(20)</span></span>
+<span><span class="co">#&gt;                                               description</span></span>
+<span><span class="co">#&gt; 1                       Baltic International Trawl Survey</span></span>
+<span><span class="co">#&gt; 2                                       Beam Trawl Survey</span></span>
+<span><span class="co">#&gt; 3  Beam Trawl Survey - SoleMon (Adriatic survey) - GSA17 </span></span>
+<span><span class="co">#&gt; 4                Beam Trawl Survey - Bay of Biscay (VIII)</span></span>
+<span><span class="co">#&gt; 5                         Canadian Maritimes trawl survey</span></span>
+<span><span class="co">#&gt; 6                                       Deepwater Surveys</span></span>
+<span><span class="co">#&gt; 7                               Inshore Beam Trawl Survey</span></span>
+<span><span class="co">#&gt; 8            French Southern Atlantic Bottom Trawl Survey</span></span>
+<span><span class="co">#&gt; 9                       French Channel Ground Fish Survey</span></span>
+<span><span class="co">#&gt; 10      French Western English Channel Ground Fish Survey</span></span>
+<span><span class="co">#&gt; 11                     Irish Anglerfish and Megrim Survey</span></span>
+<span><span class="co">#&gt; 12                               Irish Ground Fish Survey</span></span>
+<span><span class="co">#&gt; 13         Irminger Sea International Deep Pelagic Survey</span></span>
+<span><span class="co">#&gt; 14                    Northern Ireland Ground Fish Survey</span></span>
+<span><span class="co">#&gt; 15        Netherlands Industry survey on Turbot and Brill</span></span>
+<span><span class="co">#&gt; 16            North Sea International Bottom Trawl Survey</span></span>
+<span><span class="co">#&gt; 17        Norwegian Sea International Deep Pelagic Survey</span></span>
+<span><span class="co">#&gt; 18                               North Sea Sandeel Survey</span></span>
+<span><span class="co">#&gt; 19           Portuguese International Bottom Trawl Survey</span></span>
+<span><span class="co">#&gt; 20             Scottish Rockall Survey - old (until 2010)</span></span>
+<span><span class="co">#&gt; 21              Scottish Rockall Survey - new (from 2011)</span></span>
+<span><span class="co">#&gt; 22      Scottish West Coast Groundfish Survey (from 2011)</span></span>
+<span><span class="co">#&gt; 23                                    Sweden Sound Survey</span></span>
+<span><span class="co">#&gt; 24                                        Sole Net Survey</span></span>
+<span><span class="co">#&gt; 25              Spanish Gulf of Cadiz Bottom Trawl Survey</span></span>
+<span><span class="co">#&gt; 26                Spanish North Coast Bottom Trawl Survey</span></span>
+<span><span class="co">#&gt; 27                  Spanish Porcupine Bottom Trawl Survey</span></span>
+<span><span class="co">#&gt; 28   Scottish West Coast Bottom Trawl Survey (up to 2010)</span></span></code></pre></div>
+<p>The <code>downloadDATRAS</code> function allows you to download
 information for any of these surveys. If the arguments
-<code>surveys</code> and <code>years</code> are not specified
-(<code>NULL</code>), all surveys and years are downloaded, wich can take
-a while. For demonstration purposes, we download year 2023 of the
-NS-IBTS survey into a temporary directory:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">survey</span> <span class="op">&lt;-</span> <span class="st">"SNS"</span></span>
+<code>surveys</code> and <code>years</code> are not specified (i.e.,
+<code>NULL</code>), all surveys and years are downloaded, wich can take
+a while (~ 30-60min).</p>
+<p>If not the whole database is required, the <code>surveys</code> and
+<code>years</code> arguments allow to specify specific surveys and
+years. For example, the <code>Sole Net Survey (SNS)</code> in 2023 could
+be downloaded to a temporary directory with:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## select survey</span></span>
+<span><span class="va">survey</span> <span class="op">&lt;-</span> <span class="st">"SNS"</span></span>
+<span><span class="co">## create temporary directory</span></span>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## download SNS for 2023</span></span>
 <span><span class="fu"><a href="../reference/downloadDATRAS.html">downloadDATRAS</a></span><span class="op">(</span>surveys <span class="op">=</span> <span class="va">survey</span>, years <span class="op">=</span> <span class="fl">2023</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span></code></pre></div>
 <p>If no directory (argument <code>dir</code>) is specified, the data is
-downloaded into the current working directory (<code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code>).
-The function compresses downloaded data into “zip” archives. Note, that
-if a year is specified in which a specific survey did not operate, an
-empty file is created in the specified folder. However, the next
-function just reads in non-empty files.</p>
+downloaded into the current working directory (use <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code>
+to see your current working directory). The function compresses
+downloaded data into “zip” archives. Note, that if a year is specified
+in which a specific survey did not operate, an empty file is created in
+the specified folder. However, the next function just reads in non-empty
+files.</p>
+<p>DATRAS includes three main data sets, <code>HH</code> with
+information on haul level, <code>HL</code> with information on species
+level and the important information on numbers by length, and
+<code>CA</code> with information on the individual level, such as
+individual weight, age readings, or maturity scores. The third data set
+with the biological information (<code>CA</code>) can be quite large and
+might not be required for some projects. In that case, setting the
+argument <code>download.ca = FALSE</code> allows you to to omit this
+data set from the download and save some time and memory.</p>
 </div>
 <div class="section level2">
 <h2 id="read-in-datras">
 <em>Read-in DATRAS</em><a class="anchor" aria-label="anchor" href="#read-in-datras"></a>
 </h2>
 <p>Next, we can read the downloaded survey information into R:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">surv0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readDATRAS.html">readDATRAS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="va">survey</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The path can point to a specific file that you want to read in or to
 a whole directory with any number of files.</p>
@@ -139,17 +235,17 @@ use valid hauls. This can be done manually with the
 <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code> function or by using some recommended cleaning
 steps with the <code><a href="../reference/clean.html">clean()</a></code> function. This function also allows
 us to make a relevant subset of the database based on our needs.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"dab"</span><span class="op">)</span></span>
 <span><span class="va">surv0</span> <span class="op">&lt;-</span> <span class="va">dab</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/clean.html">clean</a></span><span class="op">(</span><span class="va">surv0</span><span class="op">)</span></span></code></pre></div>
 <p>By default, this function also imputes missing depth information.</p>
 <p>We can plot the resulting survey information with:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">surv</span><span class="op">)</span></span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
-<p><img src="tutorial_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="768"></p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="768"></p>
 </div>
 <div class="section level2">
 <h2 id="get-weight-by-haul">
