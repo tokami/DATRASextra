@@ -60,27 +60,29 @@ cleanFishglob <- function(x) {
 ##'
 ##' @param x a DATRASraw object.
 ##'
+##' @details DATRAS' CA data set, and some columns in the 'HH' and 'HL' data
+##'     sets are not needed to reproduce the FishGlob data set. Thus, these data
+##'     sets and columns can be removed to save some memory.
+##'
 ##' @return Pruned DATRASraw object according to FishGlb workflow.
 ##'
 ##' @export
 pruneFishglob <- function(x) {
 
-    ## TODO see what they keep
+    hh.cols <- c("RecordType","Country","Survey","Quarter", "Ship","Gear",
+                 "Year","Month", "Day","HaulDur","StatRec","Depth", "HaulVal",
+                 "StdSpecRecCode","DataType", "Distance","DoorSpread",
+                 "WingSpread","GroundSpeed","SweepLngt", "haul.id", "lon","lat")
 
-    hh.cols <- c("RecordType",'Country',"Survey","Quarter","Ship","Gear","Year","Month",
-                 "Day","TimeShot","HaulDur","DayNight", "StatRec","Depth",
-                 "HaulVal","StdSpecRecCode","DataType", "Distance","DoorSpread",
-                 "WingSpread","GroundSpeed",'SweepLngt', "haul.id", "abstime", "timeOfYear",
-                 "TimeShotHour", "lon","lat", "Roundfish")
-
-    hl.cols <- c("haul.id","RecordType",'Country', "Survey","Quarter","Ship","Gear",
-                 "Year","SpecVal","Sex","TotalNo", 'SweepLngt',## "CatIdentifier", "NoMeas",
-                 "SubFactor","SubWgt","CatCatchWgt","LngtCode","LngtClas",
-                 "HLNoAtLngt", ## "LenMeasType",
-                 "Valid_Aphia","ScientificName_WoRMS","LngtCm","Species", "HaulDur","DataType","Count")
+    hl.cols <- c("haul.id","RecordType","Country", "Survey","Quarter","Ship",
+                 "Gear", "Year","SpecVal","Sex","TotalNo", "SweepLngt",
+                 "SubFactor","SubWgt","CatCatchWgt","LngtCode", "LngtClas",
+                 "HLNoAtLngt", "Valid_Aphia","ScientificName_WoRMS","LngtCm",
+                 "Species", "HaulDur","DataType","Count")
 
     x[["HH"]] <- x[["HH"]][colnames(x[["HH"]]) %in% hh.cols]
     x[["HL"]] <- x[["HL"]][colnames(x[["HL"]]) %in% hl.cols]
+    x[["CA"]] <- NULL
 
     return(x)
 }
@@ -132,11 +134,6 @@ addSweptAreaFishGlob <- function(x) {
     x[['HH']]$Distance[x[['HH']]$Distance == 0] <- NA
 
     ## select only certain gears
-    ## 1. summary of gears per survey
-    ## ...
-    ## 2. only select certain gears per survey (GOV and/or most dominant in
-    ## cases without GOV)
-    ## TODO: review this (other surveys represented)
     x <- subset(
         x,
         !(Survey == "NS-IBTS" &
@@ -479,10 +476,6 @@ addSweptAreaFishGlob <- function(x) {
 ##'
 ##' @export
 addWeightFishglob <- function(x) {
-
-    ## TODO add weight function for fishglob?
-    ## https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/get_datras.R#L432
-
 
     ## --- input checks ---
     if (!inherits(x, "DATRASraw")) stop("input must be a DATRASraw object")
