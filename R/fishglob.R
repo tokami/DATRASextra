@@ -517,13 +517,13 @@ addWeightFishglob <- function(x) {
     )
 
     ## warning if a/b missing
-    if (any(is.na(hl2$a)) || any(is.na(hl2$b))) {
-        missing <- unique(hl2$Valid_Aphia[is.na(hl2$a) | is.na(hl2$b)])
+    if (any(is.na(hl2$aFG)) || any(is.na(hl2$bFG))) {
+        missing <- unique(hl2$Valid_Aphia[is.na(hl2$aFG) | is.na(hl2$bFG)])
         warning("some species missing a/b parameters in speciesInfo: ", paste(missing, collapse=", "))
     }
 
     ## calculate weights
-    hl2$Wgt_indiv <- with(hl2, a * (LngtCm ^ b))       # grams per individual
+    hl2$Wgt_indiv <- with(hl2, aFG * (LngtCm ^ bFG))  # grams per individual
     hl2$Wgt_total <- hl2$Wgt_indiv * hl2$HLNoAtLngt   # grams per length class group
 
     ## convert to kg
