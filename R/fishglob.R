@@ -609,7 +609,7 @@ formatFishglob.DATRASraw <- function(x) {
     hh2$country[hh2$survey == "SP-PORC"] <- "multi-countries"
 
     # convert haul duration minutes → hours (final field)
-    hh2$haul_dur <- hh2$haul_dur / 60
+    hh2$haul_dur <- hh2$haul_dur_h
 
     # metadata
     hh2$source    <- "DATRAS ICES"
