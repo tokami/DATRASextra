@@ -1,9 +1,215 @@
-# Reproduce FishGlob data set (DATRAS part)
+# How to recreate the FishGlob DATRAS dataset
 
-Objective of vignette: show way to create the DATRAS part of FishGlob
-data set.
+## Introduction
 
-**Outline:**
+This vignette demonstrates how to recreate the **DATRAS** part of the
+**FishGlob dataset** using functions from **DATRASextra**.
 
-1.  Load DATRASextra
-2.  Download data
+> **Important:**  
+> This workflow requires the **full raw DATRAS HH/HL/CA dataset** stored
+> locally.  
+> The examples assume your raw data are under: `temporary/data/`.
+
+This is how you can download the dataset:
+
+``` r
+surveys <- c(
+  "NS-IBTS",
+  "BITS",
+  "EVHOE",
+  "FR-CGFS",
+  "IE-IGFS",
+  "NIGFS",
+  "SCOROC",
+  "SWC-IBTS",
+  "SCOWCGFS",
+  "SP-PORC"
+)
+
+dir <- here('temporary/data')
+years <- c(1993:2025)
+
+downloadDATRAS(surveys = surveys, years = years, dir = dir)
+```
+
+## Load libraries
+
+``` r
+library(DATRASextra)
+library(here)
+library(tidyverse) # sorry Tobi :P
+```
+
+## Read data
+
+``` r
+raw <- readDATRAS(here("temporary/data")) %>%
+  suppressWarnings()
+#str(raw)
+names(raw)
+```
+
+    ## [1] "CA" "HH" "HL"
+
+## Cleaning and pruning
+
+``` r
+dat <- cleanFishglob(raw)
+```
+
+Reduce object size removing columns not needed
+
+``` r
+object.size(dat) %>% format(units='Mb')
+```
+
+    ## [1] "2220.8 Mb"
+
+``` r
+dat <- pruneFishglob(dat)
+object.size(dat) %>% format(units='Mb')
+```
+
+    ## [1] "1009.1 Mb"
+
+## Add swept area (and impute when missing)
+
+``` r
+dat <- addSweptAreaFishGlob(dat)
+```
+
+## Add biomass estimates (length-weight)
+
+``` r
+dat <- addWeightFishglob(dat)
+```
+
+## Format into FishGlob output structure
+
+``` r
+datras <- formatFishglob.DATRASraw(dat)
+head(datras)
+```
+
+    ##   survey      source timestamp                      haul_id         country
+    ## 1   BITS DATRAS ICES   2025-12 BITS:1993:1:SE:77AR:GOV:49:1 multi-countries
+    ## 2   BITS DATRAS ICES   2025-12 BITS:1993:1:SE:77AR:GOV:49:1 multi-countries
+    ## 3   BITS DATRAS ICES   2025-12 BITS:1993:1:SE:77AR:GOV:49:1 multi-countries
+    ## 4   BITS DATRAS ICES   2025-12 BITS:1993:1:SE:77AR:GOV:49:1 multi-countries
+    ## 5   BITS DATRAS ICES   2025-12 BITS:1993:1:SE:77AR:GOV:49:1 multi-countries
+    ## 6   BITS DATRAS ICES   2025-12 BITS:1993:1:SE:77AR:GOV:49:1 multi-countries
+    ##   sub_area continent stat_rec station stratum year month day quarter latitude
+    ## 1     <NA>    europe     40G5    <NA>    <NA> 1993     3   8       1  55.9933
+    ## 2     <NA>    europe     40G5    <NA>    <NA> 1993     3   8       1  55.9933
+    ## 3     <NA>    europe     40G5    <NA>    <NA> 1993     3   8       1  55.9933
+    ## 4     <NA>    europe     40G5    <NA>    <NA> 1993     3   8       1  55.9933
+    ## 5     <NA>    europe     40G5    <NA>    <NA> 1993     3   8       1  55.9933
+    ## 6     <NA>    europe     40G5    <NA>    <NA> 1993     3   8       1  55.9933
+    ##   longitude haul_dur gear depth  num num_cpue    num_cpua         wgt    wgt_cpue
+    ## 1     15.46        1  GOV    47  469      469  2825.17089  86.4991050  86.4991050
+    ## 2     15.46        1  GOV    47    6        6    36.14291   0.8382528   0.8382528
+    ## 3     15.46        1  GOV    47   80       80   481.90548   1.2602691   1.2602691
+    ## 4     15.46        1  GOV    47   38       38   228.90510   8.0281399   8.0281399
+    ## 5     15.46        1  GOV    47   15       15    90.35728  13.5623375  13.5623375
+    ## 6     15.46        1  GOV    47 2625     2625 15812.52363 179.5800036 179.5800036
+    ##      wgt_cpua verbatim_name verbatim_aphia_id        accepted_name aphia_id
+    ## 1  521.054911          <NA>                NA         Gadus morhua   126436
+    ## 2    5.049483          <NA>                NA      Limanda limanda   127139
+    ## 3    7.591632          <NA>                NA    Sprattus sprattus   126425
+    ## 4   48.360058          <NA>                NA   Platichthys flesus   127141
+    ## 5   81.697060          <NA>                NA Scophthalmus maximus   127149
+    ## 6 1081.757353          <NA>                NA      Clupea harengus   126417
+    ##       class             order         family        genus    rank survey_unit
+    ## 1 Teleostei        Gadiformes        Gadidae        Gadus Species      BITS-1
+    ## 2 Teleostei Pleuronectiformes Pleuronectidae      Limanda Species      BITS-1
+    ## 3 Teleostei      Clupeiformes      Clupeidae     Sprattus Species      BITS-1
+    ## 4 Teleostei Pleuronectiformes Pleuronectidae  Platichthys Species      BITS-1
+    ## 5 Teleostei Pleuronectiformes Scophthalmidae Scophthalmus Species      BITS-1
+    ## 6 Teleostei      Clupeiformes      Clupeidae       Clupea Species      BITS-1
+
+## Compare it with FishGlob
+
+### Download FishGlob
+
+``` r
+# load survey data --------------------------------------------------------
+fishglob_url <- "https://github.com/AquaAuma/FishGlob_data/raw/d71dfa03c2912b4e9d9cd10412ae2af52ba56ae5/outputs/Compiled_data/FishGlob_public_std_clean.RData" # stick with this version
+options(timeout = 300) # increase timeout to 5 minutes
+load(url(fishglob_url))
+fishglob <- data
+```
+
+### Get the surveys in common
+
+``` r
+common_surveys <- intersect(fishglob$survey, datras$survey)
+
+fishglob_common <- fishglob[fishglob$survey %in% common_surveys, ]
+datras_common <- datras[datras$survey %in% common_surveys, ]
+
+fishglob_common$haul_id <- gsub(" ", ":", fishglob_common$haul_id)
+
+# get common haul ids
+common_haul_ids <- intersect(fishglob_common$haul_id, datras_common$haul_id)
+
+# fishglob
+fishglob_agg <- fishglob_common %>% filter(haul_id %in% common_haul_ids) %>% 
+  group_by(haul_id, accepted_name, survey) %>%
+  summarise(wgt_cpua = sum(wgt_cpua, na.rm = TRUE), num = sum(num, na.rm = TRUE), .groups = "drop")
+
+# datras_extra
+datras_agg <- datras_common %>% filter(haul_id %in% common_haul_ids) %>% 
+  group_by(haul_id, accepted_name, survey) %>%
+  summarise(wgt_cpua = sum(wgt_cpua, na.rm = TRUE), num = sum(num, na.rm = TRUE), .groups = "drop")
+
+merged_agg <- merge(
+  fishglob_agg,
+  datras_agg,
+  by = c("survey","haul_id", "accepted_name"),
+  suffixes = c("_fishglob", "_datras")
+)
+
+df_cod <- merged_agg %>% 
+  filter(accepted_name == "Gadus morhua") # compare cod as example
+```
+
+``` r
+ggplot(df_cod, aes(x = num_fishglob, 
+                   y = num_datras)) +
+  
+  # Points
+  geom_point(alpha = 0.6, size = 2) +
+  geom_abline(slope = 1, intercept = 0,
+              color = "red", linewidth = 1) +
+  labs(
+    x = "FishGlob numbers",
+    y = "DATRASextra numbers",
+    title = "Comparison of num per haul by survey for cod"
+  ) +
+  facet_wrap(~ survey, scales = "free")
+```
+
+![plot of chunk plot_num](articles/articles/figures/plot_num-1.png)
+
+plot of chunk plot_num
+
+``` r
+ggplot(df_cod, aes(x = wgt_cpua_fishglob, 
+                   y = wgt_cpua_datras)) +
+  
+  # Points
+  geom_point(alpha = 0.6, size = 2) +
+  geom_abline(slope = 1, intercept = 0,
+              color = "red", linewidth = 1) +
+  labs(
+    x = "FishGlob kg/km2",
+    y = "DATRASextra kg/km2",
+    title = "Comparison of wgt_cpua per haul by survey for cod"
+  ) +
+  
+  facet_wrap(~ survey, scales = "free")
+```
+
+![plot of chunk plot_wg](articles/articles/figures/plot_wg-1.png)
+
+plot of chunk plot_wg
