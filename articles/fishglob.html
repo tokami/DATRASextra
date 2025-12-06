@@ -176,27 +176,34 @@ The examples assume your raw data are under:
 <span><span class="co">## 4     &lt;NA&gt;    europe     40G5    &lt;NA&gt;    &lt;NA&gt; 1993     3   8       1  55.9933</span></span>
 <span><span class="co">## 5     &lt;NA&gt;    europe     40G5    &lt;NA&gt;    &lt;NA&gt; 1993     3   8       1  55.9933</span></span>
 <span><span class="co">## 6     &lt;NA&gt;    europe     40G5    &lt;NA&gt;    &lt;NA&gt; 1993     3   8       1  55.9933</span></span>
-<span><span class="co">##   longitude haul_dur gear depth  num num_cpue    num_cpua         wgt    wgt_cpue</span></span>
-<span><span class="co">## 1     15.46        1  GOV    47  469      469  2825.17089  86.4991050  86.4991050</span></span>
-<span><span class="co">## 2     15.46        1  GOV    47    6        6    36.14291   0.8382528   0.8382528</span></span>
-<span><span class="co">## 3     15.46        1  GOV    47   80       80   481.90548   1.2602691   1.2602691</span></span>
-<span><span class="co">## 4     15.46        1  GOV    47   38       38   228.90510   8.0281399   8.0281399</span></span>
-<span><span class="co">## 5     15.46        1  GOV    47   15       15    90.35728  13.5623375  13.5623375</span></span>
-<span><span class="co">## 6     15.46        1  GOV    47 2625     2625 15812.52363 179.5800036 179.5800036</span></span>
-<span><span class="co">##      wgt_cpua verbatim_name verbatim_aphia_id        accepted_name aphia_id</span></span>
-<span><span class="co">## 1  521.054911          &lt;NA&gt;                NA         Gadus morhua   126436</span></span>
-<span><span class="co">## 2    5.049483          &lt;NA&gt;                NA      Limanda limanda   127139</span></span>
-<span><span class="co">## 3    7.591632          &lt;NA&gt;                NA    Sprattus sprattus   126425</span></span>
-<span><span class="co">## 4   48.360058          &lt;NA&gt;                NA   Platichthys flesus   127141</span></span>
-<span><span class="co">## 5   81.697060          &lt;NA&gt;                NA Scophthalmus maximus   127149</span></span>
-<span><span class="co">## 6 1081.757353          &lt;NA&gt;                NA      Clupea harengus   126417</span></span>
-<span><span class="co">##       class             order         family        genus    rank survey_unit</span></span>
-<span><span class="co">## 1 Teleostei        Gadiformes        Gadidae        Gadus Species      BITS-1</span></span>
-<span><span class="co">## 2 Teleostei Pleuronectiformes Pleuronectidae      Limanda Species      BITS-1</span></span>
-<span><span class="co">## 3 Teleostei      Clupeiformes      Clupeidae     Sprattus Species      BITS-1</span></span>
-<span><span class="co">## 4 Teleostei Pleuronectiformes Pleuronectidae  Platichthys Species      BITS-1</span></span>
-<span><span class="co">## 5 Teleostei Pleuronectiformes Scophthalmidae Scophthalmus Species      BITS-1</span></span>
-<span><span class="co">## 6 Teleostei      Clupeiformes      Clupeidae       Clupea Species      BITS-1</span></span></code></pre>
+<span><span class="co">##   longitude haul_dur gear depth  num num_cpue    num_cpua         wgt</span></span>
+<span><span class="co">## 1     15.46        1  GOV    47  469      469  2825.17089  86.4991050</span></span>
+<span><span class="co">## 2     15.46        1  GOV    47    6        6    36.14291   0.8382528</span></span>
+<span><span class="co">## 3     15.46        1  GOV    47   80       80   481.90548   1.2602691</span></span>
+<span><span class="co">## 4     15.46        1  GOV    47   38       38   228.90510   8.0281399</span></span>
+<span><span class="co">## 5     15.46        1  GOV    47   15       15    90.35728  13.5623375</span></span>
+<span><span class="co">## 6     15.46        1  GOV    47 2625     2625 15812.52363 179.5800036</span></span>
+<span><span class="co">##      wgt_cpue    wgt_cpua verbatim_name verbatim_aphia_id        accepted_name</span></span>
+<span><span class="co">## 1  86.4991050  521.054911          &lt;NA&gt;                NA         Gadus morhua</span></span>
+<span><span class="co">## 2   0.8382528    5.049483          &lt;NA&gt;                NA      Limanda limanda</span></span>
+<span><span class="co">## 3   1.2602691    7.591632          &lt;NA&gt;                NA    Sprattus sprattus</span></span>
+<span><span class="co">## 4   8.0281399   48.360058          &lt;NA&gt;                NA   Platichthys flesus</span></span>
+<span><span class="co">## 5  13.5623375   81.697060          &lt;NA&gt;                NA Scophthalmus maximus</span></span>
+<span><span class="co">## 6 179.5800036 1081.757353          &lt;NA&gt;                NA      Clupea harengus</span></span>
+<span><span class="co">##   aphia_id     class             order         family        genus    rank</span></span>
+<span><span class="co">## 1   126436 Teleostei        Gadiformes        Gadidae        Gadus Species</span></span>
+<span><span class="co">## 2   127139 Teleostei Pleuronectiformes Pleuronectidae      Limanda Species</span></span>
+<span><span class="co">## 3   126425 Teleostei      Clupeiformes      Clupeidae     Sprattus Species</span></span>
+<span><span class="co">## 4   127141 Teleostei Pleuronectiformes Pleuronectidae  Platichthys Species</span></span>
+<span><span class="co">## 5   127149 Teleostei Pleuronectiformes Scophthalmidae Scophthalmus Species</span></span>
+<span><span class="co">## 6   126417 Teleostei      Clupeiformes      Clupeidae       Clupea Species</span></span>
+<span><span class="co">##   survey_unit</span></span>
+<span><span class="co">## 1      BITS-1</span></span>
+<span><span class="co">## 2      BITS-1</span></span>
+<span><span class="co">## 3      BITS-1</span></span>
+<span><span class="co">## 4      BITS-1</span></span>
+<span><span class="co">## 5      BITS-1</span></span>
+<span><span class="co">## 6      BITS-1</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="compare-it-with-fishglob">Compare it with FishGlob<a class="anchor" aria-label="anchor" href="#compare-it-with-fishglob"></a>
@@ -259,7 +266,7 @@ The examples assume your raw data are under:
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">survey</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="articles/articles/figures/plot_num-1.png" alt="plot of chunk plot_num"><div class="figcaption">plot of chunk plot_num</div>
+<img src="figure/plot_num-1.png" alt="plot of chunk plot_num"><div class="figcaption">plot of chunk plot_num</div>
 </div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df_cod</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">wgt_cpua_fishglob</span>, </span>
@@ -277,7 +284,7 @@ The examples assume your raw data are under:
 <span>  </span>
 <span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">survey</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="articles/articles/figures/plot_wg-1.png" alt="plot of chunk plot_wg"><div class="figcaption">plot of chunk plot_wg</div>
+<img src="figure/plot_wg-1.png" alt="plot of chunk plot_wg"><div class="figcaption">plot of chunk plot_wg</div>
 </div>
 </div>
 </div>

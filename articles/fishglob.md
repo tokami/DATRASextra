@@ -105,27 +105,34 @@ head(datras)
     ## 4     <NA>    europe     40G5    <NA>    <NA> 1993     3   8       1  55.9933
     ## 5     <NA>    europe     40G5    <NA>    <NA> 1993     3   8       1  55.9933
     ## 6     <NA>    europe     40G5    <NA>    <NA> 1993     3   8       1  55.9933
-    ##   longitude haul_dur gear depth  num num_cpue    num_cpua         wgt    wgt_cpue
-    ## 1     15.46        1  GOV    47  469      469  2825.17089  86.4991050  86.4991050
-    ## 2     15.46        1  GOV    47    6        6    36.14291   0.8382528   0.8382528
-    ## 3     15.46        1  GOV    47   80       80   481.90548   1.2602691   1.2602691
-    ## 4     15.46        1  GOV    47   38       38   228.90510   8.0281399   8.0281399
-    ## 5     15.46        1  GOV    47   15       15    90.35728  13.5623375  13.5623375
-    ## 6     15.46        1  GOV    47 2625     2625 15812.52363 179.5800036 179.5800036
-    ##      wgt_cpua verbatim_name verbatim_aphia_id        accepted_name aphia_id
-    ## 1  521.054911          <NA>                NA         Gadus morhua   126436
-    ## 2    5.049483          <NA>                NA      Limanda limanda   127139
-    ## 3    7.591632          <NA>                NA    Sprattus sprattus   126425
-    ## 4   48.360058          <NA>                NA   Platichthys flesus   127141
-    ## 5   81.697060          <NA>                NA Scophthalmus maximus   127149
-    ## 6 1081.757353          <NA>                NA      Clupea harengus   126417
-    ##       class             order         family        genus    rank survey_unit
-    ## 1 Teleostei        Gadiformes        Gadidae        Gadus Species      BITS-1
-    ## 2 Teleostei Pleuronectiformes Pleuronectidae      Limanda Species      BITS-1
-    ## 3 Teleostei      Clupeiformes      Clupeidae     Sprattus Species      BITS-1
-    ## 4 Teleostei Pleuronectiformes Pleuronectidae  Platichthys Species      BITS-1
-    ## 5 Teleostei Pleuronectiformes Scophthalmidae Scophthalmus Species      BITS-1
-    ## 6 Teleostei      Clupeiformes      Clupeidae       Clupea Species      BITS-1
+    ##   longitude haul_dur gear depth  num num_cpue    num_cpua         wgt
+    ## 1     15.46        1  GOV    47  469      469  2825.17089  86.4991050
+    ## 2     15.46        1  GOV    47    6        6    36.14291   0.8382528
+    ## 3     15.46        1  GOV    47   80       80   481.90548   1.2602691
+    ## 4     15.46        1  GOV    47   38       38   228.90510   8.0281399
+    ## 5     15.46        1  GOV    47   15       15    90.35728  13.5623375
+    ## 6     15.46        1  GOV    47 2625     2625 15812.52363 179.5800036
+    ##      wgt_cpue    wgt_cpua verbatim_name verbatim_aphia_id        accepted_name
+    ## 1  86.4991050  521.054911          <NA>                NA         Gadus morhua
+    ## 2   0.8382528    5.049483          <NA>                NA      Limanda limanda
+    ## 3   1.2602691    7.591632          <NA>                NA    Sprattus sprattus
+    ## 4   8.0281399   48.360058          <NA>                NA   Platichthys flesus
+    ## 5  13.5623375   81.697060          <NA>                NA Scophthalmus maximus
+    ## 6 179.5800036 1081.757353          <NA>                NA      Clupea harengus
+    ##   aphia_id     class             order         family        genus    rank
+    ## 1   126436 Teleostei        Gadiformes        Gadidae        Gadus Species
+    ## 2   127139 Teleostei Pleuronectiformes Pleuronectidae      Limanda Species
+    ## 3   126425 Teleostei      Clupeiformes      Clupeidae     Sprattus Species
+    ## 4   127141 Teleostei Pleuronectiformes Pleuronectidae  Platichthys Species
+    ## 5   127149 Teleostei Pleuronectiformes Scophthalmidae Scophthalmus Species
+    ## 6   126417 Teleostei      Clupeiformes      Clupeidae       Clupea Species
+    ##   survey_unit
+    ## 1      BITS-1
+    ## 2      BITS-1
+    ## 3      BITS-1
+    ## 4      BITS-1
+    ## 5      BITS-1
+    ## 6      BITS-1
 
 ## Compare it with FishGlob
 
@@ -189,7 +196,7 @@ ggplot(df_cod, aes(x = num_fishglob,
   facet_wrap(~ survey, scales = "free")
 ```
 
-![plot of chunk plot_num](articles/articles/figures/plot_num-1.png)
+![plot of chunk plot_num](figure/plot_num-1.png)
 
 plot of chunk plot_num
 
@@ -210,6 +217,6 @@ ggplot(df_cod, aes(x = wgt_cpua_fishglob,
   facet_wrap(~ survey, scales = "free")
 ```
 
-![plot of chunk plot_wg](articles/articles/figures/plot_wg-1.png)
+![plot of chunk plot_wg](figure/plot_wg-1.png)
 
 plot of chunk plot_wg
