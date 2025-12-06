@@ -32,7 +32,7 @@ commonly used to prepare abundance indices for ICES stock assessments.
 ## Table of contents
 
 - [Installation](#installation)
-  - [Overview](#overview)
+- [Overview](#overview)
 - [Getting started](#getting-started)
 - [Getting help](#getting-help)
 - [Citation](#citation)
@@ -53,7 +53,7 @@ GitHub:
 remotes::install_github("tokami/DATRASextra")
 ```
 
-## Overview
+# Overview
 
 *DATRASextra* provides a small set of functions that guide you through a
 typical workflow with the ICES DATRAS database: from discovering

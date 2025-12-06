@@ -80,9 +80,9 @@ pruneFishglob <- function(x) {
                  "HLNoAtLngt", "Valid_Aphia","ScientificName_WoRMS","LngtCm",
                  "Species", "HaulDur","DataType","Count")
 
-    x[["HH"]] <- x[["HH"]][colnames(x[["HH"]]) %in% hh.cols]
-    x[["HL"]] <- x[["HL"]][colnames(x[["HL"]]) %in% hl.cols]
-    x[["CA"]] <- NULL
+    x["CA"] <- list(NULL)
+    x["HH"] <- list(x[["HH"]][colnames(x[["HH"]]) %in% hh.cols])
+    x["HL"] <- list(x[["HL"]][colnames(x[["HL"]]) %in% hl.cols])
 
     return(x)
 }

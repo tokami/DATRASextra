@@ -35,7 +35,7 @@ remotes::install_github("tokami/DATRASextra")
 ```
 
 
-## Overview
+# Overview
 
 *DATRASextra* provides a small set of functions that guide you through a typical
 workflow with the ICES DATRAS database: from discovering available surveys, to
