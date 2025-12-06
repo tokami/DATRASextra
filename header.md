@@ -4,7 +4,7 @@
   [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
-<h1 style="border-bottom:none;">DATRASextra <a href='https://github.com/tokami/DATRASextra'><img src='man/figures/DATRASextra_logo.png' alt="DATRASextra logo" align="right" style="height:200px; margin-top:-40px;"/></a></h1>
+<h1 style="border-bottom:none;">DATRASextra <a href='https://github.com/tokami/DATRASextra'><img src='man/figures/DATRASextra_logo.svg' alt="DATRASextra logo" align="right" style="height:200px; margin-top:-40px;"/></a></h1>
 
 Makes working with ICES **DATRAS** **extra** easy.
 

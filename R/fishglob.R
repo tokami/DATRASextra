@@ -172,7 +172,7 @@ addSweptAreaFishGlob <- function(x) {
             surv$WingSpread[surv$WingSpread %in% 50] <- NA
             ## remove one "outlier" at the high end
         }
-        if(surveys[i] == "SWC"){
+        if(surveys[i] == "SWC-IBTS"){
             surv$SweepLngt <- as.numeric(surv$SweepLngt)
             ## two hauls NA sweeplength
             surv$SweepLngt[is.na(surv$SweepLngt)] <- 60
@@ -197,7 +197,7 @@ addSweptAreaFishGlob <- function(x) {
             lm0 <- lm(DoorSpread ~ log(Depth) * SweepLngt, data=surv)
 
         } else if (surveys[i] %in% c("SP-NORTH","ROCKALL",
-                                     "IE-IGFS","SWC")) {
+                                     "IE-IGFS","SWC-IBTS")) {
 
             lm0 <- lm(DoorSpread ~ log(Depth) , data=surv) # this make no sense double check + SweepLngt
 
@@ -271,7 +271,7 @@ addSweptAreaFishGlob <- function(x) {
 
         ## No Can-Mar or PT-IBTS
         if (surveys[i] %in% c("EVHOE","SP-ARSA","SP-NORTH","ROCKALL",
-                              "IE-IGFS","SWC","SP-PORC","NIGFS",
+                              "IE-IGFS","SWC-IBTS","SP-PORC","NIGFS",
                               "FR-CGFS")) {
 
             tryCatch({
@@ -299,7 +299,7 @@ addSweptAreaFishGlob <- function(x) {
 
             lm0 <- lm(WingSpread ~ DoorSpread, data=surv)
 
-        }else if(surveys[i] %in% c("SWC")){
+        }else if(surveys[i] %in% c("SWC-IBTS")){
 
             lm0 <- lm(WingSpread ~ log(Depth) + DoorSpread , data=surv)
 
@@ -343,7 +343,7 @@ addSweptAreaFishGlob <- function(x) {
         }
 
         if (surveys[i] %in% c("EVHOE","SP-ARSA","SP-NORTH","ROCKALL",
-                              "IE-IGFS","SWC","SP-PORC","NIGFS",
+                              "IE-IGFS","SWC-IBTS","SP-PORC","NIGFS",
                               "FR-CGFS","BITS","PT-IBTS")) {
 
             if(all(!is.null(surv$door_fit))){
