@@ -1,0 +1,229 @@
+---
+title: "Extracting Length-at-Age (LAA) from DATRAS"
+output:
+    rmarkdown::html_vignette:
+    fig_caption: yes
+    number_sections: true
+    df_print: paged
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+---
+
+```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      cache = FALSE,
+                      warning = FALSE,
+                      eval = TRUE,
+                      error = FALSE,
+                      warning = FALSE,
+                      message = FALSE,
+                      include = TRUE,
+                      collapse = TRUE,
+                      comment = "#>",
+                      fig.show = "hold",
+                      fig.width=8, fig.height=7)
+```
+
+
+## Goal
+
+This vignette demonstrates how to extract and explore length-at-age (LAA) data
+from a cleaned DATRAS object and how to estimate stochastic age-length keys
+(ALKs).
+
+## Setup
+
+```{r setup, message=FALSE, warning=FALSE}
+library(DATRASextra)
+```
+
+This vignette assumes you already have a cleaned DATRAS object (see the tutorial
+vignette on data preparation). Here we use the example data:
+
+```{r}
+data("dab")
+```
+
+A typical DATRAS object is a list with three core data sets:
+
+```{r}
+str(dab, max.level = 1)
+```
+
+- `CA`: individual-level biological data (e.g., length, weight, sex, maturity, age)
+- `HH`: haul/station-level metadata (e.g., position, time, gear, environment)
+- `HL`: catch-at-length and subsampling information
+
+When a species appears in `CA`, a corresponding `HL` record should also exist
+(even if values are missing codes such as `-9`).
+
+---
+
+## Select years and clean data
+
+For LAA analyses, `CA` is essential because it contains age readings. However,
+`CA` is not catch-representative by itself, so ALKs are needed to convert
+catch-at-length (`HL`) into catch-at-age.
+
+We first select years of interest:
+
+```{r}
+years <- 2020:2024
+```
+
+Then apply a quick standard cleaning/filtering step:
+
+```{r}
+dab <- clean(dab, years = years)
+```
+
+Equivalent manual filtering (shown for reference):
+
+```{r eval=FALSE}
+dab <- subset(
+  dab,
+  Year %in% years &
+    HaulVal == "V" &
+    DayNight == "D" &
+    StdSpecRecCode == 1
+)
+```
+
+---
+
+## Investigate length-at-age data
+
+```{r}
+ca <- dab[["CA"]]
+str(ca, max.level = 1)
+```
+
+### Sample size by year
+
+```{r}
+# Number of individual rows per Year
+xtabs(~ Year, ca)
+
+# Number of unique hauls per Year
+xtabs(~ Year, data = unique(ca[c("Year", "haul.id")]))
+```
+
+### Add spatial information from HH
+
+Some variables (e.g., haul position) are in `HH` rather than `CA`. Merge them by
+`haul.id`:
+
+```{r}
+ca <- merge(
+  ca,
+  dab[["HH"]][c("haul.id", "lon", "lat")],
+  by = "haul.id",
+  all.x = TRUE,
+  sort = FALSE,
+  suffixes = c("", ".HH")
+)
+```
+
+Now you can inspect spatial patterns in LAA observations:
+
+```{r fig.width=6, fig.height=5}
+plot(ca$lon, ca$lat, cex = pmax(0.6, ca$Age / 3), xlab = "Longitude", ylab = "Latitude")
+```
+
+### Age availability and missingness
+
+```{r}
+table(ca$Age, useNA = "ifany")
+```
+
+```{r}
+sum(is.na(ca$Age))
+```
+
+Around `r round(mean(is.na(ca$Age)) * 100, 1)`% of `CA` entries have missing age.
+
+For ALK estimation, `NoAtALK` is the frequency/count associated with each
+age-length observation.
+
+---
+
+## Estimate age-length keys (ALKs)
+
+First, add the length spectrum from `HL`:
+
+```{r}
+dab <- addSpectrum(dab)
+```
+
+ALKs are often estimated by quarter for stock-assessment workflows. Example for
+Q1:
+
+```{r}
+dab_Q1 <- subset(dab, Quarter == 1)
+```
+
+Fit a basic stochastic ALK:
+
+```{r}
+ALK <- fitALK(
+  dab_Q1,
+  minAge = 3, ## TODO
+  maxAge = 8
+)
+```
+
+A more flexible model can include random year effects and spatial smooths:
+
+```{r eval = FALSE}
+ALK_spatial <- fitALK(
+  dab_Q1,
+  minAge = 2,
+  maxAge = 8,
+  model = "cra ~ LngtCm + s(Year, bs = 're') + s(lon, lat, bs = 'ts')"
+)
+```
+
+### Model interpretation
+
+`fitALK()` uses a continuation-ratio formulation. For each age threshold `a`,
+the data are restricted to fish with `Age >= a`, and the binary response is
+`Age > a`. This estimates:
+
+\[
+P(\text{Age} > a \mid \text{Age} \ge a,\; x)
+\]
+
+Combining these conditional probabilities across ages yields the full ALK.
+
+---
+
+## Predict from the fitted ALK
+
+Exact prediction workflows depend on your package version and chosen downstream
+pipeline. A typical pattern is:
+
+```{r eval=FALSE}
+# Example pattern (adapt to your object structure)
+newdata <- dab_Q1[["HL"]]
+pred <- predict(ALK_spatial, newdata = newdata, type = "response")
+
+# Continue with conversion from catch-at-length to catch-at-age per haul
+# using the predicted age probabilities.
+```
+
+If your workflow uses a package-specific helper (e.g., an ALK application
+function), use that helper in place of `predict()`.
+
+---
+
+## Summary
+
+In this vignette, we:
+
+1. Loaded and cleaned DATRAS data
+2. Explored individual age data in `CA`
+3. Added haul-level spatial context from `HH`
+4. Estimated stochastic ALKs (basic and spatially enriched)
+5. Outlined how to predict/apply ALKs to convert catch-at-length to catch-at-age

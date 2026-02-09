@@ -39,6 +39,7 @@ articles:
 - title: Advanced
   contents:
   - articles/by_length
+  - articles/laa
 - title: FishGlob
   contents:
   - articles/fishglob

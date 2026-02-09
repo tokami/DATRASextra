@@ -288,3 +288,6 @@ renameSurvey <- function(x, survNameOld, survNameNew) {
     }
     return(x)
 }
+
+
+quarter2months <- function(quarter) ((quarter - 1) * 3 + 1) : (quarter * 3)
