@@ -88,375 +88,295 @@ pruneFishglob <- function(x) {
 }
 
 
-##' @title Add Swept Area index following the FishGlob calculations
+##' @title Add swept area indices following FishGlob methodology
 ##'
-##' @param x a DATRASraw object
+##' @description
+##' Computes swept area indices (m²) for haul-level records in a
+##' `DATRASraw` object following the methodology developed for FishGlob.
+##'
+##' DoorSpread and WingSpread are re-estimated using survey-specific
+##' linear models (stored internally in the package) when missing.
+##' Towing distance is calculated from recorded distance or reconstructed
+##' from ground speed and haul duration using a hierarchical fallback:
+##' Survey-Year-Ship → Survey-Year-Country → Survey-Country → Global mean.
+##'
+##' Swept area is calculated as:
+##' \deqn{
+##' SweptArea = Distance \times WingSpread \times 10^{-6}
+##' }
+##'
+##' Door area is calculated analogously using DoorSpread.
+##'
+##' @param x A `DATRASraw` object containing haul-level (`HH`) data.
 ##'
 ##' @details
-##'
-##' The unit of the swept area indices are squaremeters (m^2).
-##'
-##' The original functions were developed by Aurore Maureaud and Daniël van
-##' Denderen and can be accessed here:
+##' The original spread estimation logic was developed by
+##' Aurore Maureaud and Daniël van Denderen and is available at:
 ##' \url{https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/source_DATRAS_wing_doorspread.R}.
 ##'
-##' Note, that this function only calculates the swept area for surveys that are
-##' included in the FISHGLOB (EVHOE, SWC-IBTS, BITS, IE-IGFS, FR-CGFS, NIGFS,
-##' ROCKALL, SP-NORTH, SP-ARSA, SP-PORC; status November 2025).
+##' This implementation uses pre-fitted survey-specific models stored
+##' internally in the package and applies hierarchical fallback logic
+##' when factor levels are not present in the training data.
 ##'
-##' @return DATRASraw object with SweptArea index, columns "SweptArea" and
-##'     "DoorArea".
+##' Swept area is returned in square km (km^2).
+##'
+##' @return A `DATRASraw` object with two additional columns in `HH`:
+##' \itemize{
+##'   \item \code{SweptArea} — swept area in km^2
+##'   \item \code{DoorsArea} — door swept area in km^2
+##' }
 ##'
 ##' @export
 addSweptAreaFishGlob <- function(x) {
-
-    ## Adjusted from original script by Aurore Maureaud and Daniël van Denderen
-
-    subsetSurvey <- function(x, survey){
-        surv <- subset(x[["HH"]], Survey == survey)
-        surv <- surv[ , !(names(surv) %in% c("TotalNo", "NoMeas",
-                                             "CatCatchWgt", "LngtCode",
-                                             "LngtClass", "HLNoAtLngt",
-                                             "Valid_Aphia")) ]
-        unique(surv)
+    
+    
+    # helper function for safe predictions ------------------------------------
+    
+    
+    safe_predict_hierarchy <- function(newdata, model_set, prefix) {
+        
+        models <- list(
+            model_set[[paste0(prefix, "_primary")]],
+            model_set[[paste0(prefix, "_fallback1")]],
+            model_set[[paste0(prefix, "_fallback2")]]
+        )
+        
+        models <- models[!sapply(models, is.null)]
+        
+        preds <- rep(NA_real_, nrow(newdata))
+        remaining <- seq_len(nrow(newdata))
+        
+        for (m in models) {
+            
+            if (length(remaining) == 0) break
+            
+            dat <- newdata[remaining, , drop = FALSE]
+            ok <- rep(TRUE, nrow(dat))
+            
+            if (!is.null(m$xlevels)) {
+                for (var in names(m$xlevels)) {
+                    if (var %in% names(dat)) {
+                        ok <- ok & dat[[var]] %in% m$xlevels[[var]]
+                    }
+                }
+            }
+            
+            if (any(ok)) {
+                idx_ok <- remaining[ok]
+                preds[idx_ok] <- predict(m, newdata[idx_ok, , drop = FALSE])
+                remaining <- setdiff(remaining, idx_ok)
+            }
+        }
+        
+        return(preds)
     }
-
+    
+    
+    # other helper -----------------------------------------------------------
     combineSurvey <- function(surv){
-        surv <- surv[, c("haul.id", "DoorSpread", "WingSpread")]
+        surv <- surv[, c("haul.id","DoorSpread","WingSpread")]
         names(surv)[names(surv) == "DoorSpread"] <- "DoorSpread2"
         names(surv)[names(surv) == "WingSpread"] <- "WingSpread2"
         surv
     }
-
-    # Replace 0 with NA
+    
+    
+    # data cleaning -----------------------------------------------------------
     x[['HH']]$WingSpread[x[['HH']]$WingSpread == 0] <- NA
     x[['HH']]$DoorSpread[x[['HH']]$DoorSpread == 0] <- NA
     x[['HH']]$Distance[x[['HH']]$Distance == 0] <- NA
-
-    ## select only certain gears
+    
     x <- subset(
         x,
         !(Survey == "NS-IBTS" &
-              Gear %in% c('ABD', 'BOT', 'DHT', 'FOT', 'GRT',
-                          'H18', 'HOB', 'HT', 'KAB', 'VIN')),
+              Gear %in% c('ABD','BOT','DHT','FOT','GRT',
+                          'H18','HOB','HT','KAB','VIN')),
         !(Survey == "BITS" &
-              Gear %in% c('CAM', 'CHP', 'DT', 'EGY', 'ESB',
-                          'EXP', 'FOT', 'GRT', 'H20', 'HAK',
-                          'LBT','LPT', 'SON', 'P20')),
-        !(Survey == "PT-IBTS" & Gear == "CAR"))
-
-
-    ## Re-estimate the wing/doorspread from linear model per survey
-    surveys <- unique(x[["HH"]]$Survey)
+              Gear %in% c('CAM','CHP','DT','EGY','ESB',
+                          'EXP','FOT','GRT','H20','HAK',
+                          'LBT','SON')),
+        !(Survey == "PT-IBTS" & Gear == "CAR")
+    ) # check why these has been removed
+    
+    surveys <- intersect(unique(x[["HH"]]$Survey),
+                         names(spread_models))
+    
     area2.list <- vector("list", length(surveys))
-    for(i in 1:length(surveys)){
-
-        surv <- subsetSurvey(x, surveys[i])
-        surv <- droplevels(surv) # safer
-
-
-
-        ## Manual corrections --------------------------
+    
+    # survey loop -------------------------------------------------------------
+    
+    for(i in seq_along(surveys)){
+        
+        surv <- subset(x[["HH"]], Survey == surveys[i]) 
+        surv <- droplevels(surv)
+        
+        # manual corrections
+        
         if(surveys[i] == "BITS"){
             surv$DoorSpread[surv$DoorSpread > 200] <- NA
-            ## remove two outliers
         }
+        
         if(surveys[i] == "EVHOE"){
-            surv$WingSpread[!(surv$Year %in% 2016:2018)] <- NA #remove for sake of example
+            surv$WingSpread[!(surv$Year %in% 2016:2018)] <- NA
         }
+        
         if(surveys[i] == "FR-CGFS"){
-            surv$WingSpread[surv$WingSpread %in% 10] <- NA
-            ## remove fixed number in 1994
+            surv$WingSpread[surv$WingSpread == 10] <- NA
         }
+        
         if(surveys[i] == "NS-IBTS"){
-            surv$WingSpread[surv$WingSpread %in% 50] <- NA
-            ## remove one "outlier" at the high end
+            surv$WingSpread[surv$WingSpread == 50] <- NA
         }
+        
         if(surveys[i] == "SWC-IBTS"){
             surv$SweepLngt <- as.numeric(surv$SweepLngt)
-            ## two hauls NA sweeplength
             surv$SweepLngt[is.na(surv$SweepLngt)] <- 60
-            ##  (mean(swc$SweepLngt[swc$Ship == "749S"],na.rm = T) =60)
         }
+        
         if(surveys[i] == "PT-IBTS"){
             surv$WingSpread[surv$WingSpread > 20] <- NA
-            ## remove at high end
-            surv$cat <- "shallow"
-            surv$cat[surv$Depth > 120] <- "deep"
-            ## seems to be a break-point when plotting (wingspread~depth)
+            surv$cat <- ifelse(surv$Depth > 120, "deep", "shallow")
         }
-
-
-        ## Doorspread --------------------------
-        if (surveys[i] %in% c("EVHOE")) {
-
-            lm0 <- lm(DoorSpread ~ Depth * SweepLngt, data=surv)
-
-        } else if (surveys[i] %in% c("SP-ARSA")) {
-
-            lm0 <- lm(DoorSpread ~ log(Depth) * SweepLngt, data=surv)
-
-        } else if (surveys[i] %in% c("SP-NORTH","ROCKALL",
-                                     "IE-IGFS","SWC-IBTS")) {
-
-            lm0 <- lm(DoorSpread ~ log(Depth) , data=surv) # this make no sense double check + SweepLngt
-
-        } else if (surveys[i] %in% c("SP-PORC","NIGFS","FR-CGFS")) {
-
-            lm0 <- lm(DoorSpread ~ log(Depth), data=surv)
-
-        } else if (surveys[i] %in% c("BITS")) {
-
-            lm0 <- lm(DoorSpread ~ log(Depth) + Country + Gear, data=surv)
-            ## no country
-            lm1 <- lm(DoorSpread ~ log(Depth) + Gear, data=surv)
-
-            ## select data with country x doorspread information
-            addcountry <- subset(surv, surv$Country %in% lm0$xlevels$Country)
-            ## select data without country x doorspread information
-            nocountry <- subset(surv, !(surv$Country %in% lm0$xlevels$Country))
-
-            ## add prediction to addcountry
-            pred0 <- predict(lm0, newdata=addcountry, interval='confidence', level=0.95)
-            addcountry$fit <-pred0[,1]
-            surv <- cbind(surv, addcountry[match(surv$haul.id,addcountry$haul.id), c("fit")])
-            colnames(surv)[ncol(surv)] <- "door_fit"
-
-            ## do the same for nocountry
-            pred0 <- predict(lm1, newdata=nocountry, interval='confidence', level=0.95)
-            nocountry$fit <-pred0[,1]
-            surv <- cbind(surv, nocountry[match(surv$haul.id,nocountry$haul.id), c("fit")])
-            colnames(surv)[ncol(surv)] <- "door_fit2"
-
-            ## merge into one, remove door_fit2
-            surv$door_fit <- ifelse(is.na(surv$door_fit), surv$door_fit2, surv$door_fit)
-            surv$door_fit2 <- NULL
-
-
-
-        } else if (surveys[i] %in% c("NS-IBTS")) {
-
-            ## add ships/sweeplength
-            lm0 <- lm(DoorSpread ~ log(Depth) + SweepLngt + Ship, data=surv)
-            ## use country for hauls that miss sweeplength and/or ships x doorspr.
-            lm1 <- lm(DoorSpread ~ log(Depth) + Country, data=surv)
-
-            ## select data with ship information + SweepLngt
-            addship <- subset(surv, surv$Ship %in% lm0$xlevels$Ship &
-                                  surv$SweepLngt >0)
-            ## select data without ship information
-            noship  <- subset(surv, !(surv$haul.id %in% addship$haul.id))
-
-            ## add prediction to addship
-            pred0 <- predict(lm0, newdata=addship, interval='confidence', level=0.95)
-            addship$fit <-pred0[,1]
-            surv <- cbind(surv, addship[match(surv$haul.id,addship$hau.id),
-                                        c("fit")])
-            colnames(surv)[ncol(surv)] <- "door_fit"
-
-            ## do the same for noship
-            pred0 <- predict(lm1, newdata=noship, interval='confidence',
-                             level=0.95)
-            noship$fit <-pred0[,1]
-            surv <- cbind(surv, noship[match(surv$haul.id,noship$haul.id),
-                                       c("fit")])
-            colnames(surv)[ncol(surv)] <- "door_fit2"
-
-
-            surv$door_fit <- ifelse(is.na(surv$door_fit), surv$door_fit2, surv$door_fit)
-            surv$door_fit2 <- NULL
-
+        
+        if (surveys[i] %in% c("EVHOE","IE-IGFS")) {
+            surv$SweepLngtCat <- ifelse(surv$SweepLngt <= 60,
+                                        "short","long")
         }
-
-
-        ## No Can-Mar or PT-IBTS
-        if (surveys[i] %in% c("EVHOE","SP-ARSA","SP-NORTH","ROCKALL",
-                              "IE-IGFS","SWC-IBTS","SP-PORC","NIGFS",
-                              "FR-CGFS")) {
-
-            tryCatch({
-                pred0 <- predict(lm0, newdata=surv, interval='confidence', level=0.95)
-            }, warning = function(w){
-                message("Warning for survey: ", surveys[i])
-                message(w$message)
-            })
-            surv$door_fit <- pred0[,1]
-
+        
+        # model predictions 
+        model_set <- spread_models[[surveys[i]]]
+        
+        # ---- DoorSpread ----
+        missing_door <- is.na(surv$DoorSpread)
+        if (any(missing_door)) {
+            newdata <- surv[missing_door, , drop = FALSE]
+            preds <- safe_predict_hierarchy(newdata, model_set, "door")
+            surv$DoorSpread[missing_door] <- preds
         }
-
-
-        ## Wingpread ---------------------------------
-        if (surveys[i] == "EVHOE") {
-
-            lm0 <- lm(WingSpread ~ DoorSpread * SweepLngt, data=surv)
-
-        }else if(surveys[i] %in% c("ROCKALL","IE-IGFS")){
-
-            lm0 <- lm(WingSpread ~ DoorSpread + SweepLngt, data=surv)
-
-        }else if(surveys[i] %in% c("SP-ARSA","SP-PORC","SP-NORTH",
-                                   "NIGFS","FR-CGFS","BITS")){
-
-            lm0 <- lm(WingSpread ~ DoorSpread, data=surv)
-
-        }else if(surveys[i] %in% c("SWC-IBTS")){
-
-            lm0 <- lm(WingSpread ~ log(Depth) + DoorSpread , data=surv)
-
-        }else if(surveys[i] %in% c("NS-IBTS")){
-
-            lm0 <- lm(WingSpread ~ log(Depth) + Country + DoorSpread + SweepLngt,
-                      data=surv) ## add sweeplngt
-            lm1 <- lm(WingSpread ~ log(Depth) + Country + DoorSpread, data=surv)
-            ## model for hauls without sweeplngt
-
-            surv[is.na(surv$DoorSpread),]$DoorSpread <-
-                surv[is.na(surv$DoorSpread),]$door_fit
-            ## include the DoorSpread prediction
-            addship <- subset(surv, surv$SweepLngt >0)
-            ## select data with SweepLngt information
-            noship  <- subset(surv, !(surv$haul.id %in% addship$haul.id))
-            ## select data without SweepLngt information
-
-            pred0 <- predict(lm0, newdata=addship, interval='confidence', level=0.95)
-            ## add prediction to addship
-            addship$fit <-pred0[,1]
-            surv <- cbind(surv, addship[match(surv$haul.id,addship$haul.id), c("fit")])
-            colnames(surv)[ncol(surv)] <- "wing_fit"
-
-            pred0 <- predict(lm1, newdata=noship, interval='confidence', level=0.95)
-            ## do the same for noship
-            noship$fit <-pred0[,1]
-            surv <- cbind(surv, noship[match(surv$haul.id,noship$haul.id), c("fit")])
-            colnames(surv)[ncol(surv)] <- "wing_fit2"
-
-            surv$wing_fit <- ifelse(is.na(surv$wing_fit), surv$wing_fit2, surv$wing_fit)
-            surv$wing_fit2 <- NULL
-
-            surv[is.na(surv$WingSpread),]$WingSpread <-
-                surv[is.na(surv$WingSpread),]$wing_fit
-
-        } else if (surveys[i] %in% c("PT-IBTS")) {
-
-            lm0 <- lm(WingSpread ~ Depth * cat, data=surv)
-
+        
+        # ---- WingSpread ----
+        missing_wing <- is.na(surv$WingSpread)
+        if (any(missing_wing)) {
+            newdata <- surv[missing_wing, , drop = FALSE]
+            preds <- safe_predict_hierarchy(newdata, model_set, "wing")
+            surv$WingSpread[missing_wing] <- preds
         }
-
-        if (surveys[i] %in% c("EVHOE","SP-ARSA","SP-NORTH","ROCKALL",
-                              "IE-IGFS","SWC-IBTS","SP-PORC","NIGFS",
-                              "FR-CGFS","BITS","PT-IBTS")) {
-
-            if(all(!is.null(surv$door_fit))){
-                surv[is.na(surv$DoorSpread),]$DoorSpread <-
-                    surv[is.na(surv$DoorSpread),]$door_fit
-            }
-
-            pred0 <- predict.lm (object=lm0, newdata=surv,
-                                 interval='confidence', level=0.95)
-            surv$wing_fit <- pred0[,1]
-            surv[is.na(surv$WingSpread),]$WingSpread <-
-                surv[is.na(surv$WingSpread),]$wing_fit
-        }
-
-        ## If not DoorSpread information!
-        if (surveys[i] %in% c("PT-IBTS")) {
+        
+        # PT fallback
+        if (surveys[i] == "PT-IBTS" &&
+            all(is.na(surv$DoorSpread))) {
             surv$DoorSpread <- surv$WingSpread / 0.3
-            ## doorspread probably not needed, rough estimate
         }
-
-        ## Combine
+        
         area2.list[[i]] <- combineSurvey(surv)
     }
-
-    area2 <- do.call(rbind, area2.list)
-
-
-    ## Replace WingSpread and DoorSpread with imputed values if missing
-    area2 <- unique(area2)
-    x[["HH"]] <- merge(x[["HH"]], area2, by = "haul.id", all.x = TRUE)
-    x$DoorSpread <- ifelse(is.na(x$DoorSpread), x$DoorSpread2, x$DoorSpread)
-    x$WingSpread <- ifelse(is.na(x$WingSpread), x$WingSpread2, x$WingSpread)
+    
+    # -------------------------------------------------
+    # Merge spreads
+    # -------------------------------------------------
+    
+    area2 <- unique(do.call(rbind, area2.list))
+    
+    x[["HH"]] <- merge(x[["HH"]], area2,
+                       by = "haul.id", all.x = TRUE)
+    
+    x$DoorSpread <- ifelse(is.na(x$DoorSpread),
+                           x$DoorSpread2,
+                           x$DoorSpread)
+    
+    x$WingSpread <- ifelse(is.na(x$WingSpread),
+                           x$WingSpread2,
+                           x$WingSpread)
+    
     x$DoorSpread2 <- NULL
     x$WingSpread2 <- NULL
-
-
-    ## Calculate Swept Area from WingSpread and DoorSpread
-    dist <- unique(x[["HH"]][, c("haul.id", "Survey", "Year",
-                                 "Ship", "Country", "Distance",
-                                 "GroundSpeed", "HaulDur")])
-
-    ## plot(dist$Distance, dist$GroundSpeed*1.852*dist$HaulDur/60*1000)
-    ## remove Distances at high end (seem wrong, see plot)
+    
+    # -------------------------------------------------
+    # Distance + hrearchical speed fallback
+    # -------------------------------------------------
+    dist <- unique(x[["HH"]][, c("haul.id","Survey","Year",
+                                 "Ship","Country","Distance",
+                                 "GroundSpeed","HaulDur")])
+    
     dist$Distance[dist$Distance > 11000] <- NA
-    ## seems wrong so also in survey data
     x$Distance[x$Distance > 11000] <- NA
-    ## remove strande speeds
     dist$GroundSpeed[dist$GroundSpeed > 30] <- NA
-    ## calculate 2nd distance
-    dist$Distance2 <- dist$GroundSpeed*1.852*dist$HaulDur/60*1000
-    dist$Distance <- ifelse(is.na(dist$Distance), dist$Distance2, dist$Distance)
-    dist$Distance2 <- NULL
-
-    ## NAs remaining missing speeds
-    ## take average speed per survey, year, ship
-    avgspeed <- aggregate(dist$GroundSpeed,
-                          by=list(dist$Survey, dist$Year, dist$Ship),
-                          FUN = mean, na.rm=T)
-    colnames(avgspeed) <- c("Survey", "Year", "Ship","GroundSpeed2")
-
-    dist <- merge(dist, avgspeed, by = c("Survey", "Year", "Ship"), all.x = TRUE)
+    
+    # hierarchical speed imputation --------------------------------------------------------
+    # 1) Survey-Year-Ship
+    avgspeed <- aggregate(GroundSpeed ~ Survey + Year + Ship,
+                          data = dist, mean, na.rm = TRUE)
+    names(avgspeed)[4] <- "Speed2"
+    dist <- merge(dist, avgspeed,
+                  by = c("Survey","Year","Ship"), all.x = TRUE)
     dist$GroundSpeed <- ifelse(is.na(dist$GroundSpeed),
-                               dist$GroundSpeed2, dist$GroundSpeed)
-    dist$GroundSpeed2 <- NULL
-
-    ## take average speed per survey, year, country
-    avgspeed <- aggregate(dist$GroundSpeed,
-                          by=list(dist$Survey, dist$Year, dist$Country),
-                          FUN = mean, na.rm=T)
-    colnames(avgspeed) <- c("Survey", "Year", "Country","GroundSpeed2")
-
-    dist <- merge(dist, avgspeed, by = c("Survey", "Year", "Country"), all.x = TRUE)
+                               dist$Speed2,
+                               dist$GroundSpeed)
+    dist$Speed2 <- NULL
+    
+    # 2) Survey-Year-Country
+    avgspeed <- aggregate(GroundSpeed ~ Survey + Year + Country,
+                          data = dist, mean, na.rm = TRUE)
+    names(avgspeed)[4] <- "Speed2"
+    dist <- merge(dist, avgspeed,
+                  by = c("Survey","Year","Country"), all.x = TRUE)
     dist$GroundSpeed <- ifelse(is.na(dist$GroundSpeed),
-                               dist$GroundSpeed2, dist$GroundSpeed)
-    dist$GroundSpeed2 <- NULL
-
-    ## take average speed per survey, country
-    avgspeed <- aggregate(dist$GroundSpeed, by=list(dist$Survey, dist$Country),
-                          FUN = mean, na.rm=T)
-    colnames(avgspeed) <- c("Survey", "Country", "GroundSpeed2")
-
-    dist <- merge(dist, avgspeed, by = c("Survey", "Country"), all.x = TRUE)
+                               dist$Speed2,
+                               dist$GroundSpeed)
+    dist$Speed2 <- NULL
+    
+    # 3) Survey-Country
+    avgspeed <- aggregate(GroundSpeed ~ Survey + Country,
+                          data = dist, mean, na.rm = TRUE)
+    names(avgspeed)[3] <- "Speed2"
+    dist <- merge(dist, avgspeed,
+                  by = c("Survey","Country"), all.x = TRUE)
     dist$GroundSpeed <- ifelse(is.na(dist$GroundSpeed),
-                               dist$GroundSpeed2, dist$GroundSpeed)
-    dist$GroundSpeed2 <- NULL
-
-    ## take average speed
-    dist$GroundSpeed2 <- mean(dist$GroundSpeed,na.rm=T)
-    dist$GroundSpeed <- ifelse(is.na(dist$GroundSpeed),
-                               dist$GroundSpeed2, dist$GroundSpeed)
-    dist$GroundSpeed2 <- NULL
-
-    ## calculate 2nd distance
-    dist$Distance2 <- dist$GroundSpeed*1.852*dist$HaulDur/60*1000
-
-    dist$Distance_pred <- ifelse(is.na(dist$Distance), dist$Distance2, dist$Distance)
-    dist <- dist[ , !(names(dist) %in% c("Distance2", "Distance",
-                                         "GroundSpeed",
-                                         "HaulDur",
-                                         "Survey", "Year", "Ship", "Country")) ]
-
-    x[["HH"]] <- merge(x[["HH"]], dist, by = "haul.id", all.x = TRUE)
-
-
-    x[["HH"]]$Distance <- ifelse(is.na(x[["HH"]]$Distance),
-                                 x[["HH"]]$Distance_pred, x[["HH"]]$Distance)
+                               dist$Speed2,
+                               dist$GroundSpeed)
+    dist$Speed2 <- NULL
+    
+    # 4) Global
+    dist$GroundSpeed[is.na(dist$GroundSpeed)] <-
+        mean(dist$GroundSpeed, na.rm = TRUE)
+    
+    # recalculate distance
+    dist$Distance2 <- dist$GroundSpeed * 1.852 *
+        dist$HaulDur / 60 * 1000
+    
+    dist$Distance <- ifelse(is.na(dist$Distance),
+                            dist$Distance2,
+                            dist$Distance)
+    
+    dist <- dist[, c("haul.id","Distance")]
+    
+    x[["HH"]] <- merge(x[["HH"]], dist,
+                       by = "haul.id",
+                       all.x = TRUE,
+                       suffixes = c("", "_pred"))
+    
+    x[["HH"]]$Distance <- ifelse(
+        is.na(x[["HH"]]$Distance),
+        x[["HH"]]$Distance_pred,
+        x[["HH"]]$Distance
+    )
+    
     x[["HH"]]$Distance_pred <- NULL
-
-    x[["HH"]]$SweptArea <- x[["HH"]]$Distance * 0.001 * x[["HH"]]$WingSpread * 0.001
-    x[["HH"]]$DoorsArea <- x[["HH"]]$Distance * 0.001 * x[["HH"]]$DoorSpread * 0.001
-
+    
+    # -------------------------------------------------
+    # Swept area calculation
+    # -------------------------------------------------
+    x[["HH"]]$SweptArea <-
+        x[["HH"]]$Distance * 0.001 *
+        x[["HH"]]$WingSpread * 0.001
+    
+    x[["HH"]]$DoorsArea <-
+        x[["HH"]]$Distance * 0.001 *
+        x[["HH"]]$DoorSpread * 0.001
+    
     return(x)
 }
+
 
 
 ##' calculate weight by length classes using empirical a and b, and add to

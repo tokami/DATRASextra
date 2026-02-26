@@ -9,3 +9,4 @@
 ^vignettes/.*\.Rmd\.orig$
 ^vignettes/.*/precompute\.R$
 ^\.travis\.yml$
+^data-raw$
