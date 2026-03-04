@@ -1,0 +1,129 @@
+Species,Common,Code,Group
+Hyperoplus lanceolatus,Great sandeel,GSE,1
+Hyperoplus immaculatus,Immaculate sandeel,ISE,1
+Gymnammodytes semisquamatus,Smooth sandeel,SMS,1
+Solea solea,Sole,SOL,1
+Solea lascaris,Sand sole,SOS,1
+Buglossidium luteum,Solenette,SOT,1
+Ammodytes tobianus,Sandeel,TSE,1
+Trachinus draco,Greater weever,WEG,1
+Echiichthys vipera,Lesser weever,WEL,1
+Molva dypterygia,Blue ling,BLI,2
+Pholis gunnellus,Butter fish,BTF,2
+Conger conger,Conger eel,COE,2
+Anguilla anguilla,European eel,ELE,2
+Enchelyopus cimbrius,Fourbeard rockling,FRR,2
+Ciliata mustela,Fivebeard rockling,FVR,2
+Myxine glutinosa,Hagfish,HGF,2
+Molva molva,Common ling,LIN,2
+Lumpenus lampretaeformis,Snake blenny,SBY,2
+Pomatoschistus minutus,Sand goby,SDG,2
+Leptoclinus maculatus,Spotted snake blenny,SNB,2
+Gaidropsarus vulgaris,Threebeard rockling,TBR,2
+Lycodes vahlii,Vahl's eelpout,VLP,2
+Scophthalmus rhombus,Brill,BLL,3
+Raja brachyura,Blonde ray,BLR,3
+Leucoraja naevus,Cuckoo ray,CUR,3
+Limanda limanda,Dab,DAB,3
+Phrynorhombus regius,Ekstroms topknot,EKT,3
+Platichthys flesus,Flounder,FLE,3
+Hippoglossus hippoglossus,Halibut,HAL,3
+Arnoglossus imperialis,Imperial scaldfish,ISF,3
+Lepidorhombus boscii,Four spot megrim,LBI,3
+Microstomus kitt,Lemon sole,LEM,3
+Dipturus oxyrinchus,Long-nose skate,LNS,3
+Lepidorhombus whiffiagonis,Megrim,MEG,3
+Phrynorhombus norvegius,Norwegian topknot,NKT,3
+Hippoglossoides platessoides,Long rough dab,PLA,3
+Pleuronectes platessa,Plaice,PLE,3
+Raja microocellata,Small-eyed ray,PTR,3
+Leucoraja circularis,Sandy ray,SAR,3
+Arnoglossus laterna,Scald fish,SDF,3
+Raja montagui,Spotted ray,SDR,3
+Leucoraja fullonica,Shagreen ray,SHR,3
+Raja batis,Common skate,SKT,3
+Amblyraja radiata,Starry ray,SYR,3
+Microchirus variegatus,Thickback sole,TBS,3
+Raja clavata,Thornback ray,THR,3
+Zeugopterus punctatus,Topknot,TKT,3
+Scophthalmus maximus,Turbot,TUR,3
+Raja undulata,Undulate ray,UNR,3
+Glyptocephalus cynoglossus,Witch,WIT,3
+Trisopterus luscus,Bib,BIB,4
+Spondyliosoma cantharus,Black seabream,BKS,4
+Labrus bergylta,Ballan wrasse,BNW,4
+Gadus morhua,Cod,COD,4
+Ctenolabrus rupestris,Goldsinny,GDY,4
+Syngnathus acus,Great pipefish,GPF,4
+Melanogrammus aeglefinus,Haddock,HAD,4
+Merluccius merluccius,Hake,HKE,4
+Zeus faber,John dory,JOD,4
+Mullus barbatus,Red mullet,MBB,4
+Mullus surmuletus,Red mullet,MUR,4
+Syngnathus rostellatus,Nilsson's pipefish,NPF,4
+Trisopterus minutus,Poor cod,POD,4
+Pollachius virens,Saithe,POK,4
+Pollachius pollachius,Pollack,POL,4
+Chimaera monstrosa,Rabbit fish,RBF,4
+Sebastes marinus,Norway haddock,REG,4
+Sebastes viviparus,Redfish,REV,4
+Mustelus asterias,Starry smooth hound,SDS,4
+Mustelus mustelus,Smooth hound,SMH,4
+Balistes carolinensis,Trigger fish,TRF,4
+Merlangius merlangus,Whiting,WHG,4
+Squalus acanthias,Spurdog,DGS,5
+Dicentrarchus labrax,Seabass,ESB,5
+Galeorhinus galeus,Tope shark,GAG,5
+Argentina silus,Spurdog,GSS,5
+Argentina sphyraena,Seabass,LSS,5
+Liza aurata,Tope shark,MGN,5
+Trisopterus esmarki,Great silver smelt,NOP,5
+Hexanchus griseus,Lesser silver smelt,SGS,5
+Petromyzon marinus,Golden mullet,SLY,5
+Osmerus eperlanus,Norway pout,SME,5
+Gadiculus argenteus,Six-gilled shark,SYP,5
+Etmopterus spinax,Sea lamprey,VBY,5
+Micromesistius poutassou,Smelt,WHB,5
+Alosa alosa,Silvery pout,AAS,6
+Engraulis encrasicolus,Velvet belly,ANE,6
+Crystallogobius linearis,Blue whiting,CLG,6
+Belone belone,Allis shad,GAR,6
+Clupea harengus,Anchovy,HER,6
+Trachurus trachurus,Crystal goby,HOM,6
+Scomber scombrus,Garfish,MAC,6
+Liza ramada,Herring,MTN,6
+Maurolicus muelleri,Horse-mackerel,PLS,6
+Brama brama,Mackerel,POA,6
+Lamna nasus,Thin lipped mullet,POR,6
+Entelurus aequoreus,Pearlside,SKP,6
+Atherina presbyter,Rays bream,SMT,6
+Sprattus sprattus,Porbeagle,SPR,6
+Alosa fallax,Snake pipefish,TAS,6
+Aphia minuta,Sand smelt,TPG,6
+Salmo trutta,Sprat,TRS,6
+Gobius niger,Twaite shad,BLG,7
+Myoxocephalus scorpius,Transparent goby,BRT,7
+Anarhichas lupus,Sea trout,CAA,7
+Callionymus lyra,Black goby,CDT,7
+Galeus melastomus,Bullrout,DBM,7
+Scyliorhinus stellaris,Catfish,DGN,7
+Zoarces viviparus,Common dragonet,ELP,7
+Phycis blennoides,Blackmouthed dogfish,GFB,7
+Eutrigla gurnardus,Greater spotted dogfish,GUG,7
+Aspitrigla cuculus,Eelpout,GUR,7
+Raniceps raninus,Greater forkbeard,LFB,7
+Scyliorhinus canicula,Grey gurnard,LSD,7
+Cyclopterus lumpus,Red gurnard,LUM,7
+Lophius piscatorius,Tadpole fish,MON,7
+Myoxocephalus quadricornis,Lesser spotted dogfish,MQS,7
+Liparis montagui,Lumpsucker,MSS,7
+Agonus cataphractus,Anglerfish,POG,7
+Helicolenus dactylopterus,Blue-mouth redfish,RBM,7
+Callionymus reticulatus,Reticulate dragonet,RDT,7
+Lepadogaster lepadogaster,Shore clingfish,SCF,7
+Callionymus maculatus,Spotted dragonet,SDT,7
+Triglops murrayi,Sculpin,SPN,7
+Taurulus bubalis,Sea scorpion,SSN,7
+Trigla lucerna,Tub gurnard,TUB,7
+Brosme brosme,Tusk,USK,7
+Lophius budegassa,Black-bellied angler,WAF,7

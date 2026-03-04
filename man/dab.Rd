@@ -3,7 +3,7 @@
 \docType{data}
 \name{dab}
 \alias{dab}
-\title{DAB survey data (example dataset)}
+\title{Dab survey data (example dataset)}
 \format{
 A list of class 'DATRASraw' with 3 elements:
 \describe{

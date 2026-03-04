@@ -1,4 +1,4 @@
-#' DAB survey data (example dataset)
+#' Dab survey data (example dataset)
 #'
 #' Example ICES DATRAS data for *Limanda limanda* (dab) from survey NS-IBTS in
 #' years 2020-2023.

@@ -1,0 +1,2065 @@
+,ITIS_TSN,ScientificName_ITIS,WoRMS_AphiaID,ScientificName_WoRMS
+1,172894,Platichthys flesus,127141,Platichthys flesus
+2,164712,Gadus morhua,126436,Gadus morhua
+3,172902,Pleuronectes platessa,127143,Pleuronectes platessa
+4,172748,Scophthalmus maximus,127149,Scophthalmus maximus
+5,161722,Clupea harengus,126417,Clupea harengus
+6,172414,Scomber scombrus,127023,Scomber scombrus
+7,161789,Sprattus sprattus,126425,Sprattus sprattus
+8,164748,Enchelyopus cimbrius,126450,Enchelyopus cimbrius
+9,164758,Merlangius merlangus,126438,Merlangius merlangus
+10,650172,Sander lucioperca,151308,Sander lucioperca
+11,165324,Zoarces viviparus,127123,Zoarces viviparus
+12,631023,Lumpenus lampretaeformis,154675,Lumpenus lampretaeformis
+13,172881,Limanda limanda,127139,Limanda limanda
+14,167255,Cottus gobio,127196,Cottus gobio
+15,164728,Pollachius pollachius,126440,Pollachius pollachius
+16,161996,Salmo salar,127186,Salmo salar
+17,162039,Osmerus eperlanus,126736,Osmerus eperlanus
+18,167612,Cyclopterus lumpus,127214,Cyclopterus lumpus
+19,167454,Agonus cataphractus,127190,Agonus cataphractus
+20,167044,Eutrigla gurnardus,150637,Eutrigla gurnardus
+21,171698,Callionymus lyra,126792,Callionymus lyra
+22,164744,Melanogrammus aeglefinus,126437,Melanogrammus aeglefinus
+23,164795,Merluccius merluccius,126484,Merluccius merluccius
+24,167318,Myoxocephalus scorpius,127203,Myoxocephalus scorpius
+25,167316,Myoxocephalus quadricornis,254529,Myoxocephalus quadricornis
+26,164754,Trisopterus minutus,126446,Trisopterus minutus
+27,173002,Solea solea,127160,Solea solea
+28,164727,Pollachius virens,126441,Pollachius virens
+29,172749,Scophthalmus rhombus,127150,Scophthalmus rhombus
+30,161128,Anguilla anguilla,126281,Anguilla anguilla
+31,171676,Ammodytes tobianus,126752,Ammodytes tobianus
+32,161997,Salmo trutta,127187,Salmo trutta
+33,171682,Hyperoplus lanceolatus,126756,Hyperoplus lanceolatus
+34,161950,Coregonus lavaretus,127180,Coregonus lavaretus
+35,165215,Zoarcidae,125575,Zoarcidae
+36,166365,Gasterosteus aculeatus,126505,Gasterosteus aculeatus
+37,159719,Lampetra fluviatilis,101172,Lampetra fluviatilis
+38,163613,Scardinius erythrophthalmus,154165,Scardinius erythrophthalmus
+39,168470,Perca fluviatilis,151353,Perca fluviatilis
+40,163661,Blicca bjoerkna,154274,Blicca bjoerkna
+41,639696,Vimba vimba,283150,Vimba vimba
+42,163761,Rutilus rutilus,154333,Rutilus rutilus
+43,168588,Trachurus trachurus,126822,Trachurus trachurus
+44,164755,Trisopterus luscus,126445,Trisopterus luscus
+45,169418,Mullus surmuletus,126986,Mullus surmuletus
+46,171670,Ammodytidae,125516,Ammodytidae
+47,164756,Trisopterus esmarkii,126444,Trisopterus esmarkii
+48,172888,Microstomus kitt,127140,Microstomus kitt
+49,171699,Callionymus maculatus,126793,Callionymus maculatus
+50,172873,Glyptocephalus cynoglossus,127136,Glyptocephalus cynoglossus
+51,172877,Hippoglossoides platessoides,127137,Hippoglossoides platessoides
+52,166464,Syngnathus acus,127387,Syngnathus acus
+53,172805,Arnoglossus laterna,127126,Arnoglossus laterna
+54,161989,Oncorhynchus mykiss,127185,Oncorhynchus mykiss
+55,166401,Spinachia spinachia,126508,Spinachia spinachia
+56,170992,Trachinus draco,127082,Trachinus draco
+57,167039,Chelidonichthys lucerna,127262,Chelidonichthys lucerna
+58,564149,Amblyraja radiata,105865,Amblyraja radiata
+59,171982,Pomatoschistus microps,126927,Pomatoschistus microps
+60,160617,Squalus acanthias,105923,Squalus acanthias
+61,171978,Pomatoschistus minutus,126928,Pomatoschistus minutus
+62,166463,Syngnathus rostellatus,127389,Syngnathus rostellatus
+63,171980,Pomatoschistus pictus,126930,Pomatoschistus pictus
+64,614239,Symphodus melops,273571,Symphodus melops
+65,162187,Maurolicus muelleri,127312,Maurolicus muelleri
+66,171671,Ammodytes,125909,Ammodytes
+67,167578,Liparis liparis,127219,Liparis liparis
+68,166363,Gasterosteidae,125476,Gasterosteidae
+69,NA,Gymnocephalus cernua,405451,Gymnocephalus cernua
+70,163580,Leuciscus leuciscus,154599,Leuciscus leuciscus
+71,171833,Gobius,125988,Gobius
+72,166320,Capros aper,127419,Capros aper
+73,163663,Alburnus alburnus,154285,Alburnus alburnus
+74,163666,Abramis brama,154281,Abramis brama
+75,161831,Engraulis encrasicolus,126426,Engraulis encrasicolus
+76,162071,Argentina sphyraena,126716,Argentina sphyraena
+77,161716,Alosa fallax,126415,Alosa fallax
+78,166595,Nerophis ophidion,127385,Nerophis ophidion
+79,171341,Anarhichas lupus,126758,Anarhichas lupus
+80,173021,Buglossidium luteum,127153,Buglossidium luteum
+81,171645,Pholis gunnellus,126996,Pholis gunnellus
+82,164765,Gaidropsarus vulgaris,126458,Gaidropsarus vulgaris
+83,160065,Scyliorhinus canicula,105814,Scyliorhinus canicula
+84,164760,Molva molva,126461,Molva molva
+85,160901,Raja clavata,105883,Raja clavata
+86,171677,Ammodytes marinus,126751,Ammodytes marinus
+87,171746,Gobiidae,125537,Gobiidae
+88,159722,Petromyzon marinus,101174,Petromyzon marinus
+89,161813,Sardina pilchardus,126421,Sardina pilchardus
+90,172835,Lepidorhombus whiffiagonis,127146,Lepidorhombus whiffiagonis
+91,170477,Labridae,125541,Labridae
+92,164501,Lophius piscatorius,126555,Lophius piscatorius
+93,166443,Syngnathidae,125606,Syngnathidae
+94,572694,Alosa agone,416357,Alosa agone
+95,164740,Brosme brosme,126447,Brosme brosme
+96,164725,Lota lota,154388,Lota lota
+97,162139,Esox lucius,154210,Esox lucius
+98,171692,Callionymus,125930,Callionymus
+99,172714,Bothidae,125576,Bothidae
+100,97317,Nephrops norvegicus,107254,Nephrops norvegicus
+101,171850,Gobius niger,126892,Gobius niger
+102,172829,Zeugopterus punctatus,127151,Zeugopterus punctatus
+103,644927,Entelurus aequoreus,127379,Entelurus aequoreus
+104,564126,Dipturus batis,105869,Dipturus batis
+105,165284,Lycodes vahlii,127118,Lycodes vahlii
+106,172933,Hippoglossus hippoglossus,127138,Hippoglossus hippoglossus
+107,172033,Aphia minuta,126868,Aphia minuta
+108,170317,Dicentrarchus labrax,126975,Dicentrarchus labrax
+109,170733,Ctenolabrus rupestris,126964,Ctenolabrus rupestris
+110,159772,Myxine glutinosa,101170,Myxine glutinosa
+111,166467,Syngnathus typhle,127393,Syngnathus typhle
+112,692071,Chelidonichthys cuculus,127259,Chelidonichthys cuculus
+113,161963,Coregonus albula,127178,Coregonus albula
+114,169419,Mullus barbatus,126985,Mullus barbatus
+115,166387,Pungitius pungitius,126507,Pungitius pungitius
+116,623023,Ciliata mustela,126448,Ciliata mustela
+117,171977,Pomatoschistus,125999,Pomatoschistus
+118,172980,Soleidae,125581,Soleidae
+119,162064,Argentina silus,126715,Argentina silus
+120,164751,Phycis blennoides,126501,Phycis blennoides
+121,171681,Hyperoplus,125911,Hyperoplus
+122,172831,Phrynorhombus norvegicus,127147,Phrynorhombus norvegicus
+123,180473,Phocoena phocoena,137117,Phocoena phocoena
+124,166287,Zeus faber,127427,Zeus faber
+125,622706,Argyropelecus olfersii,274967,Argyropelecus olfersii
+126,160067,Scyliorhinus stellaris,105815,Scyliorhinus stellaris
+127,171603,Leptoclinus maculatus,127072,Leptoclinus maculatus
+128,170371,Chelon labrosus,126977,Chelon labrosus
+129,165594,Belone belone,126375,Belone belone
+130,170737,Labrus bergylta,126965,Labrus bergylta
+131,160670,Etmopterus spinax,105913,Etmopterus spinax
+132,636404,Lipophrys pholis,126768,Lipophrys pholis
+133,160242,Mustelus mustelus,105822,Mustelus mustelus
+134,98681,Cancer pagurus,107276,Cancer pagurus
+135,167196,Cottidae,125589,Cottidae
+136,166025,Atherina presbyter,272030,Atherina presbyter
+137,172072,Neogobius melanostomus,126916,Neogobius melanostomus
+138,166356,Regalecus glesne,126525,Regalecus glesne
+139,170742,Acantholabrus palloni,126957,Acantholabrus palloni
+140,171683,Hyperoplus immaculatus,126755,Hyperoplus immaculatus
+141,167390,Taurulus bubalis,127204,Taurulus bubalis
+142,92646,Saduria entomon,119034,Saduria entomon
+143,79683,Pecten maximus,140712,Pecten maximus
+144,167550,Liparis,126160,Liparis
+145,82326,Cephalopoda,11707,Cephalopoda
+146,NA,Corvomeyenia carolinensis,167039,Corvomeyenia carolinensis
+147,164774,Micromesistius poutassou,126439,Micromesistius poutassou
+148,172067,Neogobius,125996,Neogobius
+149,79454,Mytilus edulis,140480,Mytilus edulis
+150,NA,Acanthascus (Rhabdocalyptus) mirabilis,171982,Acanthascus (Rhabdocalyptus) mirabilis
+151,164777,Raniceps raninus,126442,Raniceps raninus
+152,96967,Pandalus borealis,107649,Pandalus borealis
+153,167368,Triglops,126154,Triglops
+154,NA,Pomatoschistus flavescens,1526389,Pomatoschistus flavescens
+155,171680,Gymnammodytes semisquamatus,126754,Gymnammodytes semisquamatus
+156,647901,Sparus aurata,151523,Sparus aurata
+157,170290,Brama brama,126783,Brama brama
+158,641982,Caranx rhonchus,126806,Caranx rhonchus
+159,92645,Saduria,118451,Saduria
+160,171691,Callionymidae,125522,Callionymidae
+161,51700,Aurelia,135263,Aurelia
+162,173051,Pegusa lascaris,127156,Pegusa lascaris
+163,166444,Syngnathus,126227,Syngnathus
+164,167581,Liparis montagui,127220,Liparis montagui
+165,166779,Sebastes viviparus,127255,Sebastes viviparus
+166,631144,Lycodes gracilis,274100,Lycodes gracilis
+167,567846,Macoma balthica,141579,Macoma balthica
+168,51701,Aurelia aurita,135306,Aurelia aurita
+169,51483,Scyphozoa,135220,Scyphozoa
+170,97315,Homarus gammarus,107253,Homarus gammarus
+171,98734,Carcinus maenas,107381,Carcinus maenas
+172,97943,Lithodes maja,107205,Lithodes maja
+173,623025,Gaidropsarus macrophthalmus,126456,Gaidropsarus macrophthalmus
+174,96601,Alpheus,106978,Alpheus
+175,171971,Crystallogobius linearis,126878,Crystallogobius linearis
+176,97118,Crangon crangon,107552,Crangon crangon
+177,82375,Loligo vulgaris,140271,Loligo vulgaris
+178,82384,Alloteuthis subulata,153131,Alloteuthis subulata
+179,97107,Crangon,107007,Crangon
+180,160240,Mustelus asterias,105821,Mustelus asterias
+181,172702,Pleuronectiformes,10331,Pleuronectiformes
+182,172036,Lesueurigobius friesii,126904,Lesueurigobius friesii
+183,630409,Echiichthys vipera,150630,Echiichthys vipera
+184,NA,Petromyzontinae,101165,Petromyzontinae
+185,553269,Acipenser oxyrinchus,151802,Acipenser oxyrinchus
+186,82514,Ommastrephidae,11760,Ommastrephidae
+187,82370,Loligo,138139,Loligo
+188,82369,Loliginidae,11734,Loliginidae
+189,170739,Labrus mixtus,151501,Labrus mixtus
+190,160883,Raja montagui,105887,Raja montagui
+191,169229,Spondyliosoma cantharus,127066,Spondyliosoma cantharus
+192,NA,Chelidonichthys lastoviza,127261,Chelidonichthys lastoviza
+193,160900,Raja undulata,105891,Raja undulata
+194,173026,Microchirus variegatus,274304,Microchirus variegatus
+195,82360,Sepiidae,11723,Sepiidae
+196,160882,Raja microocellata,105885,Raja microocellata
+197,158129,Echinocardium cordatum,124392,Echinocardium cordatum
+198,573713,Polybius holsatus,1748246,Polybius holsatus
+199,157220,Asterias rubens,123776,Asterias rubens
+200,156909,Astropecten irregularis,123867,Astropecten irregularis
+201,97805,Pagurus bernhardus,107232,Pagurus bernhardus
+202,157411,Ophiura,123574,Ophiura
+203,158128,Echinocardium,123426,Echinocardium
+204,80901,Cerastoderma edule,138998,Cerastoderma edule
+205,160181,Galeorhinus galeus,105820,Galeorhinus galeus
+206,NA,Anthozoa,1292,Anthozoa
+207,NA,Corystes cassivelaunus,107277,Corystes cassivelaunus
+208,73795,Buccinum undatum,138878,Buccinum undatum
+209,64366,Aphrodita aculeata,129840,Aphrodita aculeata
+210,81694,Mya truncata,140431,Mya truncata
+211,98744,Necora puber,107398,Necora puber
+212,82363,Sepia officinalis,141444,Sepia officinalis
+213,NA,Acanthocardia echinata,138992,Acanthocardia echinata
+214,81343,Arctica islandica,138802,Arctica islandica
+215,52021,Alcyonium digitatum,125333,Alcyonium digitatum
+216,157804,Ophiothrix fragilis,125131,Ophiothrix fragilis
+217,46861,Porifera,558,Porifera
+218,98426,Hyas araneus,107322,Hyas araneus
+219,NA,Turritellinella tricarinata,1381415,Turritellinella tricarinata
+220,NA,Epitonium clathrus,146905,Epitonium clathrus
+221,74009,Neptunea antiqua,138920,Neptunea antiqua
+222,171126,Blennius ocellaris,126761,Blennius ocellaris
+223,160838,Torpedo marmorata,271684,Torpedo marmorata
+224,160880,Raja brachyura,367297,Raja brachyura
+225,171712,Callionymus reticulatus,126795,Callionymus reticulatus
+226,82374,Loligo forbesii,140270,Loligo forbesii
+227,616605,Zeugopterus regius,236488,Zeugopterus regius
+228,82590,Octopodidae,11782,Octopodidae
+229,164482,Diplecogaster bimaculata,126513,Diplecogaster bimaculata
+230,564143,Leucoraja naevus,105876,Leucoraja naevus
+231,164457,Gobiesocidae,125477,Gobiesocidae
+232,171854,Gobius paganellus,126893,Gobius paganellus
+233,636467,Parablennius gattorugine,126770,Parablennius gattorugine
+234,170730,Centrolabrus exoletus,126961,Centrolabrus exoletus
+235,161341,Conger conger,126285,Conger conger
+236,642604,Apletodon dentatus,126510,Apletodon dentatus
+237,82361,Sepia,138477,Sepia
+238,161700,Clupeidae,125464,Clupeidae
+239,157165,Henricia sanguinolenta,123974,Henricia sanguinolenta
+240,158140,Holothuroidea,123083,Holothuroidea
+241,52738,Metridium dianthus,158251,Metridium dianthus
+242,81692,Mya arenaria,140430,Mya arenaria
+243,79611,Pectinidae,213,Pectinidae
+244,170281,Cepola macrophthalma,126835,Cepola macrophthalma
+245,157954,Psammechinus miliaris,124319,Psammechinus miliaris
+246,NA,Chamelea striatula,141908,Chamelea striatula
+247,173414,Mola mola,127405,Mola mola
+248,67511,Arenicola marina,129868,Arenicola marina
+249,205649,Chamelea gallina,141907,Chamelea gallina
+250,157944,Echinus,123386,Echinus
+251,80967,Mactra,138158,Mactra
+252,80943,Spisula,138159,Spisula
+253,573589,Euspira catena,140528,Euspira catena
+254,98421,Hyas,106903,Hyas
+255,81320,Scrobicularia plana,141424,Scrobicularia plana
+256,82646,Eledone cirrhosa,140600,Eledone cirrhosa
+257,NA,Tunicata,146420,Tunicata
+258,79716,Aequipecten opercularis,140687,Aequipecten opercularis
+259,NA,Euspira nitida,151894,Euspira nitida
+260,155469,Bryozoa,146142,Bryozoa
+261,79501,Modiolus modiolus,140467,Modiolus modiolus
+262,573117,Alloteuthis,138138,Alloteuthis
+263,81251,Donax vittatus,139604,Donax vittatus
+264,81021,Ensis,138333,Ensis
+265,81691,Mya,138211,Mya
+266,80895,Laevicardium crassum,139004,Laevicardium crassum
+267,98553,Macropodia,205077,Macropodia
+268,NA,Aporrhais pespelecani,138760,Aporrhais pespelecani
+269,NA,Tetronarce nobiliana,321911,Tetronarce nobiliana
+270,155880,Flustra,110911,Flustra
+271,164764,Gaidropsarus,125743,Gaidropsarus
+272,636752,Buenia jeffreysii,126872,Buenia jeffreysii
+273,170333,Mugilidae,125546,Mugilidae
+274,205630,Mactra stultorum,140299,Mactra stultorum
+275,159214,Ascidiella scabra,103719,Ascidiella scabra
+276,73930,Colus gracilis,138899,Colus gracilis
+277,82595,Octopus,138268,Octopus
+278,166787,Helicolenus dactylopterus,127251,Helicolenus dactylopterus
+279,157325,Ophiuroidea,123084,Ophiuroidea
+280,80865,Cardiidae,229,Cardiidae
+281,80949,Spisula solida,140301,Spisula solida
+282,161690,Notacanthus chemnitzii,126643,Notacanthus chemnitzii
+283,79451,Mytilidae,211,Mytilidae
+284,98555,Macropodia rostrata,107345,Macropodia rostrata
+285,162061,Argentina,125885,Argentina
+286,173138,Balistes capriscus,154721,Balistes capriscus
+287,172806,Arnoglossus imperialis,127124,Arnoglossus imperialis
+288,989969,Luidia sarsii,123922,Luidia sarsii
+289,98689,Portunidae,106763,Portunidae
+290,157382,Ophiurida,123117,Ophiurida
+291,97774,Paguridae,106738,Paguridae
+292,157940,Echinidae,123160,Echinidae
+293,158121,Spatangus purpureus,124418,Spatangus purpureus
+294,155886,Flustra foliacea,111367,Flustra foliacea
+295,80950,Spisula subtruncata,140302,Spisula subtruncata
+296,158099,Micrasterina,510545,Micrasterina
+297,162057,Argentinidae,125508,Argentinidae
+298,171571,Chirolophis ascanii,127071,Chirolophis ascanii
+299,160845,Rajidae,105711,Rajidae
+300,171859,Gobius gasteveni,126890,Gobius gasteveni
+301,52485,Actiniaria,1360,Actiniaria
+302,79508,Modiolus barbatus,140464,Modiolus barbatus
+303,568081,Petricolaria pholadiformis,156961,Petricolaria pholadiformis
+304,80977,Lutraria lutraria,140295,Lutraria lutraria
+305,165351,Coryphaenoides guentheri,158958,Coryphaenoides guentheri
+306,81488,Dosinia,138636,Dosinia
+307,80976,Lutraria,138157,Lutraria
+308,81306,Abra alba,141433,Abra alba
+309,170732,Ctenolabrus,126020,Ctenolabrus
+310,95579,Thysanoessa parva,110710,Thysanoessa parva
+311,97135,Crangon allmanni,107551,Crangon allmanni
+312,80815,Astarte sulcata,138824,Astarte sulcata
+313,82645,Eledone,138267,Eledone
+314,171554,Stichaeidae,125566,Stichaeidae
+315,164766,Gaidropsarus mediterraneus,126457,Gaidropsarus mediterraneus
+316,170316,Dicentrarchus,126029,Dicentrarchus
+317,164502,Lophius budegassa,126554,Lophius budegassa
+318,204055,Suberites pagurorum,150237,Suberites pagurorum
+319,156872,Luidia ciliaris,123920,Luidia ciliaris
+320,155471,Gymnolaemata,1795,Gymnolaemata
+321,52419,Pennatula phosphorea,128517,Pennatula phosphorea
+322,157008,Hippasteria phrygiana,124043,Hippasteria phrygiana
+323,97775,Pagurus,106854,Pagurus
+324,201334,Alcyonidium diaphanum,111597,Alcyonidium diaphanum
+325,206823,Ophiura ophiura,124929,Ophiura ophiura
+326,157066,Crossaster papposus,124154,Crossaster papposus
+327,98667,Atelecyclus rotundatus,107273,Atelecyclus rotundatus
+328,52569,Urticina,100706,Urticina
+329,66213,Hyalinoecia tubicola,130464,Hyalinoecia tubicola
+330,52659,Hormathia digitata,100951,Hormathia digitata
+331,98047,Galathea,106834,Galathea
+332,52443,Epizoanthus,100790,Epizoanthus
+333,164498,Lophius,125802,Lophius
+334,47528,Demospongiae,164811,Demospongiae
+335,NA,Mimachlamys varia,236719,Mimachlamys varia
+336,158854,Ascidiacea,1839,Ascidiacea
+337,72883,Natica,138240,Natica
+338,49986,Thuiaria thuja,117940,Thuiaria thuja
+339,660431,Liocarcinus,106925,Liocarcinus
+340,98534,Inachus dorsettensis,107327,Inachus dorsettensis
+341,96449,Palaemon,107032,Palaemon
+342,NA,Calliactis palliata,1658483,Calliactis palliata
+343,50037,Diphasia,117228,Diphasia
+344,97179,Pontophilus spinosus,107564,Pontophilus spinosus
+345,48488,Suberites ficus,134285,Suberites ficus
+346,NA,Leptasterias (Leptasterias) muelleri,125158,Leptasterias (Leptasterias) muelleri
+347,158120,Spatangus,123430,Spatangus
+348,96971,Pandalus montagui,107651,Pandalus montagui
+349,78156,Nudibranchia,1762,Nudibranchia
+350,NA,Porania (Porania) pulvillus,125166,Porania (Porania) pulvillus
+351,NA,Polybius marmoreus,1750287,Polybius marmoreus
+352,53963,Platyhelminthes,793,Platyhelminthes
+353,48738,Cnidaria,1267,Cnidaria
+354,70419,Littorina littorea,140262,Littorina littorea
+355,167229,Cottus,126148,Cottus
+356,157949,Echinus esculentus,124287,Echinus esculentus
+357,164780,Ciliata septentrionalis,126449,Ciliata septentrionalis
+358,156857,Echinodermata,1806,Echinodermata
+359,155487,Alcyonidium gelatinosum,111600,Alcyonidium gelatinosum
+360,NA,Antalis entalis,150534,Antalis entalis
+361,NA,Cyanea,135259,Cyanea
+362,79885,Ostrea edulis,140658,Ostrea edulis
+363,82357,Sepiola atlantica,141454,Sepiola atlantica
+364,89855,Mysida,149668,Mysida
+365,157425,Ophiura robusta,124933,Ophiura robusta
+366,64358,Polychaeta,883,Polychaeta
+367,69459,Gastropoda,101,Gastropoda
+368,48485,Suberites,132072,Suberites
+369,157076,Solaster endeca,124160,Solaster endeca
+370,98423,Hyas coarctatus,107323,Hyas coarctatus
+371,48914,Tubularia,117258,Tubularia
+372,48739,Hydrozoa,1337,Hydrozoa
+373,97811,Pagurus pubescens,107240,Pagurus pubescens
+374,89599,Balanidae,106057,Balanidae
+375,1198190,Pagurus prideaux,107239,Pagurus prideaux
+376,205728,Todaropsis eblanae,140625,Todaropsis eblanae
+377,158110,Brissopsis lyrifera,124373,Brissopsis lyrifera
+378,73885,Beringius turtoni,138855,Beringius turtoni
+379,620994,Geryon trispinosus,107374,Geryon trispinosus
+380,157426,Ophiura albida,124913,Ophiura albida
+381,NA,Halichondria (Halichondria) panicea,165853,Halichondria (Halichondria) panicea
+382,78475,Tritonia hombergii,416648,Tritonia hombergii
+383,98091,Pisidia longicornis,107188,Pisidia longicornis
+384,NA,Polybius pusillus,151200,Polybius pusillus
+385,NA,Polybius depurator,1750291,Polybius depurator
+386,97106,Crangonidae,106782,Crangonidae
+387,67669,Sabellaria,129520,Sabellaria
+388,76168,Scaphander lignarius,139488,Scaphander lignarius
+389,159174,Ascidia,103483,Ascidia
+390,155894,Securiflustra securifrons,111374,Securiflustra securifrons
+391,159038,Aplidium,103471,Aplidium
+392,568462,Volutopsius norwegicus,138938,Volutopsius norwegicus
+393,68297,Filograna implexa,130989,Filograna implexa
+394,157295,Stichastrella rosea,123813,Stichastrella rosea
+395,573747,Urticina felina,100834,Urticina felina
+396,NA,Spirontocaris liljeborgii,107531,Spirontocaris liljeborgii
+397,159373,Botryllus schlosseri,103862,Botryllus schlosseri
+398,NA,Epizoanthus papillosus,101037,Epizoanthus papillosus
+399,NA,Pseudamussium peslutrae,140717,Pseudamussium peslutrae
+400,73941,Colus islandicus,138902,Colus islandicus
+401,82343,Rossia macrosoma,141449,Rossia macrosoma
+402,NA,Reteporella beaniana,111448,Reteporella beaniana
+403,NA,Troschelia berniciensis,138930,Troschelia berniciensis
+404,NA,Haliclona (Haliclona) oculata,132833,Haliclona (Haliclona) oculata
+405,79118,Bivalvia,105,Bivalvia
+406,46862,Calcarea,559,Calcarea
+407,73931,Colus jeffreysianus,138903,Colus jeffreysianus
+408,167188,Icelus bicornis,127199,Icelus bicornis
+409,81026,Ensis siliqua,140735,Ensis siliqua
+410,568050,Panomya norvegica,140105,Panomya norvegica
+411,158130,Echinocardium flavescens,124394,Echinocardium flavescens
+412,NA,Venerupis corrugata,181364,Venerupis corrugata
+413,95594,Thysanopoda cristata,110715,Thysanopoda cristata
+414,78216,Archidoris pseudoargus,138763,Archidoris pseudoargus
+415,172809,Arnoglossus thori,127128,Arnoglossus thori
+416,98052,Galathea intermedia,107150,Galathea intermedia
+417,157130,Anseropoda placenta,123985,Anseropoda placenta
+418,50049,Hydrallmania falcata,117890,Hydrallmania falcata
+419,52669,Actinauge richardi,100930,Actinauge richardi
+420,204134,Nemertesia ramosa,117815,Nemertesia ramosa
+421,156862,Asteroidea,123080,Asteroidea
+422,159213,Ascidiella aspersa,103718,Ascidiella aspersa
+423,205802,Nymphon brevirostre,150520,Nymphon brevirostre
+424,NA,Gracilechinus acutus,532031,Gracilechinus acutus
+425,NA,Gattyana cirrhosa,130749,Gattyana cirrhosa
+426,159113,Ciona intestinalis,103732,Ciona intestinalis
+427,78216,Doris pseudoargus,181228,Doris pseudoargus
+428,158156,Psolus phantapus,124710,Psolus phantapus
+429,158257,Thyonidium,123503,Thyonidium
+430,96966,Pandalus,107044,Pandalus
+431,NA,Ebalia cranchii,107294,Ebalia cranchii
+432,80948,Spisula elliptica,140300,Spisula elliptica
+433,159109,Phlebobranchia,103435,Phlebobranchia
+434,NA,Urticina eques,100833,Urticina eques
+435,50314,Nemertesia antennina,117809,Nemertesia antennina
+436,69311,Pontobdella,116943,Pontobdella
+437,NA,Halichondria (Halichondria) bowerbanki,165801,Halichondria (Halichondria) bowerbanki
+438,67313,Scalibregma inflatum,130980,Scalibregma inflatum
+439,98533,Inachus,106905,Inachus
+440,NA,Tridonta elliptica,152282,Tridonta elliptica
+441,205560,Palliolum tigerinum,140710,Palliolum tigerinum
+442,97973,Munida rugosa,107160,Munida rugosa
+443,48506,Polymastia,132046,Polymastia
+444,52395,Virgularia mirabilis,128539,Virgularia mirabilis
+445,97708,Calocaris macandreae,107726,Calocaris macandreae
+446,NA,Euspira fusca,140529,Euspira fusca
+447,79800,Anomia ephippium,138748,Anomia ephippium
+448,82068,Cuspidaria cuspidata,139442,Cuspidaria cuspidata
+449,NA,Tridonta montagui,146518,Tridonta montagui
+450,98535,Inachus phalangium,107333,Inachus phalangium
+451,NA,Chelon ramada,1042830,Chelon ramada
+452,98818,Pilumnus hirtellus,107418,Pilumnus hirtellus
+453,99122,Thia scutellata,107281,Thia scutellata
+454,157212,Asteriidae,123121,Asteriidae
+455,50313,Nemertesia,117195,Nemertesia
+456,52630,Stomphia coccinea,100854,Stomphia coccinea
+457,52580,Bolocera tuediae,100817,Bolocera tuediae
+458,205653,Timoclea ovata,141929,Timoclea ovata
+459,159212,Ascidiella,103484,Ascidiella
+460,89559,Lepadidae,106048,Lepadidae
+461,64502,Harmothoe,129491,Harmothoe
+462,78359,Acanthodoris pilosa,140627,Acanthodoris pilosa
+463,98210,Upogebia deltaura,107739,Upogebia deltaura
+464,81799,Barnea candida,140767,Barnea candida
+465,81765,Hiatella arctica,140103,Hiatella arctica
+466,67979,Thelepus,129714,Thelepus
+467,199961,Maja squinado,107350,Maja squinado
+468,155483,Alcyonidium parasiticum,111604,Alcyonidium parasiticum
+469,48919,Tubularia indivisa,117994,Tubularia indivisa
+470,204023,Axinella infundibuliformis,132480,Axinella infundibuliformis
+471,50333,Aglaophenia,116999,Aglaophenia
+472,98556,Macropodia tenuirostris,107346,Macropodia tenuirostris
+473,49946,Abietinaria abietina,117870,Abietinaria abietina
+474,72608,Capulus ungaricus,138984,Capulus ungaricus
+475,49363,Hydractinia echinata,117644,Hydractinia echinata
+476,78381,Onchidoris muricata,140640,Onchidoris muricata
+477,67982,Thelepus cincinnatus,131543,Thelepus cincinnatus
+478,1197849,Anapagurus laevis,107218,Anapagurus laevis
+479,98917,Goneplax rhomboides,107292,Goneplax rhomboides
+480,157728,Amphiura filiformis,125080,Amphiura filiformis
+481,NA,Gracilechinus elegans,532035,Gracilechinus elegans
+482,156074,Dendrobeania,110842,Dendrobeania
+483,157348,Asteronyx loveni,124951,Asteronyx loveni
+484,164772,Gadiculus argenteus,126435,Gadiculus argenteus
+485,79140,Nucula nucleus,140590,Nucula nucleus
+486,97733,Callianassa,107072,Callianassa
+487,1138632,Pycnogonum litorale,239867,Pycnogonum litorale
+488,157017,Pseudarchaster parelii,124085,Pseudarchaster parelii
+489,656177,Dosima fascicularis,106148,Dosima fascicularis
+490,159189,Ascidia virginea,103717,Ascidia virginea
+491,158588,Antedon bifida,124201,Antedon bifida
+492,98378,Ebalia tuberosa,107301,Ebalia tuberosa
+493,65902,Nereis,129379,Nereis
+494,96947,Processa canaliculata,107682,Processa canaliculata
+495,67727,Ampharete,129155,Ampharete
+496,72553,Aporrhais serresiana,138761,Aporrhais serresiana
+497,206849,Parastichopus tremulus,124535,Parastichopus tremulus
+498,172043,Thorogobius ephippiatus,126937,Thorogobius ephippiatus
+499,157384,Ophiuridae,123200,Ophiuridae
+500,164747,Enchelyopus,125742,Enchelyopus
+501,52737,Metridium senile,100982,Metridium senile
+502,157617,Ophiopholis aculeata,125125,Ophiopholis aculeata
+503,NA,Ophiura sarsii,124934,Ophiura sarsii
+504,156898,Psilaster andromeda,123908,Psilaster andromeda
+505,204122,Diphasia attenuata,117877,Diphasia attenuata
+506,98838,Xantho pilipes,107441,Xantho pilipes
+507,167375,Triglops murrayi,127205,Triglops murrayi
+508,80930,Acanthocardia aculeata,138990,Acanthocardia aculeata
+509,81491,Dosinia exoleta,141911,Dosinia exoleta
+510,719135,Halecium halecinum,231751,Halecium halecinum
+511,158195,Cucumaria frondosa,124612,Cucumaria frondosa
+512,64604,Lepidonotus squamatus,130801,Lepidonotus squamatus
+513,719103,Ectopleura larynx,157933,Ectopleura larynx
+514,78509,Dendronotus frondosus,139523,Dendronotus frondosus
+515,NA,Caryophyllia (Caryophyllia) smithii,135144,Caryophyllia (Caryophyllia) smithii
+516,NA,Macropodia deflexa,107338,Macropodia deflexa
+517,NA,Ensis leei,876640,Ensis leei
+518,52687,Sagartiidae,100681,Sagartiidae
+519,158431,Leptosynapta inhaerens,124465,Leptosynapta inhaerens
+520,156865,Luidia,123260,Luidia
+521,98050,Galathea squamifera,107154,Galathea squamifera
+522,50434,Lytocarpia myriophyllum,117302,Lytocarpia myriophyllum
+523,93294,Amphipoda,1135,Amphipoda
+524,72623,Crepidula fornicata,138963,Crepidula fornicata
+525,NA,Steromphala cineraria,1039839,Steromphala cineraria
+526,573583,Phaxas pellucidus,140737,Phaxas pellucidus
+527,70378,Lacuna crassior,140167,Lacuna crassior
+528,98687,Pirimela denticulata,107278,Pirimela denticulata
+529,167208,Artediellus atlanticus,127193,Artediellus atlanticus
+530,167043,Eutrigla,150636,Eutrigla
+531,630372,Echiichthys,150629,Echiichthys
+532,167038,Trigla,126180,Trigla
+533,173050,Pegusa,126131,Pegusa
+534,167051,Chelidonichthys,126178,Chelidonichthys
+535,172828,Zeugopterus,126125,Zeugopterus
+536,NA,Chelon auratus,1044127,Chelon auratus
+537,164478,Lepadogaster lepadogaster,126518,Lepadogaster lepadogaster
+538,158937,Polyclinidae,103441,Polyclinidae
+539,154521,Sipunculidae,1648,Sipunculidae
+540,1077860,Thyone,146116,Thyone
+541,82359,Sepietta oweniana,141452,Sepietta oweniana
+542,613058,Symphodus,126023,Symphodus
+543,NA,Portumnus latipes,107400,Portumnus latipes
+544,NA,Cyanea lamarckii,135302,Cyanea lamarckii
+545,159372,Botryllus,103529,Botryllus
+546,157152,Henricia,123276,Henricia
+547,158191,Cucumaria,123479,Cucumaria
+548,81263,Gari fervensis,140870,Gari fervensis
+549,155156,Priapulus caudatus,101160,Priapulus caudatus
+550,155054,Echiurus echiurus,110377,Echiurus echiurus
+551,65897,Neanthes fucata,130387,Neanthes fucata
+552,68037,Lanice conchilega,131495,Lanice conchilega
+553,NA,Troschelia,137713,Troschelia
+554,78126,Pleurobranchus membranaceus,140820,Pleurobranchus membranaceus
+555,98743,Macropipus tuberculatus,107397,Macropipus tuberculatus
+556,98051,Galathea strigosa,107155,Galathea strigosa
+557,171581,Lumpenus,126088,Lumpenus
+558,81977,Thracia phaseolina,152378,Thracia phaseolina
+559,81305,Abra prismatica,141436,Abra prismatica
+560,NA,Paraleptopentacta elongata,1474372,Paraleptopentacta elongata
+561,79796,Anomia,137650,Anomia
+562,78883,Lepidochitona cinerea,152774,Lepidochitona cinerea
+563,81594,Venus verrucosa,141936,Venus verrucosa
+564,637881,Pomatoschistus lozanoi,126925,Pomatoschistus lozanoi
+565,82358,Sepietta,138482,Sepietta
+566,NA,Macomangulus tenuis,878470,Macomangulus tenuis
+567,79473,Musculus niger,140474,Musculus niger
+568,72712,Velutina velutina,141905,Velutina velutina
+569,206847,Pseudothyone raphanus,124661,Pseudothyone raphanus
+570,82362,Sepia elegans,141443,Sepia elegans
+571,81587,Venus,138648,Venus
+572,67674,Sabellaria spinulosa,130867,Sabellaria spinulosa
+573,718924,Hydroidolina,19494,Hydroidolina
+574,156384,Pentapora foliacea,150672,Pentapora foliacea
+575,573711,Polybius,106928,Polybius
+576,98417,Majidae,106760,Majidae
+577,82356,Sepiola,138483,Sepiola
+578,67679,Sabellaria alveolata,130866,Sabellaria alveolata
+579,97184,Pontophilus norvegicus,107563,Pontophilus norvegicus
+580,159371,Pelonaia corrugata,103894,Pelonaia corrugata
+581,157289,Marthasterias glacialis,123803,Marthasterias glacialis
+582,158119,Spatangidae,123177,Spatangidae
+583,167045,Trigloporus,154461,Trigloporus
+584,719232,Funiculina quadrangularis,128506,Funiculina quadrangularis
+585,98307,Dromia personata,107258,Dromia personata
+586,206253,Scalpellum scalpellum,106204,Scalpellum scalpellum
+587,157109,Pteraster militaris,124147,Pteraster militaris
+588,67685,Lygdamis muratus,130861,Lygdamis muratus
+589,69812,Calliostoma zizyphinum,141767,Calliostoma zizyphinum
+590,NA,Golfingia (Golfingia) vulgaris vulgaris,410724,Golfingia (Golfingia) vulgaris vulgaris
+591,96965,Pandalidae,106789,Pandalidae
+592,564128,Leucoraja circularis,105873,Leucoraja circularis
+593,76176,Philine,138339,Philine
+594,NA,Tritia reticulata,876821,Tritia reticulata
+595,1206598,Gilvossius tyrrhenus,1398927,Gilvossius tyrrhenus
+596,81787,Zirfaea crispata,140771,Zirfaea crispata
+597,159557,Molgula manhattensis,103788,Molgula manhattensis
+598,81862,Teredo navalis,141607,Teredo navalis
+599,97188,Philocheras trispinosus,107562,Philocheras trispinosus
+600,68341,Ditrupa arietina,130987,Ditrupa arietina
+601,159337,Styela clava,103929,Styela clava
+602,645018,Hippocampus guttulatus,154776,Hippocampus guttulatus
+603,205726,Todarodes sagittatus,140624,Todarodes sagittatus
+604,159173,Ascidiidae,103443,Ascidiidae
+605,98536,Inachus leptochirus,107330,Inachus leptochirus
+606,98049,Galathea dispersa,107148,Galathea dispersa
+607,NA,Tethya aurantium,134311,Tethya aurantium
+608,158247,Thyone inermis,124672,Thyone inermis
+609,157173,Henricia oculata,123970,Henricia oculata
+610,156969,Pontaster tenuispinus,123851,Pontaster tenuispinus
+611,NA,Poraniomorpha (Poraniomorpha) hispida,125170,Poraniomorpha (Poraniomorpha) hispida
+612,157490,Ophiocomina nigra,125027,Ophiocomina nigra
+613,11216,Laminariaceae,143755,Laminariaceae
+614,97001,Dichelopandalus bonnieri,107643,Dichelopandalus bonnieri
+615,73181,Trivia arctica,141741,Trivia arctica
+616,79429,Glycymeris glycymeris,140025,Glycymeris glycymeris
+617,564134,Leucoraja fullonica,105874,Leucoraja fullonica
+618,166497,Hippocampus hippocampus,127380,Hippocampus hippocampus
+619,52624,Anemonia,100695,Anemonia
+620,78728,Aeolidia papillosa,138709,Aeolidia papillosa
+621,65991,Hediste diversicolor,152302,Hediste diversicolor
+622,199960,Maja,106909,Maja
+623,167317,Myoxocephalus scorpioides,127202,Myoxocephalus scorpioides
+624,161125,Anguillidae,125425,Anguillidae
+625,162286,Stomias,126220,Stomias
+626,NA,Reteporella grimaldii,111453,Reteporella grimaldii
+627,NA,Nymphon gracile,134687,Nymphon gracile
+628,69795,Calliostoma,138584,Calliostoma
+629,160226,Mustelus,105732,Mustelus
+630,NA,Rissoides desmaresti,136135,Rissoides desmaresti
+631,NA,Liomesus ovum,138912,Liomesus ovum
+632,157969,Strongylocentrotus droebachiensis,124321,Strongylocentrotus droebachiensis
+633,51653,Chrysaora hysoscella,135304,Chrysaora hysoscella
+634,80401,Lucinoma borealis,140283,Lucinoma borealis
+635,57595,Malacobdella grossa,122641,Malacobdella grossa
+636,NA,Polititapes rhomboides,745846,Polititapes rhomboides
+637,NA,Lepas (Lepas) anatifera,733346,Lepas (Lepas) anatifera
+638,614244,Symphodus bailloni,273566,Symphodus bailloni
+639,NA,Eunicella verrucosa,125366,Eunicella verrucosa
+640,79036,Acanthochitona crinita,138675,Acanthochitona crinita
+641,96451,Palaemon serratus,107616,Palaemon serratus
+642,11217,Laminaria,144199,Laminaria
+643,660046,Rhodophyta,852,Rhodophyta
+644,95395,Caprella linearis,101839,Caprella linearis
+645,11334,Fucus,144129,Fucus
+646,159130,Diazona violacea,103733,Diazona violacea
+647,156030,Cellariidae,110735,Cellariidae
+648,199958,Pisa tetraodon,107358,Pisa tetraodon
+649,10686,Phaeophyceae,830,Phaeophyceae
+650,82603,Octopus vulgaris,140605,Octopus vulgaris
+651,96811,Eualus pusiolus,107507,Eualus pusiolus
+652,97657,Palinurus elephas,107703,Palinurus elephas
+653,NA,Polybius corrugatus,1752528,Polybius corrugatus
+654,98571,Pisa armata,107353,Pisa armata
+655,76188,Philine aperta,140744,Philine aperta
+656,96646,Alpheus glaber,107477,Alpheus glaber
+657,205570,Limaria hians,140235,Limaria hians
+658,97964,Galatheidae,106733,Galatheidae
+659,11342,Fucus serratus,145546,Fucus serratus
+660,6562,Ulva lactuca,145984,Ulva lactuca
+661,52588,Actinia,100694,Actinia
+662,83560,Nymphon stroemi,134711,Nymphon stroemi
+663,57423,Tubulanus annulatus,122626,Tubulanus annulatus
+664,5415,Chlorophyceae,802,Chlorophyceae
+665,81006,Solenidae,233,Solenidae
+666,53862,Pleurobrachia pileus,106386,Pleurobrachia pileus
+667,81024,Ensis ensis,140733,Ensis ensis
+668,158595,Leptometra celtica,124224,Leptometra celtica
+669,204876,Jujubinus exasperatus,141807,Jujubinus exasperatus
+670,80711,Turtonia minuta,141875,Turtonia minuta
+671,160846,Raja,105766,Raja
+672,205636,Ensis magnus,160539,Ensis magnus
+673,92120,Isopoda,1131,Isopoda
+674,NA,Cylista undata,855675,Cylista undata
+675,98207,Upogebia,107079,Upogebia
+676,168556,Lactarius lactarius,218381,Lactarius lactarius
+677,79151,Nucula nitidosa,140589,Nucula nitidosa
+678,166326,Lampris guttatus,126522,Lampris guttatus
+679,98905,Geryon,106918,Geryon
+680,82523,Illex coindetii,140621,Illex coindetii
+681,74555,Turridae,152,Turridae
+682,11335,Fucus vesiculosus,145548,Fucus vesiculosus
+683,98058,Porcellanidae,106734,Porcellanidae
+684,158248,Thyone fusus,124670,Thyone fusus
+685,69580,Diodora graeca,139951,Diodora graeca
+686,206848,Holothuria forskali,1670329,Holothuria forskali
+687,92588,Idotea,118454,Idotea
+688,159413,Distomus variolosus,103890,Distomus variolosus
+689,79808,Limidae,1778,Limidae
+690,158131,Echinocardium pennatifidum,124402,Echinocardium pennatifidum
+691,97680,Scyllarides latus,107708,Scyllarides latus
+692,205549,Atrina fragilis,146524,Atrina fragilis
+693,169215,Pagellus erythrinus,127060,Pagellus erythrinus
+694,655998,Ophidiasteridae,123137,Ophidiasteridae
+695,169212,Pagellus bogaraveo,127059,Pagellus bogaraveo
+696,573716,Acrocnida brachiata,236130,Acrocnida brachiata
+697,156968,Pontaster,123244,Pontaster
+698,80796,Astartidae,228,Astartidae
+699,160836,Torpedo torpedo,271691,Torpedo torpedo
+700,552886,Callianassa subterranea,107729,Callianassa subterranea
+701,166781,Sebastes norvegicus,151324,Sebastes norvegicus
+702,48168,Raspailia,131888,Raspailia
+703,78807,Polyplacophora,55,Polyplacophora
+704,48505,Polymastiidae,131673,Polymastiidae
+705,206706,Chartella,110910,Chartella
+706,770790,Adamsia palliata,445590,Adamsia palliata
+707,48524,Cliona celata,134121,Cliona celata
+708,NA,Pachymatisma johnstonia,134057,Pachymatisma johnstonia
+709,155474,Alcyonidiidae,110783,Alcyonidiidae
+710,1078243,Pawsonia saxicola,124653,Pawsonia saxicola
+711,NA,Phakellia ventilabrum,132511,Phakellia ventilabrum
+712,48489,Suberites domuncula,134282,Suberites domuncula
+713,NA,Xandarovula patula,224890,Xandarovula patula
+714,52688,Sagartia,100776,Sagartia
+715,73182,Trivia monacha,141744,Trivia monacha
+716,NA,Echinaster (Echinaster) sepositus,125161,Echinaster (Echinaster) sepositus
+717,154596,Golfingiidae,2032,Golfingiidae
+718,159293,Dendrodoa grossularia,103882,Dendrodoa grossularia
+719,NA,Patella pellucida,147459,Patella pellucida
+720,78036,Aplysia punctata,138758,Aplysia punctata
+721,155879,Flustridae,110749,Flustridae
+722,68244,Serpula vermicularis,131051,Serpula vermicularis
+723,11340,Fucus spiralis,145547,Fucus spiralis
+724,11390,Sargassum muticum,494791,Sargassum muticum
+725,NA,Maja brachydactyla,107347,Maja brachydactyla
+726,205714,Sepietta neglecta,141450,Sepietta neglecta
+727,NA,Adinaefiola pfefferi,1437789,Adinaefiola pfefferi
+728,621752,Atlantopandalus propinqvus,158351,Atlantopandalus propinqvus
+729,64614,Lepidonotus clava,130800,Lepidonotus clava
+730,NA,Lagis koreni,152367,Lagis koreni
+731,48394,Halichondria,131807,Halichondria
+732,96174,Pasiphaea sivado,107677,Pasiphaea sivado
+733,52596,Actinia equina,100803,Actinia equina
+734,51913,Rhizostoma pulmo,135299,Rhizostoma pulmo
+735,81812,Pholas dactylus,140770,Pholas dactylus
+736,96161,Pasiphaeidae,106790,Pasiphaeidae
+737,98212,Upogebia stellata,107742,Upogebia stellata
+738,89433,Cirripedia,1082,Cirripedia
+739,NA,Botrylloides leachii,250081,Botrylloides leachii
+740,81018,Solen marginatus,141546,Solen marginatus
+741,98379,Ebalia tumefacta,107302,Ebalia tumefacta
+742,157062,Solasteridae,123143,Solasteridae
+743,52541,Actiniidae,100653,Actiniidae
+744,81916,Lyonsia,138154,Lyonsia
+745,89756,Sacculina carcini,134805,Sacculina carcini
+746,155475,Alcyonidium,110993,Alcyonidium
+747,NA,Cylista troglodytes,855674,Cylista troglodytes
+748,49917,Sertularia cupressina,117913,Sertularia cupressina
+749,98531,Eurynome aspera,107318,Eurynome aspera
+750,98979,Pinnotheres pisum,107473,Pinnotheres pisum
+751,83545,Pycnogonida,1302,Pycnogonida
+752,205487,Nucula sulcata,140592,Nucula sulcata
+753,NA,Ocenebra erinaceus,140405,Ocenebra erinaceus
+754,204853,Calliostoma granulatum,141753,Calliostoma granulatum
+755,642613,Lepadogaster candolii,272526,Lepadogaster candolii
+756,68232,Serpulidae,988,Serpulidae
+757,1173151,Hippolytidae,106777,Hippolytidae
+758,82335,Sepiolidae,11725,Sepiolidae
+759,205268,Okenia elegans,140037,Okenia elegans
+760,47771,Haliclona,131834,Haliclona
+761,205282,Lomanotus genei,140273,Lomanotus genei
+762,79456,Mytilus galloprovincialis,140481,Mytilus galloprovincialis
+763,51671,Cyanea capillata,135301,Cyanea capillata
+764,NA,Alitta virens,234851,Alitta virens
+765,79866,Ostreidae,215,Ostreidae
+766,NA,Polybius henslowii,107399,Polybius henslowii
+767,NA,Ophiocten affinis,124850,Ophiocten affinis
+768,96162,Pasiphaea,107052,Pasiphaea
+769,64381,Laetmonice hystrix,129845,Laetmonice hystrix
+770,542683,Idotea linearis,119046,Idotea linearis
+771,69312,Pontobdella muricata,116986,Pontobdella muricata
+772,156553,Celleporidae,110736,Celleporidae
+773,69746,Patellidae,113,Patellidae
+774,NA,Echinidea,510534,Echinidea
+775,157123,Asterina gibbosa,123987,Asterina gibbosa
+776,NA,Monodaeus couchii,241154,Monodaeus couchii
+777,98361,Leucosiidae,106758,Leucosiidae
+778,NA,Melarhaphe neritoides,140266,Melarhaphe neritoides
+779,1187416,Philocheras fasciatus,107559,Philocheras fasciatus
+780,11331,Ascophyllum nodosum,145541,Ascophyllum nodosum
+781,96756,Spirontocaris,106994,Spirontocaris
+782,98557,Macropodia linaresi,107341,Macropodia linaresi
+783,NA,Trophonopsis muricata,152370,Trophonopsis muricata
+784,52655,Calliactis parasitica,100946,Calliactis parasitica
+785,NA,Styela canopus,103926,Styela canopus
+786,92246,Eurydice pulchra,118852,Eurydice pulchra
+787,643891,Chelidonichthys obscurus,127263,Chelidonichthys obscurus
+788,80931,Acanthocardia,137732,Acanthocardia
+789,99152,Squilla mantis,136137,Squilla mantis
+790,69794,Trochidae,443,Trochidae
+791,52022,Alcyonium glomeratum,132159,Alcyonium glomeratum
+792,NA,Bathynectes longipes,107376,Bathynectes longipes
+793,97059,Pandalina brevirostris,107647,Pandalina brevirostris
+794,1187891,Processa modica modica,108343,Processa modica modica
+795,204176,Actinia fragacea,100805,Actinia fragacea
+796,206925,Branchiostoma lanceolatum,104906,Branchiostoma lanceolatum
+797,67097,Chaetopterus variopedatus,129914,Chaetopterus variopedatus
+798,NA,Atelecyclus undecimdentatus,107274,Atelecyclus undecimdentatus
+799,155029,Maxmuelleria lankesteri,110368,Maxmuelleria lankesteri
+800,98089,Porcellana platycheles,107190,Porcellana platycheles
+801,69752,Patella vulgata,140685,Patella vulgata
+802,NA,Rapana venosa,140416,Rapana venosa
+803,199957,Macropodia longirostris,107343,Macropodia longirostris
+804,157225,Leptasterias,123222,Leptasterias
+805,48364,Cladocroce ventilabrum,166307,Cladocroce ventilabrum
+806,157074,Solaster,123338,Solaster
+807,660675,Lophozozymus incisus,444382,Lophozozymus incisus
+808,82115,Scaphopoda,104,Scaphopoda
+809,78571,Armina loveni,138804,Armina loveni
+810,95571,Thysanoessa,110679,Thysanoessa
+811,NA,Polybius navigator,1752525,Polybius navigator
+812,NA,Venus thomassini,507988,Venus thomassini
+813,NA,Fabulina fabula,146907,Fabulina fabula
+814,NA,Alloteuthis media,153134,Alloteuthis media
+815,68076,Sabellidae,985,Sabellidae
+816,96752,Hippolyte varians,107518,Hippolyte varians
+817,57416,Tubulanus,122388,Tubulanus
+818,67706,Pectinaria,129437,Pectinaria
+819,74102,Nassariidae,151,Nassariidae
+820,NA,Cylista elegans,1471945,Cylista elegans
+821,47628,Dysidea fragilis,132324,Dysidea fragilis
+822,156421,Porella compressa,111124,Porella compressa
+823,157060,Spinulosida,123089,Spinulosida
+824,159187,Ascidia mentula,103710,Ascidia mentula
+825,159188,Ascidia conchilega,103702,Ascidia conchilega
+826,205651,Clausinella fasciata,141909,Clausinella fasciata
+827,206309,Cirolana cranchii,118839,Cirolana cranchii
+828,98748,Xanthidae,106769,Xanthidae
+829,644150,Micrenophrys lilljeborgii,127201,Micrenophrys lilljeborgii
+830,204124,Diphasia nigra,117881,Diphasia nigra
+831,57411,Nemertea,152391,Nemertea
+832,96005,Solenocera membranacea,107120,Solenocera membranacea
+833,NA,Buccinum humphreysianum,138865,Buccinum humphreysianum
+834,92242,Eurydice,118401,Eurydice
+835,73264,Urosalpinx cinerea,140429,Urosalpinx cinerea
+836,96610,Alpheus macrocheles,107479,Alpheus macrocheles
+837,160959,Dasyatis pastinaca,105851,Dasyatis pastinaca
+838,81301,Abra,138474,Abra
+839,97187,Philocheras,107010,Philocheras
+840,NA,Sepiola tridens,494117,Sepiola tridens
+841,1137624,Ammothella longipes,134614,Ammothella longipes
+842,1197663,Diogenes pugilator,107199,Diogenes pugilator
+843,1198068,Pagurus alatus,107230,Pagurus alatus
+844,80797,Astarte,137683,Astarte
+845,205646,Venerupis,138647,Venerupis
+846,96497,Palaemon longirostris,107615,Palaemon longirostris
+847,659283,Stelligera,132037,Stelligera
+848,81743,Varicorbula gibba,378492,Varicorbula gibba
+849,96941,Processidae,106791,Processidae
+850,159540,Molgulidae,103448,Molgulidae
+851,92226,Cirolana,118399,Cirolana
+852,98532,Eurynome spinosa,107319,Eurynome spinosa
+853,64359,Aphroditidae,938,Aphroditidae
+854,51917,Rhizostoma octopus,152203,Rhizostoma octopus
+855,81439,Veneridae,243,Veneridae
+856,66119,Glycera tridactyla,130130,Glycera tridactyla
+857,69981,Gibbula,138590,Gibbula
+858,914211,Echiura,1269,Echiura
+859,52457,Parazoanthus,100793,Parazoanthus
+860,NA,Glossus humanus,140023,Glossus humanus
+861,205632,Lutraria angustior,140294,Lutraria angustior
+862,97666,Scyllarus arctus,107709,Scyllarus arctus
+863,NA,Saccharina latissima,234483,Saccharina latissima
+864,NA,Obtusella intersecta,141304,Obtusella intersecta
+865,83646,Anoplodactylus petiolatus,134723,Anoplodactylus petiolatus
+866,70381,Lacuna vincta,140170,Lacuna vincta
+867,67096,Chaetopterus,129229,Chaetopterus
+868,67065,Magelona mirabilis,130271,Magelona mirabilis
+869,198011,Profilicollis botulus,448883,Profilicollis botulus
+870,169416,Mullus,126034,Mullus
+871,NA,Rissoides,136112,Rissoides
+872,204814,Trachelobdella lubrica,116991,Trachelobdella lubrica
+873,NA,Philine quadripartita,574582,Philine quadripartita
+874,NA,Tritia,246140,Tritia
+875,159567,Molgula occulta,103791,Molgula occulta
+876,98377,Ebalia,106889,Ebalia
+877,80942,Mactridae,230,Mactridae
+878,72984,Euspira,138239,Euspira
+879,158004,Echinocyamus pusillus,124273,Echinocyamus pusillus
+880,48913,Tubulariidae,1603,Tubulariidae
+881,157646,Amphiuridae,123206,Amphiuridae
+882,158069,Spatangoida,123106,Spatangoida
+883,NA,Rhombosepion orbignyanum,1667212,Rhombosepion orbignyanum
+884,591706,Jaxea nocturna,107737,Jaxea nocturna
+885,50623,Aequorea,116998,Aequorea
+886,64380,Laetmonice filicornis,129844,Laetmonice filicornis
+887,172834,Lepidorhombus boscii,127145,Lepidorhombus boscii
+888,73726,Buccinidae,149,Buccinidae
+889,79790,Anomiidae,214,Anomiidae
+890,169207,Pagrus pagrus,127063,Pagrus pagrus
+891,611706,Paraphellia expansa,100961,Paraphellia expansa
+892,169213,Pagellus acarne,127057,Pagellus acarne
+893,97988,Munida sarsi,107163,Munida sarsi
+894,NA,Ctenophora,1248,Ctenophora
+895,95601,Penaeoidea,106683,Penaeoidea
+896,98913,Goneplax,106888,Goneplax
+897,159227,Styelidae,103450,Styelidae
+898,64376,Laetmonice,129196,Laetmonice
+899,98831,Pilumnus spinifer,107420,Pilumnus spinifer
+900,78842,Ischnochitonidae,69,Ischnochitonidae
+901,82521,Illex illecebrosus,153087,Illex illecebrosus
+902,70395,Littorina,138135,Littorina
+903,158342,Stichopodidae,123184,Stichopodidae
+904,165116,Echiodon drummondii,126663,Echiodon drummondii
+905,156987,Goniasteridae,123135,Goniasteridae
+906,156997,Ceramaster granularis,124020,Ceramaster granularis
+907,1078759,Parastichopus regalis,149898,Parastichopus regalis
+908,98577,Achaeus cranchii,107313,Achaeus cranchii
+909,79123,Nuculidae,204,Nuculidae
+910,158541,Crinoidea,123081,Crinoidea
+911,161708,Alosa alosa,126413,Alosa alosa
+912,98910,Goneplacidae,106757,Goneplacidae
+913,89560,Lepas,106087,Lepas
+914,204830,Helcion,151344,Helcion
+915,93745,Gammaridae,101383,Gammaridae
+916,98696,Callinectes sapidus,107379,Callinectes sapidus
+917,97316,Nephrops,106863,Nephrops
+918,81492,Dosinia lupinus,141912,Dosinia lupinus
+919,79500,Modiolus,138223,Modiolus
+920,51267,Velella velella,117832,Velella velella
+921,1078313,Leptopentacta elongata,124635,Leptopentacta elongata
+922,159541,Molgula,103509,Molgula
+923,67899,Terebellidae,982,Terebellidae
+924,48570,Tethya,132077,Tethya
+925,51661,Pelagia noctiluca,135305,Pelagia noctiluca
+926,NA,Opisthobranchia,382226,Opisthobranchia
+927,164701,Gadidae,125469,Gadidae
+928,158574,Antedonidae,123148,Antedonidae
+929,NA,Musculus subpictus,506128,Musculus subpictus
+930,11328,Fucales,844,Fucales
+931,97190,Philocheras bispinosus,107557,Philocheras bispinosus
+932,95496,Euphausiacea,1128,Euphausiacea
+933,NA,Talochlamys pusio,236715,Talochlamys pusio
+934,11386,Halidrys siliquosa,145540,Halidrys siliquosa
+935,159385,Polycarpa pomaria,103909,Polycarpa pomaria
+936,166593,Nerophis lumbriciformis,127383,Nerophis lumbriciformis
+937,160034,Galeus melastomus,105812,Galeus melastomus
+938,79597,Pteria hirundo,140891,Pteria hirundo
+939,97175,Pontophilus,107011,Pontophilus
+940,NA,Gracilariopsis longissima,146960,Gracilariopsis longissima
+941,79033,Acanthochitona,137613,Acanthochitona
+942,NA,Pecten jacobaeus,394429,Pecten jacobaeus
+943,66025,Nephtys hombergii,130359,Nephtys hombergii
+944,11361,Himanthalia elongata,145551,Himanthalia elongata
+945,66014,Nephtys caeca,130355,Nephtys caeca
+946,98717,Portunus,106930,Portunus
+947,171125,Blennius,125915,Blennius
+948,158190,Cucumariidae,123187,Cucumariidae
+949,79472,Musculus,138225,Musculus
+950,99055,Planes minutus,107462,Planes minutus
+951,NA,Phascolion (Phascolion) strombus strombus,410749,Phascolion (Phascolion) strombus strombus
+952,NA,Ebalia granulosa,107298,Ebalia granulosa
+953,156049,Bugula,110839,Bugula
+954,159158,Corella parallelogramma,103743,Corella parallelogramma
+955,79126,Nucula,138262,Nucula
+956,80969,Mactra corallina,151616,Mactra corallina
+957,80932,Acanthocardia tuberculata,381057,Acanthocardia tuberculata
+958,68299,Protula tubularia,131035,Protula tubularia
+959,81962,Thracia,138549,Thracia
+960,NA,Gobiiformes,1517500,Gobiiformes
+961,NA,Tridonta borealis,152398,Tridonta borealis
+962,71307,Turritella,138615,Turritella
+963,69750,Patella,138312,Patella
+964,161931,Salmonidae,125587,Salmonidae
+965,165612,Scomberesox saurus,126392,Scomberesox saurus
+966,NA,Marsenia perspicua,1505994,Marsenia perspicua
+967,205245,Doris sticta,139622,Doris sticta
+968,78394,Onchidoris bilamellata,150457,Onchidoris bilamellata
+969,205661,Pholadidea loscombiana,140769,Pholadidea loscombiana
+970,NA,Phidoloporidae,110768,Phidoloporidae
+971,157137,Poraniidae,123138,Poraniidae
+972,70493,Hydrobiidae,120,Hydrobiidae
+973,204180,Anemonia viridis,100808,Anemonia viridis
+974,155868,Electra pilosa,1789435,Electra pilosa
+975,92437,Cymothoidae,118274,Cymothoidae
+976,NA,Polybius vernalis,1750288,Polybius vernalis
+977,73297,Nucella lapillus,140403,Nucella lapillus
+978,155617,Crisia aculeata,111690,Crisia aculeata
+979,NA,Epimeria (Epimeria) cornigera,1053398,Epimeria (Epimeria) cornigera
+980,167865,Serranus cabrilla,127041,Serranus cabrilla
+981,157821,Echinoidea,123082,Echinoidea
+982,1198122,Pagurus forbesii,107237,Pagurus forbesii
+983,78535,Doto coronata,139631,Doto coronata
+984,78532,Doto,137916,Doto
+985,82520,Illex,138278,Illex
+986,96213,Palaemonidae,106788,Palaemonidae
+987,NA,Azorinus chamasolen,141541,Azorinus chamasolen
+988,81634,Mysia undata,140728,Mysia undata
+989,89589,Balanomorpha,106039,Balanomorpha
+990,95110,Hyperia galba,103251,Hyperia galba
+991,NA,Lepas (Lepas) anserifera,733347,Lepas (Lepas) anserifera
+992,92551,Astacilla longicornis,119024,Astacilla longicornis
+993,NA,Dipturus intermedius,711846,Dipturus intermedius
+994,NA,Distolambrus maltzami,442261,Distolambrus maltzami
+995,74103,Nassarius,138235,Nassarius
+996,NA,Chlorophyta,801,Chlorophyta
+997,NA,Steromphala tumida,1477356,Steromphala tumida
+998,64397,Polynoidae,939,Polynoidae
+999,81015,Solen,138515,Solen
+1000,94633,Phoxocephalidae,101403,Phoxocephalidae
+1001,204813,Pontobdella vosmaeri,116987,Pontobdella vosmaeri
+1002,154520,Sipuncula,1268,Sipuncula
+1003,81145,Arcopagia crassa,141577,Arcopagia crassa
+1004,50646,Aequorea vitrina,117273,Aequorea vitrina
+1005,83661,Pycnogonidae,1567,Pycnogonidae
+1006,NA,Striarca lactea,140571,Striarca lactea
+1007,NA,Sagartia undata,854485,Sagartia undata
+1008,81978,Thracia villosiuscula,141651,Thracia villosiuscula
+1009,166487,Hippocampus,126224,Hippocampus
+1010,81688,Myidae,247,Myidae
+1011,642580,Lepadogaster purpurea,126519,Lepadogaster purpurea
+1012,73174,Erato voluta,139761,Erato voluta
+1013,69599,Emarginula fissura,139959,Emarginula fissura
+1014,89600,Balanus,106122,Balanus
+1015,543589,Ceratothoa steindachneri,118874,Ceratothoa steindachneri
+1016,79475,Musculus discors,140472,Musculus discors
+1017,NA,Steromphala,576164,Steromphala
+1018,67647,Owenia fusiformis,130544,Owenia fusiformis
+1019,67355,Ophelia borealis,130491,Ophelia borealis
+1020,80978,Lutraria magna,1793849,Lutraria magna
+1021,NA,Ruditapes decussatus,231749,Ruditapes decussatus
+1022,165546,Belonidae,125451,Belonidae
+1023,53954,Beroe,1434803,Beroe
+1024,NA,Desmophyllum pertusum,1245747,Desmophyllum pertusum
+1025,99141,Squillidae,136093,Squillidae
+1026,166705,Sebastes,126175,Sebastes
+1027,159018,Polyclinum aurantium,103674,Polyclinum aurantium
+1028,206833,Ophiothrix luetkeni,125134,Ophiothrix luetkeni
+1029,1267873,Magallana gigas,836033,Magallana gigas
+1030,80428,Myrtea spinifera,140287,Myrtea spinifera
+1031,NA,Polybius dioscurus,1748243,Polybius dioscurus
+1032,161072,Acipenser sturio,126279,Acipenser sturio
+1033,161065,Acipenser,125618,Acipenser
+1034,163665,Abramis,154271,Abramis
+1035,161064,Acipenseridae,125424,Acipenseridae
+1036,165595,Belone svetovidovi,126376,Belone svetovidovi
+1037,165206,Sciadonus galatheae,126652,Sciadonus galatheae
+1038,NA,Nototeredo norvagica,181368,Nototeredo norvagica
+1039,53917,Mnemiopsis leidyi,106401,Mnemiopsis leidyi
+1040,173031,Dicologlossa cuneata,127154,Dicologlossa cuneata
+1041,173016,Solea senegalensis,127159,Solea senegalensis
+1042,166840,Scorpaena porcus,127247,Scorpaena porcus
+1043,169366,Argyrosomus regius,127007,Argyrosomus regius
+1044,169306,Umbrina canariensis,127011,Umbrina canariensis
+1045,168590,Trachurus mediterraneus,126820,Trachurus mediterraneus
+1046,205643,Callista chione,141906,Callista chione
+1047,67095,Chaetopteridae,918,Chaetopteridae
+1048,NA,Diphasia margareta,117880,Diphasia margareta
+1049,NA,Venus casina,141934,Venus casina
+1050,97083,Chlorotocus crassicornis,107642,Chlorotocus crassicornis
+1051,1187894,Processa nouveli holthuisi,108344,Processa nouveli holthuisi
+1052,NA,Pteroeides griseum,181504,Pteroeides griseum
+1053,67411,Sternaspis scutata,131242,Sternaspis scutata
+1054,169218,Boops boops,127047,Boops boops
+1055,50036,Tamarisca tamarisca,117930,Tamarisca tamarisca
+1056,205247,Geitodoris planata,139580,Geitodoris planata
+1057,1197847,Anapagurus hyndmanni,107217,Anapagurus hyndmanni
+1058,49870,Sertularella gayi,117902,Sertularella gayi
+1059,NA,Cavernularia pusilla,128535,Cavernularia pusilla
+1060,76218,Gastropteron rubrum,181212,Gastropteron rubrum
+1061,67515,Maldanidae,923,Maldanidae
+1062,1198276,Spiropagurus elegans,107242,Spiropagurus elegans
+1063,NA,Moerella donacina,147021,Moerella donacina
+1064,NA,Veretillum cynomorium,128536,Veretillum cynomorium
+1065,NA,Laevicardium oblongum,139006,Laevicardium oblongum
+1066,154522,Sipunculus,136031,Sipunculus
+1067,81260,Gari,138388,Gari
+1068,164481,Diplecogaster,125779,Diplecogaster
+1069,1079595,Oestergrenia digitata,152547,Oestergrenia digitata
+1070,52666,Actinauge,100750,Actinauge
+1071,52367,Funiculina,128490,Funiculina
+1072,993107,Astropecten irregularis irregularis,125199,Astropecten irregularis irregularis
+1073,67695,Amphictene auricoma,152448,Amphictene auricoma
+1074,NA,Adinaefiola ligulata,1437787,Adinaefiola ligulata
+1075,556314,Rondeletiola minor,141448,Rondeletiola minor
+1076,96942,Processa,107054,Processa
+1077,205695,Antalis novemcostata,196381,Antalis novemcostata
+1078,NA,Acanthocardia paucicostata,138993,Acanthocardia paucicostata
+1079,171838,Gobius auratus,126884,Gobius auratus
+1080,97965,Munida,106835,Munida
+1081,97817,Pagurus cuanensis,107235,Pagurus cuanensis
+1082,67535,Maldane,129352,Maldane
+1083,93375,Haploops,101447,Haploops
+1084,64357,Annelida,882,Annelida
+1085,166838,Scorpaena notata,127246,Scorpaena notata
+1086,158589,Antedon petasus,124210,Antedon petasus
+1087,67644,Oweniidae,975,Oweniidae
+1088,158426,Labidoplax,123448,Labidoplax
+1089,97054,Plesionika heterocarpus,107660,Plesionika heterocarpus
+1090,164771,Gadiculus,125731,Gadiculus
+1091,50084,Amphisbetia operculata,117874,Amphisbetia operculata
+1092,158309,Holothuriidae,731943,Holothuriidae
+1093,NA,Pentapora fascialis,111082,Pentapora fascialis
+1094,49848,Sertularella,117233,Sertularella
+1095,82151,Antalis,150531,Antalis
+1096,49901,Sertularia,117234,Sertularia
+1097,57450,Cerebratulus marginatus,122478,Cerebratulus marginatus
+1098,167041,Trigla lyra,127266,Trigla lyra
+1099,NA,Diopatra neapolitana,130460,Diopatra neapolitana
+1100,82048,Cuspidaria rostrata,139453,Cuspidaria rostrata
+1101,NA,Glycera fallax,336908,Glycera fallax
+1102,66012,Nephtys assimilis,130353,Nephtys assimilis
+1103,93321,Ampelisca,101445,Ampelisca
+1104,555681,Oenonidae,22610,Oenonidae
+1105,65950,Platynereis dumerilii,130417,Platynereis dumerilii
+1106,68138,Sabella,129549,Sabella
+1107,156031,Cellaria,110869,Cellaria
+1108,NA,Desmacidon fruticosum,133526,Desmacidon fruticosum
+1109,NA,Hirudinea,2041,Hirudinea
+1110,NA,Glycera celtica,130119,Glycera celtica
+1111,158343,Parastichopus,123458,Parastichopus
+1112,205356,Solenogastres,2094,Solenogastres
+1113,NA,Necora,106927,Necora
+1114,1201740,Munida intermedia,107157,Munida intermedia
+1115,166839,Scorpaena scrofa,127248,Scorpaena scrofa
+1116,164732,Urophycis tenuis,126504,Urophycis tenuis
+1117,164791,Merluccius bilinearis,158962,Merluccius bilinearis
+1118,167439,Aspidophoroides monopterygius,159459,Aspidophoroides monopterygius
+1119,164730,Urophycis chuss,126503,Urophycis chuss
+1120,162035,Mallotus villosus,126735,Mallotus villosus
+1121,NA,Myzopsetta ferruginea,1571969,Myzopsetta ferruginea
+1122,167320,Myoxocephalus octodecemspinosus,159520,Myoxocephalus octodecemspinosus
+1123,164499,Lophius americanus,159184,Lophius americanus
+1124,564145,Leucoraja ocellata,158553,Leucoraja ocellata
+1125,564151,Malacoraja senta,158554,Malacoraja senta
+1126,NA,Leucoraja erinaceus,1577339,Leucoraja erinaceus
+1127,630979,Zoarces americanus,159267,Zoarces americanus
+1128,172567,Peprilus triacanthus,159828,Peprilus triacanthus
+1129,167289,Hemitripterus americanus,159518,Hemitripterus americanus
+1130,167207,Artediellus uncinatus,127195,Artediellus uncinatus
+1131,172905,Pseudopleuronectes americanus,158885,Pseudopleuronectes americanus
+1132,172930,Reinhardtius hippoglossoides,127144,Reinhardtius hippoglossoides
+1133,550548,Liparis fabricii,127218,Liparis fabricii
+1134,164734,Phycis chesteri,158988,Phycis chesteri
+1135,165395,Nezumia bairdii,183289,Nezumia bairdii
+1136,164793,Merluccius albidus,158748,Merluccius albidus
+1137,171674,Ammodytes dubius,151520,Ammodytes dubius
+1138,NA,Hippoglossina oblonga,158833,Hippoglossina oblonga
+1139,165255,Lycodes,126104,Lycodes
+1140,161706,Alosa pseudoharengus,158669,Alosa pseudoharengus
+1141,167478,Leptagonus decagonus,127191,Leptagonus decagonus
+1142,172746,Scophthalmus aquosus,158907,Scophthalmus aquosus
+1143,170481,Tautogolabrus adspersus,159785,Tautogolabrus adspersus
+1144,161702,Alosa sapidissima,158670,Alosa sapidissima
+1145,167545,Eumicrotremus spinosus,127217,Eumicrotremus spinosus
+1146,171616,Ulvaria subbifurcata,159821,Ulvaria subbifurcata
+1147,171609,Cryptacanthodes maculatus,159675,Cryptacanthodes maculatus
+1148,162575,Myctophidae,125498,Myctophidae
+1149,172719,Citharichthys arctifrons,158791,Citharichthys arctifrons
+1150,164769,Gaidropsarus ensis,126453,Gaidropsarus ensis
+1151,162430,Chlorophthalmus agassizi,126336,Chlorophthalmus agassizi
+1152,95392,Caprella,101430,Caprella
+1153,162041,Osmerus mordax,126737,Osmerus mordax
+1154,165280,Lycodes reticulatus,127112,Lycodes reticulatus
+1155,165419,Trachyrincus murrayi,126481,Trachyrincus murrayi
+1156,171342,Anarhichas minor,126759,Anarhichas minor
+1157,167426,Agonidae,125588,Agonidae
+1158,630981,Lycodes terraenovae,127117,Lycodes terraenovae
+1159,1205889,Pterotracheoidea,387338,Pterotracheoidea
+1160,631020,Lumpenus fabricii,127073,Lumpenus fabricii
+1161,160703,Centroscyllium fabricii,105906,Centroscyllium fabricii
+1162,171601,Eumesogrammus praecisus,159817,Eumesogrammus praecisus
+1163,162719,Myctophum,125829,Myctophum
+1164,165332,Macrouridae,125471,Macrouridae
+1165,644687,Arctozenus risso,126352,Arctozenus risso
+1166,162028,Osmeridae,125513,Osmeridae
+1167,161703,Alosa aestivalis,158667,Alosa aestivalis
+1168,167408,Cottunculus microps,127235,Cottunculus microps
+1169,167561,Liparis gibbus,159526,Liparis gibbus
+1170,167522,Careproctus reinhardti,127212,Careproctus reinhardti
+1171,172735,Paralichthys dentatus,158826,Paralichthys dentatus
+1172,166284,Zenopsis conchifer,127426,Zenopsis conchifer
+1173,162435,Parasudis truculenta,158868,Parasudis truculenta
+1174,564139,Dipturus laevis,158548,Dipturus laevis
+1175,631024,Lycenchelys verrillii,159258,Lycenchelys verrillii
+1176,167576,Liparis atlanticus,159524,Liparis atlanticus
+1177,162578,Ceratoscopelus maderensis,126585,Ceratoscopelus maderensis
+1178,550561,Anarhichas denticulatus,126757,Anarhichas denticulatus
+1179,166152,Anoplogaster cornuta,126393,Anoplogaster cornuta
+1180,165277,Lycodes pallidus,127110,Lycodes pallidus
+1181,162368,Myctophiformes,10309,Myctophiformes
+1182,164731,Urophycis regia,158991,Urophycis regia
+1183,161624,Nemichthys scolopaceus,126306,Nemichthys scolopaceus
+1184,162212,Sternoptychidae,125603,Sternoptychidae
+1185,172546,Cubiceps pauciradiatus,159424,Cubiceps pauciradiatus
+1186,173289,Sphoeroides,126241,Sphoeroides
+1187,167758,Mycteroperca,126069,Mycteroperca
+1188,173061,Symphurus,126113,Symphurus
+1189,170475,Pentanemus quinquarius,282202,Pentanemus quinquarius
+1190,635794,Synaphobranchus kaupii,126328,Synaphobranchus kaupii
+1191,643682,Cottunculus thomsonii,127237,Cottunculus thomsonii
+1192,165421,Macrourus berglax,126472,Macrourus berglax
+1193,164720,Microgadus tomcod,158928,Microgadus tomcod
+1194,167201,Artediellus,126147,Artediellus
+1195,167321,Myoxocephalus aenaeus,159519,Myoxocephalus aenaeus
+1196,164589,Dibranchus atlanticus,126558,Dibranchus atlanticus
+1197,167192,Icelus spatula,127200,Icelus spatula
+1198,167577,Liparis inquilinus,159528,Liparis inquilinus
+1199,NA,Aspidophoroides olrikii,309268,Aspidophoroides olrikii
+1200,162223,Polyipnus asteroides,158839,Polyipnus asteroides
+1201,165350,Coryphaenoides rupestris,158960,Coryphaenoides rupestris
+1202,162292,Stomias boa,127374,Stomias boa
+1203,162281,Chauliodus sloani,127338,Chauliodus sloani
+1204,161678,Notacanthidae,125501,Notacanthidae
+1205,161594,Simenchelys parasitica,126327,Simenchelys parasitica
+1206,161027,Rhinochimaera atlantica,105830,Rhinochimaera atlantica
+1207,165296,Melanostigma atlanticum,127120,Melanostigma atlanticum
+1208,635871,Notacanthus bonaparte,126642,Notacanthus bonaparte
+1209,159994,Apristurus profundorum,158513,Apristurus profundorum
+1210,564135,Rajella fyllae,105894,Rajella fyllae
+1211,161029,Harriotta raleighana,105829,Harriotta raleighana
+1212,162239,Borostomias,126204,Borostomias
+1213,165248,Lycenchelys paxillus,159257,Lycenchelys paxillus
+1214,167605,Paraliparis copei,159530,Paraliparis copei
+1215,161578,Synaphobranchidae,125436,Synaphobranchidae
+1216,644691,Magnisudis atlantica,126359,Magnisudis atlantica
+1217,160659,Etmopterus princeps,105911,Etmopterus princeps
+1218,642555,Foetorepus agassizii,276339,Foetorepus agassizii
+1219,172789,Monolene sessilicauda,159213,Monolene sessilicauda
+1220,159911,Lamna nasus,105841,Lamna nasus
+1221,630982,Lycodes esmarkii,127103,Lycodes esmarkii
+1222,162215,Argyropelecus aculeatus,127306,Argyropelecus aculeatus
+1223,167580,Liparis coheni,159525,Liparis coheni
+1224,165390,Malacocephalus occidentalis,158741,Malacocephalus occidentalis
+1225,167483,Cyclopteridae,125590,Cyclopteridae
+1226,162448,Bathypterois dubius,126342,Bathypterois dubius
+1227,622320,Malacosteinae,154693,Malacosteinae
+1228,164655,Ceratias holboelli,126537,Ceratias holboelli
+1229,98678,Cancer borealis,158056,Cancer borealis
+1230,97314,Homarus americanus,156134,Homarus americanus
+1231,98679,Cancer irroratus,158057,Cancer irroratus
+1232,79619,Chlamys islandica,140692,Chlamys islandica
+1233,98428,Chionoecetes opilio,107315,Chionoecetes opilio
+1234,164672,Antimora rostrata,126486,Antimora rostrata
+1235,162091,Bathylagus euryops,126719,Bathylagus euryops
+1236,79718,Placopecten magellanicus,156972,Placopecten magellanicus
+1237,165276,Lycodes lavalaei,127107,Lycodes lavalaei
+1238,620992,Chaceon quinquedens,158407,Chaceon quinquedens
+1239,162227,Sternoptyx diaphana,127314,Sternoptyx diaphana
+1240,167521,Careproctus longipinnis,146774,Careproctus longipinnis
+1241,166972,Triglidae,125598,Triglidae
+1242,162427,Chlorophthalmidae,125442,Chlorophthalmidae
+1243,1202393,Iridonida iris,1606704,Iridonida iris
+1244,164711,Gadus macrocephalus,254538,Gadus macrocephalus
+1245,169182,Stenotomus chrysops,159811,Stenotomus chrysops
+1246,161732,Brevoortia tyrannus,158691,Brevoortia tyrannus
+1247,83677,Crustacea,1066,Crustacea
+1248,161685,Polyacanthonotus rissoanus,126645,Polyacanthonotus rissoanus
+1249,82589,Octopoda,11718,Octopoda
+1250,172380,Benthodesmus simonyi,127087,Benthodesmus simonyi
+1251,623874,Diaphus dumerilii,126590,Diaphus dumerilii
+1252,616664,Symphurus diomedeanus,159358,Symphurus diomedeanus
+1253,1202441,Typhlonida valida,1605967,Typhlonida valida
+1254,631028,Gymnelus viridis,127096,Gymnelus viridis
+1255,167010,Peristedion miniatum,159550,Peristedion miniatum
+1256,167275,Gymnocanthus tricuspis,127198,Gymnocanthus tricuspis
+1257,168742,Naucrates ductor,126811,Naucrates ductor
+1258,171596,Stichaeus punctatus,159819,Stichaeus punctatus
+1259,97710,Axius serratus,158379,Axius serratus
+1260,164594,Halieutichthys aculeatus,159190,Halieutichthys aculeatus
+1261,166127,Polymixia nobilis,127163,Polymixia nobilis
+1262,NA,Doryteuthis (Amerigo) pealeii,410354,Doryteuthis (Amerigo) pealeii
+1263,162213,Argyropelecus,126196,Argyropelecus
+1264,NA,Sigmops elongatus,221512,Sigmops elongatus
+1265,168684,Selene setapinnis,159647,Selene setapinnis
+1266,161604,Serrivomer,125650,Serrivomer
+1267,162645,Lampanyctus pusillus,126619,Lampanyctus pusillus
+1268,631004,Lycodichthys dearborni,234713,Lycodichthys dearborni
+1269,555764,Sepiolina,1454579,Sepiolina
+1270,638685,Lampriformes,10310,Lampriformes
+1271,162679,Benthosema,125815,Benthosema
+1272,162661,Notoscopelus kroyeri,272728,Notoscopelus kroyeri
+1273,171086,Chiasmodon niger,126840,Chiasmodon niger
+1274,162723,Myctophum punctatum,126627,Myctophum punctatum
+1275,162680,Benthosema glaciale,126580,Benthosema glaciale
+1276,162654,Notoscopelus resplendens,158916,Notoscopelus resplendens
+1277,173290,Sphoeroides maculatus,158934,Sphoeroides maculatus
+1278,167579,Liparis tunicatus,154825,Liparis tunicatus
+1279,172389,Aphanopus carbo,127085,Aphanopus carbo
+1280,162222,Polyipnus,126198,Polyipnus
+1281,644643,Triglops pingelii,127207,Triglops pingelii
+1282,551497,Macroramphosus scolopax,127378,Macroramphosus scolopax
+1283,166302,Xenolepidichthys dalgleishi,159432,Xenolepidichthys dalgleishi
+1284,160724,Centroscymnus coelolepis,105907,Centroscymnus coelolepis
+1285,162257,Melanostomias,126214,Melanostomias
+1286,162340,Xenodermichthys copei,126714,Xenodermichthys copei
+1287,643676,Careproctus ranula,159523,Careproctus ranula
+1288,162269,Malacosteus niger,127358,Malacosteus niger
+1289,172512,Hyperoglyphe perciformis,126832,Hyperoglyphe perciformis
+1290,166116,Scopelogadus beanii,127278,Scopelogadus beanii
+1291,635762,Serrivomer beanii,126319,Serrivomer beanii
+1292,162708,Lampadena speculigera,126608,Lampadena speculigera
+1293,162647,Lampanyctus macdonaldi,126617,Lampanyctus macdonaldi
+1294,623332,Melanolagus bericoides,126721,Melanolagus bericoides
+1295,623714,Hygophum hygomii,126603,Hygophum hygomii
+1296,NA,Sigmops bathyphilus,398363,Sigmops bathyphilus
+1297,162328,Conocara salmoneum,126698,Conocara salmoneum
+1298,623687,Alepocephalus agassizii,126681,Alepocephalus agassizii
+1299,161664,Aldrovandia phalacra,126638,Aldrovandia phalacra
+1300,162334,Rouleina,125882,Rouleina
+1301,159987,Apristurus,105727,Apristurus
+1302,161586,Ilyophis brunneus,126326,Ilyophis brunneus
+1303,164807,Ophidiidae,125505,Ophidiidae
+1304,162408,Saurida brasiliensis,158756,Saurida brasiliensis
+1305,635796,Lipogenys gillii,158559,Lipogenys gillii
+1306,161019,Hydrolagus affinis,105825,Hydrolagus affinis
+1307,161653,Eurypharynx pelecanoides,127165,Eurypharynx pelecanoides
+1308,161672,Halosauropsis macrochir,126639,Halosauropsis macrochir
+1309,622857,Dicrolene introniger,275895,Dicrolene introniger
+1310,164768,Gaidropsarus argentatus,126451,Gaidropsarus argentatus
+1311,162573,Scopelosaurus lepidus,126349,Scopelosaurus lepidus
+1312,162164,Cyclothone,126187,Cyclothone
+1313,162308,Alepocephalus,125868,Alepocephalus
+1314,182869,Borostomias antarcticus,127334,Borostomias antarcticus
+1315,164692,Halargyreus johnsonii,126489,Halargyreus johnsonii
+1316,622861,Bassogigas gillii,159063,Bassogigas gillii
+1317,162644,Lampanyctus photonotus,126618,Lampanyctus photonotus
+1318,162335,Rouleina attrita,126709,Rouleina attrita
+1319,623366,Holtbyrnia anomala,126739,Holtbyrnia anomala
+1320,161660,Aldrovandia affinis,126637,Aldrovandia affinis
+1321,162782,Bathysaurus ferox,126369,Bathysaurus ferox
+1322,161322,Nessorhamphus ingolfianus,126292,Nessorhamphus ingolfianus
+1323,564207,Amblyraja jenseni,105864,Amblyraja jenseni
+1324,162702,Lampadena,125824,Lampadena
+1325,172548,Cubiceps gracilis,126990,Cubiceps gracilis
+1326,162528,Alepisaurus brevirostris,126332,Alepisaurus brevirostris
+1327,162444,Bathypterois quadrifilis,158862,Bathypterois quadrifilis
+1328,159992,Apristurus laurussonii,105807,Apristurus laurussonii
+1329,82558,Mastigoteuthis,138168,Mastigoteuthis
+1330,166108,Poromitra crassiceps,127273,Poromitra crassiceps
+1331,165393,Nezumia,125754,Nezumia
+1332,162754,Lobianchia dofleini,158900,Lobianchia dofleini
+1333,623334,Bathytroctes microlepis,126693,Bathytroctes microlepis
+1334,182909,Scopeloberyx robustus,127276,Scopeloberyx robustus
+1335,167488,Careproctus,126156,Careproctus
+1336,166280,Cyttopsis rosea,127425,Cyttopsis rosea
+1337,166298,Grammicolepis brachiusculus,127420,Grammicolepis brachiusculus
+1338,623328,Bajacalifornia megalops,126687,Bajacalifornia megalops
+1339,162669,Symbolophorus veranyi,126630,Symbolophorus veranyi
+1340,622866,Coryphaenoides carapinus,158956,Coryphaenoides carapinus
+1341,97960,Neolithodes grimaldii,107206,Neolithodes grimaldii
+1342,166104,Melamphaes suborbitalis,127270,Melamphaes suborbitalis
+1343,162496,Paralepis elongata,158874,Paralepis elongata
+1344,161601,Derichthys serpentinus,126291,Derichthys serpentinus
+1345,162218,Argyropelecus gigas,127308,Argyropelecus gigas
+1346,164899,Cataetyx laticeps,126657,Cataetyx laticeps
+1347,625292,Neocyttus helgae,127423,Neocyttus helgae
+1348,162491,Paralepis,125678,Paralepis
+1349,162336,Rouleina maderensis,126710,Rouleina maderensis
+1350,162449,Bathypterois longipes,126344,Bathypterois longipes
+1351,164670,Moridae,125474,Moridae
+1352,162315,Alepocephalus bairdii,126682,Alepocephalus bairdii
+1353,171085,Chiasmodon,125956,Chiasmodon
+1354,162273,Aristostomias,126201,Aristostomias
+1355,162439,Bathypterois,125669,Bathypterois
+1356,162800,Rondeletia loricata,126412,Rondeletia loricata
+1357,82485,Histioteuthis,138074,Histioteuthis
+1358,164674,Laemonema,125767,Laemonema
+1359,165333,Coryphaenoides,125748,Coryphaenoides
+1360,162272,Photostomias guernei,127372,Photostomias guernei
+1361,162163,Gonostomatidae,125601,Gonostomatidae
+1362,82418,Gonatus,138036,Gonatus
+1363,643683,Paraliparis garmani,159531,Paraliparis garmani
+1364,162194,Vinciguerria nimbaria,127303,Vinciguerria nimbaria
+1365,162443,Bathypterois phenax,126345,Bathypterois phenax
+1366,644688,Bathypterois grallator,126343,Bathypterois grallator
+1367,164629,Oneirodes,125811,Oneirodes
+1368,644694,Omosudis lowii,272087,Omosudis lowii
+1369,162656,Notoscopelus bolini,158913,Notoscopelus bolini
+1370,168332,Howella brodiei,126994,Howella brodiei
+1371,162742,Taaningichthys minimus,126632,Taaningichthys minimus
+1372,171093,Pseudoscopelus,125958,Pseudoscopelus
+1373,164729,Urophycis,125774,Urophycis
+1374,95599,Decapoda,1130,Decapoda
+1375,162632,Lampanyctus,125825,Lampanyctus
+1376,160014,Apristurus manis,105808,Apristurus manis
+1377,162653,Notoscopelus,125831,Notoscopelus
+1378,168546,Lopholatilus chamaeleonticeps,159406,Lopholatilus chamaeleonticeps
+1379,164573,Ogcocephalidae,125495,Ogcocephalidae
+1380,161585,Ilyophis,125654,Ilyophis
+1381,161668,Halosaurus guentheri,158557,Halosaurus guentheri
+1382,162527,Alepisaurus ferox,126333,Alepisaurus ferox
+1383,171620,Anisarchus medius,127070,Anisarchus medius
+1384,622409,Manducus maderensis,281518,Manducus maderensis
+1385,162657,Notoscopelus caudispinosus,158914,Notoscopelus caudispinosus
+1386,168689,Seriola dumerili,126816,Seriola dumerili
+1387,162216,Argyropelecus affinis,127307,Argyropelecus affinis
+1388,171084,Chiasmodontidae,125529,Chiasmodontidae
+1389,166704,Scorpaenidae,125595,Scorpaenidae
+1390,162534,Anotopterus pharao,126334,Anotopterus pharao
+1391,161127,Anguilla rostrata,158562,Anguilla rostrata
+1392,82414,Gonatidae,11743,Gonatidae
+1393,167376,Triglops nybelini,127206,Triglops nybelini
+1394,164831,Lepophidium profundorum,158762,Lepophidium profundorum
+1395,167604,Paraliparis calidus,159529,Paraliparis calidus
+1396,161658,Aldrovandia,125837,Aldrovandia
+1397,166100,Melamphaes microps,127268,Melamphaes microps
+1398,162576,Ceratoscopelus,125818,Ceratoscopelus
+1399,165266,Lycodes polaris,127111,Lycodes polaris
+1400,162748,Lepidophanes guentheri,126621,Lepidophanes guentheri
+1401,622370,Stomias longibarbatus,127376,Stomias longibarbatus
+1402,564037,Leucoraja,105763,Leucoraja
+1403,564125,Rajella bathyphila,105892,Rajella bathyphila
+1404,172368,Nealotus tripes,126864,Nealotus tripes
+1405,165394,Nezumia aequalis,126473,Nezumia aequalis
+1406,164675,Laemonema barbatulum,158979,Laemonema barbatulum
+1407,165373,Coelorinchus caelorhincus,398381,Coelorinchus caelorhincus
+1408,98276,Brachyura,106673,Brachyura
+1409,168297,Epigonus pandionis,159706,Epigonus pandionis
+1410,564136,Leucoraja garmani,158552,Leucoraja garmani
+1411,168301,Epigonus denticulatus,126857,Epigonus denticulatus
+1412,172915,Liopsetta putnami,158882,Liopsetta putnami
+1413,172537,Ariomma bondi,159592,Ariomma bondi
+1414,NA,Vazella pourtalesii,172121,Vazella pourtalesii
+1415,168335,Synagrops bellus,159584,Synagrops bellus
+1416,166311,Antigonia capros,127418,Antigonia capros
+1417,166155,Beryx decadactylus,126394,Beryx decadactylus
+1418,168295,Epigonus,125967,Epigonus
+1419,168677,Selar crumenophthalmus,159646,Selar crumenophthalmus
+1420,171639,Pholis fasciata,159846,Pholis fasciata
+1421,160928,Bathyraja,105761,Bathyraja
+1422,166488,Hippocampus erectus,159445,Hippocampus erectus
+1423,NA,Lampanyctus ater,126611,Lampanyctus ater
+1424,162081,Bathylagus,125888,Bathylagus
+1425,165357,Bathygadus melanobranchus,126463,Bathygadus melanobranchus
+1426,162191,Polymetme corythaeola,127300,Polymetme corythaeola
+1427,166139,Hoplostethus atlanticus,126402,Hoplostethus atlanticus
+1428,98671,Cancer,106876,Cancer
+1429,172730,Etropus microstomus,158801,Etropus microstomus
+1430,161612,Nemichthyidae,125432,Nemichthyidae
+1431,172482,Xiphias gladius,127094,Xiphias gladius
+1432,171673,Ammodytes americanus,159587,Ammodytes americanus
+1433,82487,Histioteuthis reversa,181381,Histioteuthis reversa
+1434,NA,Spinolambrus pourtalesii,442342,Spinolambrus pourtalesii
+1435,161317,Venefica procera,158593,Venefica procera
+1436,166115,Scopelogadus,126184,Scopelogadus
+1437,167771,Anthias nicholsi,159344,Anthias nicholsi
+1438,98694,Bathynectes longispina,394995,Bathynectes longispina
+1439,550833,Lepidion schmidti,126496,Lepidion schmidti
+1440,164706,Boreogadus saida,126433,Boreogadus saida
+1441,166857,Setarches guentheri,127258,Setarches guentheri
+1442,98670,Cancridae,106749,Cancridae
+1443,162463,Paralepididae,125447,Paralepididae
+1444,NA,Coelorinchus labiatus,280299,Coelorinchus labiatus
+1445,772433,Apristurus aphyodes,105806,Apristurus aphyodes
+1446,550674,Lepidion lepidion,126495,Lepidion lepidion
+1447,164761,Molva dypterygia,126459,Molva dypterygia
+1448,564230,Neoraja caerulea,105879,Neoraja caerulea
+1449,NA,Deania calceus,298167,Deania calceus
+1450,160725,Centroselachus crepidater,280071,Centroselachus crepidater
+1451,161017,Hydrolagus mirabilis,105826,Hydrolagus mirabilis
+1452,160635,Centrophorus squamosus,105901,Centrophorus squamosus
+1453,161022,Chimaera monstrosa,105824,Chimaera monstrosa
+1454,168298,Epigonus telescopus,126858,Epigonus telescopus
+1455,164687,Mora moro,126497,Mora moro
+1456,160037,Galeus murinus,105813,Galeus murinus
+1457,164746,Melanonus zugmayeri,126483,Melanonus zugmayeri
+1458,172520,Centrolophus niger,126831,Centrolophus niger
+1459,165389,Malacocephalus laevis,272392,Malacocephalus laevis
+1460,162219,Argyropelecus hemigymnus,127309,Argyropelecus hemigymnus
+1461,NA,Stomias ferox,306769,Stomias ferox
+1462,167592,Paraliparis,126161,Paraliparis
+1463,162080,Bathylagidae,125509,Bathylagidae
+1464,166133,Diretmus argenteus,126398,Diretmus argenteus
+1465,162266,Trigonolampa miriceps,127377,Trigonolampa miriceps
+1466,622909,Coryphaenoides mediterraneus,183099,Coryphaenoides mediterraneus
+1467,631187,Pachycara crassiceps,127122,Pachycara crassiceps
+1468,564501,Hydrolagus pallidus,105827,Hydrolagus pallidus
+1469,564228,Malacoraja kreffti,105877,Malacoraja kreffti
+1470,772430,Apristurus melanoasper,271345,Apristurus melanoasper
+1471,621027,Dipturus nidarosiensis,105871,Dipturus nidarosiensis
+1472,162310,Alepocephalus rostratus,126684,Alepocephalus rostratus
+1473,161657,Halosauridae,125500,Halosauridae
+1474,623339,Normichthys operosus,126745,Normichthys operosus
+1475,162565,Scopelosaurus,125672,Scopelosaurus
+1476,159819,Hexanchus griseus,105833,Hexanchus griseus
+1477,166156,Beryx splendens,126395,Beryx splendens
+1478,165398,Nezumia sclerorhynchus,126475,Nezumia sclerorhynchus
+1479,162326,Conocara macropterum,126695,Conocara macropterum
+1480,162309,Alepocephalus productus,126683,Alepocephalus productus
+1481,564220,Rajella kukujevi,105895,Rajella kukujevi
+1482,166093,Melamphaes,126181,Melamphaes
+1483,166342,Trachipterus arcticus,126527,Trachipterus arcticus
+1484,166859,Trachyscorpia cristulata,127256,Trachyscorpia cristulata
+1485,564219,Rajella bigelowi,105893,Rajella bigelowi
+1486,166140,Hoplostethus mediterraneus,126404,Hoplostethus mediterraneus
+1487,550660,Trachyrincus scabrus,126482,Trachyrincus scabrus
+1488,642554,Schedophilus medusophagus,126833,Schedophilus medusophagus
+1489,166306,Allocyttus verrucosus,127422,Allocyttus verrucosus
+1490,171090,Kali macrura,126842,Kali macrura
+1491,623341,Searsia koefoedi,126749,Searsia koefoedi
+1492,160651,Dalatias licha,105910,Dalatias licha
+1493,162552,Benthalbella infans,126365,Benthalbella infans
+1494,635827,Ilyophis blachei,126325,Ilyophis blachei
+1495,160755,Scymnodon ringens,105918,Scymnodon ringens
+1496,168333,Howella sherborni,126995,Howella sherborni
+1497,160931,Bathyraja richardsoni,105867,Bathyraja richardsoni
+1498,622862,Spectrunculus grandis,126678,Spectrunculus grandis
+1499,162324,Conocara,125874,Conocara
+1500,160929,Bathyraja pallida,105866,Bathyraja pallida
+1501,161318,Venefica proboscidea,126310,Venefica proboscidea
+1502,162284,Echiostoma barbatum,127340,Echiostoma barbatum
+1503,172370,Nesiarchus nasutus,126865,Nesiarchus nasutus
+1504,162325,Conocara murrayi,126697,Conocara murrayi
+1505,160613,Somniosus rostratus,105920,Somniosus rostratus
+1506,160695,Oxynotus paradoxus,105915,Oxynotus paradoxus
+1507,160016,Apristurus microps,105809,Apristurus microps
+1508,162321,Narcetes stomias,126706,Narcetes stomias
+1509,623370,Talismania antillarum,126711,Talismania antillarum
+1510,623188,Cryptopsaras couesii,126538,Cryptopsaras couesii
+1511,623343,Maulisia microlepis,126743,Maulisia microlepis
+1512,162649,Lampanyctus crocodilus,126612,Lampanyctus crocodilus
+1513,NA,Chimaera opalescens,712407,Chimaera opalescens
+1514,6559,Ulva,144296,Ulva
+1515,NA,Cydippidae,1697324,Cydippidae
+1516,99058,Eriocheir sinensis,107451,Eriocheir sinensis
+1517,161701,Alosa,125715,Alosa
+1518,81711,Corbula,137841,Corbula
+1519,81784,Pholadidae,252,Pholadidae
+1520,96466,Palaemon elegans,107614,Palaemon elegans
+1521,166024,Atherina boyeri,272027,Atherina boyeri
+1522,98790,Rhithropanopeus harrisii,107414,Rhithropanopeus harrisii
+1523,70420,Littorina obtusata,140263,Littorina obtusata
+1524,74738,Propebela turricula,160446,Propebela turricula
+1525,79930,Anodonta,224838,Anodonta
+1526,660781,Hemigrapsus penicillatus,107454,Hemigrapsus penicillatus
+1527,621740,Hemigrapsus sanguineus,158417,Hemigrapsus sanguineus
+1528,NA,Tritia pygmaea,876854,Tritia pygmaea
+1529,NA,Lotidae,125470,Lotidae
+1530,NA,Syngnathiformes,10327,Syngnathiformes
+1531,161955,Coregonus oxyrinchus,154238,Coregonus oxyrinchus
+1532,89856,Mysidae,119822,Mysidae
+1533,159697,Petromyzontidae,101163,Petromyzontidae
+1534,99034,Hemigrapsus,106964,Hemigrapsus
+1535,166022,Atherina,125659,Atherina
+1536,96478,Palaemon adspersus,107613,Palaemon adspersus
+1537,79452,Mytilus,138228,Mytilus
+1538,68036,Lanice,129697,Lanice
+1539,NA,Ocinebrellus inornatus,578702,Ocinebrellus inornatus
+1540,NA,Tritia varicosa,1391526,Tritia varicosa
+1541,96398,Palaemon varians,587704,Palaemon varians
+1542,80922,Cardium,137734,Cardium
+1543,81032,Tellinidae,235,Tellinidae
+1544,78701,Facelina bostoniensis,139908,Facelina bostoniensis
+1545,180649,Phoca vitulina,137084,Phoca vitulina
+1546,1187915,Philocheras bispinosus bispinosus,108207,Philocheras bispinosus bispinosus
+1547,NA,Hemigrapsus takanoi,389288,Hemigrapsus takanoi
+1548,96450,Palaemon macrodactylus,181372,Palaemon macrodactylus
+1549,NA,Cirrata,11732,Cirrata
+1550,50844,Hydridae,151708,Hydridae
+1551,82378,Lolliguncula,157027,Lolliguncula
+1552,622429,Borostomias mononema,127336,Borostomias mononema
+1553,80959,Mulinia lateralis,156870,Mulinia lateralis
+1554,97807,Pagurus longicarpus,158403,Pagurus longicarpus
+1555,49845,Sertulariidae,1614,Sertulariidae
+1556,936667,Cylista,854014,Cylista
+1557,NA,Ruditapes philippinarum,231750,Ruditapes philippinarum
+1558,175196,Mergellus albellus,232039,Mergellus albellus
+1559,81033,Macoma,138531,Macoma
+1560,172462,Rastrelliger kanagurta,127020,Rastrelliger kanagurta
+1561,49514,Obelia,117034,Obelia
+1562,81264,Gari depressa,140869,Gari depressa
+1563,66022,Nephtys longosetosa,130364,Nephtys longosetosa
+1564,NA,Alcyonidium condylocinereum,153730,Alcyonidium condylocinereum
+1565,551282,Clupeichthys aesarnensis,1012164,Clupeichthys aesarnensis
+1566,692084,Cottus rhenanus,1009258,Cottus rhenanus
+1567,76526,Radix auricularia,248263,Radix auricularia
+1568,176655,Calidris bairdii,159048,Calidris bairdii
+1569,49532,Obelia bidentata,117385,Obelia bidentata
+1570,82367,Teuthida,11716,Teuthida
+1571,79273,Yoldia limatula,157005,Yoldia limatula
+1572,81746,Potamocorbula amurensis,397175,Potamocorbula amurensis
+1573,542674,Idotea balthica,119039,Idotea balthica
+1574,81314,Abra nitida,141435,Abra nitida
+1575,631172,Lycodonus flagellicauda,127119,Lycodonus flagellicauda
+1576,NA,Huso brevirostrum,1815701,Huso brevirostrum
+1577,206846,Ocnus planci,124647,Ocnus planci
+1578,735673,Tritia nitida,890057,Tritia nitida
+1579,159805,Heterodontus ramalheira,217626,Heterodontus ramalheira
+1580,206959,Portunoidea,106702,Portunoidea
+1581,51711,Aurelia coerulea,292506,Aurelia coerulea
+1582,161784,Spratelloides,125722,Spratelloides
+1583,161941,Coregonus clupeaformis,158726,Coregonus clupeaformis
+1584,182936,Lithognathus mormyrus,127055,Lithognathus mormyrus
+1585,173028,Bathysolea profundicola,127152,Bathysolea profundicola
+1586,172409,Sarda sarda,127021,Sarda sarda
+1587,166836,Scorpaena loppei,127244,Scorpaena loppei
+1588,168593,Trachurus picturatus,126821,Trachurus picturatus
+1589,623033,Molva macrophthalma,126460,Molva macrophthalma
+1590,170318,Dicentrarchus punctatus,126976,Dicentrarchus punctatus
+1591,169211,Pagellus,126079,Pagellus
+1592,167863,Serranus hepatus,127042,Serranus hepatus
+1593,160983,Myliobatis aquila,105860,Myliobatis aquila
+1594,165406,Hymenocephalus italicus,158961,Hymenocephalus italicus
+1595,172391,Lepidopus caudatus,127088,Lepidopus caudatus
+1596,169194,Diplodus sargus,127053,Diplodus sargus
+1597,564148,Dipturus oxyrinchus,105872,Dipturus oxyrinchus
+1598,164846,Ophidion barbatum,126675,Ophidion barbatum
+1599,162583,Diaphus,125819,Diaphus
+1600,167914,Polyprion americanus,126998,Polyprion americanus
+1601,167862,Serranus scriba,127043,Serranus scriba
+1602,182919,Diplodus vulgaris,127054,Diplodus vulgaris
+1603,171983,Pomatoschistus norvegicus,126929,Pomatoschistus norvegicus
+1604,552966,Palinurus mauritanicus,107704,Palinurus mauritanicus
+1605,644690,Macroparalepis affinis,126356,Macroparalepis affinis
+1606,172412,Scomber japonicus,127022,Scomber japonicus
+1607,551213,Spratelloides lewisi,272278,Spratelloides lewisi
+1608,622358,Polymetme thaeocoryla,127301,Polymetme thaeocoryla
+1609,172413,Scomber colias,151174,Scomber colias
+1610,160747,Deania profundorum,105905,Deania profundorum
+1611,162481,Lestidiops jayakari,126354,Lestidiops jayakari
+1612,173022,Microchirus,126129,Microchirus
+1613,644060,Lepidotrigla dieuzeidei,127265,Lepidotrigla dieuzeidei
+1614,556129,Bathypolypus sponsalis,140598,Bathypolypus sponsalis
+1615,172034,Lesueurigobius,125992,Lesueurigobius
+1616,82501,Histioteuthis bonnellii,140111,Histioteuthis bonnellii
+1617,NA,Dasyatis tortonesei,105852,Dasyatis tortonesei
+1618,160424,Prionace glauca,105801,Prionace glauca
+1619,NA,Grunowia sinuata,622706,Grunowia sinuata
+1620,614242,Symphodus roissali,273573,Symphodus roissali
+1621,76428,Cymbulia peronii,139494,Cymbulia peronii
+1622,NA,Soestia zonaria,137275,Soestia zonaria
+1623,NA,Dipturus flossada,711847,Dipturus flossada
+1624,159661,Thetys vagina,137281,Thetys vagina
+1625,NA,Salpinae,720267,Salpinae
+1626,98319,Paromola cuvieri,107264,Paromola cuvieri
+1627,159635,Pyrosoma,137224,Pyrosoma
+1628,82348,Rossia palpebrosa,153083,Rossia palpebrosa
+1629,556567,Octopus salutii,140604,Octopus salutii
+1630,159645,Salpidae,137217,Salpidae
+1631,NA,Engraulis maeoticus,1575775,Engraulis maeoticus
+1632,165099,Carapus acus,126661,Carapus acus
+1633,159652,Salpa,602637,Salpa
+1634,162805,Ijimaia loppei,126330,Ijimaia loppei
+1635,NA,Trachyscorpia echinata,127257,Trachyscorpia echinata
+1636,647898,Pagellus bellottii,127058,Pagellus bellottii
+1637,182917,Diplodus cervinus,127051,Diplodus cervinus
+1638,173298,Sphoeroides pachygaster,127417,Sphoeroides pachygaster
+1639,556275,Eledone moschata,140601,Eledone moschata
+1640,170443,Sphyraena sphyraena,127068,Sphyraena sphyraena
+1641,NA,Rhombosepion elegans,1667162,Rhombosepion elegans
+1642,51732,Discomedusa lobata,135308,Discomedusa lobata
+1643,159654,Salpa maxima,137273,Salpa maxima
+1644,50634,Aequorea forskalea,117270,Aequorea forskalea
+1645,159652,Salpa,137233,Salpa
+1646,98682,Cancer bellianus,107275,Cancer bellianus
+1647,164475,Lepadogaster,125781,Lepadogaster
+1648,96106,Caridea,106674,Caridea
+1649,158587,Antedon,123349,Antedon
+1650,51912,Rhizostoma,135257,Rhizostoma
+1651,159916,Alopias vulpinus,105836,Alopias vulpinus
+1652,98530,Eurynome,106901,Eurynome
+1653,NA,Tethya citrina,134312,Tethya citrina
+1654,159445,Pyuridae,103449,Pyuridae
+1655,98570,Pisa,106912,Pisa
+1656,NA,Raspailia (Clathriodendron) hispida,133147,Raspailia (Clathriodendron) hispida
+1657,79062,Neomenia carinata,140560,Neomenia carinata
+1658,614321,Symphodus rostratus,273574,Symphodus rostratus
+1659,564123,Rostroraja alba,105896,Rostroraja alba
+1660,166756,Sebastes mentella,127254,Sebastes mentella
+1661,169180,Sparidae,125564,Sparidae
+1662,159844,Heptranchias perlo,105832,Heptranchias perlo
+1663,169406,Mullidae,125547,Mullidae
+1664,173137,Balistes,126228,Balistes
+1665,NA,Aporocidaris incerta,160783,Aporocidaris incerta
+1666,564246,Bathyraja brachyurops,271509,Bathyraja brachyurops
+1667,161994,Salmo,126141,Salmo
+1668,47325,Pheronema pilosum,171571,Pheronema pilosum
+1669,173020,Buglossidium,126127,Buglossidium
+1670,172803,Arnoglossus,126109,Arnoglossus
+1671,631033,Lycenchelys sarsii,127101,Lycenchelys sarsii
+1672,167311,Myoxocephalus,126152,Myoxocephalus
+1673,159721,Petromyzon,101169,Petromyzon
+1674,166309,Caproidae,125613,Caproidae
+1675,160806,Rajiformes,10216,Rajiformes
+1676,564140,Leucoraja lentiginosa,271564,Leucoraja lentiginosa
+1677,159700,Lampetra,101167,Lampetra
+1678,159985,Scyliorhinidae,105693,Scyliorhinidae
+1679,171345,Anarrhichthys ocellatus,279605,Anarrhichthys ocellatus
+1680,160611,Somniosus microcephalus,105919,Somniosus microcephalus
+1681,172421,Thunnus thynnus,127029,Thunnus thynnus
+1682,82635,Bathypolypus,138265,Bathypolypus
+1683,95500,Euphausiidae,110671,Euphausiidae
+1684,555797,Sthenoteuthis,138280,Sthenoteuthis
+1685,170335,Mugil cephalus,126983,Mugil cephalus
+1686,171841,Gobius cobitis,126886,Gobius cobitis
+1687,158122,Spatangus raschi,124419,Spatangus raschi
+1688,166278,Zeidae,125617,Zeidae
+1689,156901,Astropecten,123245,Astropecten
+1690,164497,Lophiidae,125493,Lophiidae
+1691,171124,Blenniidae,125519,Blenniidae
+1692,82330,Coleoidea,11709,Coleoidea
+1693,64515,Harmothoe impar,130770,Harmothoe impar
+1694,158180,Havelockia,123480,Havelockia
+1695,82336,Rossia,138481,Rossia
+1696,156806,Terebratulina retusa,104055,Terebratulina retusa
+1697,160633,Centrophorus granulosus,105899,Centrophorus granulosus
+1698,160053,Scyliorhinus,105729,Scyliorhinus
+1699,182942,Sarpa salpa,127064,Sarpa salpa
+1700,564033,Dipturus,105762,Dipturus
+1701,170297,Pterycombus brama,126785,Pterycombus brama
+1702,97919,Lithodidae,106737,Lithodidae
+1703,49099,Eudendrium,117093,Eudendrium
+1704,82515,Todarodes,138281,Todarodes
+1705,83559,Nymphon hirtum,134691,Nymphon hirtum
+1706,11350,Pelvetia canaliculata,145550,Pelvetia canaliculata
+1707,555704,Phycidae,125475,Phycidae
+1708,95600,Dendrobranchiata,106669,Dendrobranchiata
+1709,97152,Sclerocrangon,107013,Sclerocrangon
+1710,170736,Labrus merula,126967,Labrus merula
+1711,157107,Pteraster,123335,Pteraster
+1712,621488,Inachidae,148427,Inachidae
+1713,157965,Strongylocentrotidae,123161,Strongylocentrotidae
+1714,66157,Onuphidae,965,Onuphidae
+1715,89590,Chthamalidae,106059,Chthamalidae
+1716,161126,Anguilla,125620,Anguilla
+1717,157727,Amphiura chiajei,125073,Amphiura chiajei
+1718,73975,Neptunea,137710,Neptunea
+1719,96166,Pasiphaea multidentata,107676,Pasiphaea multidentata
+1720,NA,Clathria (Clathria) rubens,167569,Clathria (Clathria) rubens
+1721,96999,Dichelopandalus,107041,Dichelopandalus
+1722,155824,Membranipora membranacea,111411,Membranipora membranacea
+1723,83548,Nymphon,134591,Nymphon
+1724,155809,Eucratea loricata,111361,Eucratea loricata
+1725,156048,Bugulidae,110731,Bugulidae
+1726,206783,Reteporella,110956,Reteporella
+1727,73892,Colus,137704,Colus
+1728,83547,Nymphonidae,1566,Nymphonidae
+1729,159907,Cetorhinus maximus,105837,Cetorhinus maximus
+1730,96165,Pasiphaea tarda,107678,Pasiphaea tarda
+1731,206542,Trischizostoma raschii,416571,Trischizostoma raschii
+1732,53713,Flabellum,135114,Flabellum
+1733,1206025,Turritellidae,127,Turritellidae
+1734,78206,Dorididae,9904,Dorididae
+1735,156755,Brachiopoda,1803,Brachiopoda
+1736,NA,Rajella lintea,1019159,Rajella lintea
+1737,86084,Acartia,104108,Acartia
+1738,555701,Liparidae,234519,Liparidae
+1739,49979,Thuiaria,117237,Thuiaria
+1740,94588,Epimeria,101506,Epimeria
+1741,97940,Lithodes,106845,Lithodes
+1742,50231,Plumulariidae,1613,Plumulariidae
+1743,159175,Ascidia prunum,103714,Ascidia prunum
+1744,718950,Aglaopheniidae,1605,Aglaopheniidae
+1745,52442,Epizoanthidae,100688,Epizoanthidae
+1746,49098,Eudendriidae,1600,Eudendriidae
+1747,68281,Hydroides,129566,Hydroides
+1748,NA,Neptunea denselirata,423556,Neptunea denselirata
+1749,82474,Brachioteuthis,137697,Brachioteuthis
+1750,157129,Anseropoda,123280,Anseropoda
+1751,157110,Pteraster obscurus,124149,Pteraster obscurus
+1752,72878,Naticidae,145,Naticidae
+1753,52628,Actinostolidae,100655,Actinostolidae
+1754,NA,Ophiotrichidae,123208,Ophiotrichidae
+1755,NA,Eudendrium armstrongi,284645,Eudendrium armstrongi
+1756,164778,Ciliata,125741,Ciliata
+1757,48596,Tetillidae,131683,Tetillidae
+1758,53540,Caryophyllia,135085,Caryophyllia
+1759,92485,Aega,118394,Aega
+1760,205727,Todaropsis,138282,Todaropsis
+1761,73875,Beringius,137699,Beringius
+1762,69511,Puncturella,138015,Puncturella
+1763,83662,Pycnogonum,134595,Pycnogonum
+1764,158987,Synoicum,103479,Synoicum
+1765,NA,Ciliatocardium ciliatum ciliatum,381904,Ciliatocardium ciliatum ciliatum
+1766,89606,Balanus crenatus,106215,Balanus crenatus
+1767,206947,Paguroidea,106687,Paguroidea
+1768,555671,Sabellida,901,Sabellida
+1769,156882,Astropectinidae,123127,Astropectinidae
+1770,52417,Pennatula,128495,Pennatula
+1771,611448,Actineria,267197,Actineria
+1772,96885,Caridion,106984,Caridion
+1773,89809,Lophogastridae,119821,Lophogastridae
+1774,172859,Pleuronectidae,125579,Pleuronectidae
+1775,95533,Meganyctiphanes,110674,Meganyctiphanes
+1776,51610,Periphyllidae,135233,Periphyllidae
+1777,157482,Ophiocomidae,152490,Ophiocomidae
+1778,52651,Hormathiidae,100672,Hormathiidae
+1779,73811,Buccinum hydrophanum,138866,Buccinum hydrophanum
+1780,NA,Tima bairdii,117527,Tima bairdii
+1781,52629,Stomphia,100716,Stomphia
+1782,NA,Echiuroidea,110342,Echiuroidea
+1783,159275,Dendrodoa,103531,Dendrodoa
+1784,82419,Gonatus fabricii,153097,Gonatus fabricii
+1785,161105,Teleostei,293496,Teleostei
+1786,573587,Euspira montagui,140533,Euspira montagui
+1787,630370,Ammodytoides,203947,Ammodytoides
+1788,162060,Nansenia groenlandica,126725,Nansenia groenlandica
+1789,205721,Gonatus steenstrupi,140027,Gonatus steenstrupi
+1790,167025,Lepidotrigla,126179,Lepidotrigla
+1791,551495,Macroramphosus,126222,Macroramphosus
+1792,161827,Engraulis,125724,Engraulis
+1793,643209,Anthias anthias,127031,Anthias anthias
+1794,95733,Parapenaeus longirostris,107109,Parapenaeus longirostris
+1795,616555,Citharus linguatula,127130,Citharus linguatula
+1796,160878,Raja miraletus,105886,Raja miraletus
+1797,642542,Synchiropus phaeton,126798,Synchiropus phaeton
+1798,166811,Scorpaena,126171,Scorpaena
+1799,161325,Conger,125624,Conger
+1800,164752,Phycis phycis,126502,Phycis phycis
+1801,162182,Gonostoma,126189,Gonostoma
+1802,169224,Dentex dentex,273962,Dentex dentex
+1803,82407,Abralia veranyi,139688,Abralia veranyi
+1804,647899,Diplodus puntazzo,127052,Diplodus puntazzo
+1805,NA,Nettastoma melanura,299709,Nettastoma melanura
+1806,97050,Plesionika gigliolii,107659,Plesionika gigliolii
+1807,199951,Calappa granulata,107268,Calappa granulata
+1808,160621,Squalus blainville,105924,Squalus blainville
+1809,173024,Microchirus azevia,274299,Microchirus azevia
+1810,1195714,Robustosergia robusta,1056517,Robustosergia robusta
+1811,97020,Plesionika martia,107661,Plesionika martia
+1812,97688,Polycheles typhlops,107696,Polycheles typhlops
+1813,643226,Callanthias ruber,126789,Callanthias ruber
+1814,160660,Etmopterus pusillus,105912,Etmopterus pusillus
+1815,205711,Sepiola rondeletii,141459,Sepiola rondeletii
+1816,172385,Trichiurus lepturus,127089,Trichiurus lepturus
+1817,95759,Penaeopsis serrata,107111,Penaeopsis serrata
+1818,NA,Macrotritopus defilippi,534126,Macrotritopus defilippi
+1819,172382,Benthodesmus elongatus,127086,Benthodesmus elongatus
+1820,620993,Geryon longipes,107373,Geryon longipes
+1821,98692,Bathynectes,106920,Bathynectes
+1822,82675,Opisthoteuthis agassizii,140652,Opisthoteuthis agassizii
+1823,96062,Aristeus antennatus,107083,Aristeus antennatus
+1824,96074,Aristaeopsis edwardsiana,240796,Aristaeopsis edwardsiana
+1825,164897,Benthocometes robustus,126667,Benthocometes robustus
+1826,95630,Penaeus kerathurus,246388,Penaeus kerathurus
+1827,96056,Aristaeomorpha foliacea,158326,Aristaeomorpha foliacea
+1828,97017,Plesionika,107046,Plesionika
+1829,95919,Sergestes,106829,Sergestes
+1830,168559,Pomatomus saltatrix,151482,Pomatomus saltatrix
+1831,647987,Spicara maena,126828,Spicara maena
+1832,173023,Microchirus ocellatus,274302,Microchirus ocellatus
+1833,97037,Plesionika ensis,107657,Plesionika ensis
+1834,172808,Arnoglossus rueppelii,127127,Arnoglossus rueppelii
+1835,172455,Auxis rochei,127015,Auxis rochei
+1836,173000,Solea,126132,Solea
+1837,616398,Microchirus boscanion,274300,Microchirus boscanion
+1838,172124,Deltentosteus quadrimaculatus,126880,Deltentosteus quadrimaculatus
+1839,616508,Symphurus nigrescens,127134,Symphurus nigrescens
+1840,NA,Facciolella oxyrhynchus,126307,Facciolella oxyrhynchus
+1841,156904,Astropecten antillensis,178646,Astropecten antillensis
+1842,157942,Paracentrotus lividus,124316,Paracentrotus lividus
+1843,646292,Ephippion guttifer,127413,Ephippion guttifer
+1844,616402,Monochirus hispidus,127155,Monochirus hispidus
+1845,98315,Homola barbata,107262,Homola barbata
+1846,169220,Dentex maroccanus,273966,Dentex maroccanus
+1847,79863,Neopycnodonte cochlear,140048,Neopycnodonte cochlear
+1848,1195574,Deosergestes henseni,514121,Deosergestes henseni
+1849,637577,Lesueurigobius sanzi,126906,Lesueurigobius sanzi
+1850,157839,Cidaris cidaris,124257,Cidaris cidaris
+1851,660011,Aegaeon lacazei,107549,Aegaeon lacazei
+1852,182915,Diplodus annularis,127049,Diplodus annularis
+1853,97026,Plesionika edwardsii,107656,Plesionika edwardsii
+1854,97029,Plesionika acanthonotus,107654,Plesionika acanthonotus
+1855,96145,Oplophorus spinosus,107602,Oplophorus spinosus
+1856,52020,Alcyonium,125284,Alcyonium
+1857,647940,Diplodus bellottii,127050,Diplodus bellottii
+1858,647960,Pagrus auriga,127061,Pagrus auriga
+1859,989460,Astropecten aranciacus,123856,Astropecten aranciacus
+1860,164571,Chaunax pictus,126539,Chaunax pictus
+1861,167019,Peristedion cataphractum,127233,Peristedion cataphractum
+1862,NA,Galeodea rugosa,139024,Galeodea rugosa
+1863,162195,Vinciguerria poweriae,127304,Vinciguerria poweriae
+1864,89818,Gnathophausia zoea,119930,Gnathophausia zoea
+1865,NA,Alcyonium acaule,125331,Alcyonium acaule
+1866,97064,Heterocarpus ensifer,107644,Heterocarpus ensifer
+1867,161364,Gnathophis mystax,126287,Gnathophis mystax
+1868,166809,Pontinus kuhlii,127240,Pontinus kuhlii
+1869,NA,Ranella olearium,141115,Ranella olearium
+1870,157869,Centrostephanus longispinus,124331,Centrostephanus longispinus
+1871,NA,Neoraja iberica,398306,Neoraja iberica
+1872,72550,Aporrhais,137656,Aporrhais
+1873,171078,Uranoscopus scaber,127093,Uranoscopus scaber
+1874,644058,Lepidotrigla cavillone,127264,Lepidotrigla cavillone
+1875,162696,Hygophum benoiti,126602,Hygophum benoiti
+1876,NA,Debaspis debilis,1790004,Debaspis debilis
+1877,NA,Galeus atlanticus,105811,Galeus atlanticus
+1878,647991,Spicara smaris,126830,Spicara smaris
+1879,NA,Astrospartus mediterraneus,124963,Astrospartus mediterraneus
+1880,1197558,Dardanus arrosor,107197,Dardanus arrosor
+1881,169222,Dentex gibbosus,273964,Dentex gibbosus
+1882,550670,Gadella maraldi,126488,Gadella maraldi
+1883,160879,Raja asterias,105881,Raja asterias
+1884,NA,Charonia lampas,141101,Charonia lampas
+1885,169223,Dentex canariensis,273960,Dentex canariensis
+1886,NA,Ampulla priamus,141963,Ampulla priamus
+1887,NA,Anadara diluvii,146490,Anadara diluvii
+1888,162076,Glossanodon leioglossus,126717,Glossanodon leioglossus
+1889,160029,Galeus,105728,Galeus
+1890,623048,Physiculus dalwigki,126498,Physiculus dalwigki
+1891,205738,Haliphron atlanticus,341781,Haliphron atlanticus
+1892,97646,Palinuridae,106794,Palinuridae
+1893,167674,Serranidae,125561,Serranidae
+1894,690654,Pentherichthys atratus,742995,Pentherichthys atratus
+1895,637120,Caspiosoma caspium,126873,Caspiosoma caspium
+1896,160906,Breviraja,158545,Breviraja
+1897,642264,Epigonus constanciae,126856,Epigonus constanciae
+1898,166277,Zenion hololepis,127421,Zenion hololepis
+1899,161475,Ophichthus rufus,126316,Ophichthus rufus
+1900,172035,Lesueurigobius suerii,126907,Lesueurigobius suerii
+1901,NA,Penaeus (Melicertus) kerathurus,1809195,Penaeus (Melicertus) kerathurus
+1902,171716,Callionymus risso,126796,Callionymus risso
+1903,NA,Aetomylaeus bovinus,871951,Aetomylaeus bovinus
+1904,NA,Microchirus theophila,274303,Microchirus theophila
+1905,630272,Pomadasys incisus,126947,Pomadasys incisus
+1906,172577,Stromateus fiatola,127076,Stromateus fiatola
+1907,622969,Halobatrachus didactylus,126374,Halobatrachus didactylus
+1908,NA,Bathytoshia centroura,1017389,Bathytoshia centroura
+1909,635631,Dysomma brevirostre,126321,Dysomma brevirostre
+1910,161763,Sardinella aurita,126422,Sardinella aurita
+1911,630199,Plectorhinchus mediterraneus,126946,Plectorhinchus mediterraneus
+1912,172364,Ruvettus pretiosus,126867,Ruvettus pretiosus
+1913,162659,Notoscopelus elongatus,158915,Notoscopelus elongatus
+1914,162203,Valenciennellus tripunctulatus,127316,Valenciennellus tripunctulatus
+1915,623876,Lobianchia gemellarii,158901,Lobianchia gemellarii
+1916,NA,Buenia massutii,1043622,Buenia massutii
+1917,162752,Lobianchia,158899,Lobianchia
+1918,636987,Awaous commersoni,277418,Awaous commersoni
+1919,159921,Alopias superciliosus,105835,Alopias superciliosus
+1920,165115,Echiodon dentatus,126662,Echiodon dentatus
+1921,82652,Scaeurgus unicirrhus,140607,Scaeurgus unicirrhus
+1922,613965,Lappanella fasciata,126969,Lappanella fasciata
+1923,161243,Muraena helena,126303,Muraena helena
+1924,623713,Diaphus rafinesquii,126596,Diaphus rafinesquii
+1925,623704,Diaphus adenomus,126587,Diaphus adenomus
+1926,162628,Diaphus termophilus,126598,Diaphus termophilus
+1927,161344,Ariosoma balearicum,126283,Ariosoma balearicum
+1928,161640,Echelus myrus,126314,Echelus myrus
+1929,622410,Bathophilus nigerrimus,127331,Bathophilus nigerrimus
+1930,166834,Scorpaena elongata,127242,Scorpaena elongata
+1931,556243,Neorossia caroli,141447,Neorossia caroli
+1932,161563,Ophisurus serpens,126317,Ophisurus serpens
+1933,169305,Umbrina ronchus,127013,Umbrina ronchus
+1934,NA,Hymenogadus gracilis,318576,Hymenogadus gracilis
+1935,644291,Paraliparis membranaceus,127228,Paraliparis membranaceus
+1936,182859,Holtbyrnia macrops,126740,Holtbyrnia macrops
+1937,164689,Lepidion,125768,Lepidion
+1938,159924,Isurus oxyrinchus,105839,Isurus oxyrinchus
+1939,623732,Electrona risso,126600,Electrona risso
+1940,162648,Lampanyctus intricarius,126615,Lampanyctus intricarius
+1941,168571,Remora remora,126853,Remora remora
+1942,162493,Paralepis coregonoides,126361,Paralepis coregonoides
+1943,162199,Ichthyococcus ovatus,127298,Ichthyococcus ovatus
+1944,169330,Sciaena umbra,127010,Sciaena umbra
+1945,161670,Halosaurus ovenii,126641,Halosaurus ovenii
+1946,162774,Neoscopelus macrolepidotus,126634,Neoscopelus macrolepidotus
+1947,NA,Oblada melanurus,1577363,Oblada melanurus
+1948,169307,Umbrina cirrosa,127012,Umbrina cirrosa
+1949,164949,Monomitopus metriostoma,126674,Monomitopus metriostoma
+1950,622390,Melanostomias bartonbeani,127359,Melanostomias bartonbeani
+1951,162170,Cyclothone microdon,127286,Cyclothone microdon
+1952,1202401,Iridonida speciosa,1606714,Iridonida speciosa
+1953,NA,Bathynectes maravigna,107377,Bathynectes maravigna
+1954,164900,Cataetyx alleni,126656,Cataetyx alleni
+1955,97989,Munida tenuimana,107166,Munida tenuimana
+1956,659847,Psathyrocaris infirma,107680,Psathyrocaris infirma
+1957,1195582,Eusergestes arcticus,515738,Eusergestes arcticus
+1958,96114,Acanthephyra purpurea,107582,Acanthephyra purpurea
+1959,1187413,Philocheras echinulatus,107558,Philocheras echinulatus
+1960,NA,Benthoecetes bartletti,1391796,Benthoecetes bartletti
+1961,563984,Pisces,11676,Pisces
+1962,170676,Coris julis,126963,Coris julis
+1963,161324,Congridae,125427,Congridae
+1964,162611,Diaphus metopoclampus,126594,Diaphus metopoclampus
+1965,162689,Protomyctophum arcticum,158917,Protomyctophum arcticum
+1966,NA,Scyramathia carpenteri,836053,Scyramathia carpenteri
+1967,NA,Amalopenaeus elegans,584920,Amalopenaeus elegans
+1968,1187928,Ephyrina figueirai figueirai,515735,Ephyrina figueirai figueirai
+1969,NA,Galatea,492282,Galatea
+1970,165386,Gadomus longifilis,126471,Gadomus longifilis
+1971,162303,Alepocephalidae,125507,Alepocephalidae
+1972,82636,Bathypolypus arcticus,140596,Bathypolypus arcticus
+1973,199974,Xantho poressa,107442,Xantho poressa
+1974,98837,Xantho,106957,Xantho
+1975,96115,Acanthephyra pelagica,107581,Acanthephyra pelagica
+1976,97221,Metacrangon jacqueti,107553,Metacrangon jacqueti
+1977,NA,Howella atlantica,1011297,Howella atlantica
+1978,162331,Leptoderma macrops,126703,Leptoderma macrops
+1979,1187893,Processa nouveli nouveli,108345,Processa nouveli nouveli
+1980,NA,Ergasticus clouei,107317,Ergasticus clouei
+1981,98575,Dorhynchus thomsoni,107316,Dorhynchus thomsoni
+1982,1195659,Sergia remipes,377752,Sergia remipes
+1983,168572,Remora brachyptera,126851,Remora brachyptera
+1984,162282,Stomiidae,125604,Stomiidae
+1985,622111,Diretmichthys parini,126396,Diretmichthys parini
+1986,564036,Rajella,105767,Rajella
+1987,170425,Sphyraena,126084,Sphyraena
+1988,161123,Anguilliformes,10295,Anguilliformes
+1989,160897,Raja polystigma,105888,Raja polystigma
+1990,161689,Notacanthus,125840,Notacanthus
+1991,622377,Chirostomias pliopterus,127339,Chirostomias pliopterus
+1992,622148,Hoplostethus cadenati,126403,Hoplostethus cadenati
+1993,623340,Sagamichthys schnakenbecki,126748,Sagamichthys schnakenbecki
+1994,166109,Poromitra capito,127272,Poromitra capito
+1995,623007,Guttigadus latifrons,158978,Guttigadus latifrons
+1996,162058,Nansenia,125893,Nansenia
+1997,644799,Parasudis fraserbrunneri,275832,Parasudis fraserbrunneri
+1998,NA,Lampadena atlantica,713102,Lampadena atlantica
+1999,165144,Bellottia apoda,126654,Bellottia apoda
+2000,623638,Nansenia tenera,126729,Nansenia tenera
+2001,NA,Ancistroteuthis lichtensteinii,140647,Ancistroteuthis lichtensteinii
+2002,620990,Chaceon affinis,107369,Chaceon affinis
+2003,166344,Trachipterus trachypterus,126528,Trachipterus trachypterus
+2004,82432,Octopoteuthis,138271,Octopoteuthis
+2005,82582,Taonius pavo,139428,Taonius pavo
+2006,162235,Astronesthes niger,127328,Astronesthes niger
+2007,162542,Evermannella balbo,126338,Evermannella balbo
+2008,172938,Poecilopsetta beanii,275847,Poecilopsetta beanii
+2009,550696,Gaidropsarus granti,126454,Gaidropsarus granti
+2010,NA,Muusoctopus januarii,527149,Muusoctopus januarii
+2011,550807,Lyconus brachycolus,221502,Lyconus brachycolus
+2012,NA,Anabathron ascensum,527546,Anabathron ascensum
+2013,171094,Pseudoscopelus altipinnis,126843,Pseudoscopelus altipinnis
+2014,645439,Platyberyx opalescens,221507,Platyberyx opalescens
+2015,644274,Paraliparis hystrix,127226,Paraliparis hystrix
+2016,623131,Leucobrotula adipata,126679,Leucobrotula adipata
+2017,164653,Ceratiidae,125487,Ceratiidae
+2018,NA,Opisthoteuthis massyae,153060,Opisthoteuthis massyae
+2019,162323,Photostylus pycnopterus,126707,Photostylus pycnopterus
+2020,162775,Neoscopelus microchir,126635,Neoscopelus microchir
+2021,166613,Acentronura,159441,Acentronura
+2022,167453,Agonus,126144,Agonus
+2023,171335,Anarhichadidae,125517,Anarhichadidae
+2024,171336,Anarhichas,125912,Anarhichas
+2025,82337,Austrorossia,341410,Austrorossia
+2026,161619,Avocettina infans,126304,Avocettina infans
+2027,616685,Cheilopogon pinnatibarbatus,126383,Cheilopogon pinnatibarbatus
+2028,643890,Chelidonichthys lucernus,274877,Chelidonichthys lucernus
+2029,160742,Deania calcea,105903,Deania calcea
+2030,169224,Dentex (Dentex) dentex,127467,Dentex (Dentex) dentex
+2031,564141,Dipturus linteus,105870,Dipturus linteus
+2032,167749,Hyporthodus acanthistius,475097,Hyporthodus acanthistius
+2033,550591,Gaidropsarus biscayensis,126452,Gaidropsarus biscayensis
+2034,201979,Gasterosteus aculeatus williamsoni,293602,Gasterosteus aculeatus williamsoni
+2035,201978,Gasterosteus aculeatus aculeatus,236462,Gasterosteus aculeatus aculeatus
+2036,171974,Gobiusculus flavescens,126898,Gobiusculus flavescens
+2037,168520,Gymnocephalus cernuus,151302,Gymnocephalus cernuus
+2038,616693,Hirundichthys rondeletii,126386,Hirundichthys rondeletii
+2039,97313,Homarus,106862,Homarus
+2040,166323,Lampridae,125478,Lampridae
+2041,164690,Lepidion eques,126493,Lepidion eques
+2042,170376,Liza ramada,126980,Liza ramada
+2043,170377,Liza aurata,126978,Liza aurata
+2044,556692,Loligo subulata,341892,Loligo subulata
+2045,164789,Merlucciidae,125473,Merlucciidae
+2046,167316,Triglopsis quadricornis,127208,Triglopsis quadricornis
+2047,660857,Nyctiphanes couchii,254316,Nyctiphanes couchii
+2048,180469,Orcinus orca,137102,Orcinus orca
+2049,552965,Palinurus gilchristi,210074,Palinurus gilchristi
+2050,170315,Percichthyidae,125549,Percichthyidae
+2051,167641,Percoidei,151751,Percoidei
+2052,616195,Psetta maxima,154473,Psetta maxima
+2053,166745,Sebastes marinus,127253,Sebastes marinus
+2054,205713,Sepiola steenstrupiana,141460,Sepiola steenstrupiana
+2055,555708,Sepiolida,157033,Sepiolida
+2056,616606,Pegusa impar,236490,Pegusa impar
+2057,160604,Squalidae,105716,Squalidae
+2058,162289,Stomias boa ferox,158737,Stomias boa ferox
+2059,160838,Torpedo (Torpedo) marmorata,105930,Torpedo (Torpedo) marmorata
+2060,160834,Torpedo (Tetronarce) nobiliana,105929,Torpedo (Tetronarce) nobiliana
+2061,168585,Trachurus,125946,Trachurus
+2062,167046,Trigloporus lastoviza,154462,Trigloporus lastoviza
+2063,166271,Zeiformes,10919,Zeiformes
+2064,170363,Chelon,126030,Chelon

@@ -1,0 +1,414 @@
+"","aphia","nhauls","species","class","perHaul","relMax","relSum"
+"1",125930,43377,"Callionymus","Teleostei",47.83,0.59,0.16
+"2",125999,18387,"Pomatoschistus","Teleostei",20.27,1.75,0.46
+"3",125885,17145,"Argentina","Teleostei",18.9,1.4,0.36
+"4",127419,8299,"Capros aper","Teleostei",9.15,11.1,2.89
+"5",125741,6437,"Ciliata","Teleostei",7.1,0.02,0.01
+"6",105732,5975,"Mustelus","Elasmobranchii",6.59,0.02,0
+"7",125909,4037,"Ammodytes","Teleostei",4.45,0.13,0.03
+"8",126421,3890,"Sardina pilchardus","Teleostei",4.29,0.92,0.24
+"9",127219,2859,"Liparis liparis","Teleostei",3.15,0.01,0
+"10",125537,2656,"Gobiidae","Teleostei",2.93,0.05,0.01
+"11",125988,2437,"Gobius","Teleostei",2.69,0.07,0.02
+"12",125743,2123,"Gaidropsarus","Teleostei",2.34,0.01,0
+"13",126751,2003,"Ammodytes marinus","Teleostei",2.21,0.63,0.16
+"14",125715,1993,"Alosa","Teleostei",2.2,0.01,0
+"15",126460,1895,"Molva macrophthalma","Teleostei",2.09,0.01,0
+"16",126505,1807,"Gasterosteus aculeatus","Teleostei",1.99,0.13,0.04
+"17",398381,1734,"Coelorinchus caelorhincus","Teleostei",1.91,0.37,0.1
+"18",150636,1686,"Eutrigla","Teleostei",1.86,0.09,0.02
+"19",127261,1642,"Chelidonichthys lastoviza","Teleostei",1.81,0,0
+"20",126160,1556,"Liparis","Teleostei",1.72,0.01,0
+"21",126227,1500,"Syngnathus","Teleostei",1.65,0.04,0.01
+"22",272392,1497,"Malacocephalus laevis","Teleostei",1.65,0.01,0
+"23",126175,1406,"Sebastes","Teleostei",1.55,0.64,0.17
+"24",711846,1326,"Dipturus intermedius","Elasmobranchii",1.46,0,0
+"25",126904,1267,"Lesueurigobius friesii","Teleostei",1.4,0.01,0
+"26",126761,1154,"Blennius ocellaris","Teleostei",1.27,0,0
+"27",105762,1146,"Dipturus","Elasmobranchii",1.26,0,0
+"28",125516,810,"Ammodytidae","Teleostei",0.89,0.16,0.04
+"29",126835,767,"Cepola macrophthalma","Teleostei",0.85,0,0
+"30",126180,713,"Trigla","Teleostei",0.79,0,0
+"31",711847,668,"Dipturus flossada","Elasmobranchii",0.74,0,0
+"32",127154,663,"Dicologlossa cuneata","Teleostei",0.73,0,0
+"33",127380,541,"Hippocampus hippocampus","Teleostei",0.6,0,0
+"34",151501,524,"Labrus mixtus","Teleostei",0.58,0,0
+"35",126495,520,"Lepidion lepidion","Teleostei",0.57,0.06,0.02
+"36",125522,508,"Callionymidae","Teleostei",0.56,0.03,0.01
+"37",150629,506,"Echiichthys","Teleostei",0.56,0.01,0
+"38",126178,399,"Chelidonichthys","Teleostei",0.44,0,0
+"39",126473,393,"Nezumia aequalis","Teleostei",0.43,0.03,0.01
+"40",271684,390,"Torpedo marmorata","Elasmobranchii",0.43,0,0
+"41",126497,364,"Mora moro","Teleostei",0.4,0.01,0
+"42",126328,350,"Synaphobranchus kaupii","Teleostei",0.39,0,0
+"43",126482,342,"Trachyrincus scabrus","Teleostei",0.38,0.02,0.01
+"44",126820,320,"Trachurus mediterraneus","Teleostei",0.35,0.08,0.02
+"45",126858,317,"Epigonus telescopus","Teleostei",0.35,0,0
+"46",298167,315,"Deania calceus","Elasmobranchii",0.35,0,0
+"47",126404,296,"Hoplostethus mediterraneus","Teleostei",0.33,0.01,0
+"48",272728,292,"Notoscopelus kroyeri","Teleostei",0.32,0,0
+"49",127266,289,"Trigla lyra","Teleostei",0.32,0,0
+"50",127047,284,"Boops boops","Teleostei",0.31,0.01,0
+"51",125802,274,"Lophius","Teleostei",0.3,0,0
+"52",126612,265,"Lampanyctus crocodilus","Teleostei",0.29,0,0
+"53",127374,242,"Stomias boa","Teleostei",0.27,0,0
+"54",105918,223,"Scymnodon ringens","Elasmobranchii",0.25,0,0
+"55",126513,222,"Diplecogaster bimaculata","Teleostei",0.24,0,0
+"56",105910,220,"Dalatias licha","Elasmobranchii",0.24,0,0
+"57",271509,217,"Bathyraja brachyurops","Elasmobranchii",0.24,0,0
+"58",126714,212,"Xenodermichthys copei","Teleostei",0.23,0,0
+"59",125840,203,"Notacanthus","Teleostei",0.22,0,0
+"60",127007,200,"Argyrosomus regius","Teleostei",0.22,0,0
+"61",274100,190,"Lycodes gracilis","Teleostei",0.21,0,0
+"62",273566,188,"Symphodus bailloni","Teleostei",0.21,0,0
+"63",126131,187,"Pegusa","Teleostei",0.21,0,0
+"64",1042830,187,"Chelon ramada","Teleostei",0.21,0,0
+"65",125606,186,"Syngnathidae","Teleostei",0.21,0,0
+"66",127085,184,"Aphanopus carbo","Teleostei",0.2,0.01,0
+"67",126489,180,"Halargyreus johnsonii","Teleostei",0.2,0,0
+"68",274967,180,"Argyropelecus olfersii","Teleostei",0.2,0,0
+"69",126663,177,"Echiodon drummondii","Teleostei",0.2,0,0
+"70",126627,172,"Myctophum punctatum","Teleostei",0.19,0,0
+"71",125659,166,"Atherina","Teleostei",0.18,0,0
+"72",126642,162,"Notacanthus bonaparte","Teleostei",0.18,0,0
+"73",151353,161,"Perca fluviatilis","Teleostei",0.18,0,0
+"74",105851,154,"Dasyatis pastinaca","Elasmobranchii",0.17,0,0
+"75",126872,154,"Buenia jeffreysii","Teleostei",0.17,0,0
+"76",273571,152,"Symphodus melops","Teleostei",0.17,0,0
+"77",127011,150,"Umbrina canariensis","Teleostei",0.17,0,0
+"78",158960,150,"Coryphaenoides rupestris","Teleostei",0.17,0.01,0
+"79",151308,149,"Sander lucioperca","Teleostei",0.16,0,0
+"80",127263,140,"Chelidonichthys obscurus","Teleostei",0.15,0,0
+"81",125911,139,"Hyperoplus","Teleostei",0.15,0,0
+"82",127378,135,"Macroramphosus scolopax","Teleostei",0.15,0,0
+"83",126770,133,"Parablennius gattorugine","Teleostei",0.15,0,0
+"84",126352,132,"Arctozenus risso","Teleostei",0.15,0,0
+"85",127101,129,"Lycenchelys sarsii","Teleostei",0.14,0,0
+"86",1044127,122,"Chelon auratus","Teleostei",0.13,0,0
+"87",151174,117,"Scomber colias","Teleostei",0.13,0,0
+"88",125498,115,"Myctophidae","Teleostei",0.13,0,0
+"89",127057,112,"Pagellus acarne","Teleostei",0.12,0,0
+"90",126831,106,"Centrolophus niger","Teleostei",0.12,0,0
+"91",125589,105,"Cottidae","Teleostei",0.12,0,0
+"92",126125,101,"Zeugopterus","Teleostei",0.11,0,0
+"93",126508,96,"Spinachia spinachia","Teleostei",0.11,0,0
+"94",126395,94,"Beryx splendens","Teleostei",0.1,0,0
+"95",126129,91,"Microchirus","Teleostei",0.1,0,0
+"96",126507,91,"Pungitius pungitius","Teleostei",0.1,0,0
+"97",126394,82,"Beryx decadactylus","Teleostei",0.09,0,0
+"98",127152,81,"Bathysolea profundicola","Teleostei",0.09,0,0
+"99",127060,80,"Pagellus erythrinus","Teleostei",0.09,0,0
+"100",127059,78,"Pagellus bogaraveo","Teleostei",0.09,0,0
+"101",1517500,77,"Gobiiformes","Teleostei",0.08,0,0
+"102",126034,75,"Mullus","Teleostei",0.08,0,0
+"103",127128,75,"Arnoglossus thori","Teleostei",0.08,0,0
+"104",127338,73,"Chauliodus sloani","Teleostei",0.08,0,0
+"105",127309,70,"Argyropelecus hemigymnus","Teleostei",0.08,0,0
+"106",105871,68,"Dipturus nidarosiensis","Elasmobranchii",0.07,0,0
+"107",126127,68,"Buglossidium","Teleostei",0.07,0,0
+"108",127300,68,"Polymetme corythaeola","Teleostei",0.07,0,0
+"109",127393,67,"Syngnathus typhle","Teleostei",0.07,0,0
+"110",154461,66,"Trigloporus","Teleostei",0.07,0,0
+"111",151523,65,"Sparus aurata","Teleostei",0.07,0,0
+"112",127021,61,"Sarda sarda","Teleostei",0.07,0,0
+"113",126030,60,"Chelon","Teleostei",0.07,0,0
+"114",126684,57,"Alepocephalus rostratus","Teleostei",0.06,0,0
+"115",127041,56,"Serranus cabrilla","Teleostei",0.06,0,0
+"116",125541,55,"Labridae","Teleostei",0.06,0,0
+"117",126682,55,"Alepocephalus bairdii","Teleostei",0.06,0,0
+"118",127063,54,"Pagrus pagrus","Teleostei",0.06,0,0
+"119",158961,54,"Hymenocephalus italicus","Teleostei",0.06,0,0
+"120",127022,53,"Scomber japonicus","Teleostei",0.06,0,0
+"121",127246,52,"Scorpaena notata","Teleostei",0.06,0,0
+"122",321911,50,"Tetronarce nobiliana","Elasmobranchii",0.06,0,0
+"123",127159,49,"Solea senegalensis","Teleostei",0.05,0,0
+"124",127228,49,"Paraliparis membranaceus","Teleostei",0.05,0,0
+"125",127202,47,"Myoxocephalus scorpioides","Teleostei",0.05,0,0
+"126",105901,46,"Centrophorus squamosus","Elasmobranchii",0.05,0,0
+"127",280071,46,"Centroselachus crepidater","Elasmobranchii",0.05,0,0
+"128",127071,45,"Chirolophis ascanii","Teleostei",0.05,0,0
+"129",127186,44,"Salmo salar","Teleostei",0.05,0,0
+"130",405451,42,"Gymnocephalus cernua","Teleostei",0.05,0,0
+"131",105852,41,"Dasyatis tortonesei","Elasmobranchii",0.05,0,0
+"132",126662,41,"Echiodon dentatus","Teleostei",0.05,0,0
+"133",126961,41,"Centrolabrus exoletus","Teleostei",0.05,0,0
+"134",280299,41,"Coelorinchus labiatus","Teleostei",0.05,0,0
+"135",126306,39,"Nemichthys scolopaceus","Teleostei",0.04,0,0
+"136",125824,38,"Lampadena","Teleostei",0.04,0,0
+"137",105905,35,"Deania profundorum","Elasmobranchii",0.04,0,0
+"138",105907,33,"Centroscymnus coelolepis","Elasmobranchii",0.04,0,0
+"139",127257,33,"Trachyscorpia echinata","Teleostei",0.04,0,0
+"140",126472,32,"Macrourus berglax","Teleostei",0.04,0,0
+"141",105894,31,"Rajella fyllae","Elasmobranchii",0.03,0,0
+"142",127248,31,"Scorpaena scrofa","Teleostei",0.03,0,0
+"143",125992,30,"Lesueurigobius","Teleostei",0.03,0,0
+"144",10327,29,"Syngnathiformes","Teleostei",0.03,0,0
+"145",126023,29,"Symphodus","Teleostei",0.03,0,0
+"146",126976,29,"Dicentrarchus punctatus","Teleostei",0.03,0,0
+"147",105911,28,"Etmopterus princeps","Elasmobranchii",0.03,0,0
+"148",127244,28,"Scorpaena loppei","Teleostei",0.03,0,0
+"149",126957,27,"Acantholabrus palloni","Teleostei",0.03,0,0
+"150",127425,27,"Cyttopsis rosea","Teleostei",0.03,0,0
+"151",154776,27,"Hippocampus guttulatus","Teleostei",0.03,0,0
+"152",125546,26,"Mugilidae","Teleostei",0.03,0,0
+"153",126486,26,"Antimora rostrata","Teleostei",0.03,0,0
+"154",126833,26,"Schedophilus medusophagus","Teleostei",0.03,0,0
+"155",127201,26,"Micrenophrys lilljeborgii","Teleostei",0.03,0,0
+"156",126481,25,"Trachyrincus murrayi","Teleostei",0.03,0,0
+"157",126527,25,"Trachipterus arcticus","Teleostei",0.03,0,0
+"158",10216,24,"Rajiformes","Elasmobranchii",0.03,NA,NA
+"159",126224,24,"Hippocampus","Teleostei",0.03,NA,NA
+"160",126361,23,"Paralepis coregonoides","Teleostei",0.03,0,0
+"161",125464,22,"Clupeidae","Teleostei",0.02,0,0
+"162",272027,22,"Atherina boyeri","Teleostei",0.02,0,0
+"163",105711,21,"Rajidae","Elasmobranchii",0.02,0,0
+"164",126109,21,"Arnoglossus","Teleostei",0.02,0,0
+"165",125781,20,"Lepadogaster","Teleostei",0.02,0,0
+"166",127256,20,"Trachyscorpia cristulata","Teleostei",0.02,0,0
+"167",126510,19,"Apletodon dentatus","Teleostei",0.02,0,0
+"168",126865,19,"Nesiarchus nasutus","Teleostei",0.02,0,0
+"169",127247,18,"Scorpaena porcus","Teleostei",0.02,0,0
+"170",127265,18,"Lepidotrigla dieuzeidei","Teleostei",0.02,0,0
+"171",105860,17,"Myliobatis aquila","Elasmobranchii",0.02,0,0
+"172",105879,17,"Neoraja caerulea","Elasmobranchii",0.02,0,0
+"173",126319,16,"Serrivomer beanii","Teleostei",0.02,0,0
+"174",125477,15,"Gobiesocidae","Teleostei",0.02,0,0
+"175",125825,15,"Lampanyctus","Teleostei",0.02,0,0
+"176",126539,15,"Chaunax pictus","Teleostei",0.02,0,0
+"177",127237,15,"Cottunculus thomsonii","Teleostei",0.02,0,0
+"178",127301,15,"Polymetme thaeocoryla","Teleostei",0.02,0,0
+"179",218381,15,"Lactarius lactarius","Teleostei",0.02,0,0
+"180",105806,14,"Apristurus aphyodes","Elasmobranchii",0.02,0,0
+"181",125575,14,"Zoarcidae","Teleostei",0.02,0,0
+"182",105766,13,"Raja","Elasmobranchii",0.01,0,0
+"183",125475,13,"Phycidae","Teleostei",0.01,0,0
+"184",126402,13,"Hoplostethus atlanticus","Teleostei",0.01,0,0
+"185",306769,13,"Stomias ferox","Teleostei",0.01,0,0
+"186",125576,12,"Bothidae","Teleostei",0.01,0,0
+"187",125581,12,"Soleidae","Teleostei",0.01,0,0
+"188",126336,12,"Chlorophthalmus agassizi","Teleostei",0.01,0,0
+"189",127055,12,"Lithognathus mormyrus","Teleostei",0.01,0,0
+"190",127088,12,"Lepidopus caudatus","Teleostei",0.01,0,0
+"191",105807,11,"Apristurus laurussonii","Elasmobranchii",0.01,0,0
+"192",126643,11,"Notacanthus chemnitzii","Teleostei",0.01,0,0
+"193",126681,11,"Alepocephalus agassizii","Teleostei",0.01,0,0
+"194",126821,11,"Trachurus picturatus","Teleostei",0.01,0,0
+"195",127054,11,"Diplodus vulgaris","Teleostei",0.01,0,0
+"196",272278,11,"Spratelloides lewisi","Teleostei",0.01,0,0
+"197",1575775,11,"Engraulis maeoticus","Teleostei",0.01,0,0
+"198",105813,10,"Galeus murinus","Elasmobranchii",0.01,0,0
+"199",105892,10,"Rajella bathyphila","Elasmobranchii",0.01,0,0
+"200",105896,10,"Rostroraja alba","Elasmobranchii",0.01,0,0
+"201",125617,10,"Zeidae","Teleostei",0.01,0,0
+"202",125829,10,"Myctophum","Teleostei",0.01,0,0
+"203",126392,10,"Scomberesox saurus","Teleostei",0.01,0,0
+"204",154333,10,"Rutilus rutilus","Teleostei",0.01,0,0
+"205",105808,9,"Apristurus manis","Elasmobranchii",0.01,0,0
+"206",105906,9,"Centroscyllium fabricii","Elasmobranchii",0.01,0,0
+"207",125598,9,"Triglidae","Teleostei",0.01,0,0
+"208",126292,9,"Nessorhamphus ingolfianus","Teleostei",0.01,0,0
+"209",126342,9,"Bathypterois dubius","Teleostei",0.01,0,0
+"210",158958,9,"Coryphaenoides guentheri","Teleostei",0.01,0,0
+"211",125425,8,"Anguillidae","Teleostei",0.01,0,0
+"212",126483,8,"Melanonus zugmayeri","Teleostei",0.01,0,0
+"213",127053,8,"Diplodus sargus","Teleostei",0.01,0,0
+"214",183099,8,"Coryphaenoides mediterraneus","Teleostei",0.01,0,0
+"215",125595,7,"Scorpaenidae","Teleostei",0.01,0,0
+"216",125819,7,"Diaphus","Teleostei",0.01,0,0
+"217",126029,7,"Dicentrarchus","Teleostei",0.01,0,0
+"218",126585,7,"Ceratoscopelus maderensis","Teleostei",0.01,0,0
+"219",126657,7,"Cataetyx laticeps","Teleostei",0.01,0,0
+"220",126709,7,"Rouleina attrita","Teleostei",0.01,0,0
+"221",151324,7,"Sebastes norvegicus","Teleostei",0.01,0,0
+"222",154271,7,"Abramis","Teleostei",0.01,0,0
+"223",154281,7,"Abramis brama","Teleostei",0.01,0,0
+"224",126488,6,"Gadella maraldi","Teleostei",0.01,0,0
+"225",126806,6,"Caranx rhonchus","Teleostei",0.01,0,0
+"226",126995,6,"Howella sherborni","Teleostei",0.01,0,0
+"227",127359,6,"Melanostomias bartonbeani","Teleostei",0.01,0,0
+"228",125566,5,"Stichaeidae","Teleostei",0.01,0,0
+"229",125831,5,"Notoscopelus","Teleostei",0.01,0,0
+"230",126359,5,"Magnisudis atlantica","Teleostei",0.01,0,0
+"231",126645,5,"Polyacanthonotus rissoanus","Teleostei",0.01,0,0
+"232",126759,5,"Anarhichas minor","Teleostei",0.01,0,0
+"233",127120,5,"Melanostigma atlanticum","Teleostei",0.01,0,0
+"234",127180,5,"Coregonus lavaretus","Teleostei",0.01,0,0
+"235",127340,5,"Echiostoma barbatum","Teleostei",0.01,0,0
+"236",127358,5,"Malacosteus niger","Teleostei",0.01,0,0
+"237",127383,5,"Nerophis lumbriciformis","Teleostei",0.01,0,0
+"238",105893,4,"Rajella bigelowi","Elasmobranchii",0,0,0
+"239",125893,4,"Nansenia","Teleostei",0,0,0
+"240",125915,4,"Blennius","Teleostei",0,0,0
+"241",126369,4,"Bathysaurus ferox","Teleostei",0,0,0
+"242",126580,4,"Benthosema glaciale","Teleostei",0,0,0
+"243",126639,4,"Halosauropsis macrochir","Teleostei",0,0,0
+"244",126739,4,"Holtbyrnia anomala","Teleostei",0,0,0
+"245",126857,4,"Epigonus denticulatus","Teleostei",0,0,0
+"246",126916,4,"Neogobius melanostomus","Teleostei",0,0,0
+"247",126998,4,"Polyprion americanus","Teleostei",0,0,0
+"248",127110,4,"Lycodes pallidus","Teleostei",0,0,0
+"249",127193,4,"Artediellus atlanticus","Teleostei",0,0,0
+"250",127334,4,"Borostomias antarcticus","Teleostei",0,0,0
+"251",127405,4,"Mola mola","Teleostei",0,0,0
+"252",154210,4,"Esox lucius","Teleostei",0,0,0
+"253",154238,4,"Coregonus oxyrinchus","Teleostei",0,0,0
+"254",234519,4,"Liparidae","Teleostei",0,0,0
+"255",273573,4,"Symphodus roissali","Teleostei",0,0,0
+"256",398363,4,"Sigmops bathyphilus","Teleostei",0,0,0
+"257",713102,4,"Lampadena atlantica","Teleostei",0,0,0
+"258",10309,3,"Myctophiformes","Teleostei",0,0,0
+"259",105809,3,"Apristurus microps","Elasmobranchii",0,0,0
+"260",105915,3,"Oxynotus paradoxus","Elasmobranchii",0,0,0
+"261",125564,3,"Sparidae","Teleostei",0,0,0
+"262",125779,3,"Diplecogaster","Teleostei",0,0,0
+"263",126079,3,"Pagellus","Teleostei",0,0,0
+"264",126154,3,"Triglops","Teleostei",0,0,0
+"265",126228,3,"Balistes","Teleostei",0,0,0
+"266",126338,3,"Evermannella balbo","Teleostei",0,0,0
+"267",126354,3,"Lestidiops jayakari","Teleostei",0,0,0
+"268",126503,3,"Urophycis chuss","Teleostei",0,0,0
+"269",126519,3,"Lepadogaster purpurea","Teleostei",0,0,0
+"270",126678,3,"Spectrunculus grandis","Teleostei",0,0,0
+"271",126880,3,"Deltentosteus quadrimaculatus","Teleostei",0,0,0
+"272",127043,3,"Serranus scriba","Teleostei",0,0,0
+"273",127058,3,"Pagellus bellottii","Teleostei",0,0,0
+"274",127064,3,"Sarpa salpa","Teleostei",0,0,0
+"275",127207,3,"Triglops pingelii","Teleostei",0,NA,NA
+"276",127278,3,"Scopelogadus beanii","Teleostei",0,0,0
+"277",221512,3,"Sigmops elongatus","Teleostei",0,0,0
+"278",272526,3,"Lepadogaster candolii","Teleostei",0,0,0
+"279",105836,2,"Alopias vulpinus","Elasmobranchii",0,0,0
+"280",105837,2,"Cetorhinus maximus","Elasmobranchii",0,0,0
+"281",105867,2,"Bathyraja richardsoni","Elasmobranchii",0,0,0
+"282",105919,2,"Somniosus microcephalus","Elasmobranchii",0,0,0
+"283",125501,2,"Notacanthidae","Teleostei",0,0,0
+"284",125519,2,"Blenniidae","Teleostei",0,0,0
+"285",125547,2,"Mullidae","Teleostei",0,0,0
+"286",126141,2,"Salmo","Teleostei",0,0,0
+"287",126148,2,"Cottus","Teleostei",0,0,0
+"288",126181,2,"Melamphaes","Teleostei",0,0,0
+"289",126310,2,"Venefica proboscidea","Teleostei",0,0,0
+"290",126325,2,"Ilyophis blachei","Teleostei",0,0,0
+"291",126393,2,"Anoplogaster cornuta","Teleostei",0,0,0
+"292",126398,2,"Diretmus argenteus","Teleostei",0,0,0
+"293",126522,2,"Lampris guttatus","Teleostei",0,NA,NA
+"294",126637,2,"Aldrovandia affinis","Teleostei",0,0,0
+"295",126654,2,"Bellottia apoda","Teleostei",0,0,0
+"296",126656,2,"Cataetyx alleni","Teleostei",0,0,0
+"297",126745,2,"Normichthys operosus","Teleostei",0,0,0
+"298",126748,2,"Sagamichthys schnakenbecki","Teleostei",0,0,0
+"299",126840,2,"Chiasmodon niger","Teleostei",0,0,0
+"300",126927,2,"Pomatoschistus microps","Teleostei",0,0,0
+"301",126937,2,"Thorogobius ephippiatus","Teleostei",0,0,0
+"302",126994,2,"Howella brodiei","Teleostei",0,0,0
+"303",127042,2,"Serranus hepatus","Teleostei",0,0,0
+"304",127094,2,"Xiphias gladius","Teleostei",0,0,0
+"305",127122,2,"Pachycara crassiceps","Teleostei",0,0,0
+"306",127130,2,"Citharus linguatula","Teleostei",0,0,0
+"307",127191,2,"Leptagonus decagonus","Teleostei",0,0,0
+"308",127199,2,"Icelus bicornis","Teleostei",0,0,0
+"309",127226,2,"Paraliparis hystrix","Teleostei",0,0,0
+"310",127339,2,"Chirostomias pliopterus","Teleostei",0,0,0
+"311",158901,2,"Lobianchia gemellarii","Teleostei",0,0,0
+"312",271345,2,"Apristurus melanoasper","Elasmobranchii",0,0,0
+"313",283150,2,"Vimba vimba","Teleostei",0,0,0
+"314",742995,2,"Pentherichthys atratus","Teleostei",0,NA,NA
+"315",1019159,2,"Rajella lintea","Elasmobranchii",0,0,0
+"316",10331,1,"Pleuronectiformes","Teleostei",0,0,0
+"317",105693,1,"Scyliorhinidae","Elasmobranchii",0,0,0
+"318",105727,1,"Apristurus","Elasmobranchii",0,0,0
+"319",105729,1,"Scyliorhinus","Elasmobranchii",0,NA,NA
+"320",105801,1,"Prionace glauca","Elasmobranchii",0,0,0
+"321",105832,1,"Heptranchias perlo","Elasmobranchii",0,0,0
+"322",105864,1,"Amblyraja jenseni","Elasmobranchii",0,0,0
+"323",105866,1,"Bathyraja pallida","Elasmobranchii",0,0,0
+"324",105899,1,"Centrophorus granulosus","Elasmobranchii",0,NA,NA
+"325",125451,1,"Belonidae","Teleostei",0,0,0
+"326",125469,1,"Gadidae","Teleostei",0,0,0
+"327",125470,1,"Lotidae","Teleostei",0,0,0
+"328",125471,1,"Macrouridae","Teleostei",0,0,0
+"329",125476,1,"Gasterosteidae","Teleostei",0,0,0
+"330",125493,1,"Lophiidae","Teleostei",0,0,0
+"331",125507,1,"Alepocephalidae","Teleostei",0,0,0
+"332",125509,1,"Bathylagidae","Teleostei",0,0,0
+"333",125561,1,"Serranidae","Teleostei",0,NA,NA
+"334",125579,1,"Pleuronectidae","Teleostei",0,0,0
+"335",125587,1,"Salmonidae","Teleostei",0,0,0
+"336",125613,1,"Caproidae","Teleostei",0,0,0
+"337",125620,1,"Anguilla","Teleostei",0,0,0
+"338",125722,1,"Spratelloides","Teleostei",0,0,0
+"339",125731,1,"Gadiculus","Teleostei",0,0,0
+"340",125742,1,"Enchelyopus","Teleostei",0,0,0
+"341",125956,1,"Chiasmodon","Teleostei",0,0,0
+"342",125996,1,"Neogobius","Teleostei",0,0,0
+"343",126020,1,"Ctenolabrus","Teleostei",0,NA,NA
+"344",126088,1,"Lumpenus","Teleostei",0,0,0
+"345",126104,1,"Lycodes","Teleostei",0,0,0
+"346",126152,1,"Myoxocephalus","Teleostei",0,0,0
+"347",126161,1,"Paraliparis","Teleostei",0,0,0
+"348",126196,1,"Argyropelecus","Teleostei",0,0,0
+"349",126220,1,"Stomias","Teleostei",0,NA,NA
+"350",126327,1,"Simenchelys parasitica","Teleostei",0,0,0
+"351",126330,1,"Ijimaia loppei","Teleostei",0,0,0
+"352",126356,1,"Macroparalepis affinis","Teleostei",0,0,0
+"353",126376,1,"Belone svetovidovi","Teleostei",0,0,0
+"354",126403,1,"Hoplostethus cadenati","Teleostei",0,0,0
+"355",126454,1,"Gaidropsarus granti","Teleostei",0,0,0
+"356",126456,1,"Gaidropsarus macrophthalmus","Teleostei",0,0,0
+"357",126463,1,"Bathygadus melanobranchus","Teleostei",0,0,0
+"358",126475,1,"Nezumia sclerorhynchus","Teleostei",0,0,0
+"359",126498,1,"Physiculus dalwigki","Teleostei",0,0,0
+"360",126525,1,"Regalecus glesne","Teleostei",0,NA,NA
+"361",126528,1,"Trachipterus trachypterus","Teleostei",0,0,0
+"362",126600,1,"Electrona risso","Teleostei",0,0,0
+"363",126618,1,"Lampanyctus photonotus","Teleostei",0,0,0
+"364",126634,1,"Neoscopelus macrolepidotus","Teleostei",0,0,0
+"365",126635,1,"Neoscopelus microchir","Teleostei",0,0,0
+"366",126652,1,"Sciadonus galatheae","Teleostei",0,NA,NA
+"367",126661,1,"Carapus acus","Teleostei",0,0,0
+"368",126674,1,"Monomitopus metriostoma","Teleostei",0,0,0
+"369",126675,1,"Ophidion barbatum","Teleostei",0,0,0
+"370",126687,1,"Bajacalifornia megalops","Teleostei",0,0,0
+"371",126695,1,"Conocara macropterum","Teleostei",0,0,0
+"372",126697,1,"Conocara murrayi","Teleostei",0,0,0
+"373",126729,1,"Nansenia tenera","Teleostei",0,0,0
+"374",126749,1,"Searsia koefoedi","Teleostei",0,0,0
+"375",126768,1,"Lipophrys pholis","Teleostei",0,0,0
+"376",126785,1,"Pterycombus brama","Teleostei",0,0,0
+"377",126811,1,"Naucrates ductor","Teleostei",0,0,0
+"378",126843,1,"Pseudoscopelus altipinnis","Teleostei",0,0,0
+"379",126873,1,"Caspiosoma caspium","Teleostei",0,NA,NA
+"380",126967,1,"Labrus merula","Teleostei",0,0,0
+"381",126983,1,"Mugil cephalus","Teleostei",0,0,0
+"382",127020,1,"Rastrelliger kanagurta","Teleostei",0,0,0
+"383",127029,1,"Thunnus thynnus","Teleostei",0,0,0
+"384",127051,1,"Diplodus cervinus","Teleostei",0,0,0
+"385",127068,1,"Sphyraena sphyraena","Teleostei",0,0,0
+"386",127087,1,"Benthodesmus simonyi","Teleostei",0,0,0
+"387",127119,1,"Lycodonus flagellicauda","Teleostei",0,NA,NA
+"388",127178,1,"Coregonus albula","Teleostei",0,0,0
+"389",127235,1,"Cottunculus microps","Teleostei",0,0,0
+"390",127272,1,"Poromitra capito","Teleostei",0,0,0
+"391",127273,1,"Poromitra crassiceps","Teleostei",0,0,0
+"392",127308,1,"Argyropelecus gigas","Teleostei",0,0,0
+"393",127328,1,"Astronesthes niger","Teleostei",0,0,0
+"394",127336,1,"Borostomias mononema","Teleostei",0,NA,NA
+"395",127417,1,"Sphoeroides pachygaster","Teleostei",0,0,0
+"396",127426,1,"Zenopsis conchifer","Teleostei",0,0,0
+"397",154285,1,"Alburnus alburnus","Teleostei",0,0,0
+"398",158726,1,"Coregonus clupeaformis","Teleostei",0,0,0
+"399",158978,1,"Guttigadus latifrons","Teleostei",0,0,0
+"400",203947,1,"Ammodytoides","Teleostei",0,0,0
+"401",217626,1,"Heterodontus ramalheira","Elasmobranchii",0,0,0
+"402",221502,1,"Lyconus brachycolus","Teleostei",0,0,0
+"403",271564,1,"Leucoraja lentiginosa","Elasmobranchii",0,0,0
+"404",271691,1,"Torpedo torpedo","Elasmobranchii",0,0,0
+"405",273574,1,"Symphodus rostratus","Teleostei",0,0,0
+"406",275832,1,"Parasudis fraserbrunneri","Teleostei",0,0,0
+"407",275847,1,"Poecilopsetta beanii","Teleostei",0,0,0
+"408",279605,1,"Anarrhichthys ocellatus","Teleostei",0,0,0
+"409",281518,1,"Manducus maderensis","Teleostei",0,0,0
+"410",293496,1,"Teleostei","Teleostei",0,0,0
+"411",1009258,1,"Cottus rhenanus","Teleostei",0,NA,NA
+"412",1011297,1,"Howella atlantica","Teleostei",0,0,0
+"413",1012164,1,"Clupeichthys aesarnensis","Teleostei",0,0,0

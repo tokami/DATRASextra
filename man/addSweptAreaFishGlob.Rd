@@ -2,28 +2,45 @@
 % Please edit documentation in R/fishglob.R
 \name{addSweptAreaFishGlob}
 \alias{addSweptAreaFishGlob}
-\title{Add Swept Area index following the FishGlob calculations}
+\title{Add swept area indices following FishGlob methodology}
 \usage{
 addSweptAreaFishGlob(x)
 }
 \arguments{
-\item{x}{a DATRASraw object}
+\item{x}{A \code{DATRASraw} object containing haul-level (\code{HH}) data.}
 }
 \value{
-DATRASraw object with SweptArea index, columns "SweptArea" and
-"DoorArea".
+A \code{DATRASraw} object with two additional columns in \code{HH}:
+\itemize{
+\item \code{SweptArea} — swept area in km^2
+\item \code{DoorsArea} — door swept area in km^2
+}
 }
 \description{
-Add Swept Area index following the FishGlob calculations
+Computes swept area indices (m²) for haul-level records in a
+\code{DATRASraw} object following the methodology developed for FishGlob.
+
+DoorSpread and WingSpread are re-estimated using survey-specific
+linear models (stored internally in the package) when missing.
+Towing distance is calculated from recorded distance or reconstructed
+from ground speed and haul duration using a hierarchical fallback:
+Survey-Year-Ship → Survey-Year-Country → Survey-Country → Global mean.
+
+Swept area is calculated as:
+\deqn{
+SweptArea = Distance \times WingSpread \times 10^{-6}
+}
+
+Door area is calculated analogously using DoorSpread.
 }
 \details{
-The unit of the swept area indices are squaremeters (m^2).
-
-The original functions were developed by Aurore Maureaud and Daniël van
-Denderen and can be accessed here:
+The original spread estimation logic was developed by
+Aurore Maureaud and Daniël van Denderen and is available at:
 \url{https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/source_DATRAS_wing_doorspread.R}.
 
-Note, that this function only calculates the swept area for surveys that are
-included in the FISHGLOB (EVHOE, SWC-IBTS, BITS, IE-IGFS, FR-CGFS, NIGFS,
-ROCKALL, SP-NORTH, SP-ARSA, SP-PORC; status November 2025).
+This implementation uses pre-fitted survey-specific models stored
+internally in the package and applies hierarchical fallback logic
+when factor levels are not present in the training data.
+
+Swept area is returned in square km (km^2).
 }
