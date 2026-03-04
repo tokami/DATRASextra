@@ -100,9 +100,9 @@ data:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dab</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Class 'DATRASraw'  hidden list of 3</span></span>
-<span><span class="co">#&gt;  $ CA:'data.frame':  8051 obs. of  41 variables:</span></span>
-<span><span class="co">#&gt;  $ HH:'data.frame':  2660 obs. of  77 variables:</span></span>
-<span><span class="co">#&gt;  $ HL:'data.frame':  26824 obs. of  37 variables:</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ CA:'data.frame':  8034 obs. of  39 variables:</span></span>
+<span><span class="co">#&gt;  $ HH:'data.frame':  2651 obs. of  76 variables:</span></span>
+<span><span class="co">#&gt;  $ HL:'data.frame':  26737 obs. of  36 variables:</span></span></code></pre></div>
 <ul>
 <li>
 <code>CA</code>: individual-level biological data (e.g., length,
@@ -148,48 +148,46 @@ into catch-at-age.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ca</span> <span class="op">&lt;-</span> <span class="va">dab</span><span class="op">[[</span><span class="st">"CA"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ca</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 'data.frame':    8051 obs. of  41 variables:</span></span>
-<span><span class="co">#&gt;  $ RecordType          : Factor w/ 1 level "CA": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ Survey              : Factor w/ 1 level "NS-IBTS": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ Quarter             : Factor w/ 2 levels "1","3": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ Country             : Factor w/ 4 levels "DK","GB","GB-SCT",..: 4 4 4 4 4 4 4 4 4 4 ...</span></span>
-<span><span class="co">#&gt;  $ Ship                : Factor w/ 5 levels "26D4","58G2",..: 2 2 2 2 2 2 2 2 2 2 ...</span></span>
-<span><span class="co">#&gt;  $ Gear                : Factor w/ 1 level "GOV": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ SweepLngt           : num  110 110 110 110 110 110 110 110 110 110 ...</span></span>
-<span><span class="co">#&gt;  $ GearEx              : Factor w/ 3 levels "B","S","D": 2 2 2 2 2 2 2 2 2 2 ...</span></span>
-<span><span class="co">#&gt;  $ DoorType            : Factor w/ 1 level "P": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ StNo                : chr  "60037" "60037" "60037" "60037" ...</span></span>
-<span><span class="co">#&gt;  $ HaulNo              : int  37 37 37 37 30 34 34 34 34 34 ...</span></span>
-<span><span class="co">#&gt;  $ Year                : Factor w/ 4 levels "2020","2021",..: 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ SpecCodeType        : chr  "W" "W" "W" "W" ...</span></span>
-<span><span class="co">#&gt;  $ SpecCode            : int  127139 127139 127139 127139 127139 127139 127139 127139 127139 127139 ...</span></span>
-<span><span class="co">#&gt;  $ AreaType            : int  0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;  $ AreaCode            : Factor w/ 103 levels "34F2","34F4",..: 83 83 83 83 81 86 86 86 86 86 ...</span></span>
-<span><span class="co">#&gt;  $ LngtCode            : Factor w/ 3 levels ".","0","1": 3 3 3 3 3 3 3 3 3 3 ...</span></span>
-<span><span class="co">#&gt;  $ LngtClas            : int  16 16 18 23 19 15 15 15 15 15 ...</span></span>
-<span><span class="co">#&gt;  $ Sex                 : Factor w/ 2 levels "F","M": NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ Maturity            : Factor w/ 12 levels "61","62","63",..: NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ PlusGr              : Factor w/ 0 levels: NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ Age                 : num  NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ NoAtALK             : int  1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ IndWgt              : num  NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ FishID              : Factor w/ 100 levels "1","2","3","4",..: 2 3 4 1 1 1 15 17 20 9 ...</span></span>
-<span><span class="co">#&gt;  $ GenSamp             : Factor w/ 1 level "N": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ StomSamp            : Factor w/ 1 level "N": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ AgeSource           : Factor w/ 0 levels: NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ AgePrepMet          : Factor w/ 0 levels: NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ OtGrading           : int  NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ ParSamp             : Factor w/ 1 level "N": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ MaturityScale       : Factor w/ 2 levels "M6","SMSF": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ LiverWeight         : num  NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ Valid_Aphia         : num  127139 127139 127139 127139 127139 ...</span></span>
-<span><span class="co">#&gt;  $ ScientificName_WoRMS: Factor w/ 1 level "Limanda limanda": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ DateofCalculation   : int  20220125 20220125 20220125 20220125 20220125 20220125 20220125 20220125 20220125 20220125 ...</span></span>
-<span><span class="co">#&gt;  $ StatRec             : Factor w/ 103 levels "34F2","34F4",..: 83 83 83 83 81 86 86 86 86 86 ...</span></span>
-<span><span class="co">#&gt;  $ LngtCm              : num  16 16 18 23 19 15 15 15 15 15 ...</span></span>
-<span><span class="co">#&gt;  $ Species             : Factor w/ 1 level "Limanda limanda": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ haul.id             : Factor w/ 2660 levels "NS-IBTS:2020:1:DE:26D4:GOV:104:25",..: 285 285 285 285 278 282 282 282 282 282 ...</span></span>
-<span><span class="co">#&gt;  $ Rank                : chr  "species" "species" "species" "species" ...</span></span></code></pre></div>
+<span><span class="co">#&gt; 'data.frame':    8034 obs. of  39 variables:</span></span>
+<span><span class="co">#&gt;  $ RecordType       : Factor w/ 1 level "CA": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ Survey           : Factor w/ 1 level "NS-IBTS": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ Quarter          : Factor w/ 2 levels "1","3": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ Country          : Factor w/ 4 levels "DK","GB","GB-SCT",..: 4 4 4 4 4 4 4 4 4 4 ...</span></span>
+<span><span class="co">#&gt;  $ Ship             : Factor w/ 5 levels "26D4","58G2",..: 2 2 2 2 2 2 2 2 2 2 ...</span></span>
+<span><span class="co">#&gt;  $ Gear             : Factor w/ 1 level "GOV": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ SweepLngt        : int  110 110 110 110 110 110 110 110 110 110 ...</span></span>
+<span><span class="co">#&gt;  $ GearEx           : Factor w/ 3 levels "B","S","D": 2 2 2 2 2 2 2 2 2 2 ...</span></span>
+<span><span class="co">#&gt;  $ DoorType         : Factor w/ 1 level "P": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ StNo             : chr  "60052" "60052" "60052" "60052" ...</span></span>
+<span><span class="co">#&gt;  $ HaulNo           : int  52 52 52 52 52 52 52 52 52 52 ...</span></span>
+<span><span class="co">#&gt;  $ Year             : Factor w/ 4 levels "2020","2021",..: 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ SpecCodeType     : chr  "W" "W" "W" "W" ...</span></span>
+<span><span class="co">#&gt;  $ SpecCode         : int  127139 127139 127139 127139 127139 127139 127139 127139 127139 127139 ...</span></span>
+<span><span class="co">#&gt;  $ AreaType         : int  0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ AreaCode         : Factor w/ 104 levels "34F2","34F4",..: 71 71 71 71 71 71 71 71 71 71 ...</span></span>
+<span><span class="co">#&gt;  $ LngtCode         : Factor w/ 3 levels ".","0","1": 3 3 3 3 3 3 3 3 3 3 ...</span></span>
+<span><span class="co">#&gt;  $ LngtClas         : int  12 13 14 14 14 14 15 15 15 15 ...</span></span>
+<span><span class="co">#&gt;  $ Sex              : Factor w/ 3 levels "","F","M": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ Maturity         : chr  NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ PlusGr           : Factor w/ 1 level "": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ Age              : int  NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ NoAtALK          : int  1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ IndWgt           : num  NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ FishID           : int  40 72 100 19 47 57 24 41 83 90 ...</span></span>
+<span><span class="co">#&gt;  $ GenSamp          : Factor w/ 2 levels "","N": 2 2 2 2 2 2 2 2 2 2 ...</span></span>
+<span><span class="co">#&gt;  $ StomSamp         : Factor w/ 2 levels "","N": 2 2 2 2 2 2 2 2 2 2 ...</span></span>
+<span><span class="co">#&gt;  $ AgeSource        : Factor w/ 1 level "": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ AgePrepMet       : Factor w/ 1 level "": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ OtGrading        : int  NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ ParSamp          : Factor w/ 2 levels "","N": 2 2 2 2 2 2 2 2 2 2 ...</span></span>
+<span><span class="co">#&gt;  $ MaturityScale    : Factor w/ 3 levels "","M6","SMSF": 2 2 2 2 2 2 2 2 2 2 ...</span></span>
+<span><span class="co">#&gt;  $ Valid_Aphia      : num  127139 127139 127139 127139 127139 ...</span></span>
+<span><span class="co">#&gt;  $ DateofCalculation: int  20220125 20220125 20220125 20220125 20220125 20220125 20220125 20220125 20220125 20220125 ...</span></span>
+<span><span class="co">#&gt;  $ StatRec          : Factor w/ 104 levels "34F2","34F4",..: 71 71 71 71 71 71 71 71 71 71 ...</span></span>
+<span><span class="co">#&gt;  $ LngtCm           : num  12 13 14 14 14 14 15 15 15 15 ...</span></span>
+<span><span class="co">#&gt;  $ Species          : Factor w/ 1 level "Limanda limanda": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ haul.id          : Factor w/ 2651 levels "NS-IBTS:2020:1:DE:26D4:GOV:104:25",..: 298 298 298 298 298 298 298 298 298 298 ...</span></span>
+<span><span class="co">#&gt;  $ Rank             : chr  "species" "species" "species" "species" ...</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="sample-size-by-year">Sample size by year<a class="anchor" aria-label="anchor" href="#sample-size-by-year"></a>
 </h3>
@@ -198,13 +196,13 @@ into catch-at-age.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/xtabs.html" class="external-link">xtabs</a></span><span class="op">(</span><span class="op">~</span> <span class="va">Year</span>, <span class="va">ca</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Year</span></span>
 <span><span class="co">#&gt; 2020 2021 2022 2023 </span></span>
-<span><span class="co">#&gt; 2911 2766 1600  774</span></span>
+<span><span class="co">#&gt; 2911 2757 1595  771</span></span>
 <span></span>
 <span><span class="co"># Number of unique hauls per Year</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/xtabs.html" class="external-link">xtabs</a></span><span class="op">(</span><span class="op">~</span> <span class="va">Year</span>, data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ca</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Year"</span>, <span class="st">"haul.id"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Year</span></span>
 <span><span class="co">#&gt; 2020 2021 2022 2023 </span></span>
-<span><span class="co">#&gt;  118  124  112   95</span></span></code></pre></div>
+<span><span class="co">#&gt;  118  123  110   94</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="add-spatial-information-from-hh">Add spatial information from HH<a class="anchor" aria-label="anchor" href="#add-spatial-information-from-hh"></a>
@@ -232,10 +230,10 @@ than <code>CA</code>. Merge them by <code>haul.id</code>:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">ca</span><span class="op">$</span><span class="va">Age</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    1    2    3    4    5    6    7    8 &lt;NA&gt; </span></span>
-<span><span class="co">#&gt;    4   72   99  138  104   47   15    5 7567</span></span></code></pre></div>
+<span><span class="co">#&gt;    4   72   99  138  104   47   15    5 7550</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">ca</span><span class="op">$</span><span class="va">Age</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 7567</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 7550</span></span></code></pre></div>
 <p>Around 94% of <code>CA</code> entries have missing age.</p>
 <p>For ALK estimation, <code>NoAtALK</code> is the frequency/count
 associated with each age-length observation.</p>

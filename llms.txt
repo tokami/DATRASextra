@@ -146,7 +146,7 @@ Logo: Co-funded by the EU
 ## All functions
 
 - [`addSweptAreaFishGlob()`](https://tokami.github.io/DATRASextra/reference/addSweptAreaFishGlob.md)
-  : Add Swept Area index following the FishGlob calculations
+  : Add swept area indices following FishGlob methodology
 - [`addSweptAreaSimple()`](https://tokami.github.io/DATRASextra/reference/addSweptAreaSimple.md)
   : Add Swept Area based on wing spread / beam width using a simple
   approach.
@@ -169,7 +169,7 @@ Logo: Co-funded by the EU
   : Clean data following FishGlob workflow
 - [`correctSpecies()`](https://tokami.github.io/DATRASextra/reference/correctSpecies.md)
   : Correct species names
-- [`dab`](https://tokami.github.io/DATRASextra/reference/dab.md) : DAB
+- [`dab`](https://tokami.github.io/DATRASextra/reference/dab.md) : Dab
   survey data (example dataset)
 - [`downloadDATRAS()`](https://tokami.github.io/DATRASextra/reference/downloadDATRAS.md)
   : Download DATRAS survey information
