@@ -507,7 +507,7 @@ formatFishglob.DATRASraw <- function(x) {
     names(hh2)[names(hh2) == "Valid_Aphia"] <- "aphia_id"
 
     # scientificname_worms kept for accepted_name
-    hh2$accepted_name <- hh2$ScientificName_WoRMS
+    hh2$accepted_name <- hh2$Species
 
     # new empty fields
     hh2$verbatim_aphia_id <- NA_integer_
