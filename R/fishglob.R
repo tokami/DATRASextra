@@ -3,8 +3,8 @@
 ##' @param x a DATRASraw object
 ##'
 ##' @description This function follows the workflow that was used to create the
-##'     FishGlob data set (Maureaud et al. 2021). Adjusted from:
-##'     \url{https://github.com/fishglob/FishGlob_data/tree/main/cleaning_codes}.
+##' FishGlob data set (Maureaud et al. 2021). Adjusted from:
+##' \url{https://github.com/fishglob/FishGlob_data/tree/main/cleaning_codes}.
 ##'
 ##'
 ##' A Maureaud, A., Frelat, R., Pécuchet, L., Shackell, N., Mérigot, B., Pinsky,
@@ -91,7 +91,7 @@ pruneFishglob <- function(x) {
 ##' @title Add swept area indices following FishGlob methodology
 ##'
 ##' @description
-##' Computes swept area indices (m²) for haul-level records in a
+##' Computes swept area indices (m^2) for haul-level records in a
 ##' `DATRASraw` object following the methodology developed for FishGlob.
 ##'
 ##' DoorSpread and WingSpread are re-estimated using survey-specific
@@ -408,7 +408,7 @@ addWeightFishglob <- function(x) {
     hl[] <- lapply(hl, function(z) if (is.factor(z)) as.character(z) else z)
 
     ## check required columns
-    req_cols <- c("Valid_Aphia","ScientificName_WoRMS","HLNoAtLngt","LngtCm")
+    req_cols <- c("Valid_Aphia","Species","HLNoAtLngt","LngtCm")
     missing_cols <- req_cols[!req_cols %in% names(hl)]
     if (length(missing_cols) > 0) stop("missing required HL columns: ", paste(missing_cols, collapse=", "))
 
@@ -419,7 +419,7 @@ addWeightFishglob <- function(x) {
     hl2 <- merge(
         hl,
         speciesInfo[speciesInfo$class %in% c("Teleostei","Elasmobranchii","Petromyzonti","Myxini"), ],
-        by.x = c("Valid_Aphia","ScientificName_WoRMS"),
+        by.x = c("Valid_Aphia","Species"),
         by.y = c("WoRMS_AphiaID","ScientificName_WoRMS"),
         all.x = FALSE
     )
@@ -462,7 +462,7 @@ formatFishglob.DATRASraw <- function(x) {
     # select grouping variables for aggregation
     groups <- hl[, c(
         "Survey","Quarter","Year","haul.id","Valid_Aphia",
-        "ScientificName_WoRMS","genus","family","order","class","rank"
+        "Species","genus","family","order","class","rank"
     )]
 
     # aggregate wgt and num
