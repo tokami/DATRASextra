@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Recreating the FishGlob dataset (DATRAS part) • DATRASextra</title>
+<title>Processing ICES DATRAS Data for FishGlob • DATRASextra</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -22,7 +22,7 @@
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Recreating the FishGlob dataset (DATRAS part)">
+<meta property="og:title" content="Processing ICES DATRAS Data for FishGlob">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -70,7 +70,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Recreating the FishGlob dataset (DATRAS part)</h1>
+      <h1>Processing ICES DATRAS Data for FishGlob</h1>
             
       
 
@@ -80,16 +80,71 @@
     
     
 <div class="section level2">
+<h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
+</h2>
+<p>The <strong>FishGlob</strong> database is a global compilation of
+standardized scientific trawl survey data used to study large-scale
+patterns in marine fish biodiversity and community structure.</p>
+<p>FishGlob harmonizes data from multiple regional monitoring programs
+by standardizing:</p>
+<ul>
+<li>taxonomic information<br>
+</li>
+<li>sampling effort<br>
+</li>
+<li>catch metrics (abundance and biomass per unit area)</li>
+</ul>
+<p>The dataset integrates numerous long-term fisheries-independent
+surveys, including several surveys available through the <strong>ICES
+DATRAS</strong> database.</p>
+<p><strong>ICES DATRAS</strong> (Database of Trawl Surveys) provides
+access to standardized survey data collected in European seas, including
+haul-level sampling information (HH), length distributions (HL), and
+individual data (CA).</p>
+<p>The <strong><code>DATRASextra</code></strong> package provides tools
+to process raw DATRAS survey data and generate outputs that are
+compatible with the <strong>FishGlob data structure</strong>.</p>
+<p>This vignette demonstrates a workflow to:</p>
+<ul>
+<li>download DATRAS survey data<br>
+</li>
+<li>harmonize and clean raw survey tables<br>
+</li>
+<li>standardize species taxonomy<br>
+</li>
+<li>estimate swept area and biomass<br>
+</li>
+<li>generate FishGlob-compatible datasets</li>
+</ul>
+<p>The workflow can be applied to a single species or to multiple
+species. For illustration, this vignette uses <code>mini</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mini"</span>, package <span class="op">=</span> <span class="st">"DATRASextra"</span><span class="op">)</span></span></code></pre></div>
+<p>an example dataset containing 5 species across 4 surveys (BITS, BTS,
+EVHOE, NS-IBTS):</p>
+<p>Amblyraja radiata, Hippoglossoides platessoides, Lophius piscatorius,
+Trisopterus esmarkii, Lepidorhombus whiffiagonis</p>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<p>Maureaud, A., et al. (2021) FISHGLOB_data: an integrated dataset of
+fish biodiversity sampled with scientific bottom-trawl surveys. Sci Data
+11, 24 (2024). <a href="https://doi.org/10.1038/s41597-023-02866-w" class="external-link">https://doi.org/10.1038/s41597-023-02866-w</a></p>
+<p>ICES Database on Trawl Surveys (DATRAS), ICES, Copenhagen, Denmark.
+<a href="https://datras.ices.dk" class="external-link">https://datras.ices.dk</a></p>
+</div>
+<div class="section level2">
 <h2 id="libraries">Libraries<a class="anchor" aria-label="anchor" href="#libraries"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">DATRASextra</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Loading required package: DATRAS</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="load-the-dataset">Load the dataset<a class="anchor" aria-label="anchor" href="#load-the-dataset"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">mini</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -106,7 +161,7 @@ This step ensures:</p>
 </li>
 <li>standardized taxonomic classification</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cleanFishglob.html">cleanFishglob</a></span><span class="op">(</span><span class="va">mini</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -116,7 +171,7 @@ This step ensures:</p>
 FishGlob output.</p>
 <p>The <code><a href="../reference/pruneFishglob.html">pruneFishglob()</a></code> function removes unnecessary columns
 to reduce memory usage and improve processing speed.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pruneFishglob.html">pruneFishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -130,7 +185,7 @@ each haul</strong>.</p>
 </li>
 <li>imputes missing values when necessary</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addSweptAreaFishGlob.html">addSweptAreaFishGlob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -141,7 +196,7 @@ each haul</strong>.</p>
 <p>The <code><a href="../reference/addWeightFishglob.html">addWeightFishglob()</a></code> function converts length data to
 weight using species-specific <strong>length–weight
 relationships</strong>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addWeightFishglob.html">addWeightFishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -149,7 +204,7 @@ relationships</strong>.</p>
 </h2>
 <p>Finally, the dataset is formatted to match the <strong>FishGlob data
 structure</strong>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">datras</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/formatFishglob.DATRASraw.html">formatFishglob.DATRASraw</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">datras</span><span class="op">)</span></span></code></pre></div>
@@ -207,9 +262,32 @@ structure</strong>.</p>
 </li>
 <li>abundance and biomass per unit area</li>
 </ul>
-<div class="section level4">
-<h4 id="fede-finish-this">FEDE FINISH THIS<a class="anchor" aria-label="anchor" href="#fede-finish-this"></a>
-</h4>
+</div>
+<div class="section level2">
+<h2 id="downloading-the-fishglob-datras-surveys">Downloading the FishGlob DATRAS surveys<a class="anchor" aria-label="anchor" href="#downloading-the-fishglob-datras-surveys"></a>
+</h2>
+<p>The previous example used a small dataset to keep the vignette
+lightweight.<br>
+To reproduce the <strong>DATRAS part of the FishGlob dataset</strong>,
+the full set of surveys used in FishGlob can be downloaded like
+this:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">DATRASextra</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">surveys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NS-IBTS"</span>, <span class="st">"EVHOE"</span>, <span class="st">"SWC-IBTS"</span>, <span class="st">"BITS"</span>, <span class="st">"IE-IGFS"</span>,</span>
+<span>             <span class="st">"FR-CGFS"</span>, <span class="st">"NIGFS"</span>, <span class="st">"ROCKALL"</span>, <span class="st">"PT-IBTS"</span>,</span>
+<span>             <span class="st">"SP-NORTH"</span>, <span class="st">"SP-ARSA"</span>, <span class="st">"SP-PORC"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># create temporary directory</span></span>
+<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># download survey data</span></span>
+<span><span class="fu"><a href="../reference/downloadDATRAS.html">downloadDATRAS</a></span><span class="op">(</span>surveys <span class="op">=</span> <span class="va">surveys</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># read raw DATRAS tables</span></span>
+<span><span class="va">raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readDATRAS.html">readDATRAS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="va">surveys</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Downloading and processing these surveys take some time, as they
+include multiple decades of trawl survey data.</p>
 <!-- ## Compare it with FishGlob -->
 <!-- ### Download FishGlob -->
 <!-- ``` r -->
@@ -274,7 +352,6 @@ structure</strong>.</p>
 <!--   facet_wrap(~ survey, scales = "free") -->
 <!-- ``` -->
 <!-- ![plot of chunk plot_wg](figure/plot_wg-1.png) -->
-</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

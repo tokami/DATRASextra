@@ -16,5 +16,5 @@
 
 ### FishGlob
 
-- [Recreating the FishGlob dataset (DATRAS
-  part)](https://tokami.github.io/DATRASextra/articles/fishglob.md):
+- [Processing ICES DATRAS Data for
+  FishGlob](https://tokami.github.io/DATRASextra/articles/fishglob.md):
