@@ -18,7 +18,7 @@ downloadDATRAS(surveys = surveys, dir = tmp)
 raw <- readDATRAS(file.path(tmp, surveys))
 
 # only hh
-hh <- raw[['HH']]
+hh <- raw[['HH']] 
 
 # remove unwanted gears 
 hh <- hh %>% filter(
@@ -29,7 +29,7 @@ hh <- hh %>% filter(
       Gear %in% c('CAM','CHP','DT','EGY','ESB',
                   'EXP','FOT','GRT','H20','HAK',
                   'LBT','SON')),
-  !(Survey == "PT-IBTS" & Gear == "CAR"))
+  !(Survey == "PT-IBTS" & Gear == "CAR")) %>% filter(HaulVal %in% c("V","N")) # change this with clean()
 
 # lms adapted from https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/source_DATRAS_wing_doorspread.R
 
