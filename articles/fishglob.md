@@ -183,14 +183,6 @@ head(datras)
     ## 92 Pleuronectidae Hippoglossoides Species      BITS-1
     ## 98 Pleuronectidae Hippoglossoides Species      BITS-1
 
-The resulting dataset contains standardized variables such as:
-
-- haul identifiers  
-- spatial coordinates  
-- sampling metadata  
-- species taxonomy  
-- abundance and biomass per unit area
-
 ## Downloading the FishGlob DATRAS surveys
 
 The previous example used a small dataset to keep the vignette
