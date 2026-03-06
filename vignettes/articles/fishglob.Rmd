@@ -1,11 +1,52 @@
 ---
-title: "Recreating the FishGlob dataset (DATRAS part)"
+title: "Processing ICES DATRAS Data for FishGlob"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Recreating the FishGlob dataset (DATRAS part)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+## Background
+
+The **FishGlob** database is a global compilation of standardized scientific trawl survey data used to study large-scale patterns in marine fish biodiversity and community structure.
+
+FishGlob harmonizes data from multiple regional monitoring programs by standardizing:
+
+- taxonomic information  
+- sampling effort  
+- catch metrics (abundance and biomass per unit area)
+
+The dataset integrates numerous long-term fisheries-independent surveys, including several surveys available through the **ICES DATRAS** database.
+
+**ICES DATRAS** (Database of Trawl Surveys) provides access to standardized survey data collected in European seas, including haul-level sampling information (HH), length distributions (HL), and individual data (CA).
+
+The **`DATRASextra`** package provides tools to process raw DATRAS survey data and generate outputs that are compatible with the **FishGlob data structure**.
+
+This vignette demonstrates a workflow to:
+
+- download DATRAS survey data  
+- harmonize and clean raw survey tables  
+- standardize species taxonomy  
+- estimate swept area and biomass  
+- generate FishGlob-compatible datasets
+
+The workflow can be applied to a single species or to multiple species. 
+For illustration, this vignette uses `mini`.
+```{r}
+data("mini", package = "DATRASextra")
+```
+an example dataset containing `r length(unique(mini$HL$Species))` species 
+across `r length(unique(mini$HH$Survey))` surveys 
+(`r paste(sort(unique(mini$HH$Survey)), collapse = ", ")`):
+
+`r paste(sort(unique(mini$HL$Species)), collapse = ", ")`
+
+## References
+Maureaud, A., et al. (2021) FISHGLOB_data: an integrated dataset of fish biodiversity sampled with scientific bottom-trawl surveys. Sci Data 11, 24 (2024). [https://doi.org/10.1038/s41597-023-02866-w](https://doi.org/10.1038/s41597-023-02866-w)
+
+ICES Database on Trawl Surveys (DATRAS), ICES, Copenhagen, Denmark. [https://datras.ices.dk](https://datras.ices.dk)
+
 
 ## Libraries
 
@@ -83,7 +124,33 @@ The resulting dataset contains standardized variables such as:
 - species taxonomy  
 - abundance and biomass per unit area  
 
-#### FEDE FINISH THIS
+## Downloading the FishGlob DATRAS surveys
+
+The previous example used a small dataset to keep the vignette lightweight.  
+To reproduce the **DATRAS part of the FishGlob dataset**, the full set of
+surveys used in FishGlob can be downloaded like this:
+
+```{r, eval = FALSE}
+library(DATRASextra)
+
+surveys <- c("NS-IBTS", "EVHOE", "SWC-IBTS", "BITS", "IE-IGFS",
+             "FR-CGFS", "NIGFS", "ROCKALL", "PT-IBTS",
+             "SP-NORTH", "SP-ARSA", "SP-PORC")
+
+# create temporary directory
+tmp <- tempdir()
+
+# download survey data
+downloadDATRAS(surveys = surveys, dir = tmp)
+
+# read raw DATRAS tables
+raw <- readDATRAS(file.path(tmp, surveys))
+```
+
+Downloading and processing these surveys take some time, as they include
+multiple decades of trawl survey data.
+
+
 
 <!-- ## Compare it with FishGlob -->
 
