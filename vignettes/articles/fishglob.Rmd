@@ -116,13 +116,6 @@ datras <- formatFishglob.DATRASraw(dat)
 head(datras)
 ```
 
-The resulting dataset contains standardized variables such as:
-
-- haul identifiers  
-- spatial coordinates  
-- sampling metadata  
-- species taxonomy  
-- abundance and biomass per unit area  
 
 ## Downloading the FishGlob DATRAS surveys
 
