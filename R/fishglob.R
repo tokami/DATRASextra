@@ -116,7 +116,7 @@ pruneFishglob <- function(x) {
 ##' internally in the package and applies hierarchical fallback logic
 ##' when factor levels are not present in the training data.
 ##'
-##' Swept area is returned in square km (km^2).
+##' Swept area is returned in $km^2$.
 ##'
 ##' @return A `DATRASraw` object with two additional columns in `HH`:
 ##' \itemize{
