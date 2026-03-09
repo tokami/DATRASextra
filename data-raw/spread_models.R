@@ -40,6 +40,31 @@ hh$DoorSpread[hh$DoorSpread == 0] <- NA
 hh$Distance[hh$Distance == 0] <- NA
 hh$SweepLngt[hh$SweepLngt == 0] <- NA # this is not present in FishGlob
 
+
+# remove outliers  --------------------------------------------------------
+
+hh <- hh %>%
+  group_by(Survey, Gear) %>%
+  mutate(
+    ds_q1 = quantile(DoorSpread, 0.25, na.rm = TRUE),
+    ds_q3 = quantile(DoorSpread, 0.75, na.rm = TRUE),
+    ds_iqr = ds_q3 - ds_q1,
+    ds_low = ds_q1 - 1.5 * ds_iqr,
+    ds_high = ds_q3 + 1.5 * ds_iqr,
+    
+    ws_q1 = quantile(WingSpread, 0.25, na.rm = TRUE),
+    ws_q3 = quantile(WingSpread, 0.75, na.rm = TRUE),
+    ws_iqr = ws_q3 - ws_q1,
+    ws_low = ws_q1 - 1.5 * ws_iqr,
+    ws_high = ws_q3 + 1.5 * ws_iqr
+  ) %>%
+  filter(
+    is.na(DoorSpread) | (DoorSpread >= ds_low & DoorSpread <= ds_high),
+    is.na(WingSpread) | (WingSpread >= ws_low & WingSpread <= ws_high)
+  ) %>%
+  ungroup() %>%
+  select(-starts_with("ds_"), -starts_with("ws_"))
+
 # North Sea ---------------------------------------------------------------
 ns <- subset(hh, Survey == "NS-IBTS")
 
