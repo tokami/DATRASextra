@@ -91,7 +91,7 @@ pruneFishglob <- function(x) {
 ##' @title Add swept area indices following FishGlob methodology
 ##'
 ##' @description
-##' Computes swept area indices (km^2) for haul-level records in a
+##' Computes swept area indices (\eqn{km^2}) for haul-level records in a
 ##' `DATRASraw` object following the methodology developed for FishGlob.
 ##'
 ##' DoorSpread and WingSpread are re-estimated using survey-specific
@@ -116,12 +116,12 @@ pruneFishglob <- function(x) {
 ##' internally in the package and applies hierarchical fallback logic
 ##' when factor levels are not present in the training data.
 ##'
-##' Swept area is returned in $km^2$.
+##' Swept area is returned in \eqn{km^2}.
 ##'
 ##' @return A `DATRASraw` object with two additional columns in `HH`:
 ##' \itemize{
-##'   \item \code{SweptArea} — swept area in km^2
-##'   \item \code{DoorsArea} — door swept area in km^2
+##'   \item \code{SweptArea} — swept area in \eqn{km^2}
+##'   \item \code{DoorsArea} — door swept area in \eqn{km^2}
 ##' }
 ##'
 ##' @export
