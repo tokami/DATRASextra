@@ -1,4 +1,4 @@
-# DATRASextra [![DATRASextra logo](reference/figures/DATRASextra_logo.svg)](https://github.com/tokami/DATRASextra)
+# DATRASextra
 
 Makes working with ICES **DATRAS** **extra** easy.
 
