@@ -117,7 +117,7 @@ downloadDATRAS <- function(surveys = NULL,
 
 
 
-##' @title Download DATRAS survey information
+##' @title Read in DATRAS survey information
 ##'
 ##' @param paths paths
 ##' @param years years
@@ -154,6 +154,7 @@ readDATRAS <- function(paths,
   c.DATRASraw <- getFromNamespace("c.DATRASraw", "DATRAS")
 
   paths0 <- paths
+
 
   if (any(dir.exists(paths))) {
 
@@ -229,10 +230,12 @@ readDATRAS <- function(paths,
 
     } else {
 
+      ## TODO what if the path includes R files and and can it be the mother folder with the surveys as children?
+
       invisible(capture.output({
-        surv0 <- readExchangeDir(paths,
-                                 pattern = ".zip",
-                                 strict = FALSE)
+        surv0 <- DATRAS::readExchangeDir(paths,
+                                         pattern = ".zip",
+                                         strict = FALSE)
       }))
     }
 

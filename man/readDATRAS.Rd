@@ -2,7 +2,7 @@
 % Please edit documentation in R/download.R
 \name{readDATRAS}
 \alias{readDATRAS}
-\title{Download DATRAS survey information}
+\title{Read in DATRAS survey information}
 \usage{
 readDATRAS(
   paths,
@@ -27,7 +27,7 @@ prune which columns are removed).}
 \item{verbose}{print stuff}
 }
 \description{
-Download DATRAS survey information
+Read in DATRAS survey information
 }
 \details{
 The zip archives downloaded with dowloadDATRAS are usually between

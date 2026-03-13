@@ -23,7 +23,6 @@ clean <- function(x,
                   correct.species = TRUE,
                   do.fishglob = FALSE) {
 
-
     ## Minimum cleaning ------------------------
     if (!do.fishglob) {
 

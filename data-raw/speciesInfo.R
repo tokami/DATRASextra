@@ -1,6 +1,8 @@
 ## Species information
 ## created: 04/03/2026
 
+## TODO revise when gear indices ready!
+
 library(icesDatras)
 library(DATRASextra)
 library(worrms)

@@ -25,7 +25,7 @@ correctSpecies <- function(x) {
 
     for(i in c("CA","HL")){
 
-        if (nrow(x[[i]]) == 0) next()
+        if (is.null(x[[i]]) || nrow(x[[i]]) == 0) next()
 
         if (!any(colnames(x[[i]]) == "Rank")) {
             x[[i]]$Rank <- "species"
