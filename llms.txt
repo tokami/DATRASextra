@@ -194,7 +194,7 @@ Logo: Co-funded by the EU
 - [`pruneFishglob()`](https://tokami.github.io/DATRASextra/reference/pruneFishglob.md)
   : Prune data according to FishGlob workflow
 - [`readDATRAS()`](https://tokami.github.io/DATRASextra/reference/readDATRAS.md)
-  : Download DATRAS survey information
+  : Read in DATRAS survey information
 - [`renameSurvey()`](https://tokami.github.io/DATRASextra/reference/renameSurvey.md)
   : Rename surveys in DATRASraw
 - [`speciesInfo`](https://tokami.github.io/DATRASextra/reference/speciesInfo.md)

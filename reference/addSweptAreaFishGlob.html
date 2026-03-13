@@ -5,24 +5,22 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Add swept area indices following FishGlob methodology — addSweptAreaFishGlob"><meta name="description" content="Computes swept area indices (m²) for haul-level records in a
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Add swept area indices following FishGlob methodology — addSweptAreaFishGlob"><meta name="description" content="Computes swept area indices (\(km^2\)) for haul-level records in a
 DATRASraw object following the methodology developed for FishGlob.
 DoorSpread and WingSpread are re-estimated using survey-specific
 linear models (stored internally in the package) when missing.
 Towing distance is calculated from recorded distance or reconstructed
-from ground speed and haul duration using a hierarchical fallback:
-Survey-Year-Ship → Survey-Year-Country → Survey-Country → Global mean.
+from ground speed and haul duration.
 Swept area is calculated as:
 $$
 SweptArea = Distance \times WingSpread \times 10^{-6}
 $$
-Door area is calculated analogously using DoorSpread."><meta property="og:description" content="Computes swept area indices (m²) for haul-level records in a
+Door area is calculated analogously using DoorSpread."><meta property="og:description" content="Computes swept area indices (\(km^2\)) for haul-level records in a
 DATRASraw object following the methodology developed for FishGlob.
 DoorSpread and WingSpread are re-estimated using survey-specific
 linear models (stored internally in the package) when missing.
 Towing distance is calculated from recorded distance or reconstructed
-from ground speed and haul duration using a hierarchical fallback:
-Survey-Year-Ship → Survey-Year-Country → Survey-Country → Global mean.
+from ground speed and haul duration.
 Swept area is calculated as:
 $$
 SweptArea = Distance \times WingSpread \times 10^{-6}
@@ -67,14 +65,13 @@ Door area is calculated analogously using DoorSpread."><meta property="og:image"
     </div>
 
     <div class="ref-description section level2">
-    <p>Computes swept area indices (m²) for haul-level records in a
+    <p>Computes swept area indices (\(km^2\)) for haul-level records in a
 <code>DATRASraw</code> object following the methodology developed for FishGlob.</p>
 <p>DoorSpread and WingSpread are re-estimated using survey-specific
 linear models (stored internally in the package) when missing.
 Towing distance is calculated from recorded distance or reconstructed
-from ground speed and haul duration using a hierarchical fallback:
-Survey-Year-Ship → Survey-Year-Country → Survey-Country → Global mean.</p>
-<p>Swept area is calculated as:
+from ground speed and haul duration.
+Swept area is calculated as:
 $$
 SweptArea = Distance \times WingSpread \times 10^{-6}
 $$</p>
@@ -96,18 +93,18 @@ $$</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>DATRASraw</code> object with two additional columns in <code>HH</code>:</p><ul><li><p><code>SweptArea</code> — swept area in km^2</p></li>
-<li><p><code>DoorsArea</code> — door swept area in km^2</p></li>
+    <p>A <code>DATRASraw</code> object with two additional columns in <code>HH</code>:</p><ul><li><p><code>SweptArea</code> — swept area in \(km^2\)</p></li>
+<li><p><code>DoorsArea</code> — door swept area in \(km^2\)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The original spread estimation logic was developed by
-Aurore Maureaud and Daniël van Denderen and is available at:
+Aurore Maureaud and P. Daniël van Denderen and is available at:
 <a href="https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/source_DATRAS_wing_doorspread.R" class="external-link">https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/source_DATRAS_wing_doorspread.R</a>.</p>
 <p>This implementation uses pre-fitted survey-specific models stored
 internally in the package and applies hierarchical fallback logic
 when factor levels are not present in the training data.</p>
-<p>Swept area is returned in square km (km^2).</p>
+<p>Swept area is returned in \(km^2\).</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

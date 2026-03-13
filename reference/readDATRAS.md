@@ -1,6 +1,6 @@
-# Download DATRAS survey information
+# Read in DATRAS survey information
 
-Download DATRAS survey information
+Read in DATRAS survey information
 
 ## Usage
 
