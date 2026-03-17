@@ -23,6 +23,9 @@
 ##'   years for each selected survey are used.
 ##' @param download_missing_only Logical. If `TRUE` (default), only survey-year
 ##'   files that do not already exist in `dir` are downloaded.
+##' @param download_hl Logical. If `TRUE` (default), length-frequency data
+##'   are also downloaded where available. This option is only used when
+##'   `use_php = FALSE`.
 ##' @param download_ca Logical. If `TRUE` (default), age-length keys and age data
 ##'   are also downloaded where available. This option is only used when
 ##'   `use_php = FALSE`.
@@ -73,6 +76,7 @@
 download_datras <- function(surveys = NULL,
                             years = NULL,
                             download_missing_only = TRUE,
+                            download_hl = TRUE,
                             download_ca = TRUE,
                             use_php = FALSE,
                             dir = NULL,
@@ -127,7 +131,8 @@ download_datras <- function(surveys = NULL,
                                      paste0(survey,"_",year,".zip")))) {
             datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
                                                     strict = TRUE,
-                                                    download_ca = download_ca)
+                                                    download.hl = download_hl,
+                                                    download.ca = download_ca)
             datras_raw <- .add_class(datras_raw)
             datras_clean <- .remove_extra_variables(datras_raw)
             write_exchange(datras_clean, file.path(dir, survey,
@@ -136,7 +141,8 @@ download_datras <- function(surveys = NULL,
         } else {
           datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
                                                   strict = TRUE,
-                                                  download_ca = download_ca)
+                                                  download.hl = download_hl,
+                                                  download.ca = download_ca)
           datras_raw <- .add_class(datras_raw)
           datras_clean <- .remove_extra_variables(datras_raw)
           write_exchange(datras_clean,
@@ -147,7 +153,7 @@ download_datras <- function(surveys = NULL,
 
     } else {
 
-      if (!download_ca && verbose) message("Note that this functionality is not yet implemented, php always downloads CA. Consider setting use_php to FALSE.")
+      if ((!download_hl || !download_ca) && verbose) message("Note that this functionality is not yet implemented, php always downloads HL and CA. Consider setting use_php to FALSE.")
 
       if (download_missing_only) {
         years <- icesDatras::getSurveyYearList(survey)

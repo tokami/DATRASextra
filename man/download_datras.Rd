@@ -8,6 +8,7 @@ download_datras(
   surveys = NULL,
   years = NULL,
   download_missing_only = TRUE,
+  download_hl = TRUE,
   download_ca = TRUE,
   use_php = FALSE,
   dir = NULL,
@@ -24,6 +25,10 @@ years for each selected survey are used.}
 
 \item{download_missing_only}{Logical. If \code{TRUE} (default), only survey-year
 files that do not already exist in \code{dir} are downloaded.}
+
+\item{download_hl}{Logical. If \code{TRUE} (default), length-frequency data
+are also downloaded where available. This option is only used when
+\code{use_php = FALSE}.}
 
 \item{download_ca}{Logical. If \code{TRUE} (default), age-length keys and age data
 are also downloaded where available. This option is only used when
