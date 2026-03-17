@@ -2,17 +2,17 @@
 ## require(DATRASextra); require(testthat)
 
 
-test_that("checkOutliers works", {
+test_that("check_outliers works", {
 
-  out <- checkOutliers(dab)
+  out <- check_outliers(dab)
 
-  out <- checkOutliers(mini)
+  out <- check_outliers(mini)
 
   attr(out, "outlier_report")
 
   attr(out, "outlier_hauls")
 
-  out <- checkOutliers(dab, pct = TRUE)
+  out <- check_outliers(dab, pct = TRUE)
 
   head(attr(out, "outlier_report"))
 

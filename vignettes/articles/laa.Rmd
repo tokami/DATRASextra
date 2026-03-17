@@ -61,7 +61,7 @@ When a species appears in `CA`, a corresponding `HL` record should also exist
 
 ---
 
-## Select years and clean data
+## Select years and clean_datras data
 
 For LAA analyses, `CA` is essential because it contains age readings. However,
 `CA` is not catch-representative by itself, so ALKs are needed to convert
@@ -76,7 +76,7 @@ years <- 2020:2024
 Then apply a quick standard cleaning/filtering step:
 
 ```{r}
-dab <- clean(dab, years = years)
+dab <- clean_datras(dab, years = years)
 ```
 
 Equivalent manual filtering (shown for reference):

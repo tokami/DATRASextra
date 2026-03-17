@@ -57,7 +57,7 @@ data("dab")
 ## *Create length spectrum*
 
 ```{r}
-lpars <- checkLength(dab)
+lpars <- check_length(dab)
 ```
 
 
@@ -100,19 +100,19 @@ dab <- addSpectrum(dab, cm.breaks = cm.breaks, by = by)
 
 
 ```{r}
-wpars <- checkWeight(dab)
+wpars <- check_weight(dab)
 ```
 
 
 ```{r}
-dab <- addWeight(dab, maxL = threshold)
+dab <- add_weight(dab, maxL = threshold)
 ```
 
 
 Alteratively, ...
 
 ```{r}
-# dab <- addWeightEmpirical(dab)
+# dab <- add_weight_empirical(dab)
 ```
 
 

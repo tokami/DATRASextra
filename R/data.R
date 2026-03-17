@@ -3,7 +3,7 @@
 #' Example ICES DATRAS data for *Limanda limanda* (dab) from survey NS-IBTS in
 #' years 2020-2023.
 #'
-#' @format A list of class 'DATRASraw' with 3 elements:
+#' @format A list of class 'datras_raw' with 3 elements:
 #' \describe{
 #'   \item{CA}{Biological data}
 #'   \item{HH}{Survey level information}
@@ -21,7 +21,7 @@
 #' plaice), Trisopterus esmarkii (Norway pout), and Amblyraja radiata (Starry
 #' ray).
 #'
-#' @format A list of class 'DATRASraw' with 3 elements:
+#' @format A list of class 'datras_raw' with 3 elements:
 #' \describe{
 #'   \item{CA}{Biological data}
 #'   \item{HH}{Survey level information}
@@ -63,7 +63,7 @@
 #'   \item{bFG}{Length–weight relationship parameter \(b\) (in \(W = a L^b\)) used in FishGlobe.}
 #' }
 #' @source ICES DATRAS species reference list.
-"speciesInfo"
+"species_info"
 
 
 #' Survey information table
@@ -79,12 +79,12 @@
 #'   \item{description}{Description}
 #' }
 #' @source ICES DATRAS metadata.
-"surveyInfo"
+"survey_info"
 
 
 #' Full survey information table
 #'
-#' Extended version of `surveyInfo` with additional coverage and technical
+#' Extended version of `survey_info` with additional coverage and technical
 #' details for each DATRAS survey.
 #'
 #' @format A data frame with columns:
@@ -99,4 +99,4 @@
 #'   \item{lat}{Latitude}
 #' }
 #' @source ICES DATRAS metadata.
-"surveyInfoFull"
+"survey_info_full"

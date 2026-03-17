@@ -1,10 +1,10 @@
-##' @title Check outliers in a DATRASraw object
+##' @title Check outliers in a datras_raw object
 ##'
 ##' @description
-##' Rule-based quality control for key variables in a DATRASraw object.
+##' Rule-based quality control for key variables in a datras_raw object.
 ##' Optionally adds percentile-based extreme-value flagging (group-wise).
 ##'
-##' @param x A DATRASraw object, i.e. a list with components HH, HL, and CA.
+##' @param x A datras_raw object, i.e. a list with components HH, HL, and CA.
 ##' @param vars Optional character vector of variable names to check. If NULL,
 ##'   all default rules are used. If provided, percentile checks are also limited
 ##'   to these variables.
@@ -23,7 +23,7 @@
 ##' @param verbose Logical; print a summary?
 ##'
 ##' @return
-##' A DATRASraw object. The object is returned unchanged when
+##' A datras_raw object. The object is returned unchanged when
 ##' \code{action = "report"}, and with flagged hauls removed when
 ##' \code{action = "remove"}.
 ##'
@@ -36,7 +36,7 @@
 ##' }
 ##'
 ##' @export
-checkOutliers <- function(x,
+check_outliers <- function(x,
                           vars = NULL,
                           strict = TRUE,
                           pct = FALSE,
@@ -65,7 +65,7 @@ checkOutliers <- function(x,
 
   ## basic checks
   if (!is.list(x)) {
-    stop("'x' must be a list-like DATRASraw object.")
+    stop("'x' must be a list-like datras_raw object.")
   }
   if (!all(c("HH", "HL", "CA") %in% names(x))) {
     stop("'x' must contain components 'HH', 'HL', and 'CA'.")

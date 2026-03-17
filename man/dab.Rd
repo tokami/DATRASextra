@@ -5,7 +5,7 @@
 \alias{dab}
 \title{Dab survey data (example dataset)}
 \format{
-A list of class 'DATRASraw' with 3 elements:
+A list of class 'datras_raw' with 3 elements:
 \describe{
 \item{CA}{Biological data}
 \item{HH}{Survey level information}

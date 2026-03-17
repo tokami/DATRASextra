@@ -1,27 +1,83 @@
 
-##' @title Download DATRAS survey information
+## Main functions ----------------------------------------------------------------
+
+
+##' Download ICES DATRAS survey data
 ##'
-##' @param surveys NULL
-##' @param years NULL
-##' @param download.missing.only TRUE
-##' @param download.ca TRUE
-##' @param use.php FALSE
-##' @param dir NULL
-##' @param verbose TRUE
+##' Download ICES DATRAS survey data for one or more surveys and years, and save
+##' each survey-year combination as a zipped exchange file in a survey-specific
+##' subdirectory.
 ##'
-##' @return NULL
+##' If `surveys` is `NULL`, all available surveys returned by
+##' `icesDatras::getSurveyList()` are used. If `years` is `NULL`, all available
+##' years for each selected survey are downloaded.
+##'
+##' By default, data are downloaded using `DATRAS::getDatrasExchange()`, cleaned
+##' to remove extra variables, and written to disk with [write_exchange()].
+##' Alternatively, the legacy PHP-based download route from
+##' `DATRAS::downloadExchange()` can be used by setting `use_php = TRUE`.
+##'
+##' @param surveys A character vector of DATRAS survey names to download, for
+##'   example `"NS-IBTS"` or `"BITS"`. If `NULL`, all available surveys are used.
+##' @param years An integer vector of years to download. If `NULL`, all available
+##'   years for each selected survey are used.
+##' @param download_missing_only Logical. If `TRUE` (default), only survey-year
+##'   files that do not already exist in `dir` are downloaded.
+##' @param download_ca Logical. If `TRUE` (default), age-length keys and age data
+##'   are also downloaded where available. This option is only used when
+##'   `use_php = FALSE`.
+##' @param use_php Logical. If `FALSE` (default), data are downloaded via
+##'   `DATRAS::getDatrasExchange()`. If `TRUE`, the legacy
+##'   `DATRAS::downloadExchange()` method is used.
+##' @param dir Character string giving the directory where downloaded files
+##'   should be stored. Survey-specific subdirectories are created within this
+##'   directory. If `NULL`, the current working directory is used.
+##' @param force Logical. If `FALSE` (default), surveys known to be test surveys
+##'   or surveys with incomplete data may be skipped. If `TRUE`, they are also
+##'   downloaded.
+##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
+##'
+##' @details
+##' Files are saved as zipped exchange files named
+##' `"<survey>_<year>.zip"` inside survey-specific subfolders.
+##'
+##' The following surveys are currently treated as problematic or test surveys:
+##' `"NS-IDPS"`, `"IS-IDPS"`, `"Test-DATRAS"`, and `"NS-IBTS_UNIFtest"`.
+##'
+##' @return Invisibly returns `NULL`.
 ##'
 ##' @importFrom DATRAS downloadExchange getDatrasExchange
 ##' @importFrom icesDatras getSurveyList getSurveyYearList
 ##'
+##' @examples
+##' \dontrun{
+##' ## Download all available years for one survey into the current directory
+##' download_datras(surveys = "NS-IBTS")
+##'
+##' ## Download selected years for multiple surveys
+##' download_datras(
+##'   surveys = c("NS-IBTS", "BITS"),
+##'   years = 2010:2012,
+##'   dir = "data/datras"
+##' )
+##'
+##' ## Re-download existing files
+##' download_datras(
+##'   surveys = "NS-IBTS",
+##'   years = 2020,
+##'   download_missing_only = FALSE
+##' )
+##' }
+##'
 ##' @export
-downloadDATRAS <- function(surveys = NULL,
-                           years = NULL,
-                           download.missing.only = TRUE,
-                           download.ca = TRUE,
-                           use.php = FALSE,
-                           dir = NULL,
-                           verbose = TRUE) {
+download_datras <- function(surveys = NULL,
+                            years = NULL,
+                            download_missing_only = TRUE,
+                            download_ca = TRUE,
+                            use_php = FALSE,
+                            dir = NULL,
+                            force = FALSE,
+                            verbose = TRUE) {
 
   yearsin <- years
 
@@ -32,7 +88,14 @@ downloadDATRAS <- function(surveys = NULL,
   ## Surveys
   if(is.null(surveys)){
     surveys <- icesDatras::getSurveyList()
-    ## surveys.with.issues <- c("NS-IDPS", "IS-IDPS")
+  }
+  surveys_with_issues <- c("NS-IDPS", "IS-IDPS",
+                           "Test-DATRAS", "NS-IBTS_UNIFtest")
+
+  ind <- which(surveys %in% surveys_with_issues)
+  if (length(ind) > 0 && !isTRUE(force)) {
+    message("These surveys are test surveys or do not contain all required data and will not be downloaded: ", paste(surveys[ind], collapse = ", "), " Please use force=TRUE if you want to download these surveys.")
+    surveys <- surveys[-ind]
   }
 
   ## Dowload data for each survey
@@ -49,7 +112,7 @@ downloadDATRAS <- function(surveys = NULL,
 
     ## TODO: check if php works on mac
     ## if (.Platform$OS.type == "windows") {
-    if (!use.php) {
+    if (!use_php) {
 
       years <- icesDatras::getSurveyYearList(survey)
       if (!is.null(yearsin)) {
@@ -59,32 +122,34 @@ downloadDATRAS <- function(surveys = NULL,
         year <- years[y]
         quarters <- icesDatras::getSurveyYearQuarterList(survey, year)
 
-        if (download.missing.only) {
+        if (download_missing_only) {
           if (!file.exists(file.path(dir, survey,
                                      paste0(survey,"_",year,".zip")))) {
-            datras_raw <- getDatrasExchange(survey, year, quarters,
-                                            strict = TRUE,
-                                            download.ca = download.ca)
-            datras_clean <- removeExtraVariables(datras_raw)
-            writeExchange(datras_clean, file.path(dir, survey,
-                                                  paste0(survey,"_",year,".zip")))
+            datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
+                                                    strict = TRUE,
+                                                    download_ca = download_ca)
+            datras_raw <- .add_class(datras_raw)
+            datras_clean <- .remove_extra_variables(datras_raw)
+            write_exchange(datras_clean, file.path(dir, survey,
+                                                   paste0(survey,"_",year,".zip")))
           }
         } else {
-          datras_raw <- getDatrasExchange(survey, year, quarters,
-                                          strict = TRUE,
-                                          download.ca = download.ca)
-          datras_clean <- removeExtraVariables(datras_raw)
-          writeExchange(datras_clean,
-                        file.path(dir, survey,
-                                  paste0(survey,"_",year,".zip")))
+          datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
+                                                  strict = TRUE,
+                                                  download_ca = download_ca)
+          datras_raw <- .add_class(datras_raw)
+          datras_clean <- .remove_extra_variables(datras_raw)
+          write_exchange(datras_clean,
+                         file.path(dir, survey,
+                                   paste0(survey,"_",year,".zip")))
         }
       }
 
     } else {
 
-      if (!download.ca && verbose) writeLines("Note that this functionality is not yet implemented, php always downloads CA. Consider setting use.php to FALSE.")
+      if (!download_ca && verbose) message("Note that this functionality is not yet implemented, php always downloads CA. Consider setting use_php to FALSE.")
 
-      if (download.missing.only) {
+      if (download_missing_only) {
         years <- icesDatras::getSurveyYearList(survey)
         if (!is.null(yearsin)) {
           years <- years[years %in% yearsin]
@@ -93,7 +158,7 @@ downloadDATRAS <- function(surveys = NULL,
           year <- years[y]
           if (!file.exists(file.path(dir, survey,
                                      paste0(survey,"_",year,".zip")))) {
-            tmp <- downloadExchange(survey, year)
+            tmp <- DATRAS::downloadExchange(survey, year)
           }
         }
       } else {
@@ -101,7 +166,7 @@ downloadDATRAS <- function(surveys = NULL,
           years <- icesDatras::getSurveyYearList(survey)
           years <- years[years %in% yearsin]
         }
-        tmp <- downloadExchange(survey, years)
+        tmp <- DATRAS::downloadExchange(survey, years)
       }
 
     }
@@ -117,196 +182,12 @@ downloadDATRAS <- function(surveys = NULL,
 
 
 
-##' @title Read in DATRAS survey information
-##'
-##' @param paths paths
-##' @param years years
-##' @param min.file.size Minimum file size in bytes (default: 100KB). Files
-##'     below this value will be removed as they will likely cause errors in the
-##'     underlying DATRAS functions.
-##' @param prune logical; If `TRUE` only core columns are kept (see function
-##'     prune which columns are removed).
-##' @param verbose print stuff
-##'
-##' @return NULL
-##'
-##' @details The zip archives downloaded with dowloadDATRAS are usually between
-##'     700KB and 2.5MB dependent on the survey. 100KM is a conservative default
-##'     file size to exclude files that might be empty or damaged zip archives.
-##'
-##' If the whole DATRAS data base is read into R, R might crash due to memory
-##' limitations when trying to merge the individual files from multiple surveys.
-##' The argument 'prune' allows to get rid of some columns which saves
-##' considerable memory before merging all DATRAS files. If some columns that
-##' prune removes should be kept consider overwriting prune with your own
-##' function code.
-##'
-##' @importFrom DATRAS downloadExchange
-##'
-##' @export
-readDATRAS <- function(paths,
-                       years = NULL,
-                       min.file.size = 1e4,
-                       prune = FALSE,
-                       verbose = TRUE) {
 
-  ## import internal function from DATRAS
-  c.DATRASraw <- getFromNamespace("c.DATRASraw", "DATRAS")
-
-  paths0 <- paths
+## Internal functions -----------------------------------------------------
 
 
-  if (any(dir.exists(paths))) {
-
-    if (!is.null(years)) {
-
-      paths <- dir(paths0,
-                   full.names = TRUE)
-      paths <- paths[grep("\\.zip$", paths)]
-      paths <- paths[sort(unlist(lapply(years,
-                                        function(x)
-                                          grep(as.character(x), paths))))]
-      ind <- which(file.size(paths) <= min.file.size)
-      if(length(ind) > 0 && verbose){
-        writeLines(paste0("These files are suspiciously small, are you sure that they were downloaded correctly? They will be removed from the list as they likely give errors. Please check the files or change the 'min.file.size' argument!\n",
-                          paste(paths[ind], collapse = "\n")))
-      }
-      paths <- paths[file.size(paths) > min.file.size]
-
-      np <- length(paths)
-      if(verbose) message("Reading in zip files...")
-      if(verbose) pb <- txtProgressBar(min = 0, max = np, style = 3)
-      tmp <- vector("list", np)
-      for (i in 1:np) {
-        invisible(capture.output({
-          tmp[[i]] <- tryCatch({readExchange(paths[i], strict = FALSE)
-          }, error = function(err) {
-            message(paste0("Error with: ", paths[i]))
-            return(NULL)
-          })
-        }))
-        if (is.null(tmp[[i]]) && verbose) {
-          message(paste0("Error with: ", paths[i]))
-        }
-        if(verbose) setTxtProgressBar(pb, i)
-      }
-      if(verbose) close(pb)
-
-      idx <- which(sapply(tmp,is.null))
-      if (length(idx) > 0) {
-        if (verbose) {
-          message("One or more loaded files are NULL. Removing these. Check your files!")
-        }
-        tmp <- tmp[-idx]
-      }
-
-      removeDuplicatedHaulID <- function(args) {
-        x <- lapply(args, function(x) as.character(x$haul.id))
-        x2 <- lapply(args, function(x) x[["HH"]]$Survey)
-        ind <- which(duplicated(unlist(x)))
-        ids <- unlist(x)[ind]
-        if (length(ind) > 0) {
-          if(verbose){
-            message(paste0("These hauls are duplicated:\n",
-                           paste(paste0(unlist(x2)[ind],": ",ids),
-                                 collapse = "\n")))
-            message("Removing these hauls in order to continue. Please look into these surveys and hauls and find out why they are duplicated!")
-          }
-          args <- lapply(args, function(x) subset(x, !haul.id %in% ids))
-        }
-        return(args)
-      }
-
-      tmp <- removeDuplicatedHaulID(tmp)
-
-      if (prune) {
-        if(verbose) message("Pruning files")
-        tmp <- lapply(tmp, prune)
-      }
-
-      if(verbose) message("Combining files")
-
-      surv0 <- do.call(c.DATRASraw, tmp)
-
-    } else {
-
-      ## TODO what if the path includes R files and and can it be the mother folder with the surveys as children?
-
-      invisible(capture.output({
-        surv0 <- DATRAS::readExchangeDir(paths,
-                                         pattern = ".zip",
-                                         strict = FALSE)
-      }))
-    }
-
-  } else if (any(file.exists(paths))) {
-
-    paths <- paths[grep("\\.zip$", paths)]
-    invisible(capture.output({
-      surv0 <- readExchange(paths, strict = FALSE)
-    }))
-
-  }else {
-
-    stop(paste0("Cannot find a file or folder under path: ",
-                paste(paths, collapse = ", ")))
-
-  }
-
-  return(surv0)
-}
-
-
-
-##' @title Write DATRASraw to Exchange
-##'
-##' @param x a DATRASraw object
-##' @param zipfile name of zip file
-##'
-##' @return NULL
-##'
-##' @export
-writeExchange <- function(x,
-                          zipfile = "DATRAS.zip") {
-  stopifnot(inherits(x, "DATRASraw"))
-
-  td <- tempdir()
-  csvfile <- file.path(td, "DATRAS.csv")
-
-  con <- file(csvfile, open = "wt", encoding = "UTF-8")
-  on.exit({
-    ## Only attempt to close if we still hold a connection object
-    if (!is.null(con) && inherits(con, "connection")) {
-      try(close(con), silent = TRUE)
-    }
-  }, add = TRUE)
-
-  for (comp in c("HH", "HL", "CA")) {
-    if (!comp %in% names(x)) next
-    df <- x[[comp]]
-    if (is.null(df) || nrow(df) == 0) next
-
-    ## header once per block, then append the rows
-    writeLines(paste(names(df), collapse = ","), con)
-    write.table(df, con, sep = ",", row.names = FALSE, col.names = FALSE,
-                append = TRUE, na = "", quote = FALSE, eol = "\n")
-  }
-
-  ## Flush and close before zipping, then null the handle so on.exit() does nothing
-  close(con); con <- NULL
-
-  if (file.exists(zipfile)) unlink(zipfile)
-  utils::zip(zipfile, files = csvfile, flags = "-j")
-
-  message("Created zip file: ", zipfile)
-  invisible(zipfile)
-}
-
-
-
-
-removeExtraVariables <- function(x) {
-  stopifnot(inherits(x, "DATRASraw"))
+.remove_extra_variables <- function(x) {
+  stopifnot(inherits(x, "datras_raw"))
 
 
   ## Define the official names for each component

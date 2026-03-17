@@ -26,7 +26,7 @@ The **`DATRASextra`** package provides tools to process raw DATRAS survey data a
 This vignette demonstrates a workflow to:
 
 - download DATRAS survey data  
-- harmonize and clean raw survey tables  
+- harmonize and clean_datras raw survey tables  
 - standardize species taxonomy  
 - estimate swept area and biomass  
 - generate FishGlob-compatible datasets
@@ -62,7 +62,7 @@ data(mini)
 
 ## Clean the dataset
 
-The `cleanFishglob()` function harmonizes the raw DATRAS tables and prepares them for processing. Species names and identifiers are standardized using WoRMS taxonomy with `correctSpecies()`
+The `clean_fishglob()` function harmonizes the raw DATRAS tables and prepares them for processing. Species names and identifiers are standardized using WoRMS taxonomy with `correct_species()`
 This step ensures:
 
 - consistent scientific names  
@@ -70,17 +70,17 @@ This step ensures:
 - standardized taxonomic classification  
 
 ```{r}
-dat <- cleanFishglob(mini)
+dat <- clean_fishglob(mini)
 ```
 
 ## Reduce dataset size
 
 The raw dataset contains many variables that are not required for the FishGlob output.
 
-The `pruneFishglob()` function removes unnecessary columns to reduce memory usage and improve processing speed.
+The `prune_fishglob()` function removes unnecessary columns to reduce memory usage and improve processing speed.
 
 ```{r}
-dat <- pruneFishglob(dat)
+dat <- prune_fishglob(dat)
 ```
 
 ## Compute swept area
@@ -93,17 +93,17 @@ The function below:
 - imputes missing values when necessary  
 
 ```{r}
-dat <- addSweptAreaFishGlob(dat)
+dat <- add_swept_area_fishglob(dat)
 ```
 
 ## Estimate biomass
 
 FishGlob reports both **numbers** and **biomass**.
 
-The `addWeightFishglob()` function converts length data to weight using species-specific **length–weight relationships**.
+The `add_weight_fishglob()` function converts length data to weight using species-specific **length–weight relationships**.
 
 ```{r}
-dat <- addWeightFishglob(dat)
+dat <- add_weight_fishglob(dat)
 ```
 
 ## Format the FishGlob output
@@ -111,7 +111,7 @@ dat <- addWeightFishglob(dat)
 Finally, the dataset is formatted to match the **FishGlob data structure**.
 
 ```{r}
-datras <- formatFishglob.DATRASraw(dat)
+datras <- as_fishglob.datras_raw(dat)
 
 head(datras)
 ```
@@ -134,10 +134,10 @@ surveys <- c("NS-IBTS", "EVHOE", "SWC-IBTS", "BITS", "IE-IGFS",
 tmp <- tempdir()
 
 # download survey data
-downloadDATRAS(surveys = surveys, dir = tmp)
+download_datras(surveys = surveys, dir = tmp)
 
 # read raw DATRAS tables
-raw <- readDATRAS(file.path(tmp, surveys))
+raw <- read_datras(file.path(tmp, surveys))
 ```
 
 Downloading and processing these surveys take some time, as they include
