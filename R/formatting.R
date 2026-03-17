@@ -32,9 +32,8 @@
 ##' tab_wide <- as_table(x, type = "wide")
 ##' }
 ##'
-##' @method as_table datras_raw
 ##' @export
-format.datras_raw <- function(x, type = "long", ...) {
+as_table <- function(x, type = "long", ...) {
 
   .check_class_datras(x)
 
