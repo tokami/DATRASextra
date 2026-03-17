@@ -68,7 +68,7 @@ clean_datras <- function(x,
                          correct_species = TRUE,
                          do_fishglob = FALSE) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   ## Minimum cleaning ------------------------
   if (!do_fishglob) {
@@ -181,7 +181,7 @@ clean_datras <- function(x,
 ##' @export
 prune_datras <- function(x, do_fishglob = FALSE) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   if (!do_fishglob) {
 
@@ -262,7 +262,7 @@ prune_datras <- function(x, do_fishglob = FALSE) {
 ##' @export
 correct_species <- function(x) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   for(i in c("CA","HL")){
 

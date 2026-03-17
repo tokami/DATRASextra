@@ -161,7 +161,7 @@ read_datras <- function(paths,
 
   }
 
-  surv0 <- .add_class(surv0)
+  surv0 <- .add_class_datras(surv0)
   return(surv0)
 }
 
@@ -198,7 +198,7 @@ read_datras <- function(paths,
 write_exchange <- function(x,
                            zip_file = "DATRAS.zip") {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   td <- tempdir()
   csvfile <- file.path(td, "DATRAS.csv")

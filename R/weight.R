@@ -71,7 +71,7 @@ check_weight <- function (x,
                           max_weight = NULL,
                           plot = TRUE) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   DATRAS::checkSpectrum(x)
 
@@ -241,7 +241,7 @@ add_weight <- function (x,
                         empirical = FALSE,
                         by_haul = FALSE) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   DATRAS::checkSpectrum(x)
 
@@ -335,7 +335,7 @@ add_weight <- function (x,
 add_weight_empirical <- function (x,
                                   per_minute = TRUE) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   DATRAS::checkSpectrum(x)
 
@@ -403,7 +403,7 @@ add_weight_empirical <- function (x,
 ##' @export
 add_weight_by_haul <- function (x,
                                 per_minute = TRUE) {
-  .check_class(x)
+  .check_class_datras(x)
   DATRAS::addWeightByHaul(d = x, t1min = per_minute)
 }
 
@@ -456,7 +456,7 @@ add_weight_by_haul <- function (x,
 add_weight_by_haul_empirical <- function (x,
                                           per_minute = TRUE) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   DATRAS::checkSpectrum(x)
 

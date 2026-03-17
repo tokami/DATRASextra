@@ -133,7 +133,7 @@ download_datras <- function(surveys = NULL,
                                                     strict = TRUE,
                                                     download.hl = download_hl,
                                                     download.ca = download_ca)
-            datras_raw <- .add_class(datras_raw)
+            datras_raw <- .add_class_datras(datras_raw)
             datras_clean <- .remove_extra_variables(datras_raw)
             write_exchange(datras_clean, file.path(dir, survey,
                                                    paste0(survey,"_",year,".zip")))
@@ -143,7 +143,7 @@ download_datras <- function(surveys = NULL,
                                                   strict = TRUE,
                                                   download.hl = download_hl,
                                                   download.ca = download_ca)
-          datras_raw <- .add_class(datras_raw)
+          datras_raw <- .add_class_datras(datras_raw)
           datras_clean <- .remove_extra_variables(datras_raw)
           write_exchange(datras_clean,
                          file.path(dir, survey,

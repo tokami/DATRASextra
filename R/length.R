@@ -74,7 +74,7 @@ check_length <- function(x,
                          length_percentile = 99.9999,
                          plot = TRUE) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   ## import internal function from DATRAS
   getAccuracyCM <- getFromNamespace("getAccuracyCM", "DATRAS")

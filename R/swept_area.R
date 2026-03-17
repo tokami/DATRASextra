@@ -62,7 +62,7 @@ add_swept_area <- function(x,
                            max_dist_dev = 0.2,
                            impute_missing = FALSE) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   if (method == "simple") {
 
@@ -156,7 +156,7 @@ add_swept_area_simple <- function(x,
                                   max_dist_dev = 0.2,
                                   impute_missing = FALSE) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   x$GroundSpeed[ x$GroundSpeed < min_speed ] <- NA
   x$Distance[ x$Distance < min_dist ] <- NA

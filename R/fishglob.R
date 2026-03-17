@@ -61,7 +61,7 @@
 ##' @export
 clean_fishglob <- function(x) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   ## General cleaning -------------------------
   ## https://github.com/fishglob/FishGlob_data/blob/233d0f4c82114268ac2f8f58d340d11e7efb02c6/cleaning_codes/get_datras.R#L347
@@ -133,7 +133,7 @@ clean_fishglob <- function(x) {
 ##' @export
 prune_fishglob <- function(x) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   hh.cols <- c("RecordType","Country","Survey","Quarter", "Ship","Gear",
                "Year","Month", "Day","HaulDur","StatRec","Depth", "HaulVal",
@@ -474,7 +474,7 @@ add_swept_area_fishglob <- function(x) {
 ##' @export
 add_weight_fishglob <- function(x) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   ## --- input checks ---
   if (!inherits(x, "datras_raw")) stop("input must be a datras_raw object")
@@ -580,7 +580,7 @@ add_weight_fishglob <- function(x) {
 ##' @export
 as_fishglob.datras_raw <- function(x) {
 
-  .check_class(x)
+  .check_class_datras(x)
 
   # extract hh and hl
   hh <- x[["HH"]]
