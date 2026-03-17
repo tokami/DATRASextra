@@ -2,18 +2,43 @@
 % Please edit documentation in R/formatting.R
 \name{format.datras_raw}
 \alias{format.datras_raw}
-\title{Format DATRAS data}
+\title{Format a \code{datras_raw} object as a table}
 \usage{
-\method{format}{datras_raw}(x, ...)
+\method{as_table}{datras_raw}(x, type = "long", ...)
 }
 \arguments{
-\item{x}{a datras_raw object.}
+\item{x}{A \code{datras_raw} object.}
 
-\item{...}{extra options}
+\item{type}{Character string specifying the output format. Must be either
+\code{"long"} (default) or \code{"wide"}.}
+
+\item{...}{Additional arguments passed to \code{\link[=as_long_format]{as_long_format()}} or
+\code{\link[=as_wide_format]{as_wide_format()}}.}
 }
 \value{
-Dataframe in format x.
+A data frame in the requested format.
 }
 \description{
-Format DATRAS data
+Convert a \code{datras_raw} / \code{DATRASraw} object to either long or wide tabular
+format.
+}
+\details{
+This is a convenience wrapper around \code{\link[=as_long_format]{as_long_format()}} and
+\code{\link[=as_wide_format]{as_wide_format()}}.
+
+If \code{type = "long"}, the object is converted using \code{\link[=as_long_format]{as_long_format()}}.
+If \code{type = "wide"}, the object is converted using \code{\link[=as_wide_format]{as_wide_format()}}.
+}
+\examples{
+\dontrun{
+## Long-format table
+tab_long <- as_table(x, type = "long")
+
+## Wide-format table
+tab_wide <- as_table(x, type = "wide")
+}
+
+}
+\seealso{
+\code{\link[=as_long_format]{as_long_format()}}, \code{\link[=as_wide_format]{as_wide_format()}}
 }

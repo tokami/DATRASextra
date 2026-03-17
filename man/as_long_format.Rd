@@ -2,16 +2,62 @@
 % Please edit documentation in R/formatting.R
 \name{as_long_format}
 \alias{as_long_format}
-\title{Create long-format table}
+\title{Convert a \code{datras_raw} object to a long-format table}
 \usage{
-as_long_format(x)
+as_long_format(
+  x,
+  vars = c("Survey", "Gear", "Country", "Ship", "Year", "Quarter", "Month", "Day", "lon",
+    "lat", "timeOfYear", "abstime", "DayNight", "TimeShotHour", "HaulDur")
+)
 }
 \arguments{
-\item{x}{a datras_raw object.}
+\item{x}{A \code{datras_raw} object.}
+
+\item{vars}{Character vector of variable names to include in the output.
+Variables found in \code{HH} are taken directly from \code{HH}. Variables not found
+in \code{HH} but present in \code{HL} are joined by \code{haul.id}. Defaults to a set of
+common haul-level variables.}
 }
 \value{
-Long-format table
+A data frame in long format.
 }
 \description{
-Create long-format table
+Create a long-format data frame from a \code{datras_raw} / \code{DATRASraw} object,
+using \code{HH} as the main haul-level table and, when needed, adding variables
+from \code{HL} matched by \code{haul.id}.
+}
+\details{
+If species-level variables such as \code{Species} or \code{Valid_Aphia} are requested,
+the output contains one row per haul-species combination. Variables that are
+not found in either \code{HH} or \code{HL} are omitted with a warning.
+
+The function starts from the \code{HH} table and adds requested variables from
+\code{HL} only when needed. If one or more requested variables come from \code{HL},
+the output is expanded to one row per unique \code{haul.id} and combination of
+requested \code{HL} variables.
+
+This is particularly useful for creating haul-species tables, for example
+when requesting \code{Species} or \code{Valid_Aphia} together with haul-level
+covariates such as year, quarter, gear, or position.
+
+Variables requested in \code{vars} that are not present in either \code{HH} or \code{HL}
+are ignored and reported with a warning.
+}
+\examples{
+\dontrun{
+## Haul-level long table
+tab <- as_long_format(x)
+
+## Haul-species table
+tab <- as_long_format(x, vars = c("Survey", "Year", "haul.id",
+                                  "Species", "Valid_Aphia"))
+
+## Request variables from both HH and HL
+tab <- as_long_format(x, vars = c("Survey", "Gear", "Year",
+                                  "Species", "Valid_Aphia"))
+}
+
+}
+\seealso{
+\code{\link[=read_datras]{read_datras()}}, \code{\link[=clean_datras]{clean_datras()}}
 }
