@@ -53,27 +53,27 @@
 ##'   and `b`, if available.
 ##' }
 ##'
-##' @seealso [check_length()], [DATRAS::checkSpectrum()]
+##' @seealso [check_lengths()]
 ##'
 ##' @examples
-##' \dontrun{
-##' res <- check_weight(x)
+##'
+##' ## Add numbers at length
+##' dab <- add_numbers_at_length(dab)
+##'
+##' res <- check_weights(dab)
 ##'
 ##' ## Restrict to plausible values
-##' res <- check_weight(x, max_length = 100, max_weight = 10000)
-##' }
-##'
-##' @importFrom DATRAS checkSpectrum
+##' res <- check_weights(dab, max_length = 100, max_weight = 10000)
 ##'
 ##' @export
-check_weight <- function (x,
-                          max_length = NULL,
-                          max_weight = NULL,
-                          plot = TRUE) {
+check_weights <- function (x,
+                           max_length = NULL,
+                           max_weight = NULL,
+                           plot = TRUE) {
 
   .check_class_datras(x)
 
-  DATRAS::checkSpectrum(x)
+  if (!.has_numbers_at_length(x)) stop("No numbers at length information found in HH. Did you run 'add_numbers_at_length(x)'?")
 
   x1 <- subset(x[["CA"]], IndWgt > 0)
   if (!is.null(max_length) && !is.na(max_length) && is.numeric(max_length)) {
@@ -165,7 +165,6 @@ check_weight <- function (x,
 
 
 
-
 ##' Add weight-at-length estimates to a `datras_raw` object
 ##'
 ##' Estimate catch weight from length data and add the resulting weight fields to
@@ -173,28 +172,21 @@ check_weight <- function (x,
 ##'
 ##' The function derives weight-at-length either from an empirical
 ##' length-weight relationship fitted to the `CA` table or, if
-##' `empirical = TRUE`, from the empirical helper functions
-##' [add_weight_empirical()] and optionally [add_weight_by_haul_empirical()].
+##' `empirical = TRUE`, uses length-weight parameters from the species_info table.
 ##'
 ##' @param x A `datras_raw` object.
-##' @param per_minute Logical. If `TRUE` (default), estimated weights are divided
-##'   by haul duration in minutes.
+##' @param per_minute Logical. If `TRUE` (default), estimated weights are
+##'   divided by haul duration in minutes.
 ##' @param max_length Optional numeric value giving the maximum length in
 ##'   centimetres to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
-##' @param max_weight Optional numeric value giving the maximum individual weight
-##'   in grams to retain when fitting the length-weight relationship.
+##' @param max_weight Optional numeric value giving the maximum individual
+##'   weight in grams to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
 ##' @param empirical Logical. If `TRUE`, use empirical weight-at-length
-##'   calculations via [add_weight_empirical()] instead of fitting a
-##'   length-weight model to the `CA` table.
-##' @param by_haul Logical. If `TRUE`, also add haul-level weight information
-##'   using [add_weight_by_haul()] or [add_weight_by_haul_empirical()],
-##'   depending on the value of `empirical`.
+##'   calculations instead of fitting a length-weight model to the `CA` table.
 ##'
 ##' @details
-##' The function first calls [DATRAS::checkSpectrum()] and then proceeds in one
-##' of two ways:
 ##'
 ##' \itemize{
 ##'   \item If `empirical = FALSE`, a linear model of the form
@@ -203,55 +195,73 @@ check_weight <- function (x,
 ##'   defined by `attr(x, "cm.breaks")`, multiplied by numbers-at-length, and
 ##'   optionally divided by haul duration.
 ##'
-##'   \item If `empirical = TRUE`, weight is added using
-##'   [add_weight_empirical()]. If `by_haul = TRUE`, haul-level weight is also
-##'   added using [add_weight_by_haul_empirical()].
-##' }
+##'   \item If `empirical = TRUE`, weight is added using length-weight
+##' parameters from the species_info table. }
 ##'
-##' When `by_haul = TRUE` and `empirical = FALSE`, haul-level weight is added
-##' using [add_weight_by_haul()].
 ##'
 ##' @return A `datras_raw` object with estimated weight information added.
 ##'
-##' @seealso [check_weight()], [add_weight_empirical()],
-##'   [add_weight_by_haul()], [add_weight_by_haul_empirical()]
+##' @seealso [check_weights()], [add_total_weight_by_haul()]
 ##'
 ##' @examples
-##' \dontrun{
+##'
+##' ## Add numbers at length
+##' dab <- add_numbers_at_length(dab)
+##'
 ##' ## Add fitted weight-at-length estimates
-##' x <- add_weight(x)
+##' x <- add_weight_at_length(dab)
 ##'
 ##' ## Exclude large values when fitting the length-weight model
-##' x <- add_weight(x, max_length = 100, max_weight = 10000)
+##' x <- add_weight_at_length(dab, max_length = 100, max_weight = 10000)
 ##'
 ##' ## Use empirical weight-at-length instead
-##' x <- add_weight(x, empirical = TRUE)
-##'
-##' ## Also add haul-level weight
-##' x <- add_weight(x, by_haul = TRUE)
-##' }
-##'
-##' @importFrom DATRAS checkSpectrum
+##' x <- add_weight_at_length(dab, empirical = TRUE)
 ##'
 ##' @export
-add_weight <- function (x,
-                        per_minute = TRUE,
-                        max_length = NULL,
-                        max_weight = NULL,
-                        empirical = FALSE,
-                        by_haul = FALSE) {
+add_weight_at_length <- function (x,
+                                  per_minute = TRUE,
+                                  max_length = NULL,
+                                  max_weight = NULL,
+                                  empirical = FALSE) {
 
   .check_class_datras(x)
 
-  DATRAS::checkSpectrum(x)
+  if (!.has_numbers_at_length(x)) stop("Adding weight at length information requires information about the numbers at length. Did you run 'add_numbers_at_length(x)'?")
+
 
   if (isTRUE(empirical)) {
 
-    x <- add_weight_empirical(x, per_minute = per_minute)
+    aphia <- unique(x[["HL"]]$Valid_Aphia)
+    if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in species_info to use. Please run this function for each species separately.")
+    if(length(aphia) == 0) stop("No Aphia ID found in d[['HL']].")
 
-    if (by_haul) {
-      x <- add_weight_by_haul_empirical(x, per_minute = per_minute)
+    ## data("species_info")
+    ind <- which(species_info$WoRMS_AphiaID == aphia)
+    if(length(ind) > 1) stop("More than one matching Aphia ID found in species_info. Did you modify species_info? Please make sure to have unique Aphia IDs in species_info")
+    if(length(ind) == 0) stop("Aphia ID could not be matched in species_info. Please make sure your species is in species_info.")
+
+    a <- species_info$a[ind]
+    b <- species_info$b[ind]
+
+    if(is.na(a) || !is.numeric(a)) stop("Matched a in species_info is NA or not numeric! Please check the value!")
+    if(is.na(b) || !is.numeric(b)) stop("Matched b in species_info is NA or not numeric! Please check the value!")
+
+    cm_breaks = attr(x, "cm.breaks")[-1] - 0.5
+    tmp = x[["CA"]][1:length(cm_breaks), ]
+    tmp$LngtCm = cm_breaks
+    tmp$Wgt = a * tmp$LngtCm ^ b
+    LW = tmp$Wgt
+
+    Wgt <- sweep(x[["HH"]]$N, 2, LW, "*")
+
+    if (isTRUE(per_minute)) {
+      Wgt <- Wgt/x[["HH"]]$HaulDur
     }
+
+    Wgt <- round(Wgt, 3)
+
+    x[["HH"]]$Wgt <- Wgt[as.character(x[["HH"]]$haul.id),,drop=FALSE]
+
 
   } else {
 
@@ -277,98 +287,7 @@ add_weight <- function (x,
     Wgt <- round(Wgt, 3)
 
     x[["HH"]]$Wgt <- Wgt[as.character(x[["HH"]]$haul.id),,drop=FALSE]
-
-    if (by_haul) {
-      x <- add_weight_by_haul(x, per_minute = per_minute)
-    }
   }
-
-  return(x)
-}
-
-
-
-##' Add empirical weight-at-length estimates to `HH`
-##'
-##' Calculate weight-at-length from empirical species-specific length-weight
-##' parameters and add the resulting weights to the `HH` component of a
-##' `datras_raw` / `DATRASraw` object.
-##'
-##' The function uses the Aphia ID in the `HL` table to look up the empirical
-##' length-weight parameters `a` and `b` in `species_info`, predicts weight for
-##' each length class defined by `attr(x, "cm.breaks")`, and multiplies these
-##' by numbers-at-length stored in `HH$N`.
-##'
-##' @param x A `datras_raw` object.
-##' @param per_minute Logical. If `TRUE` (default), estimated weights are divided
-##'   by haul duration in minutes.
-##'
-##' @details
-##' The function requires that exactly one unique `Valid_Aphia` value is present
-##' in `x[["HL"]]`, and that matching empirical length-weight parameters are
-##' available in the internal `species_info` table.
-##'
-##' Weight-at-length is calculated as:
-##' \deqn{
-##'   W = a \times L^b
-##' }
-##'
-##' where `L` is length in centimetres and `W` is weight in grams.
-##'
-##' The resulting length-specific weights are multiplied by the haul-specific
-##' numbers-at-length matrix `HH$N`. If `per_minute = TRUE`, the resulting
-##' weights are standardized by haul duration.
-##'
-##' @return A `datras_raw` object with an added `Wgt` field in `HH`.
-##'
-##' @seealso [add_weight()], [add_weight_by_haul_empirical()]
-##'
-##' @examples
-##' \dontrun{
-##' x <- add_weight_empirical(x)
-##' x <- add_weight_empirical(x, per_minute = FALSE)
-##' }
-##'
-##' @importFrom DATRAS checkSpectrum
-##'
-##' @export
-add_weight_empirical <- function (x,
-                                  per_minute = TRUE) {
-
-  .check_class_datras(x)
-
-  DATRAS::checkSpectrum(x)
-
-  aphia <- unique(x[["HL"]]$Valid_Aphia)
-  if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in species_info to use. Please run this function for each species separately.")
-  if(length(aphia) == 0) stop("No Aphia ID found in d[['HL']].")
-
-  ## data("species_info")
-  ind <- which(species_info$WoRMS_AphiaID == aphia)
-  if(length(ind) > 1) stop("More than one matching Aphia ID found in species_info. Did you modify species_info? Please make sure to have unique Aphia IDs in species_info")
-  if(length(ind) == 0) stop("Aphia ID could not be matched in species_info. Please make sure your species is in species_info.")
-
-  a <- species_info$a[ind]
-  b <- species_info$b[ind]
-
-  if(is.na(a) || !is.numeric(a)) stop("Matched a in species_info is NA or not numeric! Please check the value!")
-  if(is.na(b) || !is.numeric(b)) stop("Matched b in species_info is NA or not numeric! Please check the value!")
-
-  cm_breaks = attr(x, "cm.breaks")[-1] - 0.5
-  tmp = x[["CA"]][1:length(cm_breaks), ]
-  tmp$LngtCm = cm_breaks
-  tmp$Wgt = a * tmp$LngtCm ^ b
-  LW = tmp$Wgt
-
-  Wgt <- sweep(x[["HH"]]$N, 2, LW, "*")
-
-  if (isTRUE(per_minute)) {
-    Wgt <- Wgt/x[["HH"]]$HaulDur
-  }
-
-  Wgt <- round(Wgt, 3)
-
-  x[["HH"]]$Wgt <- Wgt[as.character(x[["HH"]]$haul.id),,drop=FALSE]
 
   return(x)
 }
@@ -378,58 +297,33 @@ add_weight_empirical <- function (x,
 ##' Add total haul biomass to `HH`
 ##'
 ##' Calculate total biomass by haul and add it to the `HH` component of a
-##' `datras_raw` / `DATRASraw` object using the underlying DATRAS method.
+##' `datras_raw` / `DATRASraw` object based on available information in the `CA`
+##' data set. If `CA` data is not available, total haul biomass can be
+##' calculated from empirical species-specific length-weight parameters.
+##'
+##' Optionally, the resulting length classes can be aggregated into coarser bins
+##' via `length_cuts`.
 ##'
 ##' @param x A `datras_raw` object.
-##' @param per_minute Logical. If `TRUE` (default), biomass is divided by haul
-##'   duration in minutes.
+##' @param per_minute Logical. If `TRUE` (default), estimated weights are
+##'   divided by haul duration in minutes.
+##' @param max_length Optional numeric value giving the maximum length in
+##'   centimetres to retain when fitting the length-weight relationship.
+##'   Observations above this value are excluded.
+##' @param max_weight Optional numeric value giving the maximum individual
+##'   weight in grams to retain when fitting the length-weight relationship.
+##'   Observations above this value are excluded.
+##' @param empirical Logical. If `TRUE`, use empirical weight-at-length
+##'   calculations instead of fitting a length-weight model to the `CA` table.
+##' @param length_cuts Optional numeric vector of break points for aggregating
+##'   the original length classes into coarser bins after numbers-at-length have
+##'   been calculated. Must be strictly increasing.
 ##'
 ##' @details
-##' This function is a thin wrapper around [DATRAS::addWeightByHaul()], applied
-##' after checking that the input is a valid `datras_raw` object.
 ##'
-##' @return A `datras_raw` object with haul-level biomass added to `HH`.
-##'
-##' @seealso [add_weight()], [add_weight_by_haul_empirical()]
-##'
-##' @examples
-##' \dontrun{
-##' x <- add_weight_by_haul(x)
-##' x <- add_weight_by_haul(x, per_minute = FALSE)
-##' }
-##'
-##' @importFrom DATRAS addWeightByHaul
-##'
-##' @export
-add_weight_by_haul <- function (x,
-                                per_minute = TRUE) {
-  .check_class_datras(x)
-  DATRAS::addWeightByHaul(d = x, t1min = per_minute)
-}
-
-
-
-
-##' Add empirical total haul biomass to `HH`
-##'
-##' Calculate total biomass by haul from empirical species-specific
-##' length-weight parameters and add it to the `HH` component of a
-##' `datras_raw` / `DATRASraw` object.
-##'
-##' The function uses the Aphia ID in the `HL` table to look up the empirical
-##' length-weight parameters `a` and `b` in `species_info`, predicts weight for
-##' each length class defined by `attr(x, "cm.breaks")`, and combines these
-##' with haul-specific numbers-at-length stored in `HH$N` to compute total haul
-##' biomass.
-##'
-##' @param x A `datras_raw` object.
-##' @param per_minute Logical. If `TRUE` (default), haul biomass is divided by
-##'   haul duration in minutes.
-##'
-##' @details
-##' The function requires that exactly one unique `Valid_Aphia` value is present
-##' in `x[["HL"]]`, and that matching empirical length-weight parameters are
-##' available in the internal `species_info` table.
+##' If empirical = TRUE, the function requires that exactly one unique
+##' `Valid_Aphia` value is present in `x[["HL"]]`, and that matching empirical
+##' length-weight parameters are available in the internal `species_info` table.
 ##'
 ##' Weight-at-length is calculated as:
 ##' \deqn{
@@ -440,54 +334,65 @@ add_weight_by_haul <- function (x,
 ##' numbers-at-length by the predicted weight-at-length vector and summing across
 ##' length classes.
 ##'
-##' @return A `datras_raw` object with an added `HaulWgt` field in `HH`.
+##' Provide your own a and b parameters by overwriting the relevant fields in
+##' the species_info table.
 ##'
-##' @seealso [add_weight()], [add_weight_empirical()], [add_weight_by_haul()]
+##' @return A `datras_raw` object with haul-level biomass added to `HH`.
+##'
+##' @seealso [add_weight_at_length()]
 ##'
 ##' @examples
-##' \dontrun{
-##' x <- add_weight_by_haul_empirical(x)
-##' x <- add_weight_by_haul_empirical(x, per_minute = FALSE)
-##' }
 ##'
-##' @importFrom DATRAS checkSpectrum
+##' ## Add numbers at length
+##' dab <- add_numbers_at_length(dab)
+##'
+##' x <- add_total_weight_by_haul(dab)
+##'
+##' x <- add_total_weight_by_haul(dab, empirical = TRUE)
 ##'
 ##' @export
-add_weight_by_haul_empirical <- function (x,
-                                          per_minute = TRUE) {
-
+add_total_weight_by_haul <- function (x,
+                                      per_minute = TRUE,
+                                      max_length = NULL,
+                                      max_weight = NULL,
+                                      empirical = FALSE,
+                                      length_cuts = NULL) {
   .check_class_datras(x)
 
-  DATRAS::checkSpectrum(x)
-
-  aphia <- unique(x[["HL"]]$Valid_Aphia)
-  if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in species_info to use. Please run this function for each species separately.")
-  if(length(aphia) == 0) stop("No Aphia ID found in d[['HL']].")
-
-  ## data("species_info")
-  ind <- which(species_info$WoRMS_AphiaID == aphia)
-  if(length(ind) > 1) stop("More than one matching Aphia ID found in species_info. Did you modify species_info? Please make sure to have unique Aphia IDs in species_info")
-  if(length(ind) == 0) stop("Aphia ID could not be matched in species_info. Please make sure your species is in species_info.")
-
-  a <- species_info$a[ind]
-  b <- species_info$b[ind]
-
-  if(is.na(a) || !is.numeric(a)) stop("Matched a in species_info is NA or not numeric! Please check the value!")
-  if(is.na(b) || !is.numeric(b)) stop("Matched b in species_info is NA or not numeric! Please check the value!")
-
-  cm_breaks = attr(x, "cm.breaks")[-1] - 0.5
-  tmp = x[["CA"]][1:length(cm_breaks), ]
-  tmp$LngtCm = cm_breaks
-  tmp$Wgt = a * tmp$LngtCm ^ b
-
-  LW = tmp$Wgt
-  WgtByHaul <- function(i) {
-    x[["HH"]]$N[i, ] %*% LW
-  }
-  x[["HH"]]$HaulWgt = unlist(lapply(1:nrow(x[["HH"]]), WgtByHaul))
-  if (isTRUE(per_minute)) {
-    x[["HH"]]$HaulWgt = x[["HH"]]$HaulWgt/x[["HH"]]$HaulDur
+  if (!.has_weight_at_length(x)) {
+    x <- add_weight_at_length(x,
+                              per_minute = per_minute,
+                              max_length = max_length,
+                              max_weight = max_weight,
+                              empirical = empirical)
   }
 
-  return(x)
+  if (!is.null(length_cuts)) {
+
+    stopifnot(is.numeric(length_cuts))
+    stopifnot(length(length_cuts) > 1L)
+    stopifnot(all(diff(length_cuts) > 0))
+
+    old_breaks <- attr(x, "cm.breaks")
+    x[["HH"]][["HaulWgt"]] <- .aggregate_length_bins(
+      mat = x[["HH"]][["Wgt"]],
+      old_breaks = old_breaks,
+      new_breaks = length_cuts
+    )
+
+  } else {
+
+    x[["HH"]][["HaulWgt"]] <- rowSums(x[["HH"]][["Wgt"]], na.rm = TRUE)
+
+  }
+
+  x
+}
+
+
+
+## Internal functions ------------------------------------------------------------
+
+.has_weight_at_length <- function(x) {
+  !is.null(x[["HH"]][["Wgt"]]) && is.matrix(x[["HH"]][["Wgt"]])
 }

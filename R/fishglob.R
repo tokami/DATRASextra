@@ -464,15 +464,15 @@ add_swept_area_fishglob <- function(x) {
 ##'   \item `Wgt_total`: estimated total weight for the record in kilograms.
 ##' }
 ##'
-##' @seealso [add_weight()], [clean_fishglob()]
+##' @seealso [add_total_weight_by_haul()]
 ##'
 ##' @examples
 ##' \dontrun{
-##' x <- add_weight_fishglob(x)
+##' x <- add_total_weight_by_haul_fishglob(x)
 ##' }
 ##'
 ##' @export
-add_weight_fishglob <- function(x) {
+add_total_weight_by_haul_fishglob <- function(x) {
 
 
   ## --- input checks ---
@@ -567,7 +567,7 @@ add_weight_fishglob <- function(x) {
 ##'   haul-taxon combination.
 ##'
 ##' @seealso [clean_fishglob()], [prune_fishglob()], [add_swept_area_fishglob()],
-##'   [add_weight_fishglob()]
+##'   [add_total_weight_by_haul_fishglob()]
 ##'
 ##' @examples
 ##' \dontrun{

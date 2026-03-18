@@ -58,5 +58,5 @@ fg <- as_fishglob(x)
 }
 \seealso{
 \code{\link[=clean_fishglob]{clean_fishglob()}}, \code{\link[=prune_fishglob]{prune_fishglob()}}, \code{\link[=add_swept_area_fishglob]{add_swept_area_fishglob()}},
-\code{\link[=add_weight_fishglob]{add_weight_fishglob()}}
+\code{\link[=add_total_weight_by_haul_fishglob]{add_total_weight_by_haul_fishglob()}}
 }

@@ -48,13 +48,13 @@ the dab data set included in the package.
 ## *Create length spectrum*
 
 ```{r}
-lpars <- check_length(dab)
+lpars <- check_lengths(dab)
 ```
 
 
 
 ```{r}
-dab <- addSpectrum(dab)
+dab <- add_numbers_at_length(dab)
 ```
 
 
@@ -62,6 +62,9 @@ Alternatively, custom length breaks with e.g. maximum length threshold:
 
 
 ```{r}
+
+## TODO: ugly code, can this be improved with some helper functions?
+
 l.cut.off <- lpars$lPars$median * 5  ## find good cut-off
 ## or l.cut.off <- lpars$lPars$perc
 cm.breaks <- attr(lpars$N,"cm.breaks")
@@ -71,39 +74,44 @@ threshold <- cm.breaks[max(which(nbyl != 0))]
 
 
 
+
+
 ```{r}
+
+## TODO: ugly code, can this be improved with some helper functions?
+
 ## add length data with custom breaks
-by <- DATRAS:::getAccuracyCM(dab)
-cm.breaks <- seq(lpars$lPars$min, threshold + by, by = by)
+by <- get_accuracy_cm(dab)
+cm_breaks <- seq(lpars$lPars$min, threshold + by, by = by)
 LngtCode2cm <- c(. = 0.1, `0` = 0.5, `1` = 1, `2` = 2, `5` = 5)
-while (length(cm.breaks) > 100 && which(by == LngtCode2cm) != length(LngtCode2cm)) {
+while (length(cm_breaks) > 100 && which(by == LngtCode2cm) != length(LngtCode2cm)) {
     by <- LngtCode2cm[which(by == LngtCode2cm) + 1]
-    cm.breaks <- seq(lpars$lPars$min, threshold + by, by = by)
+    cm_breaks <- seq(lpars$lPars$min, threshold + by, by = by)
 }
 
-dab <- addSpectrum(dab, cm.breaks = cm.breaks, by = by)
+dab <- add_numbers_at_length(dab, cm_breaks = cm_breaks, by = by)
 ```
 
 
 
 
-## *Create weight spectrum*
+## *Convert numbers at length into weight at length*
 
 
 ```{r}
-wpars <- check_weight(dab)
+wpars <- check_weights(dab)
 ```
 
 
 ```{r}
-dab <- add_weight(dab, max_length = threshold)
+dab <- add_weight_at_length(dab, max_length = threshold)
 ```
 
 
 Alteratively, ...
 
 ```{r}
-# dab <- add_weight_empirical(dab)
+# dab <- add_weight_at_length(dab, empirical = TRUE)
 ```
 
 
@@ -114,41 +122,35 @@ Alteratively, ...
 If for example only 2 or 3 length classes: ....
 
 ```{r}
-cuts <- c(0, 10, 20, 30, Inf)
-by <- diff(attr(dab, "cm.breaks"))
-midL <- attr(dab, "cm.breaks")[-length(attr(dab, "cm.breaks"))] + by/2
-ind <- as.integer(cut(midL, cuts, right = TRUE, include.lowest = TRUE))
-nbins <- length(cuts) - 1
-nNew <- wNew <- matrix(0, nrow = nrow(dab$N), ncol = nbins)
-for (j in seq_len(nbins)) {
-    cols.in.bin <- which(ind == j)
-    if (length(cols.in.bin) > 0) {
-        nNew[, j] <- rowSums(dab$N[, cols.in.bin, drop = FALSE])
-        wNew[, j] <- rowSums(dab$Wgt[, cols.in.bin, drop = FALSE])
-    }
-}
-colnames(nNew) <- colnames(wNew) <- paste0("(",cuts[-length(cuts)], "-", cuts[-1],"]")
+## TODO: function to get length and weight ranges from datras_raw object
 
-dab$HaulN <- nNew
-dab$HaulWgt <- wNew
+length_cuts <- c(0, 10, 20, 30, 100)
+
+dab <- add_total_numbers_by_haul(dab, length_cuts = length_cuts)
+dab <- add_total_weight_by_haul(dab, length_cuts = length_cuts)
 ```
+
+
+HaulN and HaulWgt are now provided as matrices with numbers and weight over the
+specified length classes, respectively.
 
 
 Plot:
 
 
 ```{r}
-par(mfrow = n2mfrow(ncol(nNew), asp = 2),
+ncols <- ncol(dab[["HH"]][["HaulWgt"]])
+par(mfrow = n2mfrow(ncols, asp = 2),
     mar = c(3,3,2,2), oma = c(2,2,0,0))
-for (i in 1:ncol(nNew)) {
-    plot(dab[[2]]$lon, dab[[2]]$lat,
+for (i in 1:ncols) {
+    plot(dab[["HH"]]$lon, dab[["HH"]]$lat,
          ty = "n",
          xlab = "", ylab = "",
-         main = colnames(dab[[2]]$HaulN)[i])
-    ind <- which(dab[[2]]$HaulN[,i] > 0)
-    points(dab[[2]]$lon[ind], dab[[2]]$lat[ind],
-           cex = dab[[2]]$HaulN[,i][ind] /
-               max(dab[[2]]$HaulN[,i][ind]) * 3,
+         main = colnames(dab[["HH"]]$HaulN)[i])
+    ind <- which(dab[["HH"]]$HaulN[,i] > 0)
+    points(dab[["HH"]]$lon[ind], dab[["HH"]]$lat[ind],
+           cex = dab[["HH"]]$HaulN[,i][ind] /
+               max(dab[["HH"]]$HaulN[,i][ind]) * 3,
            col = i)
 }
 mtext("Longitude", 1, outer = TRUE)
