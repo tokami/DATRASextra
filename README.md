@@ -5,7 +5,7 @@
   [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
-<h1 style="border-bottom:none;">DATRASextra <a href='https://github.com/tokami/DATRASextra'><img src='man/figures/logo.png' alt="DATRASextra logo" align="right" style="height:200px; margin-top:-40px;"/></a></h1>
+<h1 style="border-bottom:none;">DATRASextra <a href='https://github.com/tokami/DATRASextra'><img src='man/figures/DATRASextra_logo.svg' alt="DATRASextra logo" align="right" style="height:200px; margin-top:-40px;"/></a></h1>
 
 Makes working with ICES **DATRAS** **extra** easy.
 
@@ -55,26 +55,30 @@ remotes::install_github("tokami/DATRASextra")
 
 # Overview
 
-*DATRASextra* provides a small set of functions that guide you through a
-typical workflow with the ICES DATRAS database: from discovering
-available surveys, to downloading, cleaning and checking the data, and
-finally making quick plots of survey coverage and hauls. The table below
-summarises the main user-facing functions.
+*DATRASextra* provides a set of powerful functions that guide you
+through a typical workflow with the ICES DATRAS database: from
+discovering available surveys, to downloading, cleaning and checking the
+data, and finally making quick plots of survey coverage and hauls. The
+table below summarises the main user-facing functions.
 
-| Function | Description |
-|----|----|
-| `listSurveys()` | List available surveys in the ICES DATRAS database. |
-| `downloadDATRAS()` | Download the full DATRAS database or a filtered subset of it. |
-| `readDATRAS()` | Read DATRAS data into R. |
-| `clean()` | Clean and harmonise DATRAS data. |
-| `check()` | Run general checks and flag potential outliers in DATRAS. |
-| `prune()` | Prune DATRAS data by removing or filtering problematic records. |
-| `addSweptAreaSimple()` | Calculate swept area per haul using gear-specific median values by gear type. |
-| `checkLength()` | Check length information and identify suspicious length distributions. |
-| `checkWeight()` | Check weight information and length–weight consistency. |
-| `plotHauls()` | Plot haul locations. |
-| `plotHaulsBySurvey()` | Plot haul locations by survey. |
-| `plotSurveys()` | Plot survey coverage and footprint. |
+| Function                      | Description                                                                                      |
+|-------------------------------|--------------------------------------------------------------------------------------------------|
+| `list_surveys()`              | List available surveys in the ICES DATRAS database.                                              |
+| `plot_hauls()`                | Plot haul locations.                                                                             |
+| `plot_hauls_by_survey()`      | Plot haul locations by survey.                                                                   |
+| `plot_surveys()`              | Plot survey coverage and footprint.                                                              |
+| `download_datras()`           | Download the full or filtered subset of the DATRAS database.                                     |
+| `read_datras()`               | Read DATRAS data into R.                                                                         |
+| `clean_datras()`              | Clean and harmonise DATRAS data.                                                                 |
+| `check_outliers()`            | Flag (and remove) hauls with invalid or extreme values.                                          |
+| `prune_datras()`              | Prune DATRAS data by removing or filtering problematic records.                                  |
+| `add_swept_area()`            | Calculate swept area per haul using gear-specific median values by gear type.                    |
+| `check_lengths()`             | Check length information and identify suspicious length distributions.                           |
+| `add_numbers_at_length()`     | Calculate the numbers by specified length classes and add it to the HH data set.                 |
+| `add_total_numbers_by_haul()` | Calculate total numbers by haul and add it to the HH data set.                                   |
+| `check_weights()`             | Check weight information and length–weight consistency.                                          |
+| `add_weight_at_length()`      | Convert the numbers at length classes to weight at length classes and add it to the HH data set. |
+| `add_total_weight_by_haul()`  | Calculate total weight by haul and add it to the HH data set.                                    |
 
 # Getting started
 
@@ -98,7 +102,7 @@ You can access the help pages with `help(function_name)` or
 `?function_name`, for example:
 
 ``` r
-?checkLength
+?check_lengths
 ```
 
 The package also includes several vignettes and articles that
