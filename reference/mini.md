@@ -14,7 +14,7 @@ mini
 
 ## Format
 
-A list of class 'DATRASraw' with 3 elements:
+A list of class 'datras_raw' with 3 elements:
 
 - CA:
 

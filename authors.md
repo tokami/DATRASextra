@@ -13,6 +13,9 @@
 
 ## Citation
 
+Source:
+[`inst/CITATION`](https://github.com/tokami/DATRASextra/blob/main/inst/CITATION)
+
 Mildenberger TK, Maioli F, Berg CW (2025). *DATRASextra: Extra functions
 for DTU Aqua's DATRAS R package*. In preparation,
 <https://github.com/tokami/DATRASextra>.

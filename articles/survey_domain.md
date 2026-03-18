@@ -28,7 +28,7 @@ library(rnaturalearthdata)
 library(rnaturalearthhires)
 ```
 
-## *Download DATRAS, read-in, clean, and get unique trawling events*
+## *Download DATRAS, read-in, clean_datras, and get unique trawling events*
 
 We start by extracting unique trawl haul locations from the DATRAS data
 and converting them into spatial points. We use observations dab in the
@@ -36,9 +36,6 @@ and converting them into spatial points. We use observations dab in the
 survey between 2020 and 2023 as an example.
 
 ``` r
-## Load dab example data
-data("dab")
-
 ## Extract unique trawls (haul id, lon, lat, Depth)
 unique_trawls <- unique(dab[["HH"]][, c("haul.id", "lon", "lat")])
 

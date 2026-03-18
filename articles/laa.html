@@ -57,6 +57,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/tokami/DATRASextra/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -72,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Extracting Length-at-Age (LAA) from DATRAS</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/vignettes/articles/laa.Rmd" class="external-link"><code>vignettes/articles/laa.Rmd</code></a></small>
       <div class="d-none name"><code>laa.Rmd</code></div>
     </div>
 
@@ -89,14 +90,12 @@ age-length keys (ALKs).</p>
 <h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">DATRASextra</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tokami.github.io/DATRASextra/">DATRASextra</a></span><span class="op">)</span></span></code></pre></div>
 <p>This vignette assumes you already have a cleaned DATRAS object (see
-the tutorial vignette on data preparation). Here we use the example
-data:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"dab"</span><span class="op">)</span></span></code></pre></div>
+the tutorial vignette on data preparation). Here we use the example dab
+data set included in the package.</p>
 <p>A typical DATRAS object is a list with three core data sets:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dab</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Class 'DATRASraw'  hidden list of 3</span></span>
 <span><span class="co">#&gt;  $ CA:'data.frame':  8034 obs. of  39 variables:</span></span>
@@ -118,20 +117,20 @@ codes such as <code>-9</code>).</p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="select-years-and-clean-data">Select years and clean data<a class="anchor" aria-label="anchor" href="#select-years-and-clean-data"></a>
+<h2 id="select-years-and-clean_datras-data">Select years and clean_datras data<a class="anchor" aria-label="anchor" href="#select-years-and-clean_datras-data"></a>
 </h2>
 <p>For LAA analyses, <code>CA</code> is essential because it contains
 age readings. However, <code>CA</code> is not catch-representative by
 itself, so ALKs are needed to convert catch-at-length (<code>HL</code>)
 into catch-at-age.</p>
 <p>We first select years of interest:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">years</span> <span class="op">&lt;-</span> <span class="fl">2020</span><span class="op">:</span><span class="fl">2024</span></span></code></pre></div>
 <p>Then apply a quick standard cleaning/filtering step:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/clean.html">clean</a></span><span class="op">(</span><span class="va">dab</span>, years <span class="op">=</span> <span class="va">years</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/clean_datras.html">clean_datras</a></span><span class="op">(</span><span class="va">dab</span>, years <span class="op">=</span> <span class="va">years</span><span class="op">)</span></span></code></pre></div>
 <p>Equivalent manual filtering (shown for reference):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
 <span>  <span class="va">dab</span>,</span>
 <span>  <span class="va">Year</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">years</span> <span class="op">&amp;</span></span>
@@ -144,7 +143,7 @@ into catch-at-age.</p>
 <div class="section level2">
 <h2 id="investigate-length-at-age-data">Investigate length-at-age data<a class="anchor" aria-label="anchor" href="#investigate-length-at-age-data"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ca</span> <span class="op">&lt;-</span> <span class="va">dab</span><span class="op">[[</span><span class="st">"CA"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ca</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    8034 obs. of  39 variables:</span></span>
@@ -190,7 +189,7 @@ into catch-at-age.</p>
 <div class="section level3">
 <h3 id="sample-size-by-year">Sample size by year<a class="anchor" aria-label="anchor" href="#sample-size-by-year"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Number of individual rows per Year</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/xtabs.html" class="external-link">xtabs</a></span><span class="op">(</span><span class="op">~</span> <span class="va">Year</span>, <span class="va">ca</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Year</span></span>
@@ -208,7 +207,7 @@ into catch-at-age.</p>
 </h3>
 <p>Some variables (e.g., haul position) are in <code>HH</code> rather
 than <code>CA</code>. Merge them by <code>haul.id</code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ca</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span></span>
 <span>  <span class="va">ca</span>,</span>
 <span>  <span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"haul.id"</span>, <span class="st">"lon"</span>, <span class="st">"lat"</span><span class="op">)</span><span class="op">]</span>,</span>
@@ -218,19 +217,19 @@ than <code>CA</code>. Merge them by <code>haul.id</code>:</p>
 <span>  suffixes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">""</span>, <span class="st">".HH"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now you can inspect spatial patterns in LAA observations:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ca</span><span class="op">$</span><span class="va">lon</span>, <span class="va">ca</span><span class="op">$</span><span class="va">lat</span>, cex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="va">ca</span><span class="op">$</span><span class="va">Age</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span>, xlab <span class="op">=</span> <span class="st">"Longitude"</span>, ylab <span class="op">=</span> <span class="st">"Latitude"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="laa_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="576"></p>
+<p><img src="laa_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="576"></p>
 </div>
 <div class="section level3">
 <h3 id="age-availability-and-missingness">Age availability and missingness<a class="anchor" aria-label="anchor" href="#age-availability-and-missingness"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">ca</span><span class="op">$</span><span class="va">Age</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    1    2    3    4    5    6    7    8 &lt;NA&gt; </span></span>
 <span><span class="co">#&gt;    4   72   99  138  104   47   15    5 7550</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">ca</span><span class="op">$</span><span class="va">Age</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 7550</span></span></code></pre></div>
 <p>Around 94% of <code>CA</code> entries have missing age.</p>
@@ -243,14 +242,14 @@ associated with each age-length observation.</p>
 <h2 id="estimate-age-length-keys-alks">Estimate age-length keys (ALKs)<a class="anchor" aria-label="anchor" href="#estimate-age-length-keys-alks"></a>
 </h2>
 <p>First, add the length spectrum from <code>HL</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html" class="external-link">addSpectrum</a></span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></code></pre></div>
 <p>ALKs are often estimated by quarter for stock-assessment workflows.
 Example for Q1:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dab_Q1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">dab</span>, <span class="va">Quarter</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Fit a basic stochastic ALK:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ALK</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DATRAS/man/fitALK.html" class="external-link">fitALK</a></span><span class="op">(</span></span>
 <span>  <span class="va">dab_Q1</span>,</span>
 <span>  minAge <span class="op">=</span> <span class="fl">3</span>, <span class="co">## TODO</span></span>
@@ -258,7 +257,7 @@ Example for Q1:</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>A more flexible model can include random year effects and spatial
 smooths:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ALK_spatial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DATRAS/man/fitALK.html" class="external-link">fitALK</a></span><span class="op">(</span></span>
 <span>  <span class="va">dab_Q1</span>,</span>
 <span>  minAge <span class="op">=</span> <span class="fl">2</span>,</span>
@@ -285,7 +284,7 @@ ALK.</p>
 </h2>
 <p>Exact prediction workflows depend on your package version and chosen
 downstream pipeline. A typical pattern is:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example pattern (adapt to your object structure)</span></span>
 <span><span class="va">newdata</span> <span class="op">&lt;-</span> <span class="va">dab_Q1</span><span class="op">[[</span><span class="st">"HL"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">ALK_spatial</span>, newdata <span class="op">=</span> <span class="va">newdata</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span></span>

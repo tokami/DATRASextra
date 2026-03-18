@@ -57,6 +57,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/tokami/DATRASextra/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -72,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Processing ICES DATRAS Data for FishGlob</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/vignettes/articles/fishglob.Rmd" class="external-link"><code>vignettes/articles/fishglob.Rmd</code></a></small>
       <div class="d-none name"><code>fishglob.Rmd</code></div>
     </div>
 
@@ -87,10 +88,8 @@ patterns in marine fish biodiversity and community structure.</p>
 <p>FishGlob harmonizes data from multiple regional monitoring programs
 by standardizing:</p>
 <ul>
-<li>taxonomic information<br>
-</li>
-<li>sampling effort<br>
-</li>
+<li>taxonomic information</li>
+<li>sampling effort</li>
 <li>catch metrics (abundance and biomass per unit area)</li>
 </ul>
 <p>The dataset integrates numerous long-term fisheries-independent
@@ -105,14 +104,10 @@ to process raw DATRAS survey data and generate outputs that are
 compatible with the <strong>FishGlob data structure</strong>.</p>
 <p>This vignette demonstrates a workflow to:</p>
 <ul>
-<li>download DATRAS survey data<br>
-</li>
-<li>harmonize and clean raw survey tables<br>
-</li>
-<li>standardize species taxonomy<br>
-</li>
-<li>estimate swept area and biomass<br>
-</li>
+<li>download DATRAS survey data</li>
+<li>harmonize and clean_datras raw survey tables</li>
+<li>standardize species taxonomy</li>
+<li>estimate swept area and biomass</li>
 <li>generate FishGlob-compatible datasets</li>
 </ul>
 <p>The workflow can be applied to a single species or to multiple
@@ -137,7 +132,7 @@ fish biodiversity sampled with scientific bottom-trawl surveys. Sci Data
 <h2 id="libraries">Libraries<a class="anchor" aria-label="anchor" href="#libraries"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">DATRASextra</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tokami.github.io/DATRASextra/">DATRASextra</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Loading required package: DATRAS</span></span></code></pre>
 </div>
 <div class="section level2">
@@ -149,29 +144,28 @@ fish biodiversity sampled with scientific bottom-trawl surveys. Sci Data
 <div class="section level2">
 <h2 id="clean-the-dataset">Clean the dataset<a class="anchor" aria-label="anchor" href="#clean-the-dataset"></a>
 </h2>
-<p>The <code><a href="../reference/cleanFishglob.html">cleanFishglob()</a></code> function harmonizes the raw DATRAS
+<p>The <code><a href="../reference/clean_fishglob.html">clean_fishglob()</a></code> function harmonizes the raw DATRAS
 tables and prepares them for processing. Species names and identifiers
-are standardized using WoRMS taxonomy with <code><a href="../reference/correctSpecies.html">correctSpecies()</a></code>
-This step ensures:</p>
+are standardized using WoRMS taxonomy with
+<code><a href="../reference/correct_species.html">correct_species()</a></code> This step ensures:</p>
 <ul>
-<li>consistent scientific names<br>
-</li>
-<li>valid <strong>AphiaID identifiers</strong><br>
+<li>consistent scientific names</li>
+<li>valid <strong>AphiaID identifiers</strong>
 </li>
 <li>standardized taxonomic classification</li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cleanFishglob.html">cleanFishglob</a></span><span class="op">(</span><span class="va">mini</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/clean_fishglob.html">clean_fishglob</a></span><span class="op">(</span><span class="va">mini</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reduce-dataset-size">Reduce dataset size<a class="anchor" aria-label="anchor" href="#reduce-dataset-size"></a>
 </h2>
 <p>The raw dataset contains many variables that are not required for the
 FishGlob output.</p>
-<p>The <code><a href="../reference/pruneFishglob.html">pruneFishglob()</a></code> function removes unnecessary columns
-to reduce memory usage and improve processing speed.</p>
+<p>The <code><a href="../reference/prune_fishglob.html">prune_fishglob()</a></code> function removes unnecessary
+columns to reduce memory usage and improve processing speed.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pruneFishglob.html">pruneFishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prune_fishglob.html">prune_fishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="compute-swept-area">Compute swept area<a class="anchor" aria-label="anchor" href="#compute-swept-area"></a>
@@ -180,23 +174,22 @@ to reduce memory usage and improve processing speed.</p>
 each haul</strong>.</p>
 <p>The function below:</p>
 <ul>
-<li>calculates swept area when gear information is available<br>
-</li>
+<li>calculates swept area when gear information is available</li>
 <li>imputes missing values when necessary</li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addSweptAreaFishGlob.html">addSweptAreaFishGlob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_swept_area_fishglob.html">add_swept_area_fishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="estimate-biomass">Estimate biomass<a class="anchor" aria-label="anchor" href="#estimate-biomass"></a>
 </h2>
 <p>FishGlob reports both <strong>numbers</strong> and
 <strong>biomass</strong>.</p>
-<p>The <code><a href="../reference/addWeightFishglob.html">addWeightFishglob()</a></code> function converts length data to
-weight using species-specific <strong>length–weight
+<p>The <code><a href="../reference/add_weight_fishglob.html">add_weight_fishglob()</a></code> function converts length data
+to weight using species-specific <strong>length–weight
 relationships</strong>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addWeightFishglob.html">addWeightFishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_weight_fishglob.html">add_weight_fishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="format-the-fishglob-output">Format the FishGlob output<a class="anchor" aria-label="anchor" href="#format-the-fishglob-output"></a>
@@ -204,7 +197,7 @@ relationships</strong>.</p>
 <p>Finally, the dataset is formatted to match the <strong>FishGlob data
 structure</strong>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">datras</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/formatFishglob.DATRASraw.html">formatFishglob.DATRASraw</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">datras</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_fishglob.html">as_fishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">datras</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    survey      source timestamp                          haul_id</span></span>
@@ -254,12 +247,11 @@ structure</strong>.</p>
 <h2 id="downloading-the-fishglob-datras-surveys">Downloading the FishGlob DATRAS surveys<a class="anchor" aria-label="anchor" href="#downloading-the-fishglob-datras-surveys"></a>
 </h2>
 <p>The previous example used a small dataset to keep the vignette
-lightweight.<br>
-To reproduce the <strong>DATRAS part of the FishGlob dataset</strong>,
-the full set of surveys used in FishGlob can be downloaded like
-this:</p>
+lightweight. To reproduce the <strong>DATRAS part of the FishGlob
+dataset</strong>, the full set of surveys used in FishGlob can be
+downloaded like this:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">DATRASextra</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tokami.github.io/DATRASextra/">DATRASextra</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">surveys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NS-IBTS"</span>, <span class="st">"EVHOE"</span>, <span class="st">"SWC-IBTS"</span>, <span class="st">"BITS"</span>, <span class="st">"IE-IGFS"</span>,</span>
 <span>             <span class="st">"FR-CGFS"</span>, <span class="st">"NIGFS"</span>, <span class="st">"ROCKALL"</span>, <span class="st">"PT-IBTS"</span>,</span>
@@ -269,10 +261,10 @@ this:</p>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># download survey data</span></span>
-<span><span class="fu"><a href="../reference/downloadDATRAS.html">downloadDATRAS</a></span><span class="op">(</span>surveys <span class="op">=</span> <span class="va">surveys</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/download_datras.html">download_datras</a></span><span class="op">(</span>surveys <span class="op">=</span> <span class="va">surveys</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># read raw DATRAS tables</span></span>
-<span><span class="va">raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readDATRAS.html">readDATRAS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="va">surveys</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_datras.html">read_datras</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="va">surveys</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Downloading and processing these surveys take some time, as they
 include multiple decades of trawl survey data.</p>
 <!-- ## Compare it with FishGlob -->

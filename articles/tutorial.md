@@ -47,7 +47,7 @@ an overview of included surveys with:
 
 ``` r
 ## List scientific surveys in DATRAS
-listSurveys()
+list_surveys()
 #>       survey     years                  quarters
 #> 1       BITS 1991-2025 1(35), 2(10), 3(6), 4(34)
 #> 2        BTS 1985-2024              1(19), 3(40)
@@ -108,8 +108,8 @@ listSurveys()
 #> 28   Scottish West Coast Bottom Trawl Survey (up to 2010)
 ```
 
-The `downloadDATRAS` function allows you to download information for any
-of these surveys. If the arguments `surveys` and `years` are not
+The `download_datras` function allows you to download information for
+any of these surveys. If the arguments `surveys` and `years` are not
 specified (i.e., `NULL`), all surveys and years are downloaded, wich can
 take a while (~ 30-60min).
 
@@ -124,7 +124,7 @@ survey <- "SNS"
 ## create temporary directory
 tmp <- tempdir()
 ## download SNS for 2023
-downloadDATRAS(surveys = survey, years = 2023, dir = tmp)
+download_datras(surveys = survey, years = 2023, dir = tmp)
 ```
 
 If no directory (argument `dir`) is specified, the data is downloaded
@@ -149,7 +149,7 @@ data set from the download and save some time and memory.
 Next, we can read the downloaded survey information into R:
 
 ``` r
-surv0 <- readDATRAS(file.path(tmp, survey))
+surv0 <- read_datras(file.path(tmp, survey))
 ```
 
 The path can point to a specific file that you want to read in or to a
@@ -158,23 +158,22 @@ whole directory with any number of files.
 ## *Clean DATRAS*
 
 Now, the `surv0` object contains the survey information in the usual
-`DATRASraw` format of the *DATRAS* package. (TODO: Link to more
+`datras_raw` format of the *DATRAS* package. (TODO: Link to more
 information about this data type or provide more information here.) It
-make sense to clean the data and for example only use valid hauls. This
-can be done manually with the
+make sense to clean_datras the data and for example only use valid
+hauls. This can be done manually with the
 [`subset()`](https://rdrr.io/r/base/subset.html) function or by using
 some recommended cleaning steps with the
-[`clean()`](https://tokami.github.io/DATRASextra/reference/clean.md)
+[`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md)
 function. This function also allows us to make a relevant subset of the
 database based on our needs.
 
 ``` r
-data("dab")
 surv0 <- dab
 ```
 
 ``` r
-surv <- clean(surv0)
+surv <- clean_datras(surv0)
 ```
 
 By default, this function also imputes missing depth information.

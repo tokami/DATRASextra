@@ -20,16 +20,12 @@ library(DATRASextra)
 
 and assumes that a cleaned *DATRAS* database is available (see tutorial
 vignette) for information on how to get a cleaned *DATRAS* file. Here,
-we use the
-
-``` r
-data("dab")
-```
+we use the dab data set included in the package.
 
 ## *Create length spectrum*
 
 ``` r
-lpars <- checkLength(dab)
+lpars <- check_length(dab)
 #> [1] "Length statistics:"
 #>          min  mean median maxObs maxEmp perc
 #> 99.9999%   3 17.36   17.5     43     40 37.5
@@ -39,7 +35,7 @@ lpars <- checkLength(dab)
 #> Percent   1e-04 1e-04
 ```
 
-![](by_length_files/figure-html/unnamed-chunk-3-1.png)
+![](by_length_files/figure-html/unnamed-chunk-2-1.png)
 
 ``` r
 dab <- addSpectrum(dab)
@@ -71,7 +67,7 @@ dab <- addSpectrum(dab, cm.breaks = cm.breaks, by = by)
 ## *Create weight spectrum*
 
 ``` r
-wpars <- checkWeight(dab)
+wpars <- check_weight(dab)
 #> [1] "Length statistics:"
 #>   min  mean median max
 #> 1   3 18.94     19  35
@@ -84,16 +80,16 @@ wpars <- checkWeight(dab)
 #> [1] "a = 0.007 b = 3.14"
 ```
 
-![](by_length_files/figure-html/unnamed-chunk-7-1.png)
+![](by_length_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
-dab <- addWeight(dab, maxL = threshold)
+dab <- add_weight(dab, max_length = threshold)
 ```
 
 Alteratively, …
 
 ``` r
-# dab <- addWeightEmpirical(dab)
+# dab <- add_weight_empirical(dab)
 ```
 
 ## *Aggregated length classes*
@@ -140,7 +136,7 @@ mtext("Longitude", 1, outer = TRUE)
 mtext("Latitude", 2, outer = TRUE)
 ```
 
-![](by_length_files/figure-html/unnamed-chunk-11-1.png)
+![](by_length_files/figure-html/unnamed-chunk-10-1.png)
 
 ## *Summary*
 

@@ -13,11 +13,8 @@ library(DATRASextra)
 ```
 
 This vignette assumes you already have a cleaned DATRAS object (see the
-tutorial vignette on data preparation). Here we use the example data:
-
-``` r
-data("dab")
-```
+tutorial vignette on data preparation). Here we use the example dab data
+set included in the package.
 
 A typical DATRAS object is a list with three core data sets:
 
@@ -40,7 +37,7 @@ exist (even if values are missing codes such as `-9`).
 
 ------------------------------------------------------------------------
 
-## Select years and clean data
+## Select years and clean_datras data
 
 For LAA analyses, `CA` is essential because it contains age readings.
 However, `CA` is not catch-representative by itself, so ALKs are needed
@@ -55,7 +52,7 @@ years <- 2020:2024
 Then apply a quick standard cleaning/filtering step:
 
 ``` r
-dab <- clean(dab, years = years)
+dab <- clean_datras(dab, years = years)
 ```
 
 Equivalent manual filtering (shown for reference):
@@ -157,7 +154,7 @@ Now you can inspect spatial patterns in LAA observations:
 plot(ca$lon, ca$lat, cex = pmax(0.6, ca$Age / 3), xlab = "Longitude", ylab = "Latitude")
 ```
 
-![](laa_files/figure-html/unnamed-chunk-9-1.png)
+![](laa_files/figure-html/unnamed-chunk-8-1.png)
 
 ### Age availability and missingness
 

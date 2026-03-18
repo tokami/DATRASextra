@@ -9,8 +9,8 @@ marine fish biodiversity and community structure.
 FishGlob harmonizes data from multiple regional monitoring programs by
 standardizing:
 
-- taxonomic information  
-- sampling effort  
+- taxonomic information
+- sampling effort
 - catch metrics (abundance and biomass per unit area)
 
 The dataset integrates numerous long-term fisheries-independent surveys,
@@ -28,10 +28,10 @@ data structure**.
 
 This vignette demonstrates a workflow to:
 
-- download DATRAS survey data  
-- harmonize and clean raw survey tables  
-- standardize species taxonomy  
-- estimate swept area and biomass  
+- download DATRAS survey data
+- harmonize and clean_datras raw survey tables
+- standardize species taxonomy
+- estimate swept area and biomass
 - generate FishGlob-compatible datasets
 
 The workflow can be applied to a single species or to multiple species.
@@ -73,19 +73,19 @@ data(mini)
 ## Clean the dataset
 
 The
-[`cleanFishglob()`](https://tokami.github.io/DATRASextra/reference/cleanFishglob.md)
+[`clean_fishglob()`](https://tokami.github.io/DATRASextra/reference/clean_fishglob.md)
 function harmonizes the raw DATRAS tables and prepares them for
 processing. Species names and identifiers are standardized using WoRMS
 taxonomy with
-[`correctSpecies()`](https://tokami.github.io/DATRASextra/reference/correctSpecies.md)
+[`correct_species()`](https://tokami.github.io/DATRASextra/reference/correct_species.md)
 This step ensures:
 
-- consistent scientific names  
-- valid **AphiaID identifiers**  
+- consistent scientific names
+- valid **AphiaID identifiers**
 - standardized taxonomic classification
 
 ``` r
-dat <- cleanFishglob(mini)
+dat <- clean_fishglob(mini)
 ```
 
 ## Reduce dataset size
@@ -94,12 +94,12 @@ The raw dataset contains many variables that are not required for the
 FishGlob output.
 
 The
-[`pruneFishglob()`](https://tokami.github.io/DATRASextra/reference/pruneFishglob.md)
+[`prune_fishglob()`](https://tokami.github.io/DATRASextra/reference/prune_fishglob.md)
 function removes unnecessary columns to reduce memory usage and improve
 processing speed.
 
 ``` r
-dat <- pruneFishglob(dat)
+dat <- prune_fishglob(dat)
 ```
 
 ## Compute swept area
@@ -109,11 +109,11 @@ haul**.
 
 The function below:
 
-- calculates swept area when gear information is available  
+- calculates swept area when gear information is available
 - imputes missing values when necessary
 
 ``` r
-dat <- addSweptAreaFishGlob(dat)
+dat <- add_swept_area_fishglob(dat)
 ```
 
 ## Estimate biomass
@@ -121,12 +121,12 @@ dat <- addSweptAreaFishGlob(dat)
 FishGlob reports both **numbers** and **biomass**.
 
 The
-[`addWeightFishglob()`](https://tokami.github.io/DATRASextra/reference/addWeightFishglob.md)
+[`add_weight_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_weight_fishglob.md)
 function converts length data to weight using species-specific
 **length–weight relationships**.
 
 ``` r
-dat <- addWeightFishglob(dat)
+dat <- add_weight_fishglob(dat)
 ```
 
 ## Format the FishGlob output
@@ -135,7 +135,7 @@ Finally, the dataset is formatted to match the **FishGlob data
 structure**.
 
 ``` r
-datras <- formatFishglob.DATRASraw(dat)
+datras <- as_fishglob(dat)
 
 head(datras)
 ```
@@ -186,9 +186,8 @@ head(datras)
 ## Downloading the FishGlob DATRAS surveys
 
 The previous example used a small dataset to keep the vignette
-lightweight.  
-To reproduce the **DATRAS part of the FishGlob dataset**, the full set
-of surveys used in FishGlob can be downloaded like this:
+lightweight. To reproduce the **DATRAS part of the FishGlob dataset**,
+the full set of surveys used in FishGlob can be downloaded like this:
 
 ``` r
 library(DATRASextra)
@@ -201,10 +200,10 @@ surveys <- c("NS-IBTS", "EVHOE", "SWC-IBTS", "BITS", "IE-IGFS",
 tmp <- tempdir()
 
 # download survey data
-downloadDATRAS(surveys = surveys, dir = tmp)
+download_datras(surveys = surveys, dir = tmp)
 
 # read raw DATRAS tables
-raw <- readDATRAS(file.path(tmp, surveys))
+raw <- read_datras(file.path(tmp, surveys))
 ```
 
 Downloading and processing these surveys take some time, as they include

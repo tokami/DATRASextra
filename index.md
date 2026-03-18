@@ -51,20 +51,20 @@ available surveys, to downloading, cleaning and checking the data, and
 finally making quick plots of survey coverage and hauls. The table below
 summarises the main user-facing functions.
 
-| Function                                                                                       | Description                                                                   |
-|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| [`listSurveys()`](https://tokami.github.io/DATRASextra/reference/listSurveys.md)               | List available surveys in the ICES DATRAS database.                           |
-| [`downloadDATRAS()`](https://tokami.github.io/DATRASextra/reference/downloadDATRAS.md)         | Download the full DATRAS database or a filtered subset of it.                 |
-| [`readDATRAS()`](https://tokami.github.io/DATRASextra/reference/readDATRAS.md)                 | Read DATRAS data into R.                                                      |
-| [`clean()`](https://tokami.github.io/DATRASextra/reference/clean.md)                           | Clean and harmonise DATRAS data.                                              |
-| `check()`                                                                                      | Run general checks and flag potential outliers in DATRAS.                     |
-| [`prune()`](https://tokami.github.io/DATRASextra/reference/prune.md)                           | Prune DATRAS data by removing or filtering problematic records.               |
-| [`addSweptAreaSimple()`](https://tokami.github.io/DATRASextra/reference/addSweptAreaSimple.md) | Calculate swept area per haul using gear-specific median values by gear type. |
-| [`checkLength()`](https://tokami.github.io/DATRASextra/reference/checkLength.md)               | Check length information and identify suspicious length distributions.        |
-| [`checkWeight()`](https://tokami.github.io/DATRASextra/reference/checkWeight.md)               | Check weight information and length–weight consistency.                       |
-| [`plotHauls()`](https://tokami.github.io/DATRASextra/reference/plotHauls.md)                   | Plot haul locations.                                                          |
-| [`plotHaulsBySurvey()`](https://tokami.github.io/DATRASextra/reference/plotHaulsBySurvey.md)   | Plot haul locations by survey.                                                |
-| [`plotSurveys()`](https://tokami.github.io/DATRASextra/reference/plotSurveys.md)               | Plot survey coverage and footprint.                                           |
+| Function               | Description                                                                   |
+|------------------------|-------------------------------------------------------------------------------|
+| `listSurveys()`        | List available surveys in the ICES DATRAS database.                           |
+| `downloadDATRAS()`     | Download the full DATRAS database or a filtered subset of it.                 |
+| `readDATRAS()`         | Read DATRAS data into R.                                                      |
+| `clean()`              | Clean and harmonise DATRAS data.                                              |
+| `check()`              | Run general checks and flag potential outliers in DATRAS.                     |
+| `prune()`              | Prune DATRAS data by removing or filtering problematic records.               |
+| `addSweptAreaSimple()` | Calculate swept area per haul using gear-specific median values by gear type. |
+| `checkLength()`        | Check length information and identify suspicious length distributions.        |
+| `checkWeight()`        | Check weight information and length–weight consistency.                       |
+| `plotHauls()`          | Plot haul locations.                                                          |
+| `plotHaulsBySurvey()`  | Plot haul locations by survey.                                                |
+| `plotSurveys()`        | Plot survey coverage and footprint.                                           |
 
 # Getting started
 

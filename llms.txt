@@ -51,20 +51,20 @@ available surveys, to downloading, cleaning and checking the data, and
 finally making quick plots of survey coverage and hauls. The table below
 summarises the main user-facing functions.
 
-| Function                                                                                       | Description                                                                   |
-|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| [`listSurveys()`](https://tokami.github.io/DATRASextra/reference/listSurveys.md)               | List available surveys in the ICES DATRAS database.                           |
-| [`downloadDATRAS()`](https://tokami.github.io/DATRASextra/reference/downloadDATRAS.md)         | Download the full DATRAS database or a filtered subset of it.                 |
-| [`readDATRAS()`](https://tokami.github.io/DATRASextra/reference/readDATRAS.md)                 | Read DATRAS data into R.                                                      |
-| [`clean()`](https://tokami.github.io/DATRASextra/reference/clean.md)                           | Clean and harmonise DATRAS data.                                              |
-| `check()`                                                                                      | Run general checks and flag potential outliers in DATRAS.                     |
-| [`prune()`](https://tokami.github.io/DATRASextra/reference/prune.md)                           | Prune DATRAS data by removing or filtering problematic records.               |
-| [`addSweptAreaSimple()`](https://tokami.github.io/DATRASextra/reference/addSweptAreaSimple.md) | Calculate swept area per haul using gear-specific median values by gear type. |
-| [`checkLength()`](https://tokami.github.io/DATRASextra/reference/checkLength.md)               | Check length information and identify suspicious length distributions.        |
-| [`checkWeight()`](https://tokami.github.io/DATRASextra/reference/checkWeight.md)               | Check weight information and length–weight consistency.                       |
-| [`plotHauls()`](https://tokami.github.io/DATRASextra/reference/plotHauls.md)                   | Plot haul locations.                                                          |
-| [`plotHaulsBySurvey()`](https://tokami.github.io/DATRASextra/reference/plotHaulsBySurvey.md)   | Plot haul locations by survey.                                                |
-| [`plotSurveys()`](https://tokami.github.io/DATRASextra/reference/plotSurveys.md)               | Plot survey coverage and footprint.                                           |
+| Function               | Description                                                                   |
+|------------------------|-------------------------------------------------------------------------------|
+| `listSurveys()`        | List available surveys in the ICES DATRAS database.                           |
+| `downloadDATRAS()`     | Download the full DATRAS database or a filtered subset of it.                 |
+| `readDATRAS()`         | Read DATRAS data into R.                                                      |
+| `clean()`              | Clean and harmonise DATRAS data.                                              |
+| `check()`              | Run general checks and flag potential outliers in DATRAS.                     |
+| `prune()`              | Prune DATRAS data by removing or filtering problematic records.               |
+| `addSweptAreaSimple()` | Calculate swept area per haul using gear-specific median values by gear type. |
+| `checkLength()`        | Check length information and identify suspicious length distributions.        |
+| `checkWeight()`        | Check weight information and length–weight consistency.                       |
+| `plotHauls()`          | Plot haul locations.                                                          |
+| `plotHaulsBySurvey()`  | Plot haul locations by survey.                                                |
+| `plotSurveys()`        | Plot survey coverage and footprint.                                           |
 
 # Getting started
 
@@ -145,66 +145,140 @@ Logo: Co-funded by the EU
 
 ## All functions
 
-- [`addSweptAreaFishGlob()`](https://tokami.github.io/DATRASextra/reference/addSweptAreaFishGlob.md)
-  : Add swept area indices following FishGlob methodology
-- [`addSweptAreaSimple()`](https://tokami.github.io/DATRASextra/reference/addSweptAreaSimple.md)
-  : Add Swept Area based on wing spread / beam width using a simple
-  approach.
-- [`addWeight()`](https://tokami.github.io/DATRASextra/reference/addWeight.md)
-  : Calculate weight by length classes and add to HH-records
-- [`addWeightByHaulEmpirical()`](https://tokami.github.io/DATRASextra/reference/addWeightByHaulEmpirical.md)
-  : Calculate total biomass by haul using a and b, and add to HH-records
-- [`addWeightEmpirical()`](https://tokami.github.io/DATRASextra/reference/addWeightEmpirical.md)
-  : Calculate weight by length classes using empirical a and b, and add
-  to HH-records
-- [`addWeightFishglob()`](https://tokami.github.io/DATRASextra/reference/addWeightFishglob.md)
-  : calculate weight by length classes and add to hh records
-- [`checkLength()`](https://tokami.github.io/DATRASextra/reference/checkLength.md)
-  : Create and inspect length spectrum
-- [`checkWeight()`](https://tokami.github.io/DATRASextra/reference/checkWeight.md)
-  : Check weight information (in CA)
-- [`clean()`](https://tokami.github.io/DATRASextra/reference/clean.md) :
-  Clean data
-- [`cleanFishglob()`](https://tokami.github.io/DATRASextra/reference/cleanFishglob.md)
-  : Clean data following FishGlob workflow
-- [`correctSpecies()`](https://tokami.github.io/DATRASextra/reference/correctSpecies.md)
-  : Correct species names
+- [`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md)
+  :
+
+  Add swept-area estimates to a `datras_raw` object
+
+- [`add_swept_area_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_fishglob.md)
+  : Add swept-area estimates following the FishGlob workflow
+
+- [`add_swept_area_simple()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_simple.md)
+  :
+
+  Add simple swept-area estimates to a `datras_raw` object
+
+- [`add_weight()`](https://tokami.github.io/DATRASextra/reference/add_weight.md)
+  :
+
+  Add weight-at-length estimates to a `datras_raw` object
+
+- [`add_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_weight_by_haul.md)
+  :
+
+  Add total haul biomass to `HH`
+
+- [`add_weight_by_haul_empirical()`](https://tokami.github.io/DATRASextra/reference/add_weight_by_haul_empirical.md)
+  :
+
+  Add empirical total haul biomass to `HH`
+
+- [`add_weight_empirical()`](https://tokami.github.io/DATRASextra/reference/add_weight_empirical.md)
+  :
+
+  Add empirical weight-at-length estimates to `HH`
+
+- [`add_weight_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_weight_fishglob.md)
+  :
+
+  Add weight estimates to `HL` records following the FishGlob workflow
+
+- [`as_fishglob()`](https://tokami.github.io/DATRASextra/reference/as_fishglob.md)
+  :
+
+  Convert a `datras_raw` object to FishGlob format
+
+- [`as_long_format()`](https://tokami.github.io/DATRASextra/reference/as_long_format.md)
+  :
+
+  Convert a `datras_raw` object to a long-format table
+
+- [`as_table()`](https://tokami.github.io/DATRASextra/reference/as_table.md)
+  :
+
+  Format a `datras_raw` object as a table
+
+- [`as_wide_format()`](https://tokami.github.io/DATRASextra/reference/as_wide_format.md)
+  :
+
+  Convert a `datras_raw` object to a wide-format table
+
+- [`check_length()`](https://tokami.github.io/DATRASextra/reference/check_length.md)
+  :
+
+  Check and summarize length distributions in a `datras_raw` object
+
+- [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md)
+  : Check outliers in a datras_raw object
+
+- [`check_weight()`](https://tokami.github.io/DATRASextra/reference/check_weight.md)
+  :
+
+  Check and summarize individual weight information in a `datras_raw`
+  object
+
+- [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md)
+  :
+
+  Clean a `datras_raw` object
+
+- [`clean_fishglob()`](https://tokami.github.io/DATRASextra/reference/clean_fishglob.md)
+  :
+
+  Clean a `datras_raw` object following the FishGlob workflow
+
+- [`correct_species()`](https://tokami.github.io/DATRASextra/reference/correct_species.md)
+  :
+
+  Standardize and correct species information in a `datras_raw` object
+
 - [`dab`](https://tokami.github.io/DATRASextra/reference/dab.md) : Dab
   survey data (example dataset)
-- [`downloadDATRAS()`](https://tokami.github.io/DATRASextra/reference/downloadDATRAS.md)
-  : Download DATRAS survey information
-- [`format(`*`<DATRASraw>`*`)`](https://tokami.github.io/DATRASextra/reference/format.DATRASraw.md)
-  : Format DATRAS data
-- [`formatFishglob.DATRASraw()`](https://tokami.github.io/DATRASextra/reference/formatFishglob.DATRASraw.md)
-  : Format DATRAS data to FishGlob data set
-- [`getLongFormat()`](https://tokami.github.io/DATRASextra/reference/getLongFormat.md)
-  : Create long-format table
-- [`listSurveys()`](https://tokami.github.io/DATRASextra/reference/listSurveys.md)
+
+- [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+  : Download ICES DATRAS survey data
+
+- [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md)
   : List all surveys in the DATRAS data base
+
 - [`mini`](https://tokami.github.io/DATRASextra/reference/mini.md) :
   Mini DATRAS survey data (example dataset)
-- [`plotHauls()`](https://tokami.github.io/DATRASextra/reference/plotHauls.md)
-  : Plot hauls
-- [`plotHaulsBySurvey()`](https://tokami.github.io/DATRASextra/reference/plotHaulsBySurvey.md)
-  : Plot hauls by survey
-- [`plotSurveys()`](https://tokami.github.io/DATRASextra/reference/plotSurveys.md)
-  : Plot surveys
-- [`prune()`](https://tokami.github.io/DATRASextra/reference/prune.md) :
-  Prune data
-- [`pruneFishglob()`](https://tokami.github.io/DATRASextra/reference/pruneFishglob.md)
-  : Prune data according to FishGlob workflow
-- [`readDATRAS()`](https://tokami.github.io/DATRASextra/reference/readDATRAS.md)
-  : Read in DATRAS survey information
-- [`renameSurvey()`](https://tokami.github.io/DATRASextra/reference/renameSurvey.md)
-  : Rename surveys in DATRASraw
-- [`speciesInfo`](https://tokami.github.io/DATRASextra/reference/speciesInfo.md)
+
+- [`plot_hauls()`](https://tokami.github.io/DATRASextra/reference/plot_hauls.md)
+  : Plot the spatial distribution of hauls
+
+- [`plot_hauls_by_survey()`](https://tokami.github.io/DATRASextra/reference/plot_hauls_by_survey.md)
+  : Plot the spatial distribution of hauls for each survey
+
+- [`plot_surveys()`](https://tokami.github.io/DATRASextra/reference/plot_surveys.md)
+  : Plot survey spatial coverage
+
+- [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)
+  :
+
+  Prune a `datras_raw` object to core columns
+
+- [`prune_fishglob()`](https://tokami.github.io/DATRASextra/reference/prune_fishglob.md)
+  :
+
+  Prune a `datras_raw` object following the FishGlob workflow
+
+- [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
+  : Read ICES DATRAS survey data from zipped exchange files
+
+- [`species_info`](https://tokami.github.io/DATRASextra/reference/species_info.md)
   : Species information lookup table
-- [`surveyInfo`](https://tokami.github.io/DATRASextra/reference/surveyInfo.md)
+
+- [`survey_info`](https://tokami.github.io/DATRASextra/reference/survey_info.md)
   : Survey information table
-- [`surveyInfoFull`](https://tokami.github.io/DATRASextra/reference/surveyInfoFull.md)
+
+- [`survey_info_full`](https://tokami.github.io/DATRASextra/reference/survey_info_full.md)
   : Full survey information table
-- [`writeExchange()`](https://tokami.github.io/DATRASextra/reference/writeExchange.md)
-  : Write DATRASraw to Exchange
+
+- [`write_exchange()`](https://tokami.github.io/DATRASextra/reference/write_exchange.md)
+  :
+
+  Write a `datras_raw` object to a DATRAS exchange zip file
 
 # Articles
 
