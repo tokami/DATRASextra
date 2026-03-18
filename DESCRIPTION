@@ -14,12 +14,13 @@ Authors@R:
            email = "cwb@aqua.dtu.dk",
            role = "aut",
            comment = c(ORCID = "0000-0002-3812-5269")))
-Description: The DATRASextra package provides additional tools and helper
-    functions to complement DTU Aquas DATRAS R package. It includes utilities for
-    more flexible data processing, enhanced plotting, and simplified workflows when
-    working with DATRAS survey data. The functions are designed to support common
-    tasks in analysis and reporting that go beyond the core functionality of the
-    main DATRAS package.
+Description: DATRASextra is an R package for working with ICES DATRAS survey
+    data, with tools for downloading, processing, checking, summarising, and
+    visualising bottom-trawl survey data. The package extends the functionality
+    of DATRAS with additional data workflows, quality checks, derived variables
+    and indicators, plotting tools, and analysis-ready outputs. It is intended
+    to support reproducible research, stock assessment, and survey-based
+    analyses in fisheries science.
 Depends:
     R (>= 4.0),
     DATRAS
