@@ -42,6 +42,8 @@ Remotes:
     ropensci/rnaturalearthhires
 LazyData: true
 License: GPL-3
+URL: https://tokami.github.io/DATRASextra/, https://github.com/tokami/DATRASextra
+BugReports: https://github.com/tokami/DATRASextra/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

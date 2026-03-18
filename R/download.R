@@ -86,6 +86,7 @@ download_datras <- function(surveys = NULL,
   yearsin <- years
 
   dir0 <- getwd()
+  on.exit(setwd(dir0), add = TRUE)
 
   if(is.null(dir)) dir <- dir0
 
@@ -103,7 +104,7 @@ download_datras <- function(surveys = NULL,
   }
 
   ## Dowload data for each survey
-  for(s in 1:length(surveys)){
+  for(s in seq_along(surveys)){
     survey <- surveys[s]
 
     print(paste0("Doing survey: ", survey))
@@ -122,7 +123,7 @@ download_datras <- function(surveys = NULL,
       if (!is.null(yearsin)) {
         years <- years[years %in% yearsin]
       }
-      for (y in 1:length(years)) {
+      for (y in seq_along(years)) {
         year <- years[y]
         quarters <- icesDatras::getSurveyYearQuarterList(survey, year)
 
@@ -177,8 +178,6 @@ download_datras <- function(surveys = NULL,
 
     }
   }
-
-  setwd(dir0)
 
   if(verbose) writeLines(paste0("Survey information has been downloaded and saved in folder for each survey at: ", dir))
 

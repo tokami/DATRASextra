@@ -137,7 +137,6 @@ function. This function also allows us to make a relevant subset of the database
 based on our needs.
 
 ```{r, fig.alt = ""}
-data("dab")
 surv0 <- dab
 ```
 

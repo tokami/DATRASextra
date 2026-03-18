@@ -13,8 +13,8 @@ The **FishGlob** database is a global compilation of standardized scientific tra
 
 FishGlob harmonizes data from multiple regional monitoring programs by standardizing:
 
-- taxonomic information  
-- sampling effort  
+- taxonomic information
+- sampling effort
 - catch metrics (abundance and biomass per unit area)
 
 The dataset integrates numerous long-term fisheries-independent surveys, including several surveys available through the **ICES DATRAS** database.
@@ -25,19 +25,19 @@ The **`DATRASextra`** package provides tools to process raw DATRAS survey data a
 
 This vignette demonstrates a workflow to:
 
-- download DATRAS survey data  
-- harmonize and clean_datras raw survey tables  
-- standardize species taxonomy  
-- estimate swept area and biomass  
+- download DATRAS survey data
+- harmonize and clean_datras raw survey tables
+- standardize species taxonomy
+- estimate swept area and biomass
 - generate FishGlob-compatible datasets
 
-The workflow can be applied to a single species or to multiple species. 
+The workflow can be applied to a single species or to multiple species.
 For illustration, this vignette uses `mini`.
 ```{r}
 data("mini", package = "DATRASextra")
 ```
-an example dataset containing `r length(unique(mini$HL$Species))` species 
-across `r length(unique(mini$HH$Survey))` surveys 
+an example dataset containing `r length(unique(mini$HL$Species))` species
+across `r length(unique(mini$HH$Survey))` surveys
 (`r paste(sort(unique(mini$HH$Survey)), collapse = ", ")`):
 
 `r paste(sort(unique(mini$HL$Species)), collapse = ", ")`
@@ -65,9 +65,9 @@ data(mini)
 The `clean_fishglob()` function harmonizes the raw DATRAS tables and prepares them for processing. Species names and identifiers are standardized using WoRMS taxonomy with `correct_species()`
 This step ensures:
 
-- consistent scientific names  
-- valid **AphiaID identifiers**  
-- standardized taxonomic classification  
+- consistent scientific names
+- valid **AphiaID identifiers**
+- standardized taxonomic classification
 
 ```{r}
 dat <- clean_fishglob(mini)
@@ -89,8 +89,8 @@ Catch per unit area requires an estimate of the **area swept by each haul**.
 
 The function below:
 
-- calculates swept area when gear information is available  
-- imputes missing values when necessary  
+- calculates swept area when gear information is available
+- imputes missing values when necessary
 
 ```{r}
 dat <- add_swept_area_fishglob(dat)
@@ -111,7 +111,7 @@ dat <- add_weight_fishglob(dat)
 Finally, the dataset is formatted to match the **FishGlob data structure**.
 
 ```{r}
-datras <- as_fishglob.datras_raw(dat)
+datras <- as_fishglob(dat)
 
 head(datras)
 ```
@@ -119,7 +119,7 @@ head(datras)
 
 ## Downloading the FishGlob DATRAS surveys
 
-The previous example used a small dataset to keep the vignette lightweight.  
+The previous example used a small dataset to keep the vignette lightweight.
 To reproduce the **DATRAS part of the FishGlob dataset**, the full set of
 surveys used in FishGlob can be downloaded like this:
 

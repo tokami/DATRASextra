@@ -1,14 +1,10 @@
 ---
 title: "Constructing a prediction grid within a survey domain"
-output:
-    rmarkdown::html_vignette:
-    fig_caption: yes
-    number_sections: true
-    df_print: paged
-    toc: true
-    toc_depth: 2
-    toc_float:
-      collapsed: false
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Constructing a prediction grid within a survey domain}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
@@ -54,9 +50,6 @@ converting them into spatial points. We use observations dab in the
 survey between 2020 and 2023 as an example.
 
 ```{r, fig.alt = "",results='hide'}
-## Load dab example data
-data("dab")
-
 ## Extract unique trawls (haul id, lon, lat, Depth)
 unique_trawls <- unique(dab[["HH"]][, c("haul.id", "lon", "lat")])
 

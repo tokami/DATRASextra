@@ -1,14 +1,10 @@
 ---
 title: "Numbers and weight by haul and length classes"
-output:
-    rmarkdown::html_vignette:
-    fig_caption: yes
-    number_sections: true
-    df_print: paged
-    toc: true
-    toc_depth: 2
-    toc_float:
-      collapsed: false
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Numbers and weight by haul and length classes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
@@ -47,12 +43,7 @@ library(DATRASextra)
 
 and assumes that a cleaned *DATRAS* database is available (see tutorial
 vignette) for information on how to get a cleaned *DATRAS* file. Here, we use
-the
-
-```{r}
-data("dab")
-```
-
+the dab data set included in the package.
 
 ## *Create length spectrum*
 
@@ -105,7 +96,7 @@ wpars <- check_weight(dab)
 
 
 ```{r}
-dab <- add_weight(dab, maxL = threshold)
+dab <- add_weight(dab, max_length = threshold)
 ```
 
 

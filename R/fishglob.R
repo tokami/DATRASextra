@@ -474,10 +474,9 @@ add_swept_area_fishglob <- function(x) {
 ##' @export
 add_weight_fishglob <- function(x) {
 
-  .check_class_datras(x)
 
   ## --- input checks ---
-  if (!inherits(x, "datras_raw")) stop("input must be a datras_raw object")
+  .check_class_datras(x)
   if (!all(c("HL","HH") %in% names(x))) stop("datras_raw object must contain HL and HH tables")
 
   hl <- x[["HL"]]
@@ -578,7 +577,7 @@ add_weight_fishglob <- function(x) {
 ##' @importFrom stats aggregate
 ##'
 ##' @export
-as_fishglob.datras_raw <- function(x) {
+as_fishglob <- function(x) {
 
   .check_class_datras(x)
 
