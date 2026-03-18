@@ -105,11 +105,11 @@ DATRASextra
 <div class="section level1">
 <h1 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h1>
-<p><em>DATRASextra</em> provides a small set of functions that guide you through a typical workflow with the ICES DATRAS database: from discovering available surveys, to downloading, cleaning and checking the data, and finally making quick plots of survey coverage and hauls. The table below summarises the main user-facing functions.</p>
+<p><em>DATRASextra</em> provides a set of powerful functions that guide you through a typical workflow with the ICES DATRAS database: from discovering available surveys, to downloading, cleaning and checking the data, and finally making quick plots of survey coverage and hauls. The table below summarises the main user-facing functions.</p>
 <table class="table">
 <colgroup>
-<col width="50%">
-<col width="50%">
+<col width="24%">
+<col width="75%">
 </colgroup>
 <thead><tr class="header">
 <th>Function</th>
@@ -117,52 +117,68 @@ DATRASextra
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>listSurveys()</code></td>
+<td><code><a href="reference/list_surveys.html">list_surveys()</a></code></td>
 <td>List available surveys in the ICES DATRAS database.</td>
 </tr>
 <tr class="even">
-<td><code>downloadDATRAS()</code></td>
-<td>Download the full DATRAS database or a filtered subset of it.</td>
-</tr>
-<tr class="odd">
-<td><code>readDATRAS()</code></td>
-<td>Read DATRAS data into R.</td>
-</tr>
-<tr class="even">
-<td><code>clean()</code></td>
-<td>Clean and harmonise DATRAS data.</td>
-</tr>
-<tr class="odd">
-<td><code>check()</code></td>
-<td>Run general checks and flag potential outliers in DATRAS.</td>
-</tr>
-<tr class="even">
-<td><code>prune()</code></td>
-<td>Prune DATRAS data by removing or filtering problematic records.</td>
-</tr>
-<tr class="odd">
-<td><code>addSweptAreaSimple()</code></td>
-<td>Calculate swept area per haul using gear-specific median values by gear type.</td>
-</tr>
-<tr class="even">
-<td><code>checkLength()</code></td>
-<td>Check length information and identify suspicious length distributions.</td>
-</tr>
-<tr class="odd">
-<td><code>checkWeight()</code></td>
-<td>Check weight information and length–weight consistency.</td>
-</tr>
-<tr class="even">
-<td><code>plotHauls()</code></td>
+<td><code><a href="reference/plot_hauls.html">plot_hauls()</a></code></td>
 <td>Plot haul locations.</td>
 </tr>
 <tr class="odd">
-<td><code>plotHaulsBySurvey()</code></td>
+<td><code><a href="reference/plot_hauls_by_survey.html">plot_hauls_by_survey()</a></code></td>
 <td>Plot haul locations by survey.</td>
 </tr>
 <tr class="even">
-<td><code>plotSurveys()</code></td>
+<td><code><a href="reference/plot_surveys.html">plot_surveys()</a></code></td>
 <td>Plot survey coverage and footprint.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="reference/download_datras.html">download_datras()</a></code></td>
+<td>Download the full or filtered subset of the DATRAS database.</td>
+</tr>
+<tr class="even">
+<td><code><a href="reference/read_datras.html">read_datras()</a></code></td>
+<td>Read DATRAS data into R.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="reference/clean_datras.html">clean_datras()</a></code></td>
+<td>Clean and harmonise DATRAS data.</td>
+</tr>
+<tr class="even">
+<td><code><a href="reference/check_outliers.html">check_outliers()</a></code></td>
+<td>Flag (and remove) hauls with invalid or extreme values.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="reference/prune_datras.html">prune_datras()</a></code></td>
+<td>Prune DATRAS data by removing or filtering problematic records.</td>
+</tr>
+<tr class="even">
+<td><code><a href="reference/add_swept_area.html">add_swept_area()</a></code></td>
+<td>Calculate swept area per haul using gear-specific median values by gear type.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="reference/check_lengths.html">check_lengths()</a></code></td>
+<td>Check length information and identify suspicious length distributions.</td>
+</tr>
+<tr class="even">
+<td><code><a href="reference/add_numbers_at_length.html">add_numbers_at_length()</a></code></td>
+<td>Calculate the numbers by specified length classes and add it to the HH data set.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="reference/add_total_numbers_by_haul.html">add_total_numbers_by_haul()</a></code></td>
+<td>Calculate total numbers by haul and add it to the HH data set.</td>
+</tr>
+<tr class="even">
+<td><code><a href="reference/check_weights.html">check_weights()</a></code></td>
+<td>Check weight information and length–weight consistency.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="reference/add_weight_at_length.html">add_weight_at_length()</a></code></td>
+<td>Convert the numbers at length classes to weight at length classes and add it to the HH data set.</td>
+</tr>
+<tr class="even">
+<td><code><a href="reference/add_total_weight_by_haul.html">add_total_weight_by_haul()</a></code></td>
+<td>Calculate total weight by haul and add it to the HH data set.</td>
 </tr>
 </tbody>
 </table>
@@ -180,7 +196,7 @@ DATRASextra
 </h1>
 <p>All functions in <em>DATRASextra</em> are documented and include example code. You can access the help pages with <code>help(function_name)</code> or <code>?function_name</code>, for example:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">?</span><span class="va">checkLength</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="op">?</span><span class="va">check_lengths</span></span></code></pre></div>
 <p>The package also includes several vignettes and articles that demonstrate common workflows and show how to use DATRAS data for your own research questions. To see all available vignettes, use:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span><span class="st">"DATRASextra"</span><span class="op">)</span></span></code></pre></div>

@@ -121,12 +121,12 @@ dat <- add_swept_area_fishglob(dat)
 FishGlob reports both **numbers** and **biomass**.
 
 The
-[`add_weight_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_weight_fishglob.md)
+[`add_total_weight_by_haul_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul_fishglob.md)
 function converts length data to weight using species-specific
 **length–weight relationships**.
 
 ``` r
-dat <- add_weight_fishglob(dat)
+dat <- add_total_weight_by_haul_fishglob(dat)
 ```
 
 ## Format the FishGlob output

@@ -45,26 +45,30 @@ remotes::install_github("tokami/DATRASextra")
 
 # Overview
 
-*DATRASextra* provides a small set of functions that guide you through a
-typical workflow with the ICES DATRAS database: from discovering
-available surveys, to downloading, cleaning and checking the data, and
-finally making quick plots of survey coverage and hauls. The table below
-summarises the main user-facing functions.
+*DATRASextra* provides a set of powerful functions that guide you
+through a typical workflow with the ICES DATRAS database: from
+discovering available surveys, to downloading, cleaning and checking the
+data, and finally making quick plots of survey coverage and hauls. The
+table below summarises the main user-facing functions.
 
-| Function               | Description                                                                   |
-|------------------------|-------------------------------------------------------------------------------|
-| `listSurveys()`        | List available surveys in the ICES DATRAS database.                           |
-| `downloadDATRAS()`     | Download the full DATRAS database or a filtered subset of it.                 |
-| `readDATRAS()`         | Read DATRAS data into R.                                                      |
-| `clean()`              | Clean and harmonise DATRAS data.                                              |
-| `check()`              | Run general checks and flag potential outliers in DATRAS.                     |
-| `prune()`              | Prune DATRAS data by removing or filtering problematic records.               |
-| `addSweptAreaSimple()` | Calculate swept area per haul using gear-specific median values by gear type. |
-| `checkLength()`        | Check length information and identify suspicious length distributions.        |
-| `checkWeight()`        | Check weight information and length–weight consistency.                       |
-| `plotHauls()`          | Plot haul locations.                                                          |
-| `plotHaulsBySurvey()`  | Plot haul locations by survey.                                                |
-| `plotSurveys()`        | Plot survey coverage and footprint.                                           |
+| Function                                                                                                     | Description                                                                                      |
+|--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md)                           | List available surveys in the ICES DATRAS database.                                              |
+| [`plot_hauls()`](https://tokami.github.io/DATRASextra/reference/plot_hauls.md)                               | Plot haul locations.                                                                             |
+| [`plot_hauls_by_survey()`](https://tokami.github.io/DATRASextra/reference/plot_hauls_by_survey.md)           | Plot haul locations by survey.                                                                   |
+| [`plot_surveys()`](https://tokami.github.io/DATRASextra/reference/plot_surveys.md)                           | Plot survey coverage and footprint.                                                              |
+| [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)                     | Download the full or filtered subset of the DATRAS database.                                     |
+| [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)                             | Read DATRAS data into R.                                                                         |
+| [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md)                           | Clean and harmonise DATRAS data.                                                                 |
+| [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md)                       | Flag (and remove) hauls with invalid or extreme values.                                          |
+| [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)                           | Prune DATRAS data by removing or filtering problematic records.                                  |
+| [`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md)                       | Calculate swept area per haul using gear-specific median values by gear type.                    |
+| [`check_lengths()`](https://tokami.github.io/DATRASextra/reference/check_lengths.md)                         | Check length information and identify suspicious length distributions.                           |
+| [`add_numbers_at_length()`](https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.md)         | Calculate the numbers by specified length classes and add it to the HH data set.                 |
+| [`add_total_numbers_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_numbers_by_haul.md) | Calculate total numbers by haul and add it to the HH data set.                                   |
+| [`check_weights()`](https://tokami.github.io/DATRASextra/reference/check_weights.md)                         | Check weight information and length–weight consistency.                                          |
+| [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md)           | Convert the numbers at length classes to weight at length classes and add it to the HH data set. |
+| [`add_total_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul.md)   | Calculate total weight by haul and add it to the HH data set.                                    |
 
 # Getting started
 
@@ -88,7 +92,7 @@ You can access the help pages with `help(function_name)` or
 `?function_name`, for example:
 
 ``` r
-?checkLength
+?check_lengths
 ```
 
 The package also includes several vignettes and articles that

@@ -62,7 +62,7 @@ that approximate the FishGlob workflow.
 [`clean_fishglob()`](https://tokami.github.io/DATRASextra/reference/clean_fishglob.md),
 [`prune_fishglob()`](https://tokami.github.io/DATRASextra/reference/prune_fishglob.md),
 [`add_swept_area_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_fishglob.md),
-[`add_weight_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_weight_fishglob.md)
+[`add_total_weight_by_haul_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul_fishglob.md)
 
 ## Examples
 

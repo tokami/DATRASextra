@@ -2,6 +2,9 @@
 
 ## All functions
 
+- [`add_numbers_at_length()`](https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.md)
+  : Add numbers-at-length to a DATRAS object
+
 - [`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md)
   :
 
@@ -15,30 +18,23 @@
 
   Add simple swept-area estimates to a `datras_raw` object
 
-- [`add_weight()`](https://tokami.github.io/DATRASextra/reference/add_weight.md)
-  :
+- [`add_total_numbers_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_numbers_by_haul.md)
+  : Add total numbers by haul to a DATRAS object
 
-  Add weight-at-length estimates to a `datras_raw` object
-
-- [`add_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_weight_by_haul.md)
+- [`add_total_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul.md)
   :
 
   Add total haul biomass to `HH`
 
-- [`add_weight_by_haul_empirical()`](https://tokami.github.io/DATRASextra/reference/add_weight_by_haul_empirical.md)
-  :
-
-  Add empirical total haul biomass to `HH`
-
-- [`add_weight_empirical()`](https://tokami.github.io/DATRASextra/reference/add_weight_empirical.md)
-  :
-
-  Add empirical weight-at-length estimates to `HH`
-
-- [`add_weight_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_weight_fishglob.md)
+- [`add_total_weight_by_haul_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul_fishglob.md)
   :
 
   Add weight estimates to `HL` records following the FishGlob workflow
+
+- [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md)
+  :
+
+  Add weight-at-length estimates to a `datras_raw` object
 
 - [`as_fishglob()`](https://tokami.github.io/DATRASextra/reference/as_fishglob.md)
   :
@@ -60,7 +56,7 @@
 
   Convert a `datras_raw` object to a wide-format table
 
-- [`check_length()`](https://tokami.github.io/DATRASextra/reference/check_length.md)
+- [`check_lengths()`](https://tokami.github.io/DATRASextra/reference/check_lengths.md)
   :
 
   Check and summarize length distributions in a `datras_raw` object
@@ -68,7 +64,7 @@
 - [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md)
   : Check outliers in a datras_raw object
 
-- [`check_weight()`](https://tokami.github.io/DATRASextra/reference/check_weight.md)
+- [`check_weights()`](https://tokami.github.io/DATRASextra/reference/check_weights.md)
   :
 
   Check and summarize individual weight information in a `datras_raw`
@@ -94,6 +90,9 @@
 
 - [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
   : Download ICES DATRAS survey data
+
+- [`get_accuracy_cm()`](https://tokami.github.io/DATRASextra/reference/get_accuracy_cm.md)
+  : Get length measurement accuracy in cm
 
 - [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md)
   : List all surveys in the DATRAS data base

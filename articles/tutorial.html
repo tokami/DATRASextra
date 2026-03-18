@@ -248,9 +248,23 @@ needs.</p>
 <p><img src="tutorial_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level2">
-<h2 id="get-weight-by-haul">
-<em>Get Weight by haul</em><a class="anchor" aria-label="anchor" href="#get-weight-by-haul"></a>
+<h2 id="get-total-weight-by-haul">
+<em>Get total weight by haul</em><a class="anchor" aria-label="anchor" href="#get-total-weight-by-haul"></a>
 </h2>
+<p>In order to calculate the total weight by haul, we need to raise the
+length frequency information (in HL) to the haul level, we can do that
+by adding the numbers by length:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_numbers_at_length.html">add_numbers_at_length</a></span><span class="op">(</span><span class="va">surv</span><span class="op">)</span></span></code></pre></div>
+<p>Now, the HH data set contains a matrix called <code>N</code> that
+contains the numbers at length groups. (See the cm_breaks and by
+arguments of the function to modify the length classes). Next, we can
+convert the numbers into weight and add them up, with the following
+function: TODO: does this still work for multiple species?</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_total_weight_by_haul.html">add_total_weight_by_haul</a></span><span class="op">(</span><span class="va">surv</span><span class="op">)</span></span></code></pre></div>
+<p>The HH data set now contains the total weight by haul in the column:
+‘HaulWgt’.</p>
 </div>
 <div class="section level2">
 <h2 id="summary">

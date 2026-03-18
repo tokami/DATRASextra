@@ -187,7 +187,28 @@ plot(surv)
 
 ![](tutorial_files/figure-html/unnamed-chunk-8-1.png)
 
-## *Get Weight by haul*
+## *Get total weight by haul*
+
+In order to calculate the total weight by haul, we need to raise the
+length frequency information (in HL) to the haul level, we can do that
+by adding the numbers by length:
+
+``` r
+surv <- add_numbers_at_length(surv)
+```
+
+Now, the HH data set contains a matrix called `N` that contains the
+numbers at length groups. (See the cm_breaks and by arguments of the
+function to modify the length classes). Next, we can convert the numbers
+into weight and add them up, with the following function: TODO: does
+this still work for multiple species?
+
+``` r
+surv <- add_total_weight_by_haul(surv)
+```
+
+The HH data set now contains the total weight by haul in the column:
+‘HaulWgt’.
 
 ## *Summary*
 
