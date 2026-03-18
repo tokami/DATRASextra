@@ -1,8 +1,14 @@
 ---
 title: "Processing ICES DATRAS Data for FishGlob"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    number_sections: true
+    df_print: paged
+    toc: true
+    toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Recreating the FishGlob dataset (DATRAS part)}
+  %\VignetteIndexEntry{Processing ICES DATRAS Data for FishGlob}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -122,7 +128,7 @@ head(datras)
 ### Download FishGlob
 
 ``` {r}
-# load survey data 
+# load survey data
 fishglob_url <- "https://github.com/AquaAuma/FishGlob_data/raw/d71dfa03c2912b4e9d9cd10412ae2af52ba56ae5/outputs/Compiled_data/FishGlob_public_std_clean.RData" # stick with this version
 options(timeout = 300) # increase timeout to 5 minutes
 load(url(fishglob_url))
@@ -163,7 +169,7 @@ am_dab <- merged_agg %>%
   filter(accepted_name == "Hippoglossoides platessoides") # compare american dab as example
 ```
 
-### Plot it 
+### Plot it
 
 ```{r}
 ggplot(am_dab, aes(x = num_fishglob,
@@ -225,4 +231,3 @@ raw <- read_datras(file.path(tmp, surveys))
 
 Downloading and processing these surveys take some time, as they include
 multiple decades of trawl survey data.
-

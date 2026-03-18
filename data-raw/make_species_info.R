@@ -45,25 +45,44 @@ tab <- data.frame(tab,
 fish <- as.data.frame(rfishbase:::fb_tbl("species"))
 fish$SciName <- paste(fish$Genus, fish$Species, sep= " ")
 
-mati <- maturity(tab$ScientificName_WoRMS)
-lwi <- poplw(tab$ScientificName_WoRMS)
-pgi <- popgrowth(tab$ScientificName_WoRMS)
+mati <- as.data.frame(maturity(tab$ScientificName_WoRMS))
+mati_agg <- aggregate(list(Lm = mati$Lm),
+                      by = list(Species = mati$Species),
+                      FUN = median, na.rm = TRUE)
+lwi <- as.data.frame(poplw(tab$ScientificName_WoRMS))
+lwi_agg <- aggregate(list(a = lwi$a,
+                          b = lwi$b),
+                     by = list(Species = lwi$Species),
+                     FUN = median, na.rm = TRUE)
+pgi <- as.data.frame(popgrowth(tab$ScientificName_WoRMS))
+pgi_agg <- aggregate(list(Loo = pgi$Loo,
+                          K = pgi$K,
+                          to = pgi$to),
+                     by = list(Species = pgi$Species),
+                     FUN = median, na.rm = TRUE)
 
 tab$habitat <- fish$DemersPelag[match(tab$ScientificName_WoRMS, fish$SciName)]
 tab$bodyShape <- fish$BodyShapeI[match(tab$ScientificName_WoRMS, fish$SciName)]
 tab$maxL <- fish$Length[match(tab$ScientificName_WoRMS, fish$SciName)]
 
-tab <- data.frame(tab,
-                  as.data.frame(mati[match(tab$ScientificName_WoRMS, mati$Species),
-                                     c("Lm")]))
 
-tab <- data.frame(tab,
-                  as.data.frame(lwi[match(tab$ScientificName_WoRMS, lwi$Species),
-                                    c("a","b")]))
+tmpi <- as.data.frame(mati_agg[match(tab$ScientificName_WoRMS,
+                                               mati_agg$Species),
+                               c("Lm")])
+colnames(tmpi) <- "Lm"
+tab <- data.frame(tab, tmpi)
 
-tab <- data.frame(tab,
-                  as.data.frame(pgi[match(tab$ScientificName_WoRMS, pgi$Species),
-                                    c("Loo","K","to")]))
+tmpi <- as.data.frame(lwi_agg[match(tab$ScientificName_WoRMS,
+                                              lwi_agg$Species),
+                              c("a","b")])
+colnames(tmpi) <- c("a","b")
+tab <- data.frame(tab, tmpi)
+
+tmpi <- as.data.frame(pgi_agg[match(tab$ScientificName_WoRMS,
+                                              pgi_agg$Species),
+                              c("Loo","K","to")])
+colnames(tmpi) <- c("Loo","K","to")
+tab <- data.frame(tab, tmpi)
 
 
 ## Functional groups -------------
@@ -321,10 +340,19 @@ tab[tab$genus == id & !is.na(tab$genus),]
 tab$funcGroupWalkerAll[tab$genus == id & !is.na(tab$genus)] <- 3
 
 
+## a and b from fishglob
+dati <- read.csv("data-raw/length.weight_DATRAS_3August2023.csv")
+
+indi <- match(tab$ScientificName_WoRMS, dati$taxa)
+any(is.na(indi))
+
+tab$aFG <- dati$a[indi]
+tab$bFG <- dati$b[indi]
+
 
 ## save
 species_info <- tab
 
-format(object.size(species_info), units = "auto") ## 626.2 Kb
+format(object.size(species_info), units = "auto") ## 755.5 Kb
 
 usethis::use_data(species_info, overwrite = TRUE)

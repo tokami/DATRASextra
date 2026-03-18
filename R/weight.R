@@ -107,8 +107,8 @@ check_weights <- function (x,
 
   if(plot) {
 
-    opar <- par()
-    on.exit(par(opar))
+    opar <- par(no.readonly = TRUE)
+    on.exit(par(opar), add = TRUE)
     layout(matrix(c(2,0,1,3), 2, 2, byrow = TRUE),
            widths = c(4,1), heights = c(1,4), respect = TRUE)
     par(mar = c(5, 4, 0.25, 0.25))
@@ -183,6 +183,12 @@ check_weights <- function (x,
 ##' @param max_weight Optional numeric value giving the maximum individual
 ##'   weight in grams to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
+##' @param plus_group Logical. If `TRUE` the midlength for the weight
+##'   calculation of the last length bin is not using the upper limit of this
+##'   length bin, which might be `Inf` or arbitrarily high and result in an
+##'   unrealistically high weight for that length bin. Instead the lower limit
+##'   plus half of the size of the second last length bin is used to define the
+##'   mid length of the largest length bin.
 ##' @param empirical Logical. If `TRUE`, use empirical weight-at-length
 ##'   calculations instead of fitting a length-weight model to the `CA` table.
 ##'
@@ -222,6 +228,7 @@ add_weight_at_length <- function (x,
                                   per_minute = TRUE,
                                   max_length = NULL,
                                   max_weight = NULL,
+                                  plus_group = FALSE,
                                   empirical = FALSE) {
 
   .check_class_datras(x)
@@ -272,12 +279,25 @@ add_weight_at_length <- function (x,
     if (!is.null(max_weight) && !is.na(max_weight) && is.numeric(max_weight)) {
       x1 <- x1[x1$IndWgt <= max_weight,]
     }
-    m = lm(log(IndWgt) ~ log(LngtCm), data = x1)
-    cm_breaks = attr(x, "cm.breaks")[-1] - 0.5
-    tmp = x[["CA"]][1:length(cm_breaks), ]
-    tmp$LngtCm = cm_breaks
-    tmp$Wgt = exp(predict(m, newdata = tmp))
-    LW = tmp$Wgt
+
+    m <- lm(log(IndWgt) ~ log(LngtCm), data = x1)
+    cm_breaks <- attr(x, "cm.breaks")
+    nl <- length(cm_breaks)
+    dls <- diff(cm_breaks)
+    mid_lengths <- cm_breaks[-1] + dls / 2
+    nml <- length(mid_lengths)
+
+    if (is.infinite(cm_breaks[nl]) || isTRUE(plus_group)) {
+      mid_lengths[nml] <- cm_breaks[nl-1] + dls[nml-1] / 2
+    } else if (cm_breaks[nl] > 1.2 * max(x[["CA"]]$LngtCm, na.rm = TRUE)) {
+      warning("The upper limit of the largest length bin is more than 20% larger than the largest length measurement in CA. The weight calculation based on the mid length uses this large upper limit, which might result in unrealistically high weights. Is the largest length bin a plus group? Then consider, setting plus_group = TRUE.")
+    }
+
+
+    tmp <- x[["CA"]][1:length(mid_lengths), ]
+    tmp$LngtCm <- mid_lengths
+    tmp$Wgt <- exp(predict(m, newdata = tmp))
+    LW <- tmp$Wgt
     Wgt <- sweep(x[["HH"]]$N, 2, LW, "*")
 
     if (isTRUE(per_minute)) {

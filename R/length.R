@@ -146,8 +146,9 @@ check_lengths <- function(x,
 
 
   if(plot){
-    opar <- par()
-    on.exit(par(opar))
+
+    opar <- par(no.readonly = TRUE)
+    on.exit(par(opar), add = TRUE)
     par(mfrow = c(2,1), mar = c(2,4,1,1), oma = c(2,0,0,0))
     ## counts
     bar_x <- barplot(nSum, names.arg = midL,

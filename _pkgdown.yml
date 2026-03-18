@@ -34,12 +34,12 @@ navbar:
 articles:
 - title: Getting started
   contents:
-  - tutorial
-  - articles/survey_domain
+  - datrasextra-tutorial
+  - articles/define-survey-domain
 - title: Advanced
   contents:
-  - articles/by_length
-  - articles/laa
+  - articles/custom-length-classes
+  - articles/exploring-length-at-age
 - title: FishGlob
   contents:
   - articles/fishglob

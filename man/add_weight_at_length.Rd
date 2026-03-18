@@ -9,6 +9,7 @@ add_weight_at_length(
   per_minute = TRUE,
   max_length = NULL,
   max_weight = NULL,
+  plus_group = FALSE,
   empirical = FALSE
 )
 }
@@ -25,6 +26,13 @@ Observations above this value are excluded.}
 \item{max_weight}{Optional numeric value giving the maximum individual
 weight in grams to retain when fitting the length-weight relationship.
 Observations above this value are excluded.}
+
+\item{plus_group}{Logical. If \code{TRUE} the midlength for the weight
+calculation of the last length bin is not using the upper limit of this
+length bin, which might be \code{Inf} or arbitrarily high and result in an
+unrealistically high weight for that length bin. Instead the lower limit
+plus half of the size of the second last length bin is used to define the
+mid length of the largest length bin.}
 
 \item{empirical}{Logical. If \code{TRUE}, use empirical weight-at-length
 calculations instead of fitting a length-weight model to the \code{CA} table.}
