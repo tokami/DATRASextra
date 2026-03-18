@@ -34,6 +34,8 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
+    dplyr,
+    ggplot2,
     sf,
     rnaturalearth,
     rnaturalearthdata,

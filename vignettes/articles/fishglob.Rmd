@@ -58,7 +58,8 @@ ICES Database on Trawl Surveys (DATRAS), ICES, Copenhagen, Denmark. [https://dat
 
 ```{r}
 library(DATRASextra)
-library(tidyverse)
+library(ggplot2)
+library(dplyr)
 ```
 
 ## Load the dataset
