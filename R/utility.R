@@ -15,6 +15,28 @@ list_surveys <- function() {
 }
 
 
+##' Load dissolved Natural Earth land polygon
+##'
+##' If download_map = FALSE, loads a dissolved land polygon shipped with the
+##' package (Natural Earth 1:10m), used for offline plotting.
+##'
+##' @return An sf object (single MULTIPOLYGON) in EPSG:4326.
+##' @source Natural Earth via rnaturalearth.
+get_land <- function(download_map = FALSE, scale = 50) {
+
+  if (!download_map) {
+    path <- system.file("extdata", "land_nea_50m.rds", package = "DATRASextra")
+    if (nzchar(path)) return(readRDS(path))
+  }
+
+  if (!requireNamespace("rnaturalearth", quietly = TRUE)) {
+    stop("To download land polygons, install 'rnaturalearth'.")
+  }
+
+  rnaturalearth::ne_download(
+    scale = scale, type = "land", category = "physical", returnclass = "sf"
+  )
+}
 
 
 

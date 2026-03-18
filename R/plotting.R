@@ -42,8 +42,11 @@ plot_hauls <- function(plot_map = TRUE,
 
   survey_info_full <- get("survey_info_full", envir = asNamespace("DATRASextra"))
 
-  ok <- requireNamespace("maps", quietly = TRUE) &&
-    requireNamespace("mapdata", quietly = TRUE)
+  download_map <- FALSE
+  scale <- 50
+  col_land <- grDevices::adjustcolor(grey(0.85), 0.5)
+  border_land <- grDevices::adjustcolor(grey(0.6), 0.5)
+  land_ll <- get_land(download_map, scale = scale)
 
   sq <- unique(icesSquare(survey_info_full))
   pol <- icesSquare2coord(sq,"polygons")
@@ -84,10 +87,10 @@ plot_hauls <- function(plot_map = TRUE,
         col = hcl.colors(12, "YlOrRd", rev = TRUE),
         add = TRUE)
 
-  if(plot_map){
-    if(ok) maps::map("mapdata::worldHires",add=TRUE,lwd=1,col="darkgrey",
-                     fill=FALSE)
-  }
+      if(plot_map){
+        plot(sf::st_geometry(land_ll), add = TRUE,
+             col = col_land, border = border_land)
+      }
   box(lwd = 1.5)
 
   return(invisible(NULL))
@@ -154,8 +157,11 @@ plot_hauls_by_survey <- function(plot_map = TRUE,
 
   survey_info_full <- get("survey_info_full", envir = asNamespace("DATRASextra"))
 
-  ok <- requireNamespace("maps", quietly = TRUE) &&
-    requireNamespace("mapdata", quietly = TRUE)
+  download_map <- FALSE
+  scale <- 50
+  col_land <- grDevices::adjustcolor(grey(0.85), 0.5)
+  border_land <- grDevices::adjustcolor(grey(0.6), 0.5)
+  land_ll <- get_land(download_map, scale = scale)
 
   sq <- unique(icesSquare(survey_info_full))
   pol <- icesSquare2coord(sq,"polygons")
@@ -218,10 +224,10 @@ plot_hauls_by_survey <- function(plot_map = TRUE,
           col = col,
           add = TRUE)
 
-    if(plot_map){
-      if(ok) maps::map("mapdata::worldHires",add=TRUE,lwd=1,col="darkgrey",
-                       fill=FALSE)
-    }
+      if(plot_map){
+        plot(sf::st_geometry(land_ll), add = TRUE,
+             col = col_land, border = border_land)
+      }
 
     legend("topleft", legend = surveys[i],
            pch = NA, bg = "white")
@@ -327,8 +333,11 @@ plot_surveys <- function(plot_map = TRUE,
 
   survey_info_full <- get("survey_info_full", envir = asNamespace("DATRASextra"))
 
-  ok <- requireNamespace("maps", quietly = TRUE) &&
-    requireNamespace("mapdata", quietly = TRUE)
+  download_map <- FALSE
+  scale <- 50
+  col_land <- grDevices::adjustcolor(grey(0.85), 0.5)
+  border_land <- grDevices::adjustcolor(grey(0.6), 0.5)
+  land_ll <- get_land(download_map, scale = scale)
 
   sq <- unique(icesSquare(survey_info_full))
   pol <- icesSquare2coord(sq,"polygons")
@@ -383,8 +392,8 @@ plot_surveys <- function(plot_map = TRUE,
       polygon(poli2, col = adjustcolor(i, 0.4), border = adjustcolor("grey70",0.3))
 
       if(plot_map){
-        if(ok) maps::map("mapdata::worldHires",add=TRUE,lwd=1,col="darkgrey",
-                         fill=FALSE)
+        plot(sf::st_geometry(land_ll), add = TRUE,
+             col = col_land, border = border_land)
       }
 
       legend("topleft", legend = surveys[i],
@@ -440,8 +449,8 @@ plot_surveys <- function(plot_map = TRUE,
           add = TRUE)
 
     if(plot_map){
-      if(ok) maps::map("mapdata::worldHires",add=TRUE,lwd=1,col="darkgrey",
-                       fill=FALSE)
+      plot(sf::st_geometry(land_ll), add = TRUE,
+           col = col_land, border = border_land)
     }
     labs <- breaks[-length(breaks)]
     labs[length(labs)] <- paste0(">",labs[length(labs)])
