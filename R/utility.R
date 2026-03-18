@@ -18,7 +18,13 @@ list_surveys <- function() {
 ##' Load dissolved Natural Earth land polygon
 ##'
 ##' If download_map = FALSE, loads a dissolved land polygon shipped with the
-##' package (Natural Earth 1:10m), used for offline plotting.
+##' package (Natural Earth 1:50m), used for offline plotting.
+##'
+##' @param download_map Logical. If `FALSE` the download map included in
+##'   DATRASextra is used for plotting (with 1:50m scale). If `TRUE`, a map is
+##'   downloaded with [rnaturalearth::ne_download()] and the specified scale.
+##' @param scale Scale of the map to be downloaded by
+##'   [rnaturalearth::ne_download()]. (Only used if download_map = TRUE).
 ##'
 ##' @return An sf object (single MULTIPOLYGON) in EPSG:4326.
 ##' @source Natural Earth via rnaturalearth.
