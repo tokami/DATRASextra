@@ -44,8 +44,8 @@ plot_hauls <- function(plot_map = TRUE,
 
   download_map <- FALSE
   scale <- 50
-  col_land <- grDevices::adjustcolor(grey(0.85), 0.5)
-  border_land <- grDevices::adjustcolor(grey(0.6), 0.5)
+  col_land <- grDevices::adjustcolor(grey(0.9), 0.4)
+  border_land <- grDevices::adjustcolor(grey(0.6), 0.4)
   land_ll <- get_land(download_map, scale = scale)
 
   sq <- unique(icesSquare(survey_info_full))
@@ -159,8 +159,8 @@ plot_hauls_by_survey <- function(plot_map = TRUE,
 
   download_map <- FALSE
   scale <- 50
-  col_land <- grDevices::adjustcolor(grey(0.85), 0.5)
-  border_land <- grDevices::adjustcolor(grey(0.6), 0.5)
+  col_land <- grDevices::adjustcolor(grey(0.9), 0.4)
+  border_land <- grDevices::adjustcolor(grey(0.6), 0.4)
   land_ll <- get_land(download_map, scale = scale)
 
   sq <- unique(icesSquare(survey_info_full))
@@ -335,8 +335,8 @@ plot_surveys <- function(plot_map = TRUE,
 
   download_map <- FALSE
   scale <- 50
-  col_land <- grDevices::adjustcolor(grey(0.85), 0.5)
-  border_land <- grDevices::adjustcolor(grey(0.6), 0.5)
+  col_land <- grDevices::adjustcolor(grey(0.9), 0.4)
+  border_land <- grDevices::adjustcolor(grey(0.6), 0.4)
   land_ll <- get_land(download_map, scale = scale)
 
   sq <- unique(icesSquare(survey_info_full))
@@ -389,7 +389,7 @@ plot_surveys <- function(plot_map = TRUE,
 
 
       poli2 <- do.call("rbind",lapply(poli,function(x)rbind(x,NA)))
-      polygon(poli2, col = adjustcolor(i, 0.4), border = adjustcolor("grey70",0.3))
+      polygon(poli2, col = adjustcolor(i, 0.8), border = adjustcolor("grey70",0.3))
 
       if(plot_map){
         plot(sf::st_geometry(land_ll), add = TRUE,

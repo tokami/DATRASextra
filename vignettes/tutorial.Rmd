@@ -1,5 +1,5 @@
 ---
-title: "Step-by-step guide to work with the ICES' DATRAS database"
+title: "A Step-by-step guide to working with the ICES DATRAS database using DATRASextra"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -8,51 +8,54 @@ output:
     toc: true
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Step-by-step guide to work with the ICES' DATRAS database}
+  %\VignetteIndexEntry{A Step-by-step guide to working with the ICES DATRAS database using DATRASextra}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
+
 ```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      cache = FALSE,
-                      warning = FALSE,
-                      eval = TRUE,
-                      error = FALSE,
-                      warning = FALSE,
-                      message = FALSE,
-                      include = TRUE,
-                      collapse = TRUE,
-                      comment = "#>",
-                      fig.show = "hold",
-                      fig.width=8, fig.height=7)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  cache = FALSE,
+  warning = FALSE,
+  eval = TRUE,
+  error = FALSE,
+  message = FALSE,
+  include = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.show = "hold",
+  fig.width = 8,
+  fig.height = 7
+)
 ```
 
-The goal of the **DATRASextra** is to make it easy to work with [ICES' DATRAS
-database](https://www.ices.dk/data/data-portals/pages/datras.aspx) by providing
-user-friendly, well-document functions, detailed vignettes, and building on the
-powerful [*DATRAS* R package](https://github.com/DTUAqua/DATRAS).
+The goal of the **DATRASextra** is to make it easier to work with the [ICES
+DATRAS database](https://www.ices.dk/data/data-portals/pages/datras.aspx) in R.
+The package provides user-friendly, well-document functions, detailed vignettes,
+and functionality that extends the powerful core tools of the [**DATRAS** R
+package](https://github.com/DTUAqua/DATRAS).
 
-This vignette sets you up for working with ICES DATRAS data base by taking you
-through the whole process from installing *DATRASextra* and downloading DATRAS,
-to summarizing and plotting observations from the scientific surveys.
+This vignette introduces a typical workflow for working with ICES DATRAS survey
+data, from installing **DATRASextra** and downloading survey information to
+reading, cleaning, summarising, and plotting the data.
 
 
-**Outline:**
+## Outline
 
-1. Install DATRASextra
-2. Download ICES DATRAS
-3. Read-in DATRAS
-4. Clean DATRAS
-5. Get Weight by haul
+1. Install **DATRASextra**
+2. Download ICES DATRAS survey data
+3. Read downloaded data into R
+4. Clean and inspect the data
+5. Calculate total numbers and weight by haul
 6. Summary
 7. References
 
 
+## Install DATRASextra
 
-# *Install DATRASextra*
-
-To get started, make sure to install the most recent package version from
+To get started, install the latest development version of **DATRASextra** from
 GitHub:
 
 ```{r, eval = FALSE, echo = TRUE, fig.alt = ""}
@@ -60,129 +63,202 @@ GitHub:
 remotes::install_github("tokami/DATRASextra")
 ```
 
-The package can be loaded into the R environment:
+Then load the package into your R session:
 
 ```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
-## Load the package into R
+## Load the package
 library(DATRASextra)
 ```
 
 
-# *Download DATRAS*
 
-The DATRAS data base is a large compilation of the majority of scientific
-bottom-trawl surveys in the Northeast Atlantic. You can get an overview of
-included surveys with:
+# Download DATRAS survey data
+
+The DATRAS database is a large compilation of scientific bottom-trawl survey
+data from across the Northeast Atlantic. You can get an overview of the
+available surveys with:
 
 ```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
-## List scientific surveys in DATRAS
+## List available DATRAS surveys
 list_surveys()
 ```
 
-The `download_datras` function allows you to download information for any of
-these surveys. If the arguments `surveys` and `years` are not specified (i.e.,
-`NULL`), all surveys and years are downloaded, wich can take a while (~
-30-60min).
+Or visually with:
 
-If not the whole database is required, the `surveys` and `years` arguments allow
-to specify specific surveys and years. For example, the `Sole Net Survey (SNS)`
-in 2023 could be downloaded to a temporary directory with:
+```{r, eval = TRUE, echo = TRUE, fig.alt = "Map with available surveys in DATRAS"}
+## Plot available DATRAS surveys
+plot_surveys()
+```
+
+
+The `download_datras()` function can be used to download data for one or more
+surveys. If both `surveys` and `years` are left as `NULL`, all available surveys
+and years are downloaded. Because the database is large, a full download can
+take some time.
+
+In many cases, however, only a subset of the database is needed. The `surveys`
+and `years` arguments allow you to restrict the download to selected surveys and
+years. For example, the 2023 `SNS` survey can be downloaded into a temporary
+directory with:
 
 ```{r, eval = FALSE, echo = TRUE, fig.alt = ""}
-## select survey
+## Select survey
 survey <- "SNS"
-## create temporary directory
+
+## Create temporary directory
 tmp <- tempdir()
-## download SNS for 2023
+
+## Download SNS data for 2023
 download_datras(surveys = survey, years = 2023, dir = tmp)
 ```
 
-If no directory (argument `dir`) is specified, the data is downloaded into the
-current working directory (use `getwd()` to see your current working directory).
-The function compresses downloaded data into "zip" archives. Note, that if a
-year is specified in which a specific survey did not operate, an empty file is
-created in the specified folder. However, the next function just reads in
-non-empty files.
+Note that `download_datras()` does not load the data directly into R. Instead,
+it downloads, compresses, and stores the files on disk. If no directory is
+specified via `dir`, the files are saved to the current working directory, which
+you can inspect with `getwd()`.
 
-DATRAS includes three main data sets, `HH` with information on haul level, `HL`
-with information on species level and the important information on numbers by
-length, and `CA` with information on the individual level, such as individual
-weight, age readings, or maturity scores. The third data set with the biological
-information (`CA`) can be quite large and might not be required for some
-projects. In that case, setting the argument `download.ca = FALSE` allows you to
-to omit this data set from the download and save some time and memory.
+Downloaded files are stored as zipped DATRAS exchange files. If a year is
+requested for which a survey was not conducted, an empty file may be created.
+The reading functions described below automatically ignore empty files.
+
+DATRAS typically contains three main data tables:
+
+- `HH`: haul- or station-level metadata, such as position, time, gear, and
+  environmental information
+- `HL`: species-level catch-at-length and subsampling data
+- `CA`: individual-level biological data, such as length, weight, sex, maturity,
+  and age
+
+The `CA` table can be large and may not be needed for all analyses. In such
+cases, setting `download_ca = FALSE` can reduce download time and memory use.
+Similarly, when the focus is on individual biological data rather than
+catch-at-length information, `HL` can be omitted by setting `download_hl =
+FALSE`. See the vignette on extracting length-at-age data for an example.
 
 
-# *Read-in DATRAS*
+# Read DATRAS data into R
 
-Next, we can read the downloaded survey information into R:
+The downloaded survey files can then be read into R with `read_datras()`:
 
 ```{r, fig.alt = "", eval = FALSE}
 surv0 <- read_datras(file.path(tmp, survey))
 ```
 
-The path can point to a specific file that you want to read in or to a whole
-directory with any number of files.
+The path can point either to a single file or to an entire directory containing
+multiple survey-year files.
 
-
-# *Clean DATRAS*
-
-
-Now, the `surv0` object contains the survey information in the usual `datras_raw`
-format of the *DATRAS* package. (TODO: Link to more information about this data
-type or provide more information here.) It make sense to clean_datras the data and for
-example only use valid hauls. This can be done manually with the `subset()`
-function or by using some recommended cleaning steps with the `clean_datras()`
-function. This function also allows us to make a relevant subset of the database
-based on our needs.
+To avoid relying on an internet connection for the remainder of this vignette,
+we use the example data set `dab` included in **DATRASextra**:
 
 ```{r, fig.alt = ""}
 surv0 <- dab
 ```
 
+# Clean and inspect DATRAS data
+
+The object returned by `read_datras()` has class `datras_raw` and is
+intentionally kept close to the original DATRAS exchange format. In many
+analyses it is useful to clean the data first, for example by restricting the
+data set to valid hauls only.
+
+This can be done manually with `subset()`, but **DATRASextra** also provides the
+convenience function `clean_datras()` for applying common cleaning steps and
+creating relevant subsets:
 
 ```{r, fig.alt = ""}
 surv <- clean_datras(surv0)
 ```
 
-By default, this function also imputes missing depth information.
+Another useful feature of `clean_datras()` is that it can impute missing depth
+information where appropriate.
 
+After cleaning, it is often sensible to check for invalid or unusual values.
+This can be done with `check_outliers()`:
 
-We can plot the resulting survey information with:
+```{r, fig.alt = ""}
+surv <- check_outliers(surv, pct = TRUE)
+```
+
+The function returns a summary of hauls with invalid values and, when `pct =
+TRUE`, also flags unusually extreme values in selected variables.
+
+More detailed information is available in the attributes added by the function:
+
+```{r, fig.alt = ""}
+head(attr(surv, "outlier_report"))
+```
+
+A shorter list of affected hauls can be obtained with:
+
+```{r, fig.alt = ""}
+head(attr(surv, "outlier_hauls"))
+```
+
+For the example data set used here, no clearly invalid values were detected, so
+we proceed without further filtering.
+
+A quick overview of the cleaned survey data can be obtained with:
 
 ```{r, fig.alt = ""}
 plot(surv)
 ```
 
 
+# Calculate total numbers and weight by haul
 
-# *Get total weight by haul*
+A commonly used quantity in survey analysis is the total abundance or biomass
+per haul. These values are often used to derive survey indices, community
+indicators, or biodiversity metrics.
 
-In order to calculate the total weight by haul, we need to raise the length
-frequency information (in HL) to the haul level, we can do that by adding the
-numbers by length:
+To calculate total numbers and weight by haul, the information in the `HL` table
+first needs to be raised to the haul level. A convenient first step is to add
+numbers-at-length:
 
 ```{r, fig.alt = ""}
 surv <- add_numbers_at_length(surv)
 ```
 
-Now, the HH data set contains a matrix called `N` that contains the numbers at
-length groups. (See the cm_breaks and by arguments of the function to modify the
-length classes). Next, we can convert the numbers into weight and add them up,
-with the following function: TODO: does this still work for multiple species?
+This adds a matrix `N` to the `HH` table, containing the estimated numbers in
+each length class for each haul. The length classes can be modified with the
+`cm_breaks` or `by` arguments.
 
+The total number by haul can then be obtained by summing over length classes:
+
+```{r, fig.alt = ""}
+surv <- add_total_numbers_by_haul(surv)
+```
+
+By default, this adds a single column `HaulN` to the `HH` table. More generally,
+custom bins can be specified via `length_cuts`. In that case, the result may
+contain separate totals for broader user-defined length groups.
+
+If species-specific length and weight information are available in `CA`, or
+suitable empirical length-weight relationships are available in the
+`species_info` table, the numbers can also be converted to weight:
 
 ```{r, fig.alt = ""}
 surv <- add_total_weight_by_haul(surv)
 ```
 
-The HH data set now contains the total weight by haul in the column: 'HaulWgt'.
+This adds `HaulWgt` to the `HH` table, containing the total estimated weight by
+haul. As for abundance, custom length-group summaries can be generated when
+`length_cuts` is used.
 
-# *Summary*
+# Summary
 
-This vignette introduced the main features and workflow of the *DATRASextra*
-package for ...
+This vignette introduced a basic workflow for working with ICES DATRAS survey
+data in **DATRASextra**. It showed how to
 
+- install and load the package,
+- inspect available DATRAS surveys,
+- download selected survey data,
+- read DATRAS exchange files into R,
+- clean and check the data,
+- visualise the resulting survey information, and
+- derive haul-level abundance and biomass summaries.
 
+These functions provide a practical starting point for exploratory analyses,
+survey summaries, and the preparation of DATRAS data for downstream applications
+such as indicator development, biodiversity analyses, and stock assessment.
 
-# *References*
+# References
