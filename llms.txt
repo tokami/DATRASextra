@@ -250,6 +250,9 @@ Logo: Co-funded by the EU
 - [`mini`](https://tokami.github.io/DATRASextra/reference/mini.md) :
   Mini DATRAS survey data (example dataset)
 
+- [`mini_fishglob`](https://tokami.github.io/DATRASextra/reference/mini_fishglob.md)
+  : Mini DATRAS survey data for fishglob comparison (example dataset)
+
 - [`plot_hauls()`](https://tokami.github.io/DATRASextra/reference/plot_hauls.md)
   : Plot the spatial distribution of hauls
 
@@ -290,17 +293,17 @@ Logo: Co-funded by the EU
 
 ### Getting started
 
-- [Step-by-step guide to work with the ICES' DATRAS
-  database](https://tokami.github.io/DATRASextra/articles/tutorial.md):
+- [A Step-by-step guide to working with the ICES DATRAS database using
+  DATRASextra](https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.md):
 - [Constructing a prediction grid within a survey
-  domain](https://tokami.github.io/DATRASextra/articles/survey_domain.md):
+  domain](https://tokami.github.io/DATRASextra/articles/define-survey-domain.md):
 
 ### Advanced
 
-- [Numbers and weight by haul and length
-  classes](https://tokami.github.io/DATRASextra/articles/by_length.md):
+- [Deriving numbers and weight by haul and custom length
+  classes](https://tokami.github.io/DATRASextra/articles/custom-length-classes.md):
 - [Extracting Length-at-Age (LAA) from
-  DATRAS](https://tokami.github.io/DATRASextra/articles/laa.md):
+  DATRAS](https://tokami.github.io/DATRASextra/articles/exploring-length-at-age.md):
 
 ### FishGlob
 

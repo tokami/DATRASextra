@@ -2,17 +2,17 @@
 
 ### Getting started
 
-- [Step-by-step guide to work with the ICES' DATRAS
-  database](https://tokami.github.io/DATRASextra/articles/tutorial.md):
+- [A Step-by-step guide to working with the ICES DATRAS database using
+  DATRASextra](https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.md):
 - [Constructing a prediction grid within a survey
-  domain](https://tokami.github.io/DATRASextra/articles/survey_domain.md):
+  domain](https://tokami.github.io/DATRASextra/articles/define-survey-domain.md):
 
 ### Advanced
 
-- [Numbers and weight by haul and length
-  classes](https://tokami.github.io/DATRASextra/articles/by_length.md):
+- [Deriving numbers and weight by haul and custom length
+  classes](https://tokami.github.io/DATRASextra/articles/custom-length-classes.md):
 - [Extracting Length-at-Age (LAA) from
-  DATRAS](https://tokami.github.io/DATRASextra/articles/laa.md):
+  DATRAS](https://tokami.github.io/DATRASextra/articles/exploring-length-at-age.md):
 
 ### FishGlob
 

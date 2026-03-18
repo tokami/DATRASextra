@@ -1,12 +1,12 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://tokami.github.io/DATRASextra/404.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/LICENSE.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/articles/by_length.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/articles/custom-length-classes.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/articles/define-survey-domain.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/articles/exploring-length-at-age.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/index.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/articles/laa.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/articles/survey_domain.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/articles/tutorial.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/authors.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/header.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/index.html</loc></url>
@@ -36,6 +36,7 @@
 <url><loc>https://tokami.github.io/DATRASextra/reference/index.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/list_surveys.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/mini.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/mini_fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/plot_hauls.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/plot_hauls_by_survey.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/plot_surveys.html</loc></url>

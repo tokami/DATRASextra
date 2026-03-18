@@ -88,13 +88,7 @@ res <- check_weights(dab)
 #> [1] "Estimated LW parameters:"
 #> [1] "a = 0.014 b = 2.903"
 #> [1] "Empirical LW parameters:"
-#> [1] "a = 0.007 b = 3.14"
-#> Warning: graphical parameter "cin" cannot be set
-#> Warning: graphical parameter "cra" cannot be set
-#> Warning: graphical parameter "csi" cannot be set
-#> Warning: graphical parameter "cxy" cannot be set
-#> Warning: graphical parameter "din" cannot be set
-#> Warning: graphical parameter "page" cannot be set
+#> [1] "a = 0.007 b = 3.119"
 
 ## Restrict to plausible values
 res <- check_weights(dab, max_length = 100, max_weight = 10000)
@@ -107,11 +101,5 @@ res <- check_weights(dab, max_length = 100, max_weight = 10000)
 #> [1] "Estimated LW parameters:"
 #> [1] "a = 0.014 b = 2.903"
 #> [1] "Empirical LW parameters:"
-#> [1] "a = 0.007 b = 3.14"
-#> Warning: graphical parameter "cin" cannot be set
-#> Warning: graphical parameter "cra" cannot be set
-#> Warning: graphical parameter "csi" cannot be set
-#> Warning: graphical parameter "cxy" cannot be set
-#> Warning: graphical parameter "din" cannot be set
-#> Warning: graphical parameter "page" cannot be set
+#> [1] "a = 0.007 b = 3.119"
 ```

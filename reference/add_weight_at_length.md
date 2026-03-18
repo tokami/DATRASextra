@@ -11,6 +11,7 @@ add_weight_at_length(
   per_minute = TRUE,
   max_length = NULL,
   max_weight = NULL,
+  plus_group = FALSE,
   empirical = FALSE
 )
 ```
@@ -37,6 +38,15 @@ add_weight_at_length(
   Optional numeric value giving the maximum individual weight in grams
   to retain when fitting the length-weight relationship. Observations
   above this value are excluded.
+
+- plus_group:
+
+  Logical. If `TRUE` the midlength for the weight calculation of the
+  last length bin is not using the upper limit of this length bin, which
+  might be `Inf` or arbitrarily high and result in an unrealistically
+  high weight for that length bin. Instead the lower limit plus half of
+  the size of the second last length bin is used to define the mid
+  length of the largest length bin.
 
 - empirical:
 

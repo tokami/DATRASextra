@@ -59,6 +59,7 @@ a <code>datras_raw</code> / <code>DATRASraw</code> object.</p>
 <span>  per_minute <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  max_length <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  plus_group <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  empirical <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -86,6 +87,15 @@ Observations above this value are excluded.</p></dd>
 <dd><p>Optional numeric value giving the maximum individual
 weight in grams to retain when fitting the length-weight relationship.
 Observations above this value are excluded.</p></dd>
+
+
+<dt id="arg-plus-group">plus_group<a class="anchor" aria-label="anchor" href="#arg-plus-group"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> the midlength for the weight
+calculation of the last length bin is not using the upper limit of this
+length bin, which might be <code>Inf</code> or arbitrarily high and result in an
+unrealistically high weight for that length bin. Instead the lower limit
+plus half of the size of the second last length bin is used to define the
+mid length of the largest length bin.</p></dd>
 
 
 <dt id="arg-empirical">empirical<a class="anchor" aria-label="anchor" href="#arg-empirical"></a></dt>
