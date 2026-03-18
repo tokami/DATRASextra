@@ -34,13 +34,13 @@ This vignette demonstrates a workflow to:
 The workflow can be applied to a single species or to multiple species.
 For illustration, this vignette uses `mini`.
 ```{r}
-data("mini", package = "DATRASextra")
+data("mini_fishglob", package = "DATRASextra")
 ```
-an example dataset containing `r length(unique(mini$HL$Species))` species
-across `r length(unique(mini$HH$Survey))` surveys
-(`r paste(sort(unique(mini$HH$Survey)), collapse = ", ")`):
+an example dataset containing `r length(unique(mini_fishglob$HL$Species))` species
+across `r length(unique(mini_fishglob$HH$Survey))` surveys
+(`r paste(sort(unique(mini_fishglob$HH$Survey)), collapse = ", ")`):
 
-`r paste(sort(unique(mini$HL$Species)), collapse = ", ")`
+`r paste(sort(unique(mini_fishglob$HL$Species)), collapse = ", ")`
 
 ## References
 Maureaud, A., et al. (2021) FISHGLOB_data: an integrated dataset of fish biodiversity sampled with scientific bottom-trawl surveys. Sci Data 11, 24 (2024). [https://doi.org/10.1038/s41597-023-02866-w](https://doi.org/10.1038/s41597-023-02866-w)
@@ -52,12 +52,13 @@ ICES Database on Trawl Surveys (DATRAS), ICES, Copenhagen, Denmark. [https://dat
 
 ```{r}
 library(DATRASextra)
+library(tidyverse)
 ```
 
 ## Load the dataset
 
 ```{r}
-data(mini)
+data(mini_fishglob)
 ```
 
 ## Clean the dataset
@@ -70,7 +71,7 @@ This step ensures:
 - standardized taxonomic classification
 
 ```{r}
-dat <- clean_fishglob(mini)
+dat <- clean_fishglob(mini_fishglob)
 ```
 
 ## Reduce dataset size
@@ -116,7 +117,88 @@ datras <- as_fishglob(dat)
 
 head(datras)
 ```
+## Compare it with Fishglob
 
+### Download FishGlob
+
+``` {r}
+# load survey data 
+fishglob_url <- "https://github.com/AquaAuma/FishGlob_data/raw/d71dfa03c2912b4e9d9cd10412ae2af52ba56ae5/outputs/Compiled_data/FishGlob_public_std_clean.RData" # stick with this version
+options(timeout = 300) # increase timeout to 5 minutes
+load(url(fishglob_url))
+fishglob <- data
+```
+
+### Get the surveys in common
+
+``` {r}
+common_surveys <- intersect(fishglob$survey, datras$survey)
+
+fishglob_common <- fishglob[fishglob$survey %in% common_surveys, ]
+datras_common <- datras[datras$survey %in% common_surveys, ]
+
+fishglob_common$haul_id <- gsub(" ", ":", fishglob_common$haul_id) # use our haul format
+
+# get common haul ids
+common_haul_ids <- intersect(fishglob_common$haul_id, datras_common$haul_id)
+
+# fishglob
+fishglob_agg <- fishglob_common %>% filter(haul_id %in% common_haul_ids) %>%
+  group_by(haul_id, accepted_name, survey) %>%
+  summarise(wgt_cpua = sum(wgt_cpua, na.rm = TRUE), num = sum(num, na.rm = TRUE), .groups = "drop")
+
+# datras_extra
+datras_agg <- datras_common %>% filter(haul_id %in% common_haul_ids) %>%
+  group_by(haul_id, accepted_name, survey) %>%
+  summarise(wgt_cpua = sum(wgt_cpua, na.rm = TRUE), num = sum(num, na.rm = TRUE), .groups = "drop")
+
+merged_agg <- merge(
+  fishglob_agg,
+  datras_agg,
+  by = c("survey","haul_id", "accepted_name"),
+  suffixes = c("_fishglob", "_datras")
+)
+
+am_dab <- merged_agg %>%
+  filter(accepted_name == "Hippoglossoides platessoides") # compare american dab as example
+```
+
+### Plot it 
+
+```{r}
+ggplot(am_dab, aes(x = num_fishglob,
+                   y = num_datras)) +
+
+  # Points
+  geom_point(alpha = 0.6, size = 2) +
+  geom_abline(slope = 1, intercept = 0,
+              color = "red", linewidth = 1) +
+  labs(
+    x = "FishGlob numbers",
+    y = "DATRASextra numbers",
+    title = "Comparison of num per haul by survey for cod"
+  ) +
+  facet_wrap(~ survey, scales = "free")
+```
+
+```{r}
+ggplot(am_dab, aes(x = wgt_cpua_fishglob,
+                   y = wgt_cpua_datras)) +
+
+  # Points
+  geom_point(alpha = 0.6, size = 2) +
+  geom_abline(slope = 1, intercept = 0,
+              color = "red", linewidth = 1) +
+  labs(
+    x = "FishGlob kg/km2",
+    y = "DATRASextra kg/km2",
+    title = "Comparison of wgt_cpua per haul by survey for cod"
+  ) +
+
+  facet_wrap(~ survey, scales = "free")
+```
+
+As you can see there are small differences in densities due to sligtly different swept are imputation methods.
 
 ## Downloading the FishGlob DATRAS surveys
 
@@ -144,92 +226,3 @@ raw <- read_datras(file.path(tmp, surveys))
 Downloading and processing these surveys take some time, as they include
 multiple decades of trawl survey data.
 
-
-
-<!-- ## Compare it with FishGlob -->
-
-<!-- ### Download FishGlob -->
-
-<!-- ``` r -->
-<!-- # load survey data -------------------------------------------------------- -->
-<!-- fishglob_url <- "https://github.com/AquaAuma/FishGlob_data/raw/d71dfa03c2912b4e9d9cd10412ae2af52ba56ae5/outputs/Compiled_data/FishGlob_public_std_clean.RData" # stick with this version -->
-<!-- options(timeout = 300) # increase timeout to 5 minutes -->
-<!-- load(url(fishglob_url)) -->
-<!-- fishglob <- data -->
-<!-- ``` -->
-
-<!-- ### Get the surveys in common -->
-
-<!-- ``` r -->
-<!-- common_surveys <- intersect(fishglob$survey, datras$survey) -->
-
-<!-- fishglob_common <- fishglob[fishglob$survey %in% common_surveys, ] -->
-<!-- datras_common <- datras[datras$survey %in% common_surveys, ] -->
-
-<!-- fishglob_common$haul_id <- gsub(" ", ":", fishglob_common$haul_id) -->
-
-<!-- # get common haul ids -->
-<!-- common_haul_ids <- intersect(fishglob_common$haul_id, datras_common$haul_id) -->
-
-<!-- # fishglob -->
-<!-- fishglob_agg <- fishglob_common %>% filter(haul_id %in% common_haul_ids) %>%  -->
-<!--   group_by(haul_id, accepted_name, survey) %>% -->
-<!--   summarise(wgt_cpua = sum(wgt_cpua, na.rm = TRUE), num = sum(num, na.rm = TRUE), .groups = "drop") -->
-
-<!-- # datras_extra -->
-<!-- datras_agg <- datras_common %>% filter(haul_id %in% common_haul_ids) %>%  -->
-<!--   group_by(haul_id, accepted_name, survey) %>% -->
-<!--   summarise(wgt_cpua = sum(wgt_cpua, na.rm = TRUE), num = sum(num, na.rm = TRUE), .groups = "drop") -->
-
-<!-- merged_agg <- merge( -->
-<!--   fishglob_agg, -->
-<!--   datras_agg, -->
-<!--   by = c("survey","haul_id", "accepted_name"), -->
-<!--   suffixes = c("_fishglob", "_datras") -->
-<!-- ) -->
-
-<!-- df_cod <- merged_agg %>%  -->
-<!--   filter(accepted_name == "Gadus morhua") # compare cod as example -->
-<!-- ``` -->
-
-
-
-
-
-<!-- ``` r -->
-<!-- ggplot(df_cod, aes(x = num_fishglob,  -->
-<!--                    y = num_datras)) + -->
-
-<!--   # Points -->
-<!--   geom_point(alpha = 0.6, size = 2) + -->
-<!--   geom_abline(slope = 1, intercept = 0, -->
-<!--               color = "red", linewidth = 1) + -->
-<!--   labs( -->
-<!--     x = "FishGlob numbers", -->
-<!--     y = "DATRASextra numbers", -->
-<!--     title = "Comparison of num per haul by survey for cod" -->
-<!--   ) + -->
-<!--   facet_wrap(~ survey, scales = "free") -->
-<!-- ``` -->
-
-<!-- ![plot of chunk plot_num](figure/plot_num-1.png) -->
-
-
-<!-- ``` r -->
-<!-- ggplot(df_cod, aes(x = wgt_cpua_fishglob,  -->
-<!--                    y = wgt_cpua_datras)) + -->
-
-<!--   # Points -->
-<!--   geom_point(alpha = 0.6, size = 2) + -->
-<!--   geom_abline(slope = 1, intercept = 0, -->
-<!--               color = "red", linewidth = 1) + -->
-<!--   labs( -->
-<!--     x = "FishGlob kg/km2", -->
-<!--     y = "DATRASextra kg/km2", -->
-<!--     title = "Comparison of wgt_cpua per haul by survey for cod" -->
-<!--   ) + -->
-
-<!--   facet_wrap(~ survey, scales = "free") -->
-<!-- ``` -->
-
-<!-- ![plot of chunk plot_wg](figure/plot_wg-1.png) -->
