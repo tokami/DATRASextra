@@ -94,6 +94,9 @@
 - [`get_accuracy_cm()`](https://tokami.github.io/DATRASextra/reference/get_accuracy_cm.md)
   : Get length measurement accuracy in cm
 
+- [`get_land()`](https://tokami.github.io/DATRASextra/reference/get_land.md)
+  : Load dissolved Natural Earth land polygon
+
 - [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md)
   : List all surveys in the DATRAS data base
 
