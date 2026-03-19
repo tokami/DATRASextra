@@ -3,6 +3,7 @@
   [![R-CMD-check](https://github.com/tokami/DATRASextra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tokami/DATRASextra/actions/workflows/R-CMD-check.yaml)
   [![codecov](https://codecov.io/gh/tokami/DATRASextra/graph/badge.svg?token=GLS9FJ47IP)](https://codecov.io/gh/tokami/DATRASextra)
   [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+  [![logo](https://img.shields.io/badge/Logo%20by-Elisa%20Albanelli-blue.svg)](https://elisaalbanelli95.wixsite.com/elisa-albanelli)
 <!-- badges: end -->
 
 <h1 style="border-bottom:none;">DATRASextra <a href='https://github.com/tokami/DATRASextra'><img src='man/figures/DATRASextra_logo.svg' alt="DATRASextra logo" align="right" style="height:200px; margin-top:-40px;"/></a></h1>
