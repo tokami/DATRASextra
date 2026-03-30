@@ -183,7 +183,7 @@ ggplot(am_dab, aes(x = num_fishglob,
   labs(
     x = "FishGlob numbers",
     y = "DATRASextra numbers",
-    title = "Comparison of num per haul by survey for cod"
+    title = "Comparison of num per haul by survey for American dab"
   ) +
   facet_wrap(~ survey, scales = "free")
 ```
