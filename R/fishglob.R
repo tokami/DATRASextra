@@ -283,6 +283,8 @@ add_swept_area_fishglob <- function(x) {
       surv$SweepLngtCat <- ifelse(surv$SweepLngt <= 60,
                                   "short","long")
     }
+    
+    surv <- .clean_haul_metrics(surv)
 
     # model predictions
     model_set <- spread_models[[surveys[i]]]
@@ -339,9 +341,9 @@ add_swept_area_fishglob <- function(x) {
                                "Ship","Country","Distance",
                                "GroundSpeed","HaulDur")])
 
-  dist$Distance[dist$Distance > 11000] <- NA
+  dist$Distance[dist$Distance <= 0 | dist$Distance > 11000] <- NA
   x$Distance[x$Distance > 11000] <- NA
-  dist$GroundSpeed[dist$GroundSpeed > 30] <- NA
+  dist$GroundSpeed[dist$GroundSpeed <= 0 | dist$GroundSpeed > 30] <- NA
 
   # hierarchical speed imputation --------------------------------------------------------
   # 1) Survey-Year-Ship
@@ -784,4 +786,60 @@ as_fishglob <- function(x) {
     }
   }
   return(x)
+}
+
+.clean_haul_metrics <- function(surv) {
+  
+  # -----------------------
+  # Hard limits
+  # -----------------------
+  surv$DoorSpread[surv$DoorSpread <= 0 | surv$DoorSpread > 300] <- NA
+  surv$WingSpread[surv$WingSpread <= 0 | surv$WingSpread > 100] <- NA
+  
+  surv$Distance[surv$Distance <= 0 | surv$Distance > 11000] <- NA
+  surv$GroundSpeed[surv$GroundSpeed <= 0 | surv$GroundSpeed > 30] <- NA
+  
+  # -----------------------
+  # Gentle outliers (ONLY spreads)
+  # -----------------------
+  surv <- .flag_outliers_iqr(
+    surv,
+    group_vars = c("Survey","Gear"),
+    cols = c("DoorSpread","WingSpread"),
+    k = 3
+  )
+  
+  return(surv)
+}
+
+.flag_outliers_iqr <- function(x, group_vars, cols, k = 1.5) {
+  
+  group <- interaction(x[group_vars], drop = TRUE)
+  
+  for (col in cols) {
+    
+    values <- x[[col]]
+    split_idx <- split(seq_along(values), group)
+    
+    for (idx in split_idx) {
+      
+      v <- values[idx]
+      
+      if (all(is.na(v)) || length(stats::na.omit(v)) < 4) next
+      
+      q1 <- stats::quantile(v, 0.25, na.rm = TRUE)
+      q3 <- stats::quantile(v, 0.75, na.rm = TRUE)
+      iqr <- q3 - q1
+      
+      low  <- q1 - k * iqr
+      high <- q3 + k * iqr
+      
+      outliers <- v < low | v > high
+      values[idx][outliers] <- NA
+    }
+    
+    x[[col]] <- values
+  }
+  
+  x
 }
