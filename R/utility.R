@@ -50,6 +50,35 @@ get_land <- function(download_map = FALSE, scale = 50) {
 
 ## Internal functions ------------------------------------------------------------
 
+.cols_datrasextra <- function(n) {
+
+  if (length(n) != 1L || is.na(n) || !is.numeric(n) || n < 1) {
+    stop("`n` must be a single positive integer.")
+  }
+
+  n <- as.integer(n)
+
+  ## Marine-inspired package palette
+  base_cols <- c(
+    "#0B3C5D", ## deep ocean blue
+    "#117A8B", ## teal
+    "#16A085", ## turquoise-green
+    "#4DAF7C", ## sea green
+    "#A1C181", ## soft algae
+    "#F1C27D", ## sand
+    "#E07A5F", ## coral
+    "#B56576", ## muted rose
+    "#6D597A"  ## dusk purple
+  )
+
+  if (n <= length(base_cols)) {
+    return(base_cols[seq_len(n)])
+  }
+
+  grDevices::colorRampPalette(base_cols)(n)
+}
+
+
 .add_class_datras <- function(x) {
   class(x) <- c("datras_raw", "DATRASraw")
   x
@@ -67,7 +96,7 @@ get_land <- function(download_map = FALSE, scale = 50) {
 
 
 
-map2bar <- function(value, midL, bar.x) {
+.map2bar <- function(value, midL, bar.x) {
     if (length(midL) > 1) {
         approx(midL, bar.x, xout = value, rule = 2)$y
     } else {
@@ -77,4 +106,4 @@ map2bar <- function(value, midL, bar.x) {
 
 
 
-quarter2months <- function(quarter) ((quarter - 1) * 3 + 1) : (quarter * 3)
+.quarter2months <- function(quarter) ((quarter - 1) * 3 + 1) : (quarter * 3)

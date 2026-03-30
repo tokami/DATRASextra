@@ -187,7 +187,7 @@ download_datras <- function(surveys = NULL,
   if(verbose) message("Survey information has been downloaded and saved in folder for each survey at: ", dir)
 
   if (isTRUE(return_data)) {
-    dat <- read_datras(paths = dir, ...)
+    dat <- read_datras(paths = dir, years = years, ...)
     return(dat)
   } else {
     return(invisible(dir))

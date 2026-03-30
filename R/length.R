@@ -154,12 +154,12 @@ check_lengths <- function(x,
     bar_x <- barplot(nSum, names.arg = midL,
                      xlab = "",
                      ylab = "Count")
-    abline(v = map2bar(minLObs, midL, bar_x), col = 4, lty = 3, lwd = 2)
-    abline(v = map2bar(meanL, midL, bar_x), col = 3, lwd = 2)
-    abline(v = map2bar(medianL, midL, bar_x), col = 4, lty = 2, lwd = 2)
-    abline(v = map2bar(maxLObs, midL, bar_x), col = 4, lty = 3, lwd = 2)
-    abline(v = map2bar(maxLEmp, midL, bar_x), col = 4, lty = 1, lwd = 2)
-    abline(v = map2bar(percL, midL, bar_x), col = 2, lty = 2, lwd = 2)
+    abline(v = .map2bar(minLObs, midL, bar_x), col = 4, lty = 3, lwd = 2)
+    abline(v = .map2bar(meanL, midL, bar_x), col = 3, lwd = 2)
+    abline(v = .map2bar(medianL, midL, bar_x), col = 4, lty = 2, lwd = 2)
+    abline(v = .map2bar(maxLObs, midL, bar_x), col = 4, lty = 3, lwd = 2)
+    abline(v = .map2bar(maxLEmp, midL, bar_x), col = 4, lty = 1, lwd = 2)
+    abline(v = .map2bar(percL, midL, bar_x), col = 2, lty = 2, lwd = 2)
     legend("topright", legend = c("Min","Mean", "Median",
                                   "Max (observed)", "Max (empirical)",
                                   "Percentile (99.9999%)"),
@@ -171,12 +171,12 @@ check_lengths <- function(x,
     bar_x <- barplot(logNSum, names.arg = midL,
                      xlab = "Length (cm)",
                      ylab = "log(Count)")
-    abline(v = map2bar(minLObs, midL, bar_x), col = 4, lty = 3, lwd = 2)
-    abline(v = map2bar(meanL, midL, bar_x), col = 3, lwd = 2)
-    abline(v = map2bar(medianL, midL, bar_x), col = 4, lty = 2, lwd = 2)
-    abline(v = map2bar(maxLObs, midL, bar_x), col = 4, lty = 3, lwd = 2)
-    abline(v = map2bar(maxLEmp, midL, bar_x), col = 4, lty = 1, lwd = 2)
-    abline(v = map2bar(percL, midL, bar_x), col = 2, lty = 2, lwd = 2)
+    abline(v = .map2bar(minLObs, midL, bar_x), col = 4, lty = 3, lwd = 2)
+    abline(v = .map2bar(meanL, midL, bar_x), col = 3, lwd = 2)
+    abline(v = .map2bar(medianL, midL, bar_x), col = 4, lty = 2, lwd = 2)
+    abline(v = .map2bar(maxLObs, midL, bar_x), col = 4, lty = 3, lwd = 2)
+    abline(v = .map2bar(maxLEmp, midL, bar_x), col = 4, lty = 1, lwd = 2)
+    abline(v = .map2bar(percL, midL, bar_x), col = 2, lty = 2, lwd = 2)
   }
 
   res <- list(N = nout,

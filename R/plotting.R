@@ -69,7 +69,11 @@ plot_hauls <- function(plot_map = TRUE,
                                                max(point[,2]), by = 0.5),
                                   include.lowest = TRUE)
 
-  plot(range,type="n",las=1,xlab="Longitude",ylab="Latitude")
+  plot(range, type="n",
+       las=1,
+       xlab="Longitude",
+       ylab="Latitude",
+       asp = 1)
 
   freq <- aggregate(Hauls ~ lon_bin + lat_bin, data = survey_info_full, FUN = sum)
   grid <- expand.grid(
@@ -87,10 +91,10 @@ plot_hauls <- function(plot_map = TRUE,
         col = hcl.colors(12, "YlOrRd", rev = TRUE),
         add = TRUE)
 
-      if(plot_map){
-        plot(sf::st_geometry(land_ll), add = TRUE,
-             col = col_land, border = border_land)
-      }
+  if(plot_map){
+    plot(sf::st_geometry(land_ll), add = TRUE,
+         col = col_land, border = border_land)
+  }
   box(lwd = 1.5)
 
   return(invisible(NULL))
@@ -200,6 +204,7 @@ plot_hauls_by_survey <- function(plot_map = TRUE,
          type="n", las=1,
          xaxt = xaxt,
          yaxt = yaxt,
+         asp = 1,
          xlab = "", ylab = "")
 
     freq <- aggregate(Hauls ~ lon_bin + lat_bin, data = subi, FUN = sum)
@@ -224,10 +229,10 @@ plot_hauls_by_survey <- function(plot_map = TRUE,
           col = col,
           add = TRUE)
 
-      if(plot_map){
-        plot(sf::st_geometry(land_ll), add = TRUE,
-             col = col_land, border = border_land)
-      }
+    if(plot_map){
+      plot(sf::st_geometry(land_ll), add = TRUE,
+           col = col_land, border = border_land)
+    }
 
     legend("topleft", legend = surveys[i],
            pch = NA, bg = "white")
@@ -385,6 +390,7 @@ plot_surveys <- function(plot_map = TRUE,
            type="n", las=1,
            xaxt = xaxt,
            yaxt = yaxt,
+           asp = 1,
            xlab = "", ylab = "")
 
 
@@ -464,4 +470,332 @@ plot_surveys <- function(plot_map = TRUE,
   }
 
   return(invisible(NULL))
+}
+
+
+
+#' Plot haul maps through space and time
+#'
+#' Visualise the spatial footprint of survey hauls by year using faceted maps.
+#' Point sizes can optionally be scaled by a haul-level variable or by a
+#' haul-level variable standardised by effort.
+#'
+#' The function expects a DATRAS-like object containing a haul table
+#' \code{x[["HH"]]} with at least the columns \code{Year}, \code{lon}, and
+#' \code{lat}.
+#'
+#' @param x A DATRAS-like object containing an \code{HH} data frame.
+#' @param value_var Optional character string naming a haul-level variable in
+#'   \code{x[["HH"]]} used to scale point sizes. If \code{NULL}, point sizes are
+#'   constant unless \code{size_var} is provided.
+#' @param effort_var Optional character string naming a haul-level effort
+#'   variable in \code{x[["HH"]]}. If both \code{value_var} and
+#'   \code{effort_var} are available, point sizes are scaled by
+#'   \code{value_var / effort_var}.
+#' @param years Optional numeric or character vector specifying which years to
+#'   plot. Defaults to all available years.
+#' @param plot_map Logical; if \code{TRUE}, add land polygons in the background.
+#' @param fixed_axes Logical; if \code{TRUE}, all panels use the same
+#'   \code{xlim} and \code{ylim}. If \code{FALSE}, each panel is scaled to the
+#'   data shown in that year.
+#' @param xlim Optional numeric vector of length 2 giving x-axis limits.
+#' @param ylim Optional numeric vector of length 2 giving y-axis limits.
+#' @param size_var Deprecated alias for \code{value_var}. If supplied, it
+#'   overrides \code{value_var}.
+#' @param cex Base point size used when no scaling variable is available.
+#' @param cex_range Numeric vector of length 2 giving the minimum and maximum
+#'   point size when scaling is applied.
+#' @param col_points Colour used for haul locations.
+#' @param pch Plotting symbol used for haul locations.
+#' @param transform Character string specifying the transformation applied before
+#'   scaling point sizes. One of \code{"sqrt"}, \code{"log1p"}, or
+#'   \code{"identity"}.
+#' @param verbose Logical; if \code{TRUE}, print which variable was used for
+#'   point-size scaling.
+#'
+#' @return Invisibly returns a list with the plotted years, axis limits, panel
+#'   layout, and the variable used for scaling.
+#'
+#' @details
+#' If both \code{value_var} and \code{effort_var} are available, point sizes are
+#' based on \code{value_var / effort_var}, which can be useful for visualising a
+#' haul-level quantity standardised by effort. However, in standard DATRAS haul
+#' tables, \code{HaulN} is typically a haul identifier rather than a catch
+#' variable and is therefore generally not meaningful for this purpose.
+#'
+#' @examples
+#' \dontrun{
+#' ## Plot yearly haul maps
+#' plot_haul_map(dat)
+#'
+#' ## Restrict to selected years
+#' plot_haul_map(dat, years = 2010:2015)
+#'
+#' ## Scale point size by a haul-level variable
+#' plot_haul_map(dat, value_var = "HaulDur")
+#'
+#' ## Scale point size by a haul-level quantity standardised by effort
+#' plot_haul_map(dat, value_var = "TotalNo", effort_var = "SweptArea")
+#' }
+#'
+#' @export
+plot_haul_map <- function(x,
+                          value_var = "HaulN",
+                          effort_var = "SweptArea",
+                          years = NULL,
+                          plot_map = TRUE,
+                          fixed_axes = TRUE,
+                          xlim = NULL,
+                          ylim = NULL,
+                          size_var = NULL,
+                          cex = 0.8,
+                          cex_range = c(0.5, 2.5),
+                          col_points = NULL,
+                          pch = 16,
+                          transform = c("sqrt", "log1p", "identity"),
+                          show_size_legend = TRUE,
+                          legend_n = 4,
+                          legend_pos = "bottomright",
+                          legend_title = NULL,
+                          verbose = TRUE) {
+
+  transform <- match.arg(transform)
+
+  hh <- x[["HH"]]
+
+  if (is.null(hh)) {
+    stop("`x` must contain an 'HH' element.")
+  }
+
+  needed <- c("Year", "lon", "lat")
+  miss <- setdiff(needed, names(hh))
+  if (length(miss) > 0) {
+    stop("Missing required columns in `x[['HH']]`: ",
+         paste(miss, collapse = ", "))
+  }
+
+  ## Backward compatibility
+  if (!is.null(size_var)) {
+    value_var <- size_var
+  }
+
+  hh <- hh[stats::complete.cases(hh[, c("Year", "lon", "lat")]), , drop = FALSE]
+
+  if (!is.null(years)) {
+    hh <- hh[hh$Year %in% years, , drop = FALSE]
+  }
+
+  if (nrow(hh) == 0) {
+    stop("No rows available for plotting after filtering.")
+  }
+
+  years <- sort(unique(hh$Year))
+  nyears <- length(years)
+
+  if (plot_map) {
+    download_map <- FALSE
+    scale_map <- 50
+    col_land <- grDevices::adjustcolor(grey(0.9), 0.4)
+    border_land <- grDevices::adjustcolor(grey(0.6), 0.4)
+    land_ll <- get_land(download = download_map, scale = scale_map)
+  }
+
+  if (is.null(xlim)) xlim <- range(hh$lon, na.rm = TRUE)
+  if (is.null(ylim)) ylim <- range(hh$lat, na.rm = TRUE)
+
+  ## Determine scaling variable
+  scale_values_raw <- NULL
+  scale_label <- "constant"
+
+  if (!is.null(value_var)) {
+    if (!value_var %in% names(hh)) {
+      warning("`value_var` not found in `x[['HH']]`: ", value_var,
+              ". Using constant point size.")
+      value_var <- NULL
+    }
+  }
+
+  if (!is.null(value_var)) {
+    vals <- hh[[value_var]]
+    vals[!is.finite(vals)] <- NA_real_
+
+    if (!is.null(effort_var) && effort_var %in% names(hh)) {
+      eff <- hh[[effort_var]]
+      eff[!is.finite(eff) | eff <= 0] <- NA_real_
+      scale_values_raw <- vals / eff
+      scale_label <- paste0(value_var, " / ", effort_var)
+    } else {
+      scale_values_raw <- vals
+      scale_label <- value_var
+    }
+
+    scale_values_raw[!is.finite(scale_values_raw) | scale_values_raw < 0] <- NA_real_
+  }
+
+  ## Apply transformation
+  scale_values <- scale_values_raw
+  if (!is.null(scale_values)) {
+    scale_values <- switch(
+      transform,
+      sqrt = sqrt(scale_values),
+      log1p = log1p(scale_values),
+      identity = scale_values
+    )
+  }
+
+  ## Convert scaling variable to cex
+  point_cex_all <- rep(cex, nrow(hh))
+  scale_rng <- c(NA_real_, NA_real_)
+
+  if (!is.null(scale_values) && any(is.finite(scale_values))) {
+    scale_rng <- range(scale_values, na.rm = TRUE)
+    if (diff(scale_rng) > 0) {
+      point_cex_all <- cex_range[1] +
+        (cex_range[2] - cex_range[1]) * (scale_values - scale_rng[1]) / diff(scale_rng)
+      point_cex_all[!is.finite(point_cex_all)] <- cex
+    }
+  }
+
+  if (isTRUE(verbose)) {
+    message("Point-size scaling: ", scale_label)
+  }
+
+  panel_layout <- grDevices::n2mfrow(nyears, asp = 1.2)
+  oldpar <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(oldpar))
+
+  graphics::par(mfrow = panel_layout,
+                mar = c(1.5, 1.5, 2, 1),
+                oma = c(3, 3, 1, 1))
+
+  if (is.null(col_points)) col_points <- .cols_datrasextra(length(years))
+  if (length(col_points) < length(years)) {
+    col_points <- rep(col_points, length.out = length(years))
+  }
+
+  ## Helper: map raw values to cex using the same transformation/scaling
+  map_values_to_cex <- function(z_raw) {
+    if (is.null(scale_values_raw) || !any(is.finite(scale_values))) {
+      return(rep(cex, length(z_raw)))
+    }
+
+    z_tr <- switch(
+      transform,
+      sqrt = sqrt(z_raw),
+      log1p = log1p(z_raw),
+      identity = z_raw
+    )
+
+    if (!all(is.finite(scale_rng)) || diff(scale_rng) <= 0) {
+      return(rep(cex, length(z_raw)))
+    }
+
+    out <- cex_range[1] +
+      (cex_range[2] - cex_range[1]) * (z_tr - scale_rng[1]) / diff(scale_rng)
+
+    out[!is.finite(out)] <- cex
+    out
+  }
+
+  ## Precompute size legend
+  legend_vals <- NULL
+  legend_cex <- NULL
+
+  if (show_size_legend && !is.null(scale_values_raw) && any(is.finite(scale_values_raw))) {
+    raw_rng <- range(scale_values_raw, na.rm = TRUE)
+
+    if (diff(raw_rng) > 0) {
+      legend_vals <- pretty(raw_rng, n = legend_n)
+      legend_vals <- legend_vals[legend_vals >= raw_rng[1] & legend_vals <= raw_rng[2]]
+
+      ## make sure we keep at least 2 values
+      if (length(legend_vals) < 2) {
+        legend_vals <- seq(raw_rng[1], raw_rng[2], length.out = legend_n)
+      }
+
+      legend_cex <- map_values_to_cex(legend_vals)
+
+      if (is.null(legend_title)) {
+        legend_title <- scale_label
+      }
+    }
+  }
+
+  for (i in seq_along(years)) {
+    ind <- hh$Year == years[i]
+    subi <- hh[ind, , drop = FALSE]
+    point_cex <- point_cex_all[ind]
+
+    panel_xlim <- xlim
+    panel_ylim <- ylim
+
+    if (!fixed_axes) {
+      panel_xlim <- range(subi$lon, na.rm = TRUE)
+      panel_ylim <- range(subi$lat, na.rm = TRUE)
+    }
+
+    graphics::plot(NA,
+                   xlim = panel_xlim,
+                   ylim = panel_ylim,
+                   xlab = "",
+                   ylab = "",
+                   xaxt = "n",
+                   yaxt = "n",
+                   asp = 1)
+
+    if (plot_map) {
+      graphics::plot(sf::st_geometry(land_ll),
+                     add = TRUE,
+                     col = col_land,
+                     border = border_land)
+    }
+
+    graphics::points(subi$lon, subi$lat,
+                     cex = point_cex,
+                     col = col_points[i],
+                     pch = pch)
+
+    if (i %in% seq(1, prod(panel_layout), by = panel_layout[2])) {
+      graphics::axis(2, las = 1)
+    }
+    if (i %in% (prod(panel_layout) - panel_layout[2] + 1):prod(panel_layout)) {
+      graphics::axis(1)
+    }
+
+    ## Draw size legend once in the last panel
+    if (i == length(years) &&
+        show_size_legend &&
+        !is.null(legend_vals) &&
+        length(legend_vals) > 0) {
+
+      graphics::legend(
+        legend_pos,
+        legend = formatC(legend_vals, format = "fg", digits = 3),
+        pt.cex = legend_cex,
+        pch = pch,
+        col = "grey20",
+        pt.bg = NA,
+        title = legend_title,
+        bg = "white",
+        x.intersp = 1,
+        y.intersp = 1.2
+      )
+    }
+
+    graphics::box(lwd = 1.2)
+    graphics::title(main = years[i], cex.main = 0.95)
+
+  }
+
+  graphics::mtext("Longitude", side = 1, outer = TRUE, line = 1.5)
+  graphics::mtext("Latitude", side = 2, outer = TRUE, line = 1.5)
+
+  invisible(list(
+    years = years,
+    xlim = xlim,
+    ylim = ylim,
+    layout = panel_layout,
+    scale_label = scale_label,
+    legend_values = legend_vals
+  ))
 }
