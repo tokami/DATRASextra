@@ -18,16 +18,17 @@
 ##' `DATRAS::downloadExchange()` can be used by setting `use_php = TRUE`.
 ##'
 ##' @param surveys A character vector of DATRAS survey names to download, for
-##'   example `"NS-IBTS"` or `"BITS"`. If `NULL`, all available surveys are used.
-##' @param years An integer vector of years to download. If `NULL`, all available
-##'   years for each selected survey are used.
+##'   example `"NS-IBTS"` or `"BITS"`. If `NULL`, all available surveys are
+##'   used.
+##' @param years An integer vector of years to download. If `NULL`, all
+##'   available years for each selected survey are used.
 ##' @param download_missing_only Logical. If `TRUE` (default), only survey-year
 ##'   files that do not already exist in `dir` are downloaded.
-##' @param download_hl Logical. If `TRUE` (default), length-frequency data
-##'   are also downloaded where available. This option is only used when
-##'   `use_php = FALSE`.
-##' @param download_ca Logical. If `TRUE` (default), age-length keys and age data
-##'   are also downloaded where available. This option is only used when
+##' @param download_hl Logical. If `TRUE` (default), length-frequency data are
+##'   also downloaded where available. This option is only used when `use_php =
+##'   FALSE`.
+##' @param download_ca Logical. If `TRUE` (default), age-length keys and age
+##'   data are also downloaded where available. This option is only used when
 ##'   `use_php = FALSE`.
 ##' @param use_php Logical. If `FALSE` (default), data are downloaded via
 ##'   `DATRAS::getDatrasExchange()`. If `TRUE`, the legacy
@@ -38,6 +39,8 @@
 ##' @param force Logical. If `FALSE` (default), surveys known to be test surveys
 ##'   or surveys with incomplete data may be skipped. If `TRUE`, they are also
 ##'   downloaded.
+##' @param return_data Logical. If `TRUE` (default), the function returns the
+##'   downloaded data by running `read_datras()` on the specified path.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
 ##'
 ##' @details
@@ -55,17 +58,17 @@
 ##' @examples
 ##' \dontrun{
 ##' ## Download all available years for one survey into the current directory
-##' download_datras(surveys = "NS-IBTS")
+##' dat <- download_datras(surveys = "NS-IBTS")
 ##'
 ##' ## Download selected years for multiple surveys
-##' download_datras(
+##' dat <- download_datras(
 ##'   surveys = c("NS-IBTS", "BITS"),
 ##'   years = 2010:2012,
 ##'   dir = "data/datras"
 ##' )
 ##'
 ##' ## Re-download existing files
-##' download_datras(
+##' dat <- download_datras(
 ##'   surveys = "NS-IBTS",
 ##'   years = 2020,
 ##'   download_missing_only = FALSE
@@ -81,7 +84,9 @@ download_datras <- function(surveys = NULL,
                             use_php = FALSE,
                             dir = NULL,
                             force = FALSE,
-                            verbose = TRUE) {
+                            return_data = TRUE,
+                            verbose = TRUE,
+                            ...) {
 
   yearsin <- years
 
@@ -179,9 +184,14 @@ download_datras <- function(surveys = NULL,
     }
   }
 
-  if(verbose) writeLines(paste0("Survey information has been downloaded and saved in folder for each survey at: ", dir))
+  if(verbose) message("Survey information has been downloaded and saved in folder for each survey at: ", dir)
 
-  return(invisible(NULL))
+  if (isTRUE(return_data)) {
+    dat <- read_datras(paths = dir, ...)
+    return(dat)
+  } else {
+    return(invisible(dir))
+  }
 }
 
 

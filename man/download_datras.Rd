@@ -13,25 +13,27 @@ download_datras(
   use_php = FALSE,
   dir = NULL,
   force = FALSE,
-  verbose = TRUE
+  return_data = TRUE,
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
 \item{surveys}{A character vector of DATRAS survey names to download, for
-example \code{"NS-IBTS"} or \code{"BITS"}. If \code{NULL}, all available surveys are used.}
+example \code{"NS-IBTS"} or \code{"BITS"}. If \code{NULL}, all available surveys are
+used.}
 
-\item{years}{An integer vector of years to download. If \code{NULL}, all available
-years for each selected survey are used.}
+\item{years}{An integer vector of years to download. If \code{NULL}, all
+available years for each selected survey are used.}
 
 \item{download_missing_only}{Logical. If \code{TRUE} (default), only survey-year
 files that do not already exist in \code{dir} are downloaded.}
 
-\item{download_hl}{Logical. If \code{TRUE} (default), length-frequency data
-are also downloaded where available. This option is only used when
-\code{use_php = FALSE}.}
+\item{download_hl}{Logical. If \code{TRUE} (default), length-frequency data are
+also downloaded where available. This option is only used when \code{use_php = FALSE}.}
 
-\item{download_ca}{Logical. If \code{TRUE} (default), age-length keys and age data
-are also downloaded where available. This option is only used when
+\item{download_ca}{Logical. If \code{TRUE} (default), age-length keys and age
+data are also downloaded where available. This option is only used when
 \code{use_php = FALSE}.}
 
 \item{use_php}{Logical. If \code{FALSE} (default), data are downloaded via
@@ -45,6 +47,9 @@ directory. If \code{NULL}, the current working directory is used.}
 \item{force}{Logical. If \code{FALSE} (default), surveys known to be test surveys
 or surveys with incomplete data may be skipped. If \code{TRUE}, they are also
 downloaded.}
+
+\item{return_data}{Logical. If \code{TRUE} (default), the function returns the
+downloaded data by running \code{read_datras()} on the specified path.}
 
 \item{verbose}{Logical. If \code{TRUE} (default), progress messages are printed.}
 }
@@ -75,17 +80,17 @@ The following surveys are currently treated as problematic or test surveys:
 \examples{
 \dontrun{
 ## Download all available years for one survey into the current directory
-download_datras(surveys = "NS-IBTS")
+dat <- download_datras(surveys = "NS-IBTS")
 
 ## Download selected years for multiple surveys
-download_datras(
+dat <- download_datras(
   surveys = c("NS-IBTS", "BITS"),
   years = 2010:2012,
   dir = "data/datras"
 )
 
 ## Re-download existing files
-download_datras(
+dat <- download_datras(
   surveys = "NS-IBTS",
   years = 2020,
   download_missing_only = FALSE
