@@ -21,7 +21,10 @@
 ##'   point either to individual DATRAS `.zip` exchange files or to directories
 ##'   containing such files.
 ##' @param years Optional integer vector of years to read. When supplied and
-##'   `paths` contains directories, only zip files matching those years are read.
+##'   `paths` contains directories, only zip files matching those years are
+##'   read.
+##' @param recursive logical. Should the listing recurse into directories?
+##'   (Default: `TRUE`).
 ##' @param min_file_size Minimum file size in bytes. Files smaller than this
 ##'   threshold are excluded because they are likely incomplete or invalid and
 ##'   may cause errors when being read. Defaults to `1e4`.
@@ -71,6 +74,7 @@
 ##' @export
 read_datras <- function(paths,
                         years = NULL,
+                        recursive = TRUE,
                         min_file_size = 1e4,
                         prune = FALSE,
                         verbose = TRUE) {
@@ -80,14 +84,15 @@ read_datras <- function(paths,
 
   paths0 <- paths
 
-
   if (any(dir.exists(paths))) {
 
     if (!is.null(years)) {
 
       paths <- dir(paths0,
-                   full.names = TRUE)
+                   full.names = TRUE,
+                   recursive = recursive)
       paths <- paths[grep("\\.zip$", paths)]
+      if (length(paths) == 0) stop("No zip files found in the specified paths. Did you specify the correct path? Consider setting recursive = TRUE and run again.")
       paths <- paths[sort(unlist(lapply(years,
                                         function(x)
                                           grep(as.character(x), paths))))]
