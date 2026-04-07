@@ -16,7 +16,9 @@ download_datras(
   use_php = FALSE,
   dir = NULL,
   force = FALSE,
-  verbose = TRUE
+  return_data = TRUE,
+  verbose = TRUE,
+  ...
 )
 ```
 
@@ -69,6 +71,13 @@ download_datras(
   surveys with incomplete data may be skipped. If `TRUE`, they are also
   downloaded.
 
+- return_data:
+
+  Logical. If `TRUE` (default), the function returns the downloaded data
+  by running
+  [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
+  on the specified path.
+
 - verbose:
 
   Logical. If `TRUE` (default), progress messages are printed.
@@ -104,17 +113,17 @@ surveys: `"NS-IDPS"`, `"IS-IDPS"`, `"Test-DATRAS"`, and
 ``` r
 if (FALSE) { # \dontrun{
 ## Download all available years for one survey into the current directory
-download_datras(surveys = "NS-IBTS")
+dat <- download_datras(surveys = "NS-IBTS")
 
 ## Download selected years for multiple surveys
-download_datras(
+dat <- download_datras(
   surveys = c("NS-IBTS", "BITS"),
   years = 2010:2012,
   dir = "data/datras"
 )
 
 ## Re-download existing files
-download_datras(
+dat <- download_datras(
   surveys = "NS-IBTS",
   years = 2020,
   download_missing_only = FALSE

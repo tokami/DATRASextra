@@ -106,6 +106,9 @@
 - [`mini_fishglob`](https://tokami.github.io/DATRASextra/reference/mini_fishglob.md)
   : Mini DATRAS survey data for fishglob comparison (example dataset)
 
+- [`plot_haul_map()`](https://tokami.github.io/DATRASextra/reference/plot_haul_map.md)
+  : Plot haul maps through space and time
+
 - [`plot_hauls()`](https://tokami.github.io/DATRASextra/reference/plot_hauls.md)
   : Plot the spatial distribution of hauls
 

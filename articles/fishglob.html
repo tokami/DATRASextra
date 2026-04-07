@@ -58,6 +58,14 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/tokami/DATRASextra/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
 
@@ -212,12 +220,12 @@ structure</strong>.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">datras</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##     survey      source timestamp                          haul_id</span></span>
-<span><span class="co">## 2     BITS DATRAS ICES   2026-03  BITS:2015:1:DE:06SL:TVS:22004:7</span></span>
-<span><span class="co">## 4     BITS DATRAS ICES   2026-03  BITS:2015:1:DE:06SL:TVS:22007:8</span></span>
-<span><span class="co">## 44    BITS DATRAS ICES   2026-03 BITS:2015:1:DE:06SL:TVS:24212:15</span></span>
-<span><span class="co">## 110   BITS DATRAS ICES   2026-03      BITS:2015:1:DK:26HI:TVS:1:1</span></span>
-<span><span class="co">## 111   BITS DATRAS ICES   2026-03    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
-<span><span class="co">## 112   BITS DATRAS ICES   2026-03    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
+<span><span class="co">## 2     BITS DATRAS ICES   2026-04  BITS:2015:1:DE:06SL:TVS:22004:7</span></span>
+<span><span class="co">## 4     BITS DATRAS ICES   2026-04  BITS:2015:1:DE:06SL:TVS:22007:8</span></span>
+<span><span class="co">## 44    BITS DATRAS ICES   2026-04 BITS:2015:1:DE:06SL:TVS:24212:15</span></span>
+<span><span class="co">## 110   BITS DATRAS ICES   2026-04      BITS:2015:1:DK:26HI:TVS:1:1</span></span>
+<span><span class="co">## 111   BITS DATRAS ICES   2026-04    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
+<span><span class="co">## 112   BITS DATRAS ICES   2026-04    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
 <span><span class="co">##             country sub_area continent stat_rec station stratum year month day</span></span>
 <span><span class="co">## 2   multi-countries     &lt;NA&gt;    europe     37G0    &lt;NA&gt;    &lt;NA&gt; 2015     2  25</span></span>
 <span><span class="co">## 4   multi-countries     &lt;NA&gt;    europe     37G1    &lt;NA&gt;    &lt;NA&gt; 2015     2  26</span></span>
@@ -315,7 +323,7 @@ structure</strong>.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="st">"FishGlob numbers"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"DATRASextra numbers"</span>,</span>
-<span>    title <span class="op">=</span> <span class="st">"Comparison of num per haul by survey for cod"</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Comparison of num per haul by survey for American dab"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">survey</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="fishglob_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
