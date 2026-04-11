@@ -45,6 +45,124 @@ get_land <- function(download_map = FALSE, scale = 50) {
 }
 
 
+##' Add species information to CA and HL tables
+##'
+##' @description
+##' Adds one or more columns from `species_info` to the `CA` and/or `HL`
+##' elements of a DATRAS-like object by matching `Valid_Aphia` in the table
+##' to `WoRMS_AphiaID` in `species_info`.
+##'
+##' The function preserves the original row order of each table and performs
+##' a left join, meaning that rows with no matching species information are
+##' retained and receive `NA` in the added columns.
+##'
+##' For this type of lookup, the function uses [base::match()], which is
+##' typically faster and simpler than [base::merge()] when only selected
+##' columns need to be appended and the original row order should be kept.
+##'
+##' @param x A DATRAS-like object containing at least optional `CA` and/or `HL`
+##'   data frames.
+##' @param vars Character vector giving the names of columns in `species_info`
+##'   to add. If `NULL`, all columns except `WoRMS_AphiaID` are added.
+##' @param verbose Logical; if `TRUE`, progress messages are printed.
+##'
+##' @details
+##' The lookup is based on the correspondence between:
+##' \itemize{
+##'   \item `x[["CA"]][["Valid_Aphia"]]` or `x[["HL"]][["Valid_Aphia"]]`
+##'   \item `species_info[["WoRMS_AphiaID"]]`
+##' }
+##'
+##' If any requested columns already exist in `CA` or `HL`, they are
+##' overwritten.
+##'
+##' @return
+##' The input object `x`, with the requested columns added to the `CA` and/or
+##' `HL` elements where present.
+##'
+##' @examples
+##' ## Add all available species information
+##' ## x <- add_species_info(x)
+##'
+##' ## Add only selected columns
+##' ## x <- add_species_info(x, vars = c("ScientificName", "FishBase"))
+##'
+##' @export
+add_species_info <- function(x, vars = NULL, verbose = TRUE) {
+
+  .check_class_datras(x)
+
+  if (!exists("species_info", inherits = TRUE)) {
+    stop("'species_info' was not found. Did you load DATRASextra? (library(DATRASextra) or try to run data('species_info').")
+  }
+
+  if (!is.data.frame(species_info)) {
+    stop("'species_info' must be a data.frame.")
+  }
+
+  if (!"WoRMS_AphiaID" %in% names(species_info)) {
+    stop("'species_info' must contain a column named 'WoRMS_AphiaID'.")
+  }
+
+  if (is.null(vars)) {
+    vars <- setdiff(names(species_info), "WoRMS_AphiaID")
+    if (verbose) {
+      message(
+        "No variables selected. Adding all columns of species_info except ",
+        "'WoRMS_AphiaID'."
+      )
+    }
+  }
+
+  if (!is.character(vars)) {
+    stop("'vars' must be a character vector or NULL.")
+  }
+
+  missing_vars <- setdiff(vars, names(species_info))
+  if (length(missing_vars) > 0) {
+    stop(
+      "The following 'vars' are not found in 'species_info': ",
+      paste(missing_vars, collapse = ", ")
+    )
+  }
+
+  ## Internal helper to add species information to one table
+  add_to_table <- function(tab, tab_name) {
+
+    if (!is.data.frame(tab) || nrow(tab) == 0) {
+      return(tab)
+    }
+
+    if (!"Valid_Aphia" %in% names(tab)) {
+      warning("Skipping ", tab_name, ": column 'Valid_Aphia' not found.")
+      return(tab)
+    }
+
+    ind <- match(tab[["Valid_Aphia"]], species_info[["WoRMS_AphiaID"]])
+
+    ## Assign matched columns directly to preserve row order and avoid
+    ## rebuilding the full data frame unnecessarily
+    tab[vars] <- species_info[ind, vars, drop = FALSE]
+
+    if (verbose) {
+      message("Added ", paste(vars, collapse = ", "), " to ", tab_name, ".")
+    }
+
+    tab
+  }
+
+  if ("CA" %in% names(x)) {
+    x[["CA"]] <- add_to_table(x[["CA"]], "CA")
+  }
+
+  if ("HL" %in% names(x)) {
+    x[["HL"]] <- add_to_table(x[["HL"]], "HL")
+  }
+
+  x
+}
+
+
 
 
 
