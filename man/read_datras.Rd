@@ -7,6 +7,7 @@
 read_datras(
   paths,
   years = NULL,
+  recursive = TRUE,
   min_file_size = 10000,
   prune = FALSE,
   verbose = TRUE
@@ -18,7 +19,11 @@ point either to individual DATRAS \code{.zip} exchange files or to directories
 containing such files.}
 
 \item{years}{Optional integer vector of years to read. When supplied and
-\code{paths} contains directories, only zip files matching those years are read.}
+\code{paths} contains directories, only zip files matching those years are
+read.}
+
+\item{recursive}{logical. Should the listing recurse into directories?
+(Default: \code{TRUE}).}
 
 \item{min_file_size}{Minimum file size in bytes. Files smaller than this
 threshold are excluded because they are likely incomplete or invalid and

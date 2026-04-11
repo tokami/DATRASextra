@@ -191,6 +191,10 @@ check_weights <- function (x,
 ##'   mid length of the largest length bin.
 ##' @param empirical Logical. If `TRUE`, use empirical weight-at-length
 ##'   calculations instead of fitting a length-weight model to the `CA` table.
+##' @param empirical_as_backup Logical. If `TRUE`, empirical parameters of the
+##'   length-weight relationship (a, b) in the species_info table are used.
+##'   Default: `FALSE`.
+##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
 ##'
 ##' @details
 ##'
@@ -229,84 +233,81 @@ add_weight_at_length <- function (x,
                                   max_length = NULL,
                                   max_weight = NULL,
                                   plus_group = FALSE,
-                                  empirical = FALSE) {
+                                  empirical = FALSE,
+                                  empirical_as_backup = FALSE,
+                                  verbose = TRUE) {
 
   .check_class_datras(x)
 
   if (!.has_numbers_at_length(x)) stop("Adding weight at length information requires information about the numbers at length. Did you run 'add_numbers_at_length(x)'?")
 
+  aphia <- unique(x[["HL"]]$Valid_Aphia)
+  n_aphia <- length(aphia)
+
+  ## if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in species_info to use. Please run this function for each species separately.")
+  if(n_aphia == 0) stop("No Aphia ID found in d[['HL']].")
+
+  if (verbose) message("Multiple aphia IDs in data set (n = ", n_aphia, "). Caclulating weight at length for each and summing them all up.")
+
+  x[["HH"]][["Wgt"]] <- x[["HH"]][["N"]]
+  x[["HH"]][["Wgt"]][] <- 0
+
 
   if (isTRUE(empirical)) {
 
-    aphia <- unique(x[["HL"]]$Valid_Aphia)
-    if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in species_info to use. Please run this function for each species separately.")
-    if(length(aphia) == 0) stop("No Aphia ID found in d[['HL']].")
+    for (i in seq_len(n_aphia)) {
 
-    ## data("species_info")
-    ind <- which(species_info$WoRMS_AphiaID == aphia)
-    if(length(ind) > 1) stop("More than one matching Aphia ID found in species_info. Did you modify species_info? Please make sure to have unique Aphia IDs in species_info")
-    if(length(ind) == 0) stop("Aphia ID could not be matched in species_info. Please make sure your species is in species_info.")
+      if (verbose) message("Running aphia: ", aphia[i])
 
-    a <- species_info$a[ind]
-    b <- species_info$b[ind]
+      Wgt <- .get_wgt_one_empirical(x, aphia, n_aphia,
+                                    per_minute, verbose)
 
-    if(is.na(a) || !is.numeric(a)) stop("Matched a in species_info is NA or not numeric! Please check the value!")
-    if(is.na(b) || !is.numeric(b)) stop("Matched b in species_info is NA or not numeric! Please check the value!")
+      if(is.null(Wgt)) {
+        if (n_aphia == 1) {
+          stop("Couldn't convert length into weight. Please check the empirical information in the species_info table or consider using the CA data set if available (empirical = FALSE).")
+        } else {
+          next()
+        }
+      }
 
-    cm_breaks = attr(x, "cm.breaks")[-1] - 0.5
-    tmp = x[["CA"]][1:length(cm_breaks), ]
-    tmp$LngtCm = cm_breaks
-    tmp$Wgt = a * tmp$LngtCm ^ b
-    LW = tmp$Wgt
+      ind_hh <- match(rownames(Wgt), rownames(x[["HH"]]$Wgt))
 
-    Wgt <- sweep(x[["HH"]]$N, 2, LW, "*")
+      x[["HH"]]$Wgt[ind_hh,] <- x[["HH"]]$Wgt[ind_hh,] + Wgt
 
-    if (isTRUE(per_minute)) {
-      Wgt <- Wgt/x[["HH"]]$HaulDur
     }
-
-    Wgt <- round(Wgt, 3)
-
-    x[["HH"]]$Wgt <- Wgt[as.character(x[["HH"]]$haul.id),,drop=FALSE]
-
 
   } else {
 
-    x1 <- subset(x[["CA"]], IndWgt > 0)
-    if (!is.null(max_length) && !is.na(max_length) && is.numeric(max_length)) {
-      x1 <- x1[x1$LngtCm <= max_length,]
-    }
-    if (!is.null(max_weight) && !is.na(max_weight) && is.numeric(max_weight)) {
-      x1 <- x1[x1$IndWgt <= max_weight,]
-    }
+    for (i in seq_len(n_aphia)) {
 
-    m <- lm(log(IndWgt) ~ log(LngtCm), data = x1)
-    cm_breaks <- attr(x, "cm.breaks")
-    nl <- length(cm_breaks)
-    dls <- diff(cm_breaks)
-    mid_lengths <- cm_breaks[-1] + dls / 2
-    nml <- length(mid_lengths)
+      if (verbose) message("Running aphia: ", aphia[i])
 
-    if (is.infinite(cm_breaks[nl]) || isTRUE(plus_group)) {
-      mid_lengths[nml] <- cm_breaks[nl-1] + dls[nml-1] / 2
-    } else if (cm_breaks[nl] > 1.2 * max(x[["CA"]]$LngtCm, na.rm = TRUE)) {
-      warning("The upper limit of the largest length bin is more than 20% larger than the largest length measurement in CA. The weight calculation based on the mid length uses this large upper limit, which might result in unrealistically high weights. Is the largest length bin a plus group? Then consider, setting plus_group = TRUE.")
-    }
+      Wgt <- .get_wgt_one_ca(x, aphia, n_aphia,
+                             max_length, max_weight,
+                             plus_group,
+                             per_minute,
+                             verbose)
 
+      if (is.null(Wgt) && isTRUE(empirical_as_backup)) {
+        if (isTRUE(verbose)) message("Using empirical info in species_info table.")
+        Wgt <- .get_wgt_one_empirical(x, aphia, n_aphia,
+                                      per_minute, verbose)
+      }
 
-    tmp <- x[["CA"]][1:length(mid_lengths), ]
-    tmp$LngtCm <- mid_lengths
-    tmp$Wgt <- exp(predict(m, newdata = tmp))
-    LW <- tmp$Wgt
-    Wgt <- sweep(x[["HH"]]$N, 2, LW, "*")
+      if(is.null(Wgt)) {
+        if (n_aphia == 1) {
+          stop("Couldn't convert length into weight. Please check the CA data set or consider using empirical information in the species_info table (empirical = TRUE).")
+        } else {
+          next()
+        }
+      }
 
-    if (isTRUE(per_minute)) {
-      Wgt <- Wgt/x[["HH"]]$HaulDur
+      ind_hh <- match(rownames(Wgt), rownames(x[["HH"]]$Wgt))
+
+      x[["HH"]]$Wgt[ind_hh,] <- x[["HH"]]$Wgt[ind_hh,] + Wgt
+
     }
 
-    Wgt <- round(Wgt, 3)
-
-    x[["HH"]]$Wgt <- Wgt[as.character(x[["HH"]]$haul.id),,drop=FALSE]
   }
 
   return(x)
@@ -415,4 +416,134 @@ add_total_weight_by_haul <- function (x,
 
 .has_weight_at_length <- function(x) {
   !is.null(x[["HH"]][["Wgt"]]) && is.matrix(x[["HH"]][["Wgt"]])
+}
+
+
+.get_wgt_one_empirical <- function(x, aphia, n_aphia,
+                                   per_minute,
+                                   verbose = TRUE) {
+
+  xsub <- subset(x, Valid_Aphia == aphia)
+
+  ind <- match(aphia, species_info$WoRMS_AphiaID)
+
+  if(length(ind) > 1) {
+    txt <- "More than one matching Aphia ID found in species_info. Did you modify species_info? Please make sure to have unique Aphia IDs in species_info."
+    if (n_aphia == 1) {
+      stop(txt)
+    } else {
+      if (verbose) message(txt, " Skipping: ", aphia[i])
+      return(NULL)
+    }
+  }
+
+  if(length(ind) == 0) stop("Aphia ID could not be matched in species_info. Please make sure your species is in species_info.")
+
+  a <- species_info$a[ind]
+  b <- species_info$b[ind]
+
+  if(is.na(a) || !is.numeric(a)) {
+    txt <- "Matched a in species_info is NA or not numeric! Please check the value!"
+    if (n_aphia == 1) {
+      stop(txt)
+    } else {
+      if (verbose) message(txt, " Skipping: ", aphia[i])
+      return(NULL)
+    }
+  }
+  if(is.na(b) || !is.numeric(b)) {
+    txt <- "Matched b in species_info is NA or not numeric! Please check the value!"
+    if (n_aphia == 1) {
+      stop(txt)
+    } else {
+      if (verbose) message(txt, " Skipping: ", aphia[i])
+      return(NULL)
+    }
+  }
+
+  cm_breaks = attr(x, "cm.breaks")
+  nl <- length(cm_breaks)
+  dls <- diff(cm_breaks)
+  mid_lengths <- cm_breaks[-1] + dls / 2
+  tmp <- x[["CA"]][1:length(mid_lengths), ]
+  tmp$LngtCm <- mid_lengths
+  tmp$Wgt <- a * tmp$LngtCm ^ b
+  LW <- tmp$Wgt
+
+  if (n_aphia > 1) {
+    xsub <- add_numbers_at_length(xsub,
+                                  cm_breaks = cm_breaks,
+                                  by = cm_breaks[2] -
+                                    cm_breaks[1])
+  }
+
+  Wgt <- sweep(xsub[["HH"]]$N, 2, LW, "*")
+
+  if (isTRUE(per_minute)) {
+    Wgt <- Wgt/xsub[["HH"]]$HaulDur
+  }
+
+  round(Wgt, 3)
+}
+
+
+.get_wgt_one_ca <- function(x, aphia, n_aphia,
+                            max_length, max_weight,
+                            plus_group,
+                            per_minute,
+                            verbose = TRUE) {
+
+  xsub <- subset(x, Valid_Aphia == aphia)
+
+  if (is.null(xsub[["CA"]]) || nrow(xsub[["CA"]]) < 1) {
+    if(isTRUE(verbose)) message("CA not available.")
+    return(NULL)
+  }
+
+  x1 <- subset(xsub[["CA"]], IndWgt > 0)
+  if (!is.null(max_length) && !is.na(max_length) && is.numeric(max_length)) {
+    x1 <- x1[x1$LngtCm <= max_length,]
+  }
+  if (!is.null(max_weight) && !is.na(max_weight) && is.numeric(max_weight)) {
+    x1 <- x1[x1$IndWgt <= max_weight,]
+  }
+
+  if (nrow(x1) < 3) {
+    if(isTRUE(verbose)) message("Less than 3 observations in CA")
+    return(NULL)
+  }
+
+  m <- lm(log(IndWgt) ~ log(LngtCm), data = x1)
+  cm_breaks <- attr(x, "cm.breaks")
+  nl <- length(cm_breaks)
+  dls <- diff(cm_breaks)
+  mid_lengths <- cm_breaks[-1] + dls / 2
+  nml <- length(mid_lengths)
+
+  if (is.infinite(cm_breaks[nl]) || isTRUE(plus_group)) {
+    mid_lengths[nml] <- cm_breaks[nl-1] + dls[nml-1] / 2
+  } else if (cm_breaks[nl] > 1.2 * max(x[["CA"]]$LngtCm, na.rm = TRUE)) {
+    warning("The upper limit of the largest length bin is more than 20% larger than the largest length measurement in CA. The weight calculation based on the mid length uses this large upper limit, which might result in unrealistically high weights. Is the largest length bin a plus group? Then consider, setting plus_group = TRUE.")
+  }
+
+
+  tmp <- x[["CA"]][1:length(mid_lengths), ]
+  tmp$LngtCm <- mid_lengths
+  tmp$Wgt <- exp(predict(m, newdata = tmp))
+  LW <- tmp$Wgt
+
+  if (n_aphia > 1) {
+    xsub <- add_numbers_at_length(xsub,
+                                  cm_breaks = cm_breaks,
+                                  by = cm_breaks[2] -
+                                    cm_breaks[1])
+  }
+
+  Wgt <- sweep(xsub[["HH"]]$N, 2, LW, "*")
+
+  if (isTRUE(per_minute)) {
+    Wgt <- Wgt/xsub[["HH"]]$HaulDur
+  }
+
+  round(Wgt, 3)
 }

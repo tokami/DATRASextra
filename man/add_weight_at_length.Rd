@@ -10,7 +10,9 @@ add_weight_at_length(
   max_length = NULL,
   max_weight = NULL,
   plus_group = FALSE,
-  empirical = FALSE
+  empirical = FALSE,
+  empirical_as_backup = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -36,6 +38,12 @@ mid length of the largest length bin.}
 
 \item{empirical}{Logical. If \code{TRUE}, use empirical weight-at-length
 calculations instead of fitting a length-weight model to the \code{CA} table.}
+
+\item{empirical_as_backup}{Logical. If \code{TRUE}, empirical parameters of the
+length-weight relationship (a, b) in the species_info table are used.
+Default: \code{FALSE}.}
+
+\item{verbose}{Logical. If \code{TRUE} (default), progress messages are printed.}
 }
 \value{
 A \code{datras_raw} object with estimated weight information added.
