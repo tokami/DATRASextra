@@ -12,7 +12,9 @@ add_weight_at_length(
   max_length = NULL,
   max_weight = NULL,
   plus_group = FALSE,
-  empirical = FALSE
+  empirical = FALSE,
+  empirical_as_backup = FALSE,
+  verbose = TRUE
 )
 ```
 
@@ -53,6 +55,16 @@ add_weight_at_length(
   Logical. If `TRUE`, use empirical weight-at-length calculations
   instead of fitting a length-weight model to the `CA` table.
 
+- empirical_as_backup:
+
+  Logical. If `TRUE`, empirical parameters of the length-weight
+  relationship (a, b) in the species_info table are used. Default:
+  `FALSE`.
+
+- verbose:
+
+  Logical. If `TRUE` (default), progress messages are printed.
+
 ## Value
 
 A `datras_raw` object with estimated weight information added.
@@ -88,10 +100,16 @@ dab <- add_numbers_at_length(dab)
 
 ## Add fitted weight-at-length estimates
 x <- add_weight_at_length(dab)
+#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
+#> Running aphia: 127139
 
 ## Exclude large values when fitting the length-weight model
 x <- add_weight_at_length(dab, max_length = 100, max_weight = 10000)
+#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
+#> Running aphia: 127139
 
 ## Use empirical weight-at-length instead
 x <- add_weight_at_length(dab, empirical = TRUE)
+#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
+#> Running aphia: 127139
 ```

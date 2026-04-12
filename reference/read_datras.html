@@ -63,6 +63,7 @@ one or more directories, into a single <code>datras_raw</code> / <code>DATRASraw
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_datras</span><span class="op">(</span></span>
 <span>  <span class="va">paths</span>,</span>
 <span>  years <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  min_file_size <span class="op">=</span> <span class="fl">10000</span>,</span>
 <span>  prune <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -81,7 +82,13 @@ containing such files.</p></dd>
 
 <dt id="arg-years">years<a class="anchor" aria-label="anchor" href="#arg-years"></a></dt>
 <dd><p>Optional integer vector of years to read. When supplied and
-<code>paths</code> contains directories, only zip files matching those years are read.</p></dd>
+<code>paths</code> contains directories, only zip files matching those years are
+read.</p></dd>
+
+
+<dt id="arg-recursive">recursive<a class="anchor" aria-label="anchor" href="#arg-recursive"></a></dt>
+<dd><p>logical. Should the listing recurse into directories?
+(Default: <code>TRUE</code>).</p></dd>
 
 
 <dt id="arg-min-file-size">min_file_size<a class="anchor" aria-label="anchor" href="#arg-min-file-size"></a></dt>

@@ -88,6 +88,10 @@ dab <- add_numbers_at_length(dab)
 #> Warning: NAs found in var[[3]]$LngtCode - assumed to be 1 cm
 
 x <- add_total_weight_by_haul(dab)
+#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
+#> Running aphia: 127139
 
 x <- add_total_weight_by_haul(dab, empirical = TRUE)
+#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
+#> Running aphia: 127139
 ```

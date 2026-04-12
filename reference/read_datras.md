@@ -10,6 +10,7 @@ files in one or more directories, into a single `datras_raw` /
 read_datras(
   paths,
   years = NULL,
+  recursive = TRUE,
   min_file_size = 10000,
   prune = FALSE,
   verbose = TRUE
@@ -28,6 +29,11 @@ read_datras(
 
   Optional integer vector of years to read. When supplied and `paths`
   contains directories, only zip files matching those years are read.
+
+- recursive:
+
+  logical. Should the listing recurse into directories? (Default:
+  `TRUE`).
 
 - min_file_size:
 

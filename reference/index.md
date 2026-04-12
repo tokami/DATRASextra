@@ -5,6 +5,9 @@
 - [`add_numbers_at_length()`](https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.md)
   : Add numbers-at-length to a DATRAS object
 
+- [`add_species_info()`](https://tokami.github.io/DATRASextra/reference/add_species_info.md)
+  : Add species information to CA and HL tables
+
 - [`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md)
   :
 
