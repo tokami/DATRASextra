@@ -164,6 +164,127 @@ add_species_info <- function(x, vars = NULL, verbose = TRUE) {
 
 
 
+##' Get WoRMS AphiaIDs from species names
+##'
+##' @description
+##' Retrieves WoRMS AphiaIDs for one or more scientific species names.
+##' By default, the function matches names against the internal
+##' `species_info` table. Optionally, it can query the \pkg{worrms}
+##' package to look up AphiaIDs directly from WoRMS.
+##'
+##' @param x A character vector of scientific species names.
+##' @param use_worrms Logical; if `TRUE`, AphiaIDs are retrieved using
+##'   [worrms::wm_name2id()]. If `FALSE` (default), names are matched against
+##'   the internal `species_info` table.
+##'
+##' @return
+##' If `use_worrms = FALSE`, an integer vector of WoRMS AphiaIDs with the same
+##' length and order as `x`. Names not found in `species_info` return `NA`.
+##'
+##' If `use_worrms = TRUE`, the value returned by [worrms::wm_name2id()], which
+##' may differ in structure from the internal lookup result depending on the
+##' queried names and the response from WoRMS.
+##'
+##' @details
+##' Using the internal `species_info` table provides a fast offline lookup, but
+##' only for names included in that table. Using `use_worrms = TRUE` allows
+##' direct lookup from WoRMS, but requires the \pkg{worrms} package to be
+##' installed and may depend on internet access.
+##'
+##' @examples
+##' get_aphia("Gadus morhua")
+##'
+##' get_aphia(c("Gadus morhua", "Melanogrammus aeglefinus"))
+##'
+##' \dontrun{
+##' get_aphia("Gadus morhua", use_worrms = TRUE)
+##' }
+##'
+##' @seealso [worrms::wm_name2id()]
+##' @export
+get_aphia <- function(x, use_worrms = FALSE) {
+
+  if (isTRUE(use_worrms)) {
+
+    if (!requireNamespace("worrms", quietly = TRUE)) {
+      stop("Package 'worrms' is required to get the aphia ID from a species name. Please install it or use the species_info table to get the aphia ID (use_worrms = FALSE).")
+    }
+
+    return(worrms::wm_name2id(x))
+
+  } else {
+
+    ind <- match(x, species_info$ScientificName_WoRMS)
+
+    if (any(is.na(ind))) stop("At last one latin name not found in species_info table. Please check your input or try using use_worrms = TRUE.")
+
+    return(species_info$WoRMS_AphiaID[ind])
+
+  }
+}
+
+
+
+##' Get scientific names from WoRMS AphiaIDs
+##'
+##' @description
+##' Retrieves scientific names for one or more WoRMS AphiaIDs. By default,
+##' the function matches AphiaIDs against the internal `species_info` table.
+##' Optionally, it can query WoRMS directly via the \pkg{worrms} package.
+##'
+##' @param x A vector of WoRMS AphiaIDs.
+##' @param use_worrms Logical; if `TRUE`, scientific names are retrieved using
+##'   [worrms::wm_id2name()]. If `FALSE` (default), AphiaIDs are matched against
+##'   the internal `species_info` table.
+##'
+##' @return
+##' If `use_worrms = FALSE`, a character vector of scientific names with the
+##' same length and order as `x`. AphiaIDs not found in `species_info` return
+##' `NA`, unless `x` has length 0, in which case an error is thrown.
+##'
+##' If `use_worrms = TRUE`, the value returned by [worrms::wm_id2name()], which
+##' may differ in structure depending on the queried AphiaIDs and the response
+##' from WoRMS.
+##'
+##' @details
+##' Using the internal `species_info` table provides a fast offline lookup, but
+##' only for AphiaIDs included in that table. Using `use_worrms = TRUE` allows
+##' direct lookup from WoRMS, but requires the \pkg{worrms} package to be
+##' installed and may depend on internet access.
+##'
+##' @examples
+##' get_latin(126436)
+##'
+##' get_latin(c(126436, 126437))
+##'
+##' \dontrun{
+##' get_latin(126436, use_worrms = TRUE)
+##' }
+##'
+##' @seealso [worrms::wm_id2name()]
+##' @export
+get_latin <- function(x, use_worrms = FALSE) {
+
+  if (isTRUE(use_worrms)) {
+
+    if (!requireNamespace("worrms", quietly = TRUE)) {
+      stop("Package 'worrms' is required to get the latin name from an aphia ID. Please install it or use the species_info table to get the latin name (use_worrms = FALSE).")
+    }
+
+    return(worrms::wm_id2name(x))
+
+  } else {
+
+    ind <- match(x, species_info$WoRMS_AphiaID)
+
+    if (any(is.na(ind))) stop("At last one aphia ID not found in species_info table. Please check your input or try using use_worrms = TRUE.")
+
+    return(species_info$ScientificName_WoRMS[ind])
+
+  }
+}
+
+
 
 
 ## Internal functions ------------------------------------------------------------

@@ -25,7 +25,6 @@ Depends:
     R (>= 4.0),
     DATRAS
 Imports:
-    icesDatras,
     mgcv
 Suggests:
     mapdata,
@@ -39,10 +38,12 @@ Suggests:
     sf,
     rnaturalearth,
     rnaturalearthdata,
-    rnaturalearthhires
+    rnaturalearthhires,
+    worrms
 Remotes:
     tokami/DATRAS/DATRAS@DATRASextra,
     ropensci/rnaturalearthhires
+    ices-tools-prod/icesDatras
 LazyData: true
 License: GPL-3
 URL: https://tokami.github.io/DATRASextra/, https://github.com/tokami/DATRASextra

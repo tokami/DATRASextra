@@ -120,7 +120,6 @@ download_datras <- function(surveys = NULL,
     ## Download data to directory
     setwd(file.path(dir, survey))
 
-    ## TODO: check if php works on mac
     ## if (.Platform$OS.type == "windows") {
     if (!use_php) {
 
@@ -159,7 +158,7 @@ download_datras <- function(surveys = NULL,
 
     } else {
 
-      if ((!download_hl || !download_ca) && verbose) message("Note that this functionality is not yet implemented, php always downloads HL and CA. Consider setting use_php to FALSE.")
+      if ((!download_hl || !download_ca) && verbose) message("Note that this functionality is not yet implemented, php always downloads HL and CA. Consider setting use_php = FALSE.")
 
       if (download_missing_only) {
         years <- icesDatras::getSurveyYearList(survey)
