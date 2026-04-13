@@ -574,7 +574,6 @@ plot_haul_map <- function(x,
          paste(miss, collapse = ", "))
   }
 
-  ## Backward compatibility
   if (!is.null(size_var)) {
     value_var <- size_var
   }
@@ -603,7 +602,6 @@ plot_haul_map <- function(x,
   if (is.null(xlim)) xlim <- range(hh$lon, na.rm = TRUE)
   if (is.null(ylim)) ylim <- range(hh$lat, na.rm = TRUE)
 
-  ## Determine scaling variable
   scale_values_raw <- NULL
   scale_label <- "constant"
 
@@ -632,7 +630,6 @@ plot_haul_map <- function(x,
     scale_values_raw[!is.finite(scale_values_raw) | scale_values_raw < 0] <- NA_real_
   }
 
-  ## Apply transformation
   scale_values <- scale_values_raw
   if (!is.null(scale_values)) {
     scale_values <- switch(
@@ -643,7 +640,6 @@ plot_haul_map <- function(x,
     )
   }
 
-  ## Convert scaling variable to cex
   point_cex_all <- rep(cex, nrow(hh))
   scale_rng <- c(NA_real_, NA_real_)
 
@@ -673,7 +669,6 @@ plot_haul_map <- function(x,
     col_points <- rep(col_points, length.out = length(years))
   }
 
-  ## Helper: map raw values to cex using the same transformation/scaling
   map_values_to_cex <- function(z_raw) {
     if (is.null(scale_values_raw) || !any(is.finite(scale_values))) {
       return(rep(cex, length(z_raw)))
@@ -697,7 +692,6 @@ plot_haul_map <- function(x,
     out
   }
 
-  ## Precompute size legend
   legend_vals <- NULL
   legend_cex <- NULL
 
@@ -708,7 +702,6 @@ plot_haul_map <- function(x,
       legend_vals <- pretty(raw_rng, n = legend_n)
       legend_vals <- legend_vals[legend_vals >= raw_rng[1] & legend_vals <= raw_rng[2]]
 
-      ## make sure we keep at least 2 values
       if (length(legend_vals) < 2) {
         legend_vals <- seq(raw_rng[1], raw_rng[2], length.out = legend_n)
       }
@@ -725,6 +718,11 @@ plot_haul_map <- function(x,
     ind <- hh$Year == years[i]
     subi <- hh[ind, , drop = FALSE]
     point_cex <- point_cex_all[ind]
+
+    zero_ind <- rep(FALSE, nrow(subi))
+    if (!is.null(scale_values_raw)) {
+      zero_ind <- is.finite(scale_values_raw[ind]) & scale_values_raw[ind] == 0
+    }
 
     panel_xlim <- xlim
     panel_ylim <- ylim
@@ -750,10 +748,20 @@ plot_haul_map <- function(x,
                      border = border_land)
     }
 
-    graphics::points(subi$lon, subi$lat,
-                     cex = point_cex,
-                     col = col_points[i],
-                     pch = pch)
+    if (any(!zero_ind)) {
+      graphics::points(subi$lon[!zero_ind], subi$lat[!zero_ind],
+                       cex = point_cex[!zero_ind],
+                       col = col_points[i],
+                       pch = pch)
+    }
+
+    if (any(zero_ind)) {
+      graphics::points(subi$lon[zero_ind], subi$lat[zero_ind],
+                       cex = 1,
+                       col = "pink",
+                       pch = 4,
+                       lwd = 1.5)
+    }
 
     if (i %in% seq(1, prod(panel_layout), by = panel_layout[2])) {
       graphics::axis(2, las = 1)
@@ -762,7 +770,6 @@ plot_haul_map <- function(x,
       graphics::axis(1)
     }
 
-    ## Draw size legend once in the last panel
     if (i == length(years) &&
         show_size_legend &&
         !is.null(legend_vals) &&
@@ -784,7 +791,6 @@ plot_haul_map <- function(x,
 
     graphics::box(lwd = 1.2)
     graphics::title(main = years[i], cex.main = 0.95)
-
   }
 
   graphics::mtext("Longitude", side = 1, outer = TRUE, line = 1.5)
