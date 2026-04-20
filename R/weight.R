@@ -252,6 +252,7 @@ add_weight_at_length <- function (x,
   x[["HH"]][["Wgt"]] <- x[["HH"]][["N"]]
   x[["HH"]][["Wgt"]][] <- 0
 
+  warn_msgs <- character()
 
   if (isTRUE(empirical)) {
 
@@ -259,8 +260,14 @@ add_weight_at_length <- function (x,
 
       if (verbose) message("Running aphia: ", aphia[i])
 
-      Wgt <- .get_wgt_one_empirical(x, aphia, n_aphia,
-                                    per_minute, verbose)
+      Wgt <- withCallingHandlers(
+        .get_wgt_one_empirical(x, aphia[i], n_aphia,
+                               per_minute, verbose),
+        warning = function(w) {
+          warn_msgs <<- c(warn_msgs, conditionMessage(w))
+          invokeRestart("muffleWarning")
+        }
+      )
 
       if(is.null(Wgt)) {
         if (n_aphia == 1) {
@@ -282,16 +289,28 @@ add_weight_at_length <- function (x,
 
       if (verbose) message("Running aphia: ", aphia[i])
 
-      Wgt <- .get_wgt_one_ca(x, aphia, n_aphia,
-                             max_length, max_weight,
-                             plus_group,
-                             per_minute,
-                             verbose)
+      Wgt <- withCallingHandlers(
+        .get_wgt_one_ca(x, aphia[i], n_aphia,
+                        max_length, max_weight,
+                        plus_group,
+                        per_minute,
+                        verbose),
+        warning = function(w) {
+          warn_msgs <<- c(warn_msgs, conditionMessage(w))
+          invokeRestart("muffleWarning")
+        }
+      )
 
       if (is.null(Wgt) && isTRUE(empirical_as_backup)) {
         if (isTRUE(verbose)) message("Using empirical info in species_info table.")
-        Wgt <- .get_wgt_one_empirical(x, aphia, n_aphia,
-                                      per_minute, verbose)
+        Wgt <- withCallingHandlers(
+          .get_wgt_one_empirical(x, aphia[i], n_aphia,
+                                 per_minute, verbose),
+          warning = function(w) {
+            warn_msgs <<- c(warn_msgs, conditionMessage(w))
+            invokeRestart("muffleWarning")
+          }
+        )
       }
 
       if(is.null(Wgt)) {
@@ -308,6 +327,18 @@ add_weight_at_length <- function (x,
 
     }
 
+  }
+
+  unique_warns <- unique(warn_msgs)
+  if (length(unique_warns) > 0) {
+    warning(
+      paste(
+        "Unique warnings produced in loop:",
+        paste(unique_warns, collapse = "\n- "),
+        sep = "\n- "
+      ),
+      call. = FALSE
+    )
   }
 
   return(x)
