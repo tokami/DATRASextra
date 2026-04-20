@@ -11,7 +11,7 @@ Authors@R:
            role = "aut",
            comment = c(ORCID = "0000-0002-8305-1609")),
     person("Casper", "Berg",
-           email = "cwb@aqua.dtu.dk",
+           email = "cbe@aqua.dtu.dk",
            role = "aut",
            comment = c(ORCID = "0000-0002-3812-5269")))
 Description: DATRASextra is an R package for working with ICES DATRAS survey
@@ -42,7 +42,7 @@ Suggests:
     worrms
 Remotes:
     tokami/DATRAS/DATRAS@DATRASextra,
-    ropensci/rnaturalearthhires
+    ropensci/rnaturalearthhires,
     ices-tools-prod/icesDatras
 LazyData: true
 License: GPL-3
