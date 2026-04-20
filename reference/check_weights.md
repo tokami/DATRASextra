@@ -74,8 +74,6 @@ If available, empirical length-weight parameters are also retrieved from
 ``` r
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
-#> Warning: Mixed accuracies found in var[[3]]$LngtCode - worst chosen: 1 cm
-#> Warning: NAs found in var[[3]]$LngtCode - assumed to be 1 cm
 
 res <- check_weights(dab)
 #> [1] "Length statistics:"

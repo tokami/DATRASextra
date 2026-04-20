@@ -95,8 +95,6 @@ table.
 ``` r
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
-#> Warning: Mixed accuracies found in var[[3]]$LngtCode - worst chosen: 1 cm
-#> Warning: NAs found in var[[3]]$LngtCode - assumed to be 1 cm
 
 ## Add fitted weight-at-length estimates
 x <- add_weight_at_length(dab)
