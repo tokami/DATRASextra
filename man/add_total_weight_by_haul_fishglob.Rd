@@ -18,13 +18,13 @@ additional columns:
 }
 }
 \description{
-Calculate weight-at-length using empirical length-weight parameters and add
-the resulting weight fields to the \code{HL} table of a \code{datras_raw} /
-\code{DATRASraw} object.
+Calculate weight-at-length using lookup length-weight parameters from the
+species_info table and add the resulting weight fields to the \code{HL} table of
+a \code{datras_raw} / \code{DATRASraw} object.
 }
 \details{
 The function merges the \code{HL} table with internal species information to
-obtain empirical length-weight parameters (\code{aFG} and \code{bFG}), computes
+obtain lookup length-weight parameters (\code{aFG} and \code{bFG}), computes
 individual weight from length, and then calculates total weight for each
 length class record.
 
@@ -34,7 +34,7 @@ Weight-at-length is calculated for each \code{HL} record as:
 }
 
 where \code{LngtCm} is fish length in centimetres and \code{aFG} and \code{bFG} are
-empirical species-specific length-weight parameters obtained from the
+lookup species-specific length-weight parameters obtained from the
 internal \code{species_info} data.
 
 Total weight per record is then calculated as:

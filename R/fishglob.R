@@ -283,7 +283,7 @@ add_swept_area_fishglob <- function(x) {
       surv$SweepLngtCat <- ifelse(surv$SweepLngt <= 60,
                                   "short","long")
     }
-    
+
     surv <- .clean_haul_metrics(surv)
 
     # model predictions
@@ -424,12 +424,12 @@ add_swept_area_fishglob <- function(x) {
 
 ##' Add weight estimates to `HL` records following the FishGlob workflow
 ##'
-##' Calculate weight-at-length using empirical length-weight parameters and add
-##' the resulting weight fields to the `HL` table of a `datras_raw` /
-##' `DATRASraw` object.
+##' Calculate weight-at-length using lookup length-weight parameters from the
+##' species_info table and add the resulting weight fields to the `HL` table of
+##' a `datras_raw` / `DATRASraw` object.
 ##'
 ##' The function merges the `HL` table with internal species information to
-##' obtain empirical length-weight parameters (`aFG` and `bFG`), computes
+##' obtain lookup length-weight parameters (`aFG` and `bFG`), computes
 ##' individual weight from length, and then calculates total weight for each
 ##' length class record.
 ##'
@@ -442,7 +442,7 @@ add_swept_area_fishglob <- function(x) {
 ##' }
 ##'
 ##' where `LngtCm` is fish length in centimetres and `aFG` and `bFG` are
-##' empirical species-specific length-weight parameters obtained from the
+##' lookup species-specific length-weight parameters obtained from the
 ##' internal `species_info` data.
 ##'
 ##' Total weight per record is then calculated as:
@@ -789,16 +789,16 @@ as_fishglob <- function(x) {
 }
 
 .clean_haul_metrics <- function(surv) {
-  
+
   # -----------------------
   # Hard limits
   # -----------------------
   surv$DoorSpread[surv$DoorSpread <= 0 | surv$DoorSpread > 300] <- NA
   surv$WingSpread[surv$WingSpread <= 0 | surv$WingSpread > 100] <- NA
-  
+
   surv$Distance[surv$Distance <= 0 | surv$Distance > 11000] <- NA
   surv$GroundSpeed[surv$GroundSpeed <= 0 | surv$GroundSpeed > 30] <- NA
-  
+
   # -----------------------
   # Gentle outliers (ONLY spreads)
   # -----------------------
@@ -808,38 +808,38 @@ as_fishglob <- function(x) {
     cols = c("DoorSpread","WingSpread"),
     k = 3
   )
-  
+
   return(surv)
 }
 
 .flag_outliers_iqr <- function(x, group_vars, cols, k = 1.5) {
-  
+
   group <- interaction(x[group_vars], drop = TRUE)
-  
+
   for (col in cols) {
-    
+
     values <- x[[col]]
     split_idx <- split(seq_along(values), group)
-    
+
     for (idx in split_idx) {
-      
+
       v <- values[idx]
-      
+
       if (all(is.na(v)) || length(stats::na.omit(v)) < 4) next
-      
+
       q1 <- stats::quantile(v, 0.25, na.rm = TRUE)
       q3 <- stats::quantile(v, 0.75, na.rm = TRUE)
       iqr <- q3 - q1
-      
+
       low  <- q1 - k * iqr
       high <- q3 + k * iqr
-      
+
       outliers <- v < low | v > high
       values[idx][outliers] <- NA
     }
-    
+
     x[[col]] <- values
   }
-  
+
   x
 }

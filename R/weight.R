@@ -445,13 +445,18 @@ add_total_weight_by_haul <- function (x,
 
   }
 
+
   if (isTRUE(per_minute)) {
-    x[["HH"]][["HaulWgtPerMin"]] <- sweep(
-      x[["HH"]][["HaulWgt"]],
-      MARGIN = 1,
-      STATS = x[["HH"]]$HaulDur,
-      FUN = "/"
-    )
+    if (inherits(x[["HH"]][["HaulWgt"]], "matrix")) {
+      x[["HH"]][["HaulWgtPerMin"]] <- sweep(
+        x[["HH"]][["HaulWgt"]],
+        MARGIN = 1,
+        STATS = x[["HH"]]$HaulDur,
+        FUN = "/"
+      )
+    } else {
+      x[["HH"]][["HaulWgtPerMin"]] <- x[["HH"]][["HaulWgt"]] / x[["HH"]]$HaulDur
+    }
   }
 
   x
