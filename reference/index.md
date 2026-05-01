@@ -115,17 +115,8 @@
 - [`mini_fishglob`](https://tokami.github.io/DATRASextra/reference/mini_fishglob.md)
   : Mini DATRAS survey data for fishglob comparison (example dataset)
 
-- [`plot_haul_map()`](https://tokami.github.io/DATRASextra/reference/plot_haul_map.md)
-  : Plot haul maps through space and time
-
-- [`plot_hauls()`](https://tokami.github.io/DATRASextra/reference/plot_hauls.md)
-  : Plot the spatial distribution of hauls
-
-- [`plot_hauls_by_survey()`](https://tokami.github.io/DATRASextra/reference/plot_hauls_by_survey.md)
-  : Plot the spatial distribution of hauls for each survey
-
-- [`plot_surveys()`](https://tokami.github.io/DATRASextra/reference/plot_surveys.md)
-  : Plot survey spatial coverage
+- [`plot_datras_overview()`](https://tokami.github.io/DATRASextra/reference/plot_datras_overview.md)
+  : Unified DATRAS overview plotting
 
 - [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)
   :
@@ -146,7 +137,7 @@
 - [`survey_info`](https://tokami.github.io/DATRASextra/reference/survey_info.md)
   : Survey information table
 
-- [`survey_info_full`](https://tokami.github.io/DATRASextra/reference/survey_info_full.md)
+- [`survey_info_full_raw`](https://tokami.github.io/DATRASextra/reference/survey_info_full_raw.md)
   : Full survey information table
 
 - [`write_exchange()`](https://tokami.github.io/DATRASextra/reference/write_exchange.md)

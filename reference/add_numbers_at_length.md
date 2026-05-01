@@ -7,7 +7,7 @@ and one column per length class.
 ## Usage
 
 ``` r
-add_numbers_at_length(x, cm_breaks = NULL, by = get_accuracy_cm(x))
+add_numbers_at_length(x, cm_breaks = NULL, by = 1)
 ```
 
 ## Arguments
@@ -25,7 +25,8 @@ add_numbers_at_length(x, cm_breaks = NULL, by = get_accuracy_cm(x))
 - by:
 
   Numeric scalar giving the width of the default length classes in cm.
-  Only used when `cm_breaks = NULL`.
+  Default is 1cm (for herring, sprat and other smaller species 0.5 might
+  be more appropriate). Only used when `cm_breaks = NULL`.
 
 ## Value
 

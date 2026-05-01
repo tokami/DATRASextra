@@ -34,6 +34,7 @@ In other words:
 Load the package with:
 
 ``` r
+
 library(DATRASextra)
 ```
 
@@ -42,6 +43,7 @@ the example data set `dab` included in **DATRASextra** to demonstrate
 the workflow:
 
 ``` r
+
 str(dab, max.level = 1)
 #> Class 'DATRASraw'  hidden list of 3
 #>  $ CA:'data.frame':  8034 obs. of  39 variables:
@@ -68,6 +70,7 @@ time period before exploring LAA patterns or fitting an ALK. Here, we
 focus on the years 2020 to 2024:
 
 ``` r
+
 years <- 2020:2024
 ```
 
@@ -75,6 +78,7 @@ We then apply a standard cleaning step with
 [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md):
 
 ``` r
+
 dab <- clean_datras(dab, years = years)
 ```
 
@@ -86,6 +90,7 @@ analysis-ready data set.
 Equivalent manual filtering would look like this:
 
 ``` r
+
 dab <- subset(
   dab,
   Year %in% years &
@@ -105,6 +110,7 @@ reproducible.
 We start by extracting the `CA` table:
 
 ``` r
+
 ca <- dab[["CA"]]
 
 ## Structure of CA data
@@ -160,6 +166,7 @@ information for estimating age-length relationships.
 A first useful check is to inspect how much data are available by year:
 
 ``` r
+
 ## Number of individual rows per year
 xtabs(~ Year, ca)
 #> Year
@@ -185,6 +192,7 @@ than `CA`. To explore the spatial distribution of aged fish, we merge
 this information onto the `CA` table using `haul.id`:
 
 ``` r
+
 ca <- merge(
   ca,
   dab[["HH"]][c("haul.id", "lon", "lat")],
@@ -199,6 +207,7 @@ We can now inspect where age observations were collected. The following
 plot shows the haul locations of fish assigned to different ages:
 
 ``` r
+
 ages <- sort(unique(ca$Age))
 ages <- ages[!is.na(ages)]
 
@@ -239,6 +248,7 @@ The next step is to check how many observations actually have age
 information:
 
 ``` r
+
 table(ca$Age, useNA = "ifany")
 #> 
 #>    1    2    3    4    5    6    7    8 <NA> 
@@ -246,6 +256,7 @@ table(ca$Age, useNA = "ifany")
 ```
 
 ``` r
+
 sum(is.na(ca$Age))
 #> [1] 7550
 ```
@@ -266,6 +277,7 @@ Before fitting a model, it is often useful to visualise the observed
 age-length relationship:
 
 ``` r
+
 plot(ca$LngtCm, ca$Age,
      pch = 16, cex = 0.6,
      xlab = "Length [cm]",
@@ -282,6 +294,7 @@ outliers or unusual records may require further checking.
 A year-specific view can also be informative:
 
 ``` r
+
 par(mfrow = n2mfrow(length(unique(ca$Year))),
     mar = c(3, 3, 2, 1))
 
@@ -312,6 +325,7 @@ information from `HL`. We therefore add the numbers-at-length matrix to
 the object:
 
 ``` r
+
 dab <- add_numbers_at_length(dab)
 ```
 
@@ -319,12 +333,14 @@ For stock-assessment applications, ALKs are often estimated separately
 by quarter. As a simple example, we restrict the data to quarter 1:
 
 ``` r
+
 dab_Q1 <- subset(dab, Quarter == 1)
 ```
 
 We can now fit a basic stochastic ALK:
 
 ``` r
+
 ALK <- fitALK(
   dab_Q1,
   minAge = 3,
@@ -339,6 +355,7 @@ A more flexible model can include additional structure, for example
 random year effects or spatial smooths:
 
 ``` r
+
 ALK_spatial <- fitALK(
   dab_Q1,
   minAge = 2,
@@ -377,6 +394,7 @@ length into numbers at age. Prediction is currently done using the
 corresponding prediction method from the **DATRAS** package:
 
 ``` r
+
 dab_Q1$Nage <- predict(ALK)
 ```
 
@@ -384,6 +402,7 @@ This adds a new matrix to the `HH` component with the predicted numbers
 by age:
 
 ``` r
+
 head(dab_Q1$Nage)
 #>               3           4           5           6           7          8+
 #> [1,]  42.319884  64.1632166  46.8023136 22.81739329 7.440942296 2.456249953
@@ -409,6 +428,7 @@ A simple first check is to look at the total predicted numbers by age
 across all hauls:
 
 ``` r
+
 colSums(dab_Q1$Nage, na.rm = TRUE)
 #>          3          4          5          6          7         8+ 
 #> 150478.338 115774.099  55497.529  19510.320   3490.392   1050.322

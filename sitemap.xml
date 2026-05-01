@@ -7,6 +7,7 @@
 <url><loc>https://tokami.github.io/DATRASextra/articles/exploring-length-at-age.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/index.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/articles/plot-datras-overview.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/authors.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/header.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/index.html</loc></url>
@@ -40,16 +41,13 @@
 <url><loc>https://tokami.github.io/DATRASextra/reference/list_surveys.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/mini.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/mini_fishglob.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/reference/plot_haul_map.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/reference/plot_hauls.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/reference/plot_hauls_by_survey.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/reference/plot_surveys.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/plot_datras_overview.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/prune_datras.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/prune_fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/read_datras.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/species_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/survey_info.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/reference/survey_info_full.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/survey_info_full_raw.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/write_exchange.html</loc></url>
 </urlset>
 

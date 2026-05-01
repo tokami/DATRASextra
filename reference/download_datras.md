@@ -82,6 +82,11 @@ download_datras(
 
   Logical. If `TRUE` (default), progress messages are printed.
 
+- ...:
+
+  Additional arguments for the function
+  [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md).
+
 ## Value
 
 Invisibly returns `NULL`.

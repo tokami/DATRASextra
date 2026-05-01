@@ -72,6 +72,7 @@ If available, empirical length-weight parameters are also retrieved from
 ## Examples
 
 ``` r
+
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
 

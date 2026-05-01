@@ -26,6 +26,7 @@ development, biodiversity analyses, and stock-assessment workflows.
 Load the package with:
 
 ``` r
+
 library(DATRASextra)
 ```
 
@@ -38,6 +39,7 @@ Here, we use the example data set `dab` included in the package and
 apply a standard cleaning step first:
 
 ``` r
+
 dab <- clean_datras(dab)
 ```
 
@@ -48,6 +50,7 @@ Catch-at-length information is stored in the `HL` component of a
 the available length measurements:
 
 ``` r
+
 lpars <- check_lengths(dab)
 #> [1] "Length statistics:"
 #>          min  mean median maxObs maxEmp perc
@@ -67,6 +70,7 @@ reasonable, the next step is to aggregate the `HL` observations to
 numbers at length by haul and add the result to the `HH` component:
 
 ``` r
+
 dab <- add_numbers_at_length(dab)
 ```
 
@@ -74,6 +78,7 @@ This creates a matrix `HH$N`, with one row per haul and one column per
 length class:
 
 ``` r
+
 dab[["HH"]][["N"]][1:5, 1:5]
 #>                                  sizeGroup
 #> haul.id                           [3,4) [4,5) [5,6) [6,7) [7,8)
@@ -104,6 +109,7 @@ For example, the following code creates numbers at length using 0.5 cm
 bins:
 
 ``` r
+
 ## Define custom resolution of length bins
 by <- 0.5
 
@@ -117,6 +123,7 @@ dab <- add_numbers_at_length(dab, cm_breaks = cm_breaks, by = by)
 The resulting matrix now has a finer length resolution:
 
 ``` r
+
 dab[["HH"]][["N"]][1:5, 1:5]
 #>                                  sizeGroup
 #> haul.id                           [3,3.5) [3.5,4) [4,4.5) [4.5,5) [5,5.5)
@@ -140,6 +147,7 @@ relationship. Before doing so, it is useful to inspect the available
 weight data:
 
 ``` r
+
 wpars <- check_weights(dab)
 #> [1] "Length statistics:"
 #>   min  mean median max
@@ -161,6 +169,7 @@ information looks reasonable, the numbers-at-length matrix in `HH$N` can
 be converted to weight at length with:
 
 ``` r
+
 dab <- add_weight_at_length(dab)
 ```
 
@@ -183,6 +192,7 @@ taken from the `species_info` table by setting `empirical = TRUE`.
 Before doing so, it is good practice to inspect the stored parameters:
 
 ``` r
+
 species_info[
   which(species_info$ScientificName_WoRMS == "Limanda limanda"),
   c("a", "b")
@@ -195,6 +205,7 @@ If these values appear appropriate, the empirical relationship can be
 used with:
 
 ``` r
+
 dab <- add_weight_at_length(dab, empirical = TRUE)
 ```
 
@@ -213,6 +224,7 @@ For dab, one biologically meaningful split is the approximate length at
 50% maturity, available in `species_info`:
 
 ``` r
+
 (lm <- species_info[
   which(species_info$ScientificName_WoRMS == "Limanda limanda"),
   "Lm"
@@ -223,6 +235,7 @@ For dab, one biologically meaningful split is the approximate length at
 We can use this value to define two custom groups, below and above `Lm`:
 
 ``` r
+
 length_cuts <- c(0, lm, Inf)
 
 dab <- add_total_numbers_by_haul(dab, length_cuts = length_cuts)
@@ -232,6 +245,7 @@ dab <- add_total_weight_by_haul(dab, length_cuts = length_cuts)
 This returns haul-level summaries for juveniles and adults separately:
 
 ``` r
+
 head(dab[["HH"]][["HaulN"]])
 #>                                 (0-17.75] (17.75-Inf]
 #> NS-IBTS:2020:1:DK:26D4:GOV:6:1         26         160
@@ -243,6 +257,7 @@ head(dab[["HH"]][["HaulN"]])
 ```
 
 ``` r
+
 head(dab[["HH"]][["HaulWgt"]])
 #>                                 (0-17.75] (17.75-Inf]
 #> NS-IBTS:2020:1:DK:26D4:GOV:6:1     32.455     603.386
@@ -257,6 +272,7 @@ By default, the column names reflect the chosen cut points, but they can
 be renamed as needed:
 
 ``` r
+
 colnames(dab[["HH"]][["HaulN"]]) <- c("juveniles", "adults")
 colnames(dab[["HH"]][["HaulWgt"]]) <- c("juveniles", "adults")
 ```
@@ -264,6 +280,7 @@ colnames(dab[["HH"]][["HaulWgt"]]) <- c("juveniles", "adults")
 This makes the result easier to interpret:
 
 ``` r
+
 head(dab[["HH"]][["HaulN"]])
 #>                                 juveniles adults
 #> NS-IBTS:2020:1:DK:26D4:GOV:6:1         26    160
@@ -278,6 +295,7 @@ Of course, any number of custom length groups can be defined. For
 example:
 
 ``` r
+
 length_cuts <- c(0, 10, 20, 30, 100)
 
 dab <- add_total_numbers_by_haul(dab, length_cuts = length_cuts)
@@ -288,6 +306,7 @@ This gives haul-level numbers and weights for four user-defined length
 groups:
 
 ``` r
+
 head(dab[["HH"]][["HaulN"]])
 #>                                 (0-10] (10-20] (20-30] (30-100]
 #> NS-IBTS:2020:1:DK:26D4:GOV:6:1       0      68     118        0
@@ -312,6 +331,7 @@ shows where hauls with positive catches occurred for each length class,
 with point size scaled by haul-level abundance:
 
 ``` r
+
 ncols <- ncol(dab[["HH"]][["HaulWgt"]])
 
 par(mfrow = n2mfrow(ncols, asp = 2),

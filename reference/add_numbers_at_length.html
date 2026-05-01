@@ -63,7 +63,7 @@ one column per length class.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_numbers_at_length</span><span class="op">(</span><span class="va">x</span>, cm_breaks <span class="op">=</span> <span class="cn">NULL</span>, by <span class="op">=</span> <span class="fu"><a href="get_accuracy_cm.html">get_accuracy_cm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_numbers_at_length</span><span class="op">(</span><span class="va">x</span>, cm_breaks <span class="op">=</span> <span class="cn">NULL</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -82,7 +82,8 @@ range of <code>HL$LngtCm</code> using <code>by</code>.</p></dd>
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
 <dd><p>Numeric scalar giving the width of the default length classes in
-cm. Only used when <code>cm_breaks = NULL</code>.</p></dd>
+cm. Default is 1cm (for herring, sprat and other smaller species 0.5 might
+be more appropriate). Only used when <code>cm_breaks = NULL</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

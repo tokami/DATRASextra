@@ -70,6 +70,7 @@ first.
 ## Examples
 
 ``` r
+
 ## Add total numbers by haul
 x <- add_total_numbers_by_haul(dab)
 #> Warning: Mixed accuracies found in var[[3]]$LngtCode - worst chosen: 1 cm

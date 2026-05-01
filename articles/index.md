@@ -4,6 +4,8 @@
 
 - [A Step-by-step guide to working with the ICES DATRAS database using
   DATRASextra](https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.md):
+- [Plotting DATRAS
+  overviews](https://tokami.github.io/DATRASextra/articles/plot-datras-overview.md):
 - [Constructing a prediction grid within a survey
   domain](https://tokami.github.io/DATRASextra/articles/define-survey-domain.md):
 

@@ -39,6 +39,7 @@ area indices, and plot results. *DATRASextra* can be installed from
 GitHub:
 
 ``` r
+
 ## Install the package
 remotes::install_github("tokami/DATRASextra")
 ```
@@ -51,24 +52,22 @@ discovering available surveys, to downloading, cleaning and checking the
 data, and finally making quick plots of survey coverage and hauls. The
 table below summarises the main user-facing functions.
 
-| Function                                                                                                     | Description                                                                                      |
-|--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md)                           | List available surveys in the ICES DATRAS database.                                              |
-| [`plot_hauls()`](https://tokami.github.io/DATRASextra/reference/plot_hauls.md)                               | Plot haul locations.                                                                             |
-| [`plot_hauls_by_survey()`](https://tokami.github.io/DATRASextra/reference/plot_hauls_by_survey.md)           | Plot haul locations by survey.                                                                   |
-| [`plot_surveys()`](https://tokami.github.io/DATRASextra/reference/plot_surveys.md)                           | Plot survey coverage and footprint.                                                              |
-| [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)                     | Download the full or filtered subset of the DATRAS database.                                     |
-| [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)                             | Read DATRAS data into R.                                                                         |
-| [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md)                           | Clean and harmonise DATRAS data.                                                                 |
-| [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md)                       | Flag (and remove) hauls with invalid or extreme values.                                          |
-| [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)                           | Prune DATRAS data by removing or filtering problematic records.                                  |
-| [`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md)                       | Calculate swept area per haul using gear-specific median values by gear type.                    |
-| [`check_lengths()`](https://tokami.github.io/DATRASextra/reference/check_lengths.md)                         | Check length information and identify suspicious length distributions.                           |
-| [`add_numbers_at_length()`](https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.md)         | Calculate the numbers by specified length classes and add it to the HH data set.                 |
-| [`add_total_numbers_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_numbers_by_haul.md) | Calculate total numbers by haul and add it to the HH data set.                                   |
-| [`check_weights()`](https://tokami.github.io/DATRASextra/reference/check_weights.md)                         | Check weight information and length–weight consistency.                                          |
-| [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md)           | Convert the numbers at length classes to weight at length classes and add it to the HH data set. |
-| [`add_total_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul.md)   | Calculate total weight by haul and add it to the HH data set.                                    |
+| Function | Description |
+|----|----|
+| [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md) | List available surveys in the ICES DATRAS database. |
+| [`plot_datras_overview()`](https://tokami.github.io/DATRASextra/reference/plot_datras_overview.md) | Plot haul locations |
+| [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md) | Download the full or filtered subset of the DATRAS database. |
+| [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md) | Read DATRAS data into R. |
+| [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md) | Clean and harmonise DATRAS data. |
+| [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md) | Flag (and remove) hauls with invalid or extreme values. |
+| [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md) | Prune DATRAS data by removing or filtering problematic records. |
+| [`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md) | Calculate swept area per haul using gear-specific median values by gear type. |
+| [`check_lengths()`](https://tokami.github.io/DATRASextra/reference/check_lengths.md) | Check length information and identify suspicious length distributions. |
+| [`add_numbers_at_length()`](https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.md) | Calculate the numbers by specified length classes and add it to the HH data set. |
+| [`add_total_numbers_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_numbers_by_haul.md) | Calculate total numbers by haul and add it to the HH data set. |
+| [`check_weights()`](https://tokami.github.io/DATRASextra/reference/check_weights.md) | Check weight information and length–weight consistency. |
+| [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md) | Convert the numbers at length classes to weight at length classes and add it to the HH data set. |
+| [`add_total_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul.md) | Calculate total weight by haul and add it to the HH data set. |
 
 # Getting started
 
@@ -76,6 +75,7 @@ A good way to start working with *DATRASextra* is the tutorial vignette.
 You can access it with:
 
 ``` r
+
 vignette("tutorial")
 ```
 
@@ -92,6 +92,7 @@ You can access the help pages with `help(function_name)` or
 `?function_name`, for example:
 
 ``` r
+
 ?check_lengths
 ```
 
@@ -100,6 +101,7 @@ demonstrate common workflows and show how to use DATRAS data for your
 own research questions. To see all available vignettes, use:
 
 ``` r
+
 browseVignettes("DATRASextra")
 ```
 
@@ -117,6 +119,7 @@ would like to request a feature, please open an issue on GitHub:
 To see how to cite *DATRASextra* in your work, run:
 
 ``` r
+
 citation("DATRASextra")
 ```
 
@@ -262,17 +265,8 @@ Logo: Co-funded by the EU
 - [`mini_fishglob`](https://tokami.github.io/DATRASextra/reference/mini_fishglob.md)
   : Mini DATRAS survey data for fishglob comparison (example dataset)
 
-- [`plot_haul_map()`](https://tokami.github.io/DATRASextra/reference/plot_haul_map.md)
-  : Plot haul maps through space and time
-
-- [`plot_hauls()`](https://tokami.github.io/DATRASextra/reference/plot_hauls.md)
-  : Plot the spatial distribution of hauls
-
-- [`plot_hauls_by_survey()`](https://tokami.github.io/DATRASextra/reference/plot_hauls_by_survey.md)
-  : Plot the spatial distribution of hauls for each survey
-
-- [`plot_surveys()`](https://tokami.github.io/DATRASextra/reference/plot_surveys.md)
-  : Plot survey spatial coverage
+- [`plot_datras_overview()`](https://tokami.github.io/DATRASextra/reference/plot_datras_overview.md)
+  : Unified DATRAS overview plotting
 
 - [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)
   :
@@ -293,7 +287,7 @@ Logo: Co-funded by the EU
 - [`survey_info`](https://tokami.github.io/DATRASextra/reference/survey_info.md)
   : Survey information table
 
-- [`survey_info_full`](https://tokami.github.io/DATRASextra/reference/survey_info_full.md)
+- [`survey_info_full_raw`](https://tokami.github.io/DATRASextra/reference/survey_info_full_raw.md)
   : Full survey information table
 
 - [`write_exchange()`](https://tokami.github.io/DATRASextra/reference/write_exchange.md)
@@ -307,6 +301,8 @@ Logo: Co-funded by the EU
 
 - [A Step-by-step guide to working with the ICES DATRAS database using
   DATRASextra](https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.md):
+- [Plotting DATRAS
+  overviews](https://tokami.github.io/DATRASextra/articles/plot-datras-overview.md):
 - [Constructing a prediction grid within a survey
   domain](https://tokami.github.io/DATRASextra/articles/define-survey-domain.md):
 
