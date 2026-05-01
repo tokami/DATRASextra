@@ -9,8 +9,8 @@ add_weight_at_length(
   max_length = NULL,
   max_weight = NULL,
   plus_group = FALSE,
-  empirical = FALSE,
-  empirical_as_backup = FALSE,
+  lw_source = c("lookup", "ca"),
+  lookup_as_backup = FALSE,
   verbose = TRUE
 )
 }
@@ -32,10 +32,10 @@ unrealistically high weight for that length bin. Instead the lower limit
 plus half of the size of the second last length bin is used to define the
 mid length of the largest length bin.}
 
-\item{empirical}{Logical. If \code{TRUE}, use empirical weight-at-length
-calculations instead of fitting a length-weight model to the \code{CA} table.}
+\item{lw_source}{Character string specifying the source of length-weight
+parameters. One of \code{"ca"} or \code{"lookup"}.}
 
-\item{empirical_as_backup}{Logical. If \code{TRUE}, empirical parameters of the
+\item{lookup_as_backup}{Logical. If \code{TRUE}, lookup parameters of the
 length-weight relationship (a, b) in the species_info table are used.
 Default: \code{FALSE}.}
 
@@ -49,18 +49,18 @@ Estimate catch weight from length data and add the resulting weight fields to
 a \code{datras_raw} / \code{DATRASraw} object.
 }
 \details{
-The function derives weight-at-length either from an empirical
-length-weight relationship fitted to the \code{CA} table or, if
-\code{empirical = TRUE}, uses length-weight parameters from the species_info table.
+The function derives weight-at-length either from an lookup length-weight
+relationship fitted to the \code{CA} table or, if \code{lw_source = "lookup"}, uses
+length-weight parameters from the species_info table.
 
 \itemize{
-\item If \code{empirical = FALSE}, a linear model of the form
+\item If \code{lw_source = "lookup"}, a linear model of the form
 \eqn{\log(IndWgt) ~ \log(LngtCm)} is fitted to positive individual weights
 in the \code{CA} table. Predicted weights are then assigned to length classes
 defined by \code{attr(x, "cm.breaks")}, multiplied by numbers-at-length, and
 optionally divided by haul duration.
 
-\item If \code{empirical = TRUE}, weight is added using length-weight
+\item If \code{lw_source = "lookup"}, weight is added using length-weight
 parameters from the species_info table. }
 }
 \examples{
@@ -74,8 +74,8 @@ x <- add_weight_at_length(dab)
 ## Exclude large values when fitting the length-weight model
 x <- add_weight_at_length(dab, max_length = 100, max_weight = 10000)
 
-## Use empirical weight-at-length instead
-x <- add_weight_at_length(dab, empirical = TRUE)
+## Use lookup weight-at-length instead from the species_info table
+x <- add_weight_at_length(dab, lw_source = "lookup")
 
 }
 \seealso{

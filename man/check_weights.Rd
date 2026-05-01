@@ -28,7 +28,7 @@ A list with four elements:
 \item \code{wPars}: a data frame with summary statistics for observed weights,
 \item \code{parEst}: a data frame with estimated length-weight parameters \code{a}
 and \code{b},
-\item \code{parEmp}: a data frame with empirical length-weight parameters \code{a}
+\item \code{parEmp}: a data frame with lookup length-weight parameters \code{a}
 and \code{b}, if available.
 }
 }
@@ -59,7 +59,7 @@ and
   b
 }
 
-If available, empirical length-weight parameters are also retrieved from
+If available, lookup length-weight parameters are also retrieved from
 \code{species_info} for comparison.
 }
 \examples{

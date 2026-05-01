@@ -40,7 +40,7 @@
 ##'   b
 ##' }
 ##'
-##' If available, empirical length-weight parameters are also retrieved from
+##' If available, lookup length-weight parameters are also retrieved from
 ##' `species_info` for comparison.
 ##'
 ##' @return A list with four elements:
@@ -49,7 +49,7 @@
 ##'   \item `wPars`: a data frame with summary statistics for observed weights,
 ##'   \item `parEst`: a data frame with estimated length-weight parameters `a`
 ##'   and `b`,
-##'   \item `parEmp`: a data frame with empirical length-weight parameters `a`
+##'   \item `parEmp`: a data frame with lookup length-weight parameters `a`
 ##'   and `b`, if available.
 ##' }
 ##'
@@ -139,7 +139,7 @@ check_weights <- function (x,
   print("Estimated LW parameters:")
   print(paste0("a = ", round(a,3), " b = ", round(b,3)))
 
-  ## Empirical parameters
+  ## Lookup parameters
   aEmp <- bEmp <- NA
   aphia <- unique(x[["HL"]]$Valid_Aphia)
   if (!is.na(aphia) && length(aphia) == 1) {
@@ -149,7 +149,7 @@ check_weights <- function (x,
         aEmp <- species_info$a[ind]
         bEmp <- species_info$b[ind]
 
-        print("Empirical LW parameters:")
+        print("Lookup LW parameters in the species_info table:")
         print(paste0("a = ", round(aEmp,3), " b = ", round(bEmp,3)))
       }
     }
@@ -170,9 +170,9 @@ check_weights <- function (x,
 ##' Estimate catch weight from length data and add the resulting weight fields to
 ##' a `datras_raw` / `DATRASraw` object.
 ##'
-##' The function derives weight-at-length either from an empirical
-##' length-weight relationship fitted to the `CA` table or, if
-##' `empirical = TRUE`, uses length-weight parameters from the species_info table.
+##' The function derives weight-at-length either from an lookup length-weight
+##' relationship fitted to the `CA` table or, if `lw_source = "lookup"`, uses
+##' length-weight parameters from the species_info table.
 ##'
 ##' @param x A `datras_raw` object.
 ##' @param max_length Optional numeric value giving the maximum length in
@@ -187,9 +187,9 @@ check_weights <- function (x,
 ##'   unrealistically high weight for that length bin. Instead the lower limit
 ##'   plus half of the size of the second last length bin is used to define the
 ##'   mid length of the largest length bin.
-##' @param empirical Logical. If `TRUE`, use empirical weight-at-length
-##'   calculations instead of fitting a length-weight model to the `CA` table.
-##' @param empirical_as_backup Logical. If `TRUE`, empirical parameters of the
+##' @param lw_source Character string specifying the source of length-weight
+##'   parameters. One of `"ca"` or `"lookup"`.
+##' @param lookup_as_backup Logical. If `TRUE`, lookup parameters of the
 ##'   length-weight relationship (a, b) in the species_info table are used.
 ##'   Default: `FALSE`.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
@@ -197,13 +197,13 @@ check_weights <- function (x,
 ##' @details
 ##'
 ##' \itemize{
-##'   \item If `empirical = FALSE`, a linear model of the form
+##'   \item If `lw_source = "lookup"`, a linear model of the form
 ##'   \eqn{\log(IndWgt) ~ \log(LngtCm)} is fitted to positive individual weights
 ##'   in the `CA` table. Predicted weights are then assigned to length classes
 ##'   defined by `attr(x, "cm.breaks")`, multiplied by numbers-at-length, and
 ##'   optionally divided by haul duration.
 ##'
-##'   \item If `empirical = TRUE`, weight is added using length-weight
+##'   \item If `lw_source = "lookup"`, weight is added using length-weight
 ##' parameters from the species_info table. }
 ##'
 ##'
@@ -222,17 +222,19 @@ check_weights <- function (x,
 ##' ## Exclude large values when fitting the length-weight model
 ##' x <- add_weight_at_length(dab, max_length = 100, max_weight = 10000)
 ##'
-##' ## Use empirical weight-at-length instead
-##' x <- add_weight_at_length(dab, empirical = TRUE)
+##' ## Use lookup weight-at-length instead from the species_info table
+##' x <- add_weight_at_length(dab, lw_source = "lookup")
 ##'
 ##' @export
 add_weight_at_length <- function (x,
                                   max_length = NULL,
                                   max_weight = NULL,
                                   plus_group = FALSE,
-                                  empirical = FALSE,
-                                  empirical_as_backup = FALSE,
+                                  lw_source = c("lookup", "ca"),
+                                  lookup_as_backup = FALSE,
                                   verbose = TRUE) {
+
+  lw_source <- match.arg(lw_source)
 
   .check_class_datras(x)
 
@@ -244,21 +246,21 @@ add_weight_at_length <- function (x,
   ## if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in species_info to use. Please run this function for each species separately.")
   if(n_aphia == 0) stop("No Aphia ID found in d[['HL']].")
 
-  if (verbose) message("Multiple aphia IDs in data set (n = ", n_aphia, "). Caclulating weight at length for each and summing them all up.")
+  if (verbose && n_aphia > 1) message("Multiple aphia IDs in data set (n = ", n_aphia, "). Caclulating weight at length for each and summing them all up.")
 
   x[["HH"]][["Wgt"]] <- x[["HH"]][["N"]]
   x[["HH"]][["Wgt"]][] <- 0
 
   warn_msgs <- character()
 
-  if (isTRUE(empirical)) {
+  if (lw_source == "lookup") {
 
     for (i in seq_len(n_aphia)) {
 
-      if (verbose) message("Running aphia: ", aphia[i])
+      if (verbose && n_aphia > 1) message("Running aphia: ", aphia[i])
 
       Wgt <- withCallingHandlers(
-        .get_wgt_one_empirical(x, aphia[i], n_aphia, verbose),
+        .get_wgt_one_lookup(x, aphia[i], n_aphia, verbose),
         warning = function(w) {
           warn_msgs <<- c(warn_msgs, conditionMessage(w))
           invokeRestart("muffleWarning")
@@ -267,7 +269,7 @@ add_weight_at_length <- function (x,
 
       if(is.null(Wgt)) {
         if (n_aphia == 1) {
-          stop("Couldn't convert length into weight. Please check the empirical information in the species_info table or consider using the CA data set if available (empirical = FALSE).")
+          stop("Couldn't convert length into weight. Please check the lookup information in the species_info table or consider using the CA data set if available (lw_source = 'lookup').")
         } else {
           next()
         }
@@ -279,7 +281,7 @@ add_weight_at_length <- function (x,
 
     }
 
-  } else {
+  } else if (lw_source == "ca") {
 
     for (i in seq_len(n_aphia)) {
 
@@ -296,10 +298,10 @@ add_weight_at_length <- function (x,
         }
       )
 
-      if (is.null(Wgt) && isTRUE(empirical_as_backup)) {
-        if (isTRUE(verbose)) message("Using empirical info in species_info table.")
+      if (is.null(Wgt) && isTRUE(lookup_as_backup)) {
+        if (isTRUE(verbose)) message("Using lookup info in species_info table.")
         Wgt <- withCallingHandlers(
-          .get_wgt_one_empirical(x, aphia[i], n_aphia, verbose),
+          .get_wgt_one_lookup(x, aphia[i], n_aphia, verbose),
           warning = function(w) {
             warn_msgs <<- c(warn_msgs, conditionMessage(w))
             invokeRestart("muffleWarning")
@@ -309,7 +311,7 @@ add_weight_at_length <- function (x,
 
       if(is.null(Wgt)) {
         if (n_aphia == 1) {
-          stop("Couldn't convert length into weight. Please check the CA data set or consider using empirical information in the species_info table (empirical = TRUE).")
+          stop("Couldn't convert length into weight. Please check the CA data set or consider using lookup information in the species_info table (lw_source = 'lookup').")
         } else {
           next()
         }
@@ -321,7 +323,7 @@ add_weight_at_length <- function (x,
 
     }
 
-  }
+  } else stop("Don't know the lw_source. Only 'ca' or 'lookup' known.")
 
   unique_warns <- unique(warn_msgs)
   if (length(unique_warns) > 0) {
@@ -356,13 +358,14 @@ add_weight_at_length <- function (x,
 ##' @param max_length Optional numeric value giving the maximum length in
 ##'   centimetres to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
-##' @param max_weight Optional numeric value giving the maximum individual weight
-##'   in grams to retain when fitting the length-weight relationship.
+##' @param max_weight Optional numeric value giving the maximum individual
+##'   weight in grams to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
-##' @param empirical Logical. If `TRUE`, use length-weight parameters from
-##'   `species_info` instead of fitting a length-weight model to the `CA` table.
+##' @param lw_source Character string specifying the source of length-weight
+##'   parameters. One of `"ca"` or `"lookup"`.
 ##' @param length_cuts Optional numeric vector of break points for aggregating
-##'   the original length classes into coarser bins. Must be strictly increasing.
+##'   the original length classes into coarser bins. Must be strictly
+##'   increasing.
 ##'
 ##' @details
 ##' If weight-at-length information is not already present, the function first
@@ -401,23 +404,26 @@ add_weight_at_length <- function (x,
 ##' ## Add total haul biomass and biomass per minute
 ##' x <- add_total_weight_by_haul(dab, per_minute = TRUE)
 ##'
-##' ## Use length-weight parameters from species_info
-##' x <- add_total_weight_by_haul(dab, empirical = TRUE)
+##' ## Use length-weight parameters from the species_info table
+##' x <- add_total_weight_by_haul(dab, lw_source = "lookup")
 ##'
 ##' @export
 add_total_weight_by_haul <- function (x,
                                       per_minute = FALSE,
                                       max_length = NULL,
                                       max_weight = NULL,
-                                      empirical = FALSE,
+                                      lw_source = c("lookup", "ca"),
                                       length_cuts = NULL) {
+
+  lw_source <- match.arg(lw_source)
+
   .check_class_datras(x)
 
   if (!.has_weight_at_length(x)) {
     x <- add_weight_at_length(x,
                               max_length = max_length,
                               max_weight = max_weight,
-                              empirical = empirical)
+                              lw_source = lw_source)
   }
 
   if (!is.null(length_cuts)) {
@@ -460,7 +466,7 @@ add_total_weight_by_haul <- function (x,
 }
 
 
-.get_wgt_one_empirical <- function(x, aphia, n_aphia,
+.get_wgt_one_lookup <- function(x, aphia, n_aphia,
                                    verbose = TRUE) {
 
   xsub <- subset(x, Valid_Aphia == aphia)

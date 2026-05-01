@@ -9,7 +9,7 @@ add_total_weight_by_haul(
   per_minute = FALSE,
   max_length = NULL,
   max_weight = NULL,
-  empirical = FALSE,
+  lw_source = c("lookup", "ca"),
   length_cuts = NULL
 )
 }
@@ -24,15 +24,16 @@ is added.}
 centimetres to retain when fitting the length-weight relationship.
 Observations above this value are excluded.}
 
-\item{max_weight}{Optional numeric value giving the maximum individual weight
-in grams to retain when fitting the length-weight relationship.
+\item{max_weight}{Optional numeric value giving the maximum individual
+weight in grams to retain when fitting the length-weight relationship.
 Observations above this value are excluded.}
 
-\item{empirical}{Logical. If \code{TRUE}, use length-weight parameters from
-\code{species_info} instead of fitting a length-weight model to the \code{CA} table.}
+\item{lw_source}{Character string specifying the source of length-weight
+parameters. One of \code{"ca"} or \code{"lookup"}.}
 
 \item{length_cuts}{Optional numeric vector of break points for aggregating
-the original length classes into coarser bins. Must be strictly increasing.}
+the original length classes into coarser bins. Must be strictly
+increasing.}
 }
 \value{
 A \code{datras_raw} object with \code{HaulWgt} added to \code{HH}. If
@@ -78,8 +79,8 @@ x <- add_total_weight_by_haul(dab)
 ## Add total haul biomass and biomass per minute
 x <- add_total_weight_by_haul(dab, per_minute = TRUE)
 
-## Use length-weight parameters from species_info
-x <- add_total_weight_by_haul(dab, empirical = TRUE)
+## Use length-weight parameters from the species_info table
+x <- add_total_weight_by_haul(dab, lw_source = "lookup")
 
 }
 \seealso{
