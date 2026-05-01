@@ -106,6 +106,12 @@
 - [`get_latin()`](https://tokami.github.io/DATRASextra/reference/get_latin.md)
   : Get scientific names from WoRMS AphiaIDs
 
+- [`list_prune_datras_available()`](https://tokami.github.io/DATRASextra/reference/list_prune_datras_available.md)
+  : Available columns in a datras_raw object
+
+- [`list_prune_datras_defaults()`](https://tokami.github.io/DATRASextra/reference/list_prune_datras_defaults.md)
+  : Default columns used by prune_datras
+
 - [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md)
   : List all surveys in the DATRAS data base
 
@@ -121,7 +127,7 @@
 - [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)
   :
 
-  Prune a `datras_raw` object to core columns
+  Prune a `datras_raw` object to selected columns
 
 - [`prune_fishglob()`](https://tokami.github.io/DATRASextra/reference/prune_fishglob.md)
   :
