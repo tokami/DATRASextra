@@ -43,7 +43,7 @@ A list with four elements:
 - `parEst`: a data frame with estimated length-weight parameters `a` and
   `b`,
 
-- `parEmp`: a data frame with empirical length-weight parameters `a` and
+- `parEmp`: a data frame with lookup length-weight parameters `a` and
   `b`, if available.
 
 ## Details
@@ -62,7 +62,7 @@ A linear model of the form \$\$ \log(IndWgt) = \alpha + b \log(LngtCm)
 length-weight parameters are returned as: \$\$ a = \exp(\alpha) \$\$ and
 \$\$ b \$\$
 
-If available, empirical length-weight parameters are also retrieved from
+If available, lookup length-weight parameters are also retrieved from
 `species_info` for comparison.
 
 ## See also
@@ -86,7 +86,7 @@ res <- check_weights(dab)
 
 #> [1] "Estimated LW parameters:"
 #> [1] "a = 0.014 b = 2.903"
-#> [1] "Empirical LW parameters:"
+#> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.007 b = 3.119"
 
 ## Restrict to plausible values
@@ -99,6 +99,6 @@ res <- check_weights(dab, max_length = 100, max_weight = 10000)
 #> 1   1 85.93     66 559
 #> [1] "Estimated LW parameters:"
 #> [1] "a = 0.014 b = 2.903"
-#> [1] "Empirical LW parameters:"
+#> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.007 b = 3.119"
 ```

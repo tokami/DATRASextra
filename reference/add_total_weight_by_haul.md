@@ -11,7 +11,7 @@ add_total_weight_by_haul(
   per_minute = FALSE,
   max_length = NULL,
   max_weight = NULL,
-  empirical = FALSE,
+  lw_source = c("lookup", "ca"),
   length_cuts = NULL
 )
 ```
@@ -40,10 +40,10 @@ add_total_weight_by_haul(
   to retain when fitting the length-weight relationship. Observations
   above this value are excluded.
 
-- empirical:
+- lw_source:
 
-  Logical. If `TRUE`, use length-weight parameters from `species_info`
-  instead of fitting a length-weight model to the `CA` table.
+  Character string specifying the source of length-weight parameters.
+  One of `"ca"` or `"lookup"`.
 
 - length_cuts:
 
@@ -93,18 +93,12 @@ dab <- add_numbers_at_length(dab)
 
 ## Add total haul biomass
 x <- add_total_weight_by_haul(dab)
-#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
-#> Running aphia: 127139
 
 ## Add total haul biomass and biomass per minute
 x <- add_total_weight_by_haul(dab, per_minute = TRUE)
-#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
-#> Running aphia: 127139
 #> Warning: STATS is longer than the extent of 'dim(x)[MARGIN]'
 #> Error in array(STATS, dims[perm]): 'dim' cannot be of length 0
 
-## Use length-weight parameters from species_info
-x <- add_total_weight_by_haul(dab, empirical = TRUE)
-#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
-#> Running aphia: 127139
+## Use length-weight parameters from the species_info table
+x <- add_total_weight_by_haul(dab, lw_source = "lookup")
 ```

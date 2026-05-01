@@ -217,7 +217,7 @@ inspect the available weight data:</p>
 <span><span class="co">#&gt; 1   1 85.93     66 559</span></span>
 <span><span class="co">#&gt; [1] "Estimated LW parameters:"</span></span>
 <span><span class="co">#&gt; [1] "a = 0.014 b = 2.903"</span></span>
-<span><span class="co">#&gt; [1] "Empirical LW parameters:"</span></span>
+<span><span class="co">#&gt; [1] "Lookup LW parameters in the species_info table:"</span></span>
 <span><span class="co">#&gt; [1] "a = 0.007 b = 3.119"</span></span></code></pre></div>
 <p><img src="custom-length-classes_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="768"></p>
 <p>This function provides summary statistics and diagnostic plots for
@@ -292,12 +292,12 @@ separately:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"HaulWgt"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                 (0-17.75] (17.75-Inf]</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    973.606   18101.531</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2   1512.372   10140.797</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3  7927.438   19709.288</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  1661.560    9915.907</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5 12235.769   23464.613</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6     0.000      77.814</span></span></code></pre></div>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    915.684   18487.350</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2   1413.448   10274.518</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3  7498.031   19681.076</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  1577.837   10108.460</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5 11750.668   23250.572</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6     0.000      76.908</span></span></code></pre></div>
 <p>By default, the column names reflect the chosen cut points, but they
 can be renamed as needed:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -333,12 +333,12 @@ length groups:</p>
 <span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6      0       1       0        0</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"HaulWgt"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                  (0-10]   (10-20]   (20-30] (30-100]</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    0.000  4013.044 15062.093    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2  150.012  4401.798  7101.359    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3 136.869 17655.905  9843.952    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  43.152  3331.883  7921.138  281.294</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5   0.000 29653.797  6046.585    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6   0.000    77.814     0.000    0.000</span></span></code></pre></div>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    0.000  3904.189 15498.845    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2  123.243  4278.710  7286.013    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3 115.514 17078.956  9984.637    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  35.156  3231.022  8114.143  305.976</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5   0.000 28859.317  6141.923    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6   0.000    76.908     0.000    0.000</span></span></code></pre></div>
 <p>These summaries can then be used to explore whether the spatial
 distribution differs among size groups. For example, the following plot
 shows where hauls with positive catches occurred for each length class,

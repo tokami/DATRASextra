@@ -65,8 +65,8 @@ a <code>datras_raw</code> / <code>DATRASraw</code> object.</p>
 <span>  max_length <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plus_group <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  empirical <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  empirical_as_backup <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  lw_source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lookup"</span>, <span class="st">"ca"</span><span class="op">)</span>,</span>
+<span>  lookup_as_backup <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -100,13 +100,13 @@ plus half of the size of the second last length bin is used to define the
 mid length of the largest length bin.</p></dd>
 
 
-<dt id="arg-empirical">empirical<a class="anchor" aria-label="anchor" href="#arg-empirical"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, use empirical weight-at-length
-calculations instead of fitting a length-weight model to the <code>CA</code> table.</p></dd>
+<dt id="arg-lw-source">lw_source<a class="anchor" aria-label="anchor" href="#arg-lw-source"></a></dt>
+<dd><p>Character string specifying the source of length-weight
+parameters. One of <code>"ca"</code> or <code>"lookup"</code>.</p></dd>
 
 
-<dt id="arg-empirical-as-backup">empirical_as_backup<a class="anchor" aria-label="anchor" href="#arg-empirical-as-backup"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, empirical parameters of the
+<dt id="arg-lookup-as-backup">lookup_as_backup<a class="anchor" aria-label="anchor" href="#arg-lookup-as-backup"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, lookup parameters of the
 length-weight relationship (a, b) in the species_info table are used.
 Default: <code>FALSE</code>.</p></dd>
 
@@ -121,15 +121,15 @@ Default: <code>FALSE</code>.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function derives weight-at-length either from an empirical
-length-weight relationship fitted to the <code>CA</code> table or, if
-<code>empirical = TRUE</code>, uses length-weight parameters from the species_info table.</p>
-<ul><li><p>If <code>empirical = FALSE</code>, a linear model of the form
+    <p>The function derives weight-at-length either from an lookup length-weight
+relationship fitted to the <code>CA</code> table or, if <code>lw_source = "lookup"</code>, uses
+length-weight parameters from the species_info table.</p>
+<ul><li><p>If <code>lw_source = "lookup"</code>, a linear model of the form
 \(\log(IndWgt) ~ \log(LngtCm)\) is fitted to positive individual weights
 in the <code>CA</code> table. Predicted weights are then assigned to length classes
 defined by <code>attr(x, "cm.breaks")</code>, multiplied by numbers-at-length, and
 optionally divided by haul duration.</p></li>
-<li><p>If <code>empirical = TRUE</code>, weight is added using length-weight
+<li><p>If <code>lw_source = "lookup"</code>, weight is added using length-weight
 parameters from the species_info table.</p></li>
 </ul></div>
     <div class="section level2">
@@ -145,18 +145,12 @@ parameters from the species_info table.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Add fitted weight-at-length estimates</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running aphia: 127139</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Exclude large values when fitting the length-weight model</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span>, max_length <span class="op">=</span> <span class="fl">100</span>, max_weight <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running aphia: 127139</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Use empirical weight-at-length instead</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span>, empirical <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running aphia: 127139</span>
+<span class="r-in"><span><span class="co">## Use lookup weight-at-length instead from the species_info table</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span>, lw_source <span class="op">=</span> <span class="st">"lookup"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

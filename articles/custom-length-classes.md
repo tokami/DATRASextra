@@ -157,7 +157,7 @@ wpars <- check_weights(dab)
 #> 1   1 85.93     66 559
 #> [1] "Estimated LW parameters:"
 #> [1] "a = 0.014 b = 2.903"
-#> [1] "Empirical LW parameters:"
+#> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.007 b = 3.119"
 ```
 
@@ -260,12 +260,12 @@ head(dab[["HH"]][["HaulN"]])
 
 head(dab[["HH"]][["HaulWgt"]])
 #>                                 (0-17.75] (17.75-Inf]
-#> NS-IBTS:2020:1:DK:26D4:GOV:6:1    973.606   18101.531
-#> NS-IBTS:2020:1:DK:26D4:GOV:8:2   1512.372   10140.797
-#> NS-IBTS:2020:1:DK:26D4:GOV:10:3  7927.438   19709.288
-#> NS-IBTS:2020:1:DK:26D4:GOV:11:4  1661.560    9915.907
-#> NS-IBTS:2020:1:DK:26D4:GOV:19:5 12235.769   23464.613
-#> NS-IBTS:2020:1:DK:26D4:GOV:21:6     0.000      77.814
+#> NS-IBTS:2020:1:DK:26D4:GOV:6:1    915.684   18487.350
+#> NS-IBTS:2020:1:DK:26D4:GOV:8:2   1413.448   10274.518
+#> NS-IBTS:2020:1:DK:26D4:GOV:10:3  7498.031   19681.076
+#> NS-IBTS:2020:1:DK:26D4:GOV:11:4  1577.837   10108.460
+#> NS-IBTS:2020:1:DK:26D4:GOV:19:5 11750.668   23250.572
+#> NS-IBTS:2020:1:DK:26D4:GOV:21:6     0.000      76.908
 ```
 
 By default, the column names reflect the chosen cut points, but they can
@@ -317,12 +317,12 @@ head(dab[["HH"]][["HaulN"]])
 #> NS-IBTS:2020:1:DK:26D4:GOV:21:6      0       1       0        0
 head(dab[["HH"]][["HaulWgt"]])
 #>                                  (0-10]   (10-20]   (20-30] (30-100]
-#> NS-IBTS:2020:1:DK:26D4:GOV:6:1    0.000  4013.044 15062.093    0.000
-#> NS-IBTS:2020:1:DK:26D4:GOV:8:2  150.012  4401.798  7101.359    0.000
-#> NS-IBTS:2020:1:DK:26D4:GOV:10:3 136.869 17655.905  9843.952    0.000
-#> NS-IBTS:2020:1:DK:26D4:GOV:11:4  43.152  3331.883  7921.138  281.294
-#> NS-IBTS:2020:1:DK:26D4:GOV:19:5   0.000 29653.797  6046.585    0.000
-#> NS-IBTS:2020:1:DK:26D4:GOV:21:6   0.000    77.814     0.000    0.000
+#> NS-IBTS:2020:1:DK:26D4:GOV:6:1    0.000  3904.189 15498.845    0.000
+#> NS-IBTS:2020:1:DK:26D4:GOV:8:2  123.243  4278.710  7286.013    0.000
+#> NS-IBTS:2020:1:DK:26D4:GOV:10:3 115.514 17078.956  9984.637    0.000
+#> NS-IBTS:2020:1:DK:26D4:GOV:11:4  35.156  3231.022  8114.143  305.976
+#> NS-IBTS:2020:1:DK:26D4:GOV:19:5   0.000 28859.317  6141.923    0.000
+#> NS-IBTS:2020:1:DK:26D4:GOV:21:6   0.000    76.908     0.000    0.000
 ```
 
 These summaries can then be used to explore whether the spatial

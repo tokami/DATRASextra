@@ -11,8 +11,8 @@ add_weight_at_length(
   max_length = NULL,
   max_weight = NULL,
   plus_group = FALSE,
-  empirical = FALSE,
-  empirical_as_backup = FALSE,
+  lw_source = c("lookup", "ca"),
+  lookup_as_backup = FALSE,
   verbose = TRUE
 )
 ```
@@ -44,14 +44,14 @@ add_weight_at_length(
   the size of the second last length bin is used to define the mid
   length of the largest length bin.
 
-- empirical:
+- lw_source:
 
-  Logical. If `TRUE`, use empirical weight-at-length calculations
-  instead of fitting a length-weight model to the `CA` table.
+  Character string specifying the source of length-weight parameters.
+  One of `"ca"` or `"lookup"`.
 
-- empirical_as_backup:
+- lookup_as_backup:
 
-  Logical. If `TRUE`, empirical parameters of the length-weight
+  Logical. If `TRUE`, lookup parameters of the length-weight
   relationship (a, b) in the species_info table are used. Default:
   `FALSE`.
 
@@ -65,19 +65,19 @@ A `datras_raw` object with estimated weight information added.
 
 ## Details
 
-The function derives weight-at-length either from an empirical
+The function derives weight-at-length either from an lookup
 length-weight relationship fitted to the `CA` table or, if
-`empirical = TRUE`, uses length-weight parameters from the species_info
-table.
+`lw_source = "lookup"`, uses length-weight parameters from the
+species_info table.
 
-- If `empirical = FALSE`, a linear model of the form \\\log(IndWgt) ~
+- If `lw_source = "lookup"`, a linear model of the form \\\log(IndWgt) ~
   \log(LngtCm)\\ is fitted to positive individual weights in the `CA`
   table. Predicted weights are then assigned to length classes defined
   by `attr(x, "cm.breaks")`, multiplied by numbers-at-length, and
   optionally divided by haul duration.
 
-- If `empirical = TRUE`, weight is added using length-weight parameters
-  from the species_info table.
+- If `lw_source = "lookup"`, weight is added using length-weight
+  parameters from the species_info table.
 
 ## See also
 
@@ -93,16 +93,10 @@ dab <- add_numbers_at_length(dab)
 
 ## Add fitted weight-at-length estimates
 x <- add_weight_at_length(dab)
-#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
-#> Running aphia: 127139
 
 ## Exclude large values when fitting the length-weight model
 x <- add_weight_at_length(dab, max_length = 100, max_weight = 10000)
-#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
-#> Running aphia: 127139
 
-## Use empirical weight-at-length instead
-x <- add_weight_at_length(dab, empirical = TRUE)
-#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
-#> Running aphia: 127139
+## Use lookup weight-at-length instead from the species_info table
+x <- add_weight_at_length(dab, lw_source = "lookup")
 ```
