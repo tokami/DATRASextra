@@ -6,7 +6,7 @@
 \usage{
 add_total_weight_by_haul(
   x,
-  per_minute = TRUE,
+  per_minute = FALSE,
   max_length = NULL,
   max_weight = NULL,
   empirical = FALSE,
@@ -16,60 +16,69 @@ add_total_weight_by_haul(
 \arguments{
 \item{x}{A \code{datras_raw} object.}
 
-\item{per_minute}{Logical. If \code{TRUE} (default), estimated weights are
-divided by haul duration in minutes.}
+\item{per_minute}{Logical. If \code{TRUE}, add \code{HaulWgtPerMin}, calculated as
+\code{HaulWgt} divided by haul duration in minutes. If \code{FALSE}, only \code{HaulWgt}
+is added.}
 
 \item{max_length}{Optional numeric value giving the maximum length in
 centimetres to retain when fitting the length-weight relationship.
 Observations above this value are excluded.}
 
-\item{max_weight}{Optional numeric value giving the maximum individual
-weight in grams to retain when fitting the length-weight relationship.
+\item{max_weight}{Optional numeric value giving the maximum individual weight
+in grams to retain when fitting the length-weight relationship.
 Observations above this value are excluded.}
 
-\item{empirical}{Logical. If \code{TRUE}, use empirical weight-at-length
-calculations instead of fitting a length-weight model to the \code{CA} table.}
+\item{empirical}{Logical. If \code{TRUE}, use length-weight parameters from
+\code{species_info} instead of fitting a length-weight model to the \code{CA} table.}
 
 \item{length_cuts}{Optional numeric vector of break points for aggregating
-the original length classes into coarser bins after numbers-at-length have
-been calculated. Must be strictly increasing.}
+the original length classes into coarser bins. Must be strictly increasing.}
 }
 \value{
-A \code{datras_raw} object with haul-level biomass added to \code{HH}.
+A \code{datras_raw} object with \code{HaulWgt} added to \code{HH}. If
+\code{per_minute = TRUE}, \code{HaulWgtPerMin} is also added.
 }
 \description{
 Calculate total biomass by haul and add it to the \code{HH} component of a
-\code{datras_raw} / \code{DATRASraw} object based on available information in the \code{CA}
-data set. If \code{CA} data is not available, total haul biomass can be
-calculated from empirical species-specific length-weight parameters.
+\code{datras_raw} / \code{DATRASraw} object.
 }
 \details{
-Optionally, the resulting length classes can be aggregated into coarser bins
-via \code{length_cuts}.
+Optionally, total biomass can be standardized by haul duration and returned
+as biomass per minute. Length classes can also be aggregated into coarser
+bins via \code{length_cuts}.
 
-If empirical = TRUE, the function requires that exactly one unique
-\code{Valid_Aphia} value is present in \code{x[["HL"]]}, and that matching empirical
-length-weight parameters are available in the internal \code{species_info} table.
+If weight-at-length information is not already present, the function first
+calls \code{\link[=add_weight_at_length]{add_weight_at_length()}} to create \code{x[["HH"]][["Wgt"]]}.
 
 Weight-at-length is calculated as:
 \deqn{
   W = a \times L^b
 }
 
-Total biomass for each haul is then calculated by multiplying the haul-level
-numbers-at-length by the predicted weight-at-length vector and summing across
-length classes.
+Total biomass for each haul is calculated by summing estimated
+weight-at-length across length classes and is stored in
+\code{x[["HH"]][["HaulWgt"]]}.
 
-Provide your own a and b parameters by overwriting the relevant fields in
-the species_info table.
+If \code{length_cuts} is supplied, \code{HaulWgt} is a matrix with one column per
+aggregated length bin. Otherwise, \code{HaulWgt} is a vector with one value per
+haul.
+
+If \code{per_minute = TRUE}, the function also adds
+\code{x[["HH"]][["HaulWgtPerMin"]]}, calculated by dividing \code{HaulWgt} by
+\code{HaulDur}. If \code{HaulWgt} is a matrix, each row is divided by the corresponding
+haul duration.
 }
 \examples{
-
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
 
+## Add total haul biomass
 x <- add_total_weight_by_haul(dab)
 
+## Add total haul biomass and biomass per minute
+x <- add_total_weight_by_haul(dab, per_minute = TRUE)
+
+## Use length-weight parameters from species_info
 x <- add_total_weight_by_haul(dab, empirical = TRUE)
 
 }

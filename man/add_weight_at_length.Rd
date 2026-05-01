@@ -6,7 +6,6 @@
 \usage{
 add_weight_at_length(
   x,
-  per_minute = TRUE,
   max_length = NULL,
   max_weight = NULL,
   plus_group = FALSE,
@@ -17,9 +16,6 @@ add_weight_at_length(
 }
 \arguments{
 \item{x}{A \code{datras_raw} object.}
-
-\item{per_minute}{Logical. If \code{TRUE} (default), estimated weights are
-divided by haul duration in minutes.}
 
 \item{max_length}{Optional numeric value giving the maximum length in
 centimetres to retain when fitting the length-weight relationship.

@@ -175,8 +175,6 @@ check_weights <- function (x,
 ##' `empirical = TRUE`, uses length-weight parameters from the species_info table.
 ##'
 ##' @param x A `datras_raw` object.
-##' @param per_minute Logical. If `TRUE` (default), estimated weights are
-##'   divided by haul duration in minutes.
 ##' @param max_length Optional numeric value giving the maximum length in
 ##'   centimetres to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
@@ -229,7 +227,6 @@ check_weights <- function (x,
 ##'
 ##' @export
 add_weight_at_length <- function (x,
-                                  per_minute = TRUE,
                                   max_length = NULL,
                                   max_weight = NULL,
                                   plus_group = FALSE,
@@ -261,8 +258,7 @@ add_weight_at_length <- function (x,
       if (verbose) message("Running aphia: ", aphia[i])
 
       Wgt <- withCallingHandlers(
-        .get_wgt_one_empirical(x, aphia[i], n_aphia,
-                               per_minute, verbose),
+        .get_wgt_one_empirical(x, aphia[i], n_aphia, verbose),
         warning = function(w) {
           warn_msgs <<- c(warn_msgs, conditionMessage(w))
           invokeRestart("muffleWarning")
@@ -293,7 +289,6 @@ add_weight_at_length <- function (x,
         .get_wgt_one_ca(x, aphia[i], n_aphia,
                         max_length, max_weight,
                         plus_group,
-                        per_minute,
                         verbose),
         warning = function(w) {
           warn_msgs <<- c(warn_msgs, conditionMessage(w))
@@ -304,8 +299,7 @@ add_weight_at_length <- function (x,
       if (is.null(Wgt) && isTRUE(empirical_as_backup)) {
         if (isTRUE(verbose)) message("Using empirical info in species_info table.")
         Wgt <- withCallingHandlers(
-          .get_wgt_one_empirical(x, aphia[i], n_aphia,
-                                 per_minute, verbose),
+          .get_wgt_one_empirical(x, aphia[i], n_aphia, verbose),
           warning = function(w) {
             warn_msgs <<- c(warn_msgs, conditionMessage(w))
             invokeRestart("muffleWarning")
@@ -349,62 +343,70 @@ add_weight_at_length <- function (x,
 ##' Add total haul biomass to `HH`
 ##'
 ##' Calculate total biomass by haul and add it to the `HH` component of a
-##' `datras_raw` / `DATRASraw` object based on available information in the `CA`
-##' data set. If `CA` data is not available, total haul biomass can be
-##' calculated from empirical species-specific length-weight parameters.
+##' `datras_raw` / `DATRASraw` object.
 ##'
-##' Optionally, the resulting length classes can be aggregated into coarser bins
-##' via `length_cuts`.
+##' Optionally, total biomass can be standardized by haul duration and returned
+##' as biomass per minute. Length classes can also be aggregated into coarser
+##' bins via `length_cuts`.
 ##'
 ##' @param x A `datras_raw` object.
-##' @param per_minute Logical. If `TRUE` (default), estimated weights are
-##'   divided by haul duration in minutes.
+##' @param per_minute Logical. If `TRUE`, add `HaulWgtPerMin`, calculated as
+##'   `HaulWgt` divided by haul duration in minutes. If `FALSE`, only `HaulWgt`
+##'   is added.
 ##' @param max_length Optional numeric value giving the maximum length in
 ##'   centimetres to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
-##' @param max_weight Optional numeric value giving the maximum individual
-##'   weight in grams to retain when fitting the length-weight relationship.
+##' @param max_weight Optional numeric value giving the maximum individual weight
+##'   in grams to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
-##' @param empirical Logical. If `TRUE`, use empirical weight-at-length
-##'   calculations instead of fitting a length-weight model to the `CA` table.
+##' @param empirical Logical. If `TRUE`, use length-weight parameters from
+##'   `species_info` instead of fitting a length-weight model to the `CA` table.
 ##' @param length_cuts Optional numeric vector of break points for aggregating
-##'   the original length classes into coarser bins after numbers-at-length have
-##'   been calculated. Must be strictly increasing.
+##'   the original length classes into coarser bins. Must be strictly increasing.
 ##'
 ##' @details
-##'
-##' If empirical = TRUE, the function requires that exactly one unique
-##' `Valid_Aphia` value is present in `x[["HL"]]`, and that matching empirical
-##' length-weight parameters are available in the internal `species_info` table.
+##' If weight-at-length information is not already present, the function first
+##' calls [add_weight_at_length()] to create `x[["HH"]][["Wgt"]]`.
 ##'
 ##' Weight-at-length is calculated as:
 ##' \deqn{
 ##'   W = a \times L^b
 ##' }
 ##'
-##' Total biomass for each haul is then calculated by multiplying the haul-level
-##' numbers-at-length by the predicted weight-at-length vector and summing across
-##' length classes.
+##' Total biomass for each haul is calculated by summing estimated
+##' weight-at-length across length classes and is stored in
+##' `x[["HH"]][["HaulWgt"]]`.
 ##'
-##' Provide your own a and b parameters by overwriting the relevant fields in
-##' the species_info table.
+##' If `length_cuts` is supplied, `HaulWgt` is a matrix with one column per
+##' aggregated length bin. Otherwise, `HaulWgt` is a vector with one value per
+##' haul.
 ##'
-##' @return A `datras_raw` object with haul-level biomass added to `HH`.
+##' If `per_minute = TRUE`, the function also adds
+##' `x[["HH"]][["HaulWgtPerMin"]]`, calculated by dividing `HaulWgt` by
+##' `HaulDur`. If `HaulWgt` is a matrix, each row is divided by the corresponding
+##' haul duration.
+##'
+##' @return A `datras_raw` object with `HaulWgt` added to `HH`. If
+##'   `per_minute = TRUE`, `HaulWgtPerMin` is also added.
 ##'
 ##' @seealso [add_weight_at_length()]
 ##'
 ##' @examples
-##'
 ##' ## Add numbers at length
 ##' dab <- add_numbers_at_length(dab)
 ##'
+##' ## Add total haul biomass
 ##' x <- add_total_weight_by_haul(dab)
 ##'
+##' ## Add total haul biomass and biomass per minute
+##' x <- add_total_weight_by_haul(dab, per_minute = TRUE)
+##'
+##' ## Use length-weight parameters from species_info
 ##' x <- add_total_weight_by_haul(dab, empirical = TRUE)
 ##'
 ##' @export
 add_total_weight_by_haul <- function (x,
-                                      per_minute = TRUE,
+                                      per_minute = FALSE,
                                       max_length = NULL,
                                       max_weight = NULL,
                                       empirical = FALSE,
@@ -413,7 +415,6 @@ add_total_weight_by_haul <- function (x,
 
   if (!.has_weight_at_length(x)) {
     x <- add_weight_at_length(x,
-                              per_minute = per_minute,
                               max_length = max_length,
                               max_weight = max_weight,
                               empirical = empirical)
@@ -438,6 +439,15 @@ add_total_weight_by_haul <- function (x,
 
   }
 
+  if (isTRUE(per_minute)) {
+    x[["HH"]][["HaulWgtPerMin"]] <- sweep(
+      x[["HH"]][["HaulWgt"]],
+      MARGIN = 1,
+      STATS = x[["HH"]]$HaulDur,
+      FUN = "/"
+    )
+  }
+
   x
 }
 
@@ -451,7 +461,6 @@ add_total_weight_by_haul <- function (x,
 
 
 .get_wgt_one_empirical <- function(x, aphia, n_aphia,
-                                   per_minute,
                                    verbose = TRUE) {
 
   xsub <- subset(x, Valid_Aphia == aphia)
@@ -510,10 +519,6 @@ add_total_weight_by_haul <- function (x,
 
   Wgt <- sweep(xsub[["HH"]]$N, 2, LW, "*")
 
-  if (isTRUE(per_minute)) {
-    Wgt <- Wgt/xsub[["HH"]]$HaulDur
-  }
-
   round(Wgt, 3)
 }
 
@@ -521,7 +526,6 @@ add_total_weight_by_haul <- function (x,
 .get_wgt_one_ca <- function(x, aphia, n_aphia,
                             max_length, max_weight,
                             plus_group,
-                            per_minute,
                             verbose = TRUE) {
 
   xsub <- subset(x, Valid_Aphia == aphia)
@@ -571,10 +575,6 @@ add_total_weight_by_haul <- function (x,
   }
 
   Wgt <- sweep(xsub[["HH"]]$N, 2, LW, "*")
-
-  if (isTRUE(per_minute)) {
-    Wgt <- Wgt/xsub[["HH"]]$HaulDur
-  }
 
   round(Wgt, 3)
 }
