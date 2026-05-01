@@ -1,16 +1,14 @@
 # Add total haul biomass to `HH`
 
 Calculate total biomass by haul and add it to the `HH` component of a
-`datras_raw` / `DATRASraw` object based on available information in the
-`CA` data set. If `CA` data is not available, total haul biomass can be
-calculated from empirical species-specific length-weight parameters.
+`datras_raw` / `DATRASraw` object.
 
 ## Usage
 
 ``` r
 add_total_weight_by_haul(
   x,
-  per_minute = TRUE,
+  per_minute = FALSE,
   max_length = NULL,
   max_weight = NULL,
   empirical = FALSE,
@@ -26,8 +24,9 @@ add_total_weight_by_haul(
 
 - per_minute:
 
-  Logical. If `TRUE` (default), estimated weights are divided by haul
-  duration in minutes.
+  Logical. If `TRUE`, add `HaulWgtPerMin`, calculated as `HaulWgt`
+  divided by haul duration in minutes. If `FALSE`, only `HaulWgt` is
+  added.
 
 - max_length:
 
@@ -43,37 +42,44 @@ add_total_weight_by_haul(
 
 - empirical:
 
-  Logical. If `TRUE`, use empirical weight-at-length calculations
+  Logical. If `TRUE`, use length-weight parameters from `species_info`
   instead of fitting a length-weight model to the `CA` table.
 
 - length_cuts:
 
   Optional numeric vector of break points for aggregating the original
-  length classes into coarser bins after numbers-at-length have been
-  calculated. Must be strictly increasing.
+  length classes into coarser bins. Must be strictly increasing.
 
 ## Value
 
-A `datras_raw` object with haul-level biomass added to `HH`.
+A `datras_raw` object with `HaulWgt` added to `HH`. If
+`per_minute = TRUE`, `HaulWgtPerMin` is also added.
 
 ## Details
 
-Optionally, the resulting length classes can be aggregated into coarser
-bins via `length_cuts`.
+Optionally, total biomass can be standardized by haul duration and
+returned as biomass per minute. Length classes can also be aggregated
+into coarser bins via `length_cuts`.
 
-If empirical = TRUE, the function requires that exactly one unique
-`Valid_Aphia` value is present in `x[["HL"]]`, and that matching
-empirical length-weight parameters are available in the internal
-`species_info` table.
+If weight-at-length information is not already present, the function
+first calls
+[`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md)
+to create `x[["HH"]][["Wgt"]]`.
 
 Weight-at-length is calculated as: \$\$ W = a \times L^b \$\$
 
-Total biomass for each haul is then calculated by multiplying the
-haul-level numbers-at-length by the predicted weight-at-length vector
-and summing across length classes.
+Total biomass for each haul is calculated by summing estimated
+weight-at-length across length classes and is stored in
+`x[["HH"]][["HaulWgt"]]`.
 
-Provide your own a and b parameters by overwriting the relevant fields
-in the species_info table.
+If `length_cuts` is supplied, `HaulWgt` is a matrix with one column per
+aggregated length bin. Otherwise, `HaulWgt` is a vector with one value
+per haul.
+
+If `per_minute = TRUE`, the function also adds
+`x[["HH"]][["HaulWgtPerMin"]]`, calculated by dividing `HaulWgt` by
+`HaulDur`. If `HaulWgt` is a matrix, each row is divided by the
+corresponding haul duration.
 
 ## See also
 
@@ -82,14 +88,22 @@ in the species_info table.
 ## Examples
 
 ``` r
-
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
 
+## Add total haul biomass
 x <- add_total_weight_by_haul(dab)
 #> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
 #> Running aphia: 127139
 
+## Add total haul biomass and biomass per minute
+x <- add_total_weight_by_haul(dab, per_minute = TRUE)
+#> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
+#> Running aphia: 127139
+#> Warning: STATS is longer than the extent of 'dim(x)[MARGIN]'
+#> Error in array(STATS, dims[perm]): 'dim' cannot be of length 0
+
+## Use length-weight parameters from species_info
 x <- add_total_weight_by_haul(dab, empirical = TRUE)
 #> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.
 #> Running aphia: 127139

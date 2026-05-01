@@ -6,12 +6,8 @@
     }
   };
 </script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Add total haul biomass to HH — add_total_weight_by_haul"><meta name="description" content="Calculate total biomass by haul and add it to the HH component of a
-datras_raw / DATRASraw object based on available information in the CA
-data set. If CA data is not available, total haul biomass can be
-calculated from empirical species-specific length-weight parameters."><meta property="og:description" content="Calculate total biomass by haul and add it to the HH component of a
-datras_raw / DATRASraw object based on available information in the CA
-data set. If CA data is not available, total haul biomass can be
-calculated from empirical species-specific length-weight parameters."><meta property="og:image" content="https://tokami.github.io/DATRASextra/logo.png"></head><body>
+datras_raw / DATRASraw object."><meta property="og:description" content="Calculate total biomass by haul and add it to the HH component of a
+datras_raw / DATRASraw object."><meta property="og:image" content="https://tokami.github.io/DATRASextra/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -59,16 +55,14 @@ calculated from empirical species-specific length-weight parameters."><meta prop
 
     <div class="ref-description section level2">
     <p>Calculate total biomass by haul and add it to the <code>HH</code> component of a
-<code>datras_raw</code> / <code>DATRASraw</code> object based on available information in the <code>CA</code>
-data set. If <code>CA</code> data is not available, total haul biomass can be
-calculated from empirical species-specific length-weight parameters.</p>
+<code>datras_raw</code> / <code>DATRASraw</code> object.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_total_weight_by_haul</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  per_minute <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  per_minute <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  max_length <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  empirical <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -85,8 +79,9 @@ calculated from empirical species-specific length-weight parameters.</p>
 
 
 <dt id="arg-per-minute">per_minute<a class="anchor" aria-label="anchor" href="#arg-per-minute"></a></dt>
-<dd><p>Logical. If <code>TRUE</code> (default), estimated weights are
-divided by haul duration in minutes.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, add <code>HaulWgtPerMin</code>, calculated as
+<code>HaulWgt</code> divided by haul duration in minutes. If <code>FALSE</code>, only <code>HaulWgt</code>
+is added.</p></dd>
 
 
 <dt id="arg-max-length">max_length<a class="anchor" aria-label="anchor" href="#arg-max-length"></a></dt>
@@ -96,42 +91,47 @@ Observations above this value are excluded.</p></dd>
 
 
 <dt id="arg-max-weight">max_weight<a class="anchor" aria-label="anchor" href="#arg-max-weight"></a></dt>
-<dd><p>Optional numeric value giving the maximum individual
-weight in grams to retain when fitting the length-weight relationship.
+<dd><p>Optional numeric value giving the maximum individual weight
+in grams to retain when fitting the length-weight relationship.
 Observations above this value are excluded.</p></dd>
 
 
 <dt id="arg-empirical">empirical<a class="anchor" aria-label="anchor" href="#arg-empirical"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, use empirical weight-at-length
-calculations instead of fitting a length-weight model to the <code>CA</code> table.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, use length-weight parameters from
+<code>species_info</code> instead of fitting a length-weight model to the <code>CA</code> table.</p></dd>
 
 
 <dt id="arg-length-cuts">length_cuts<a class="anchor" aria-label="anchor" href="#arg-length-cuts"></a></dt>
 <dd><p>Optional numeric vector of break points for aggregating
-the original length classes into coarser bins after numbers-at-length have
-been calculated. Must be strictly increasing.</p></dd>
+the original length classes into coarser bins. Must be strictly increasing.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>datras_raw</code> object with haul-level biomass added to <code>HH</code>.</p>
+    <p>A <code>datras_raw</code> object with <code>HaulWgt</code> added to <code>HH</code>. If
+<code>per_minute = TRUE</code>, <code>HaulWgtPerMin</code> is also added.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Optionally, the resulting length classes can be aggregated into coarser bins
-via <code>length_cuts</code>.</p>
-<p>If empirical = TRUE, the function requires that exactly one unique
-<code>Valid_Aphia</code> value is present in <code>x[["HL"]]</code>, and that matching empirical
-length-weight parameters are available in the internal <code>species_info</code> table.</p>
+    <p>Optionally, total biomass can be standardized by haul duration and returned
+as biomass per minute. Length classes can also be aggregated into coarser
+bins via <code>length_cuts</code>.</p>
+<p>If weight-at-length information is not already present, the function first
+calls <code><a href="add_weight_at_length.html">add_weight_at_length()</a></code> to create <code>x[["HH"]][["Wgt"]]</code>.</p>
 <p>Weight-at-length is calculated as:
 $$
   W = a \times L^b
 $$</p>
-<p>Total biomass for each haul is then calculated by multiplying the haul-level
-numbers-at-length by the predicted weight-at-length vector and summing across
-length classes.</p>
-<p>Provide your own a and b parameters by overwriting the relevant fields in
-the species_info table.</p>
+<p>Total biomass for each haul is calculated by summing estimated
+weight-at-length across length classes and is stored in
+<code>x[["HH"]][["HaulWgt"]]</code>.</p>
+<p>If <code>length_cuts</code> is supplied, <code>HaulWgt</code> is a matrix with one column per
+aggregated length bin. Otherwise, <code>HaulWgt</code> is a vector with one value per
+haul.</p>
+<p>If <code>per_minute = TRUE</code>, the function also adds
+<code>x[["HH"]][["HaulWgtPerMin"]]</code>, calculated by dividing <code>HaulWgt</code> by
+<code>HaulDur</code>. If <code>HaulWgt</code> is a matrix, each row is divided by the corresponding
+haul duration.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -140,14 +140,22 @@ the species_info table.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Add numbers at length</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Add numbers at length</span></span></span>
 <span class="r-in"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_numbers_at_length.html">add_numbers_at_length</a></span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Add total haul biomass</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_total_weight_by_haul</span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running aphia: 127139</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Add total haul biomass and biomass per minute</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_total_weight_by_haul</span><span class="op">(</span><span class="va">dab</span>, per_minute <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Running aphia: 127139</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>STATS is longer than the extent of 'dim(x)[MARGIN]'</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in array(STATS, dims[perm]):</span> 'dim' cannot be of length 0</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Use length-weight parameters from species_info</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_total_weight_by_haul</span><span class="op">(</span><span class="va">dab</span>, empirical <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Multiple aphia IDs in data set (n = 1). Caclulating weight at length for each and summing them all up.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running aphia: 127139</span>

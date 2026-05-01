@@ -8,7 +8,6 @@ fields to a `datras_raw` / `DATRASraw` object.
 ``` r
 add_weight_at_length(
   x,
-  per_minute = TRUE,
   max_length = NULL,
   max_weight = NULL,
   plus_group = FALSE,
@@ -23,11 +22,6 @@ add_weight_at_length(
 - x:
 
   A `datras_raw` object.
-
-- per_minute:
-
-  Logical. If `TRUE` (default), estimated weights are divided by haul
-  duration in minutes.
 
 - max_length:
 

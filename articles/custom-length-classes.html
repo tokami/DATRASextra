@@ -292,12 +292,12 @@ separately:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"HaulWgt"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                 (0-17.75] (17.75-Inf]</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1     32.455     603.386</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2     50.413     338.025</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3   264.250     656.977</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4    55.384     330.529</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5   407.858     782.154</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6     0.000       2.594</span></span></code></pre></div>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    973.606   18101.531</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2   1512.372   10140.797</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3  7927.438   19709.288</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  1661.560    9915.907</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5 12235.769   23464.613</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6     0.000      77.814</span></span></code></pre></div>
 <p>By default, the column names reflect the chosen cut points, but they
 can be renamed as needed:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -332,13 +332,13 @@ length groups:</p>
 <span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5      0     477      55        0</span></span>
 <span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6      0       1       0        0</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"HaulWgt"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                                 (0-10] (10-20] (20-30] (30-100]</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1   0.000 133.770 502.071    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2   5.001 146.727 236.710    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3  4.563 588.532 328.132    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  1.438 111.062 264.037    9.376</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5  0.000 988.459 201.553    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6  0.000   2.594   0.000    0.000</span></span></code></pre></div>
+<span><span class="co">#&gt;                                  (0-10]   (10-20]   (20-30] (30-100]</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    0.000  4013.044 15062.093    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2  150.012  4401.798  7101.359    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3 136.869 17655.905  9843.952    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  43.152  3331.883  7921.138  281.294</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5   0.000 29653.797  6046.585    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6   0.000    77.814     0.000    0.000</span></span></code></pre></div>
 <p>These summaries can then be used to explore whether the spatial
 distribution differs among size groups. For example, the following plot
 shows where hauls with positive catches occurred for each length class,
