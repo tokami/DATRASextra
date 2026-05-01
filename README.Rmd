@@ -46,9 +46,7 @@ user-facing functions.
 | Function                      | Description                                                                                      |
 |-------------------------------|--------------------------------------------------------------------------------------------------|
 | `list_surveys()`              | List available surveys in the ICES DATRAS database.                                              |
-| `plot_hauls()`                | Plot haul locations.                                                                             |
-| `plot_hauls_by_survey()`      | Plot haul locations by survey.                                                                   |
-| `plot_surveys()`              | Plot survey coverage and footprint.                                                              |
+| `plot_datras_overview()`      | Plot haul locations                                                                              |
 | `download_datras()`           | Download the full or filtered subset of the DATRAS database.                                     |
 | `read_datras()`               | Read DATRAS data into R.                                                                         |
 | `clean_datras()`              | Clean and harmonise DATRAS data.                                                                 |

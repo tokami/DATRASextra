@@ -1,807 +1,780 @@
 
-##' Plot the spatial distribution of hauls
-##'
-##' Plot the number of hauls by ICES rectangle on a longitude-latitude grid
-##' using the internal `survey_info_full` data set.
-##'
-##' The function aggregates haul counts over spatial bins derived from ICES
-##' statistical rectangles and displays them as a heat map. Optionally, a
-##' coastline map is added if the suggested packages `maps` and `mapdata` are
-##' available.
-##'
-##' @param plot_map Logical. If `TRUE` (default), add a coastline map in the
-##'   background when the required map packages are installed.
-##' @param xlim Optional numeric vector of length 2 giving the longitude limits
-##'   of the plot.
-##' @param ylim Optional numeric vector of length 2 giving the latitude limits
-##'   of the plot.
-##'
-##' @details
-##' Hauls are aggregated to a regular grid based on ICES rectangle midpoints.
-##' The resulting frequencies are plotted with [image()] using a heat-map colour
-##' scale.
-##'
-##' The map background is only drawn if both the `maps` and `mapdata` packages
-##' are available.
-##'
-##' @return Invisibly returns `NULL`.
-##'
-##' @examples
-##' \dontrun{
-##' ## Plot all hauls
-##' plot_hauls()
-##'
-##' ## Plot hauls in a restricted region
-##' plot_hauls(xlim = c(-10, 15), ylim = c(50, 65))
-##' }
-##'
-##' @export
-plot_hauls <- function(plot_map = TRUE,
-                       xlim = NULL,
-                       ylim = NULL) {
+## Main functions ----------------------------------------------------------------
 
-  survey_info_full <- get("survey_info_full", envir = asNamespace("DATRASextra"))
-
-  download_map <- FALSE
-  scale <- 50
-  col_land <- grDevices::adjustcolor(grey(0.9), 0.4)
-  border_land <- grDevices::adjustcolor(grey(0.6), 0.4)
-  land_ll <- get_land(download_map, scale = scale)
-
-  sq <- unique(icesSquare(survey_info_full))
-  pol <- icesSquare2coord(sq,"polygons")
-  point <- icesSquare2coord(sq,"midpoint")
-  range <- as.data.frame(lapply(do.call("rbind",pol),range))
-  if(!is.null(xlim)) {
-    range$lon[] <- xlim
-  }
-  if(!is.null(ylim)) {
-    range$lat[] <- ylim
-  }
-  lon_breaks <- seq(min(point[,1]) - 0.5, max(point[,1]) + 0.5, by = 1)
-  lat_breaks <- seq(min(point[,2]) - 0.25, max(point[,2]) + 0.25, by = 0.5)
-  survey_info_full$lon_bin <- cut(survey_info_full$lon, breaks = lon_breaks,
-                                  labels = seq(min(point[,1]),
-                                               max(point[,1]), by = 1),
-                                  include.lowest = TRUE)
-  survey_info_full$lat_bin <- cut(survey_info_full$lat, breaks = lat_breaks,
-                                  labels = seq(min(point[,2]),
-                                               max(point[,2]), by = 0.5),
-                                  include.lowest = TRUE)
-
-  plot(range, type="n",
-       las=1,
-       xlab="Longitude",
-       ylab="Latitude",
-       asp = 1)
-
-  freq <- aggregate(Hauls ~ lon_bin + lat_bin, data = survey_info_full, FUN = sum)
-  grid <- expand.grid(
-    lon_bin = levels(survey_info_full$lon_bin),
-    lat_bin = levels(survey_info_full$lat_bin)
-  )
-  freq_full <- merge(grid, freq, by = c("lon_bin", "lat_bin"), all.x = TRUE)
-  freq_full$Hauls[is.na(freq_full$Hauls)] <- 0
-  tmp <- xtabs(Hauls ~ lon_bin + lat_bin, data = freq_full)
-
-  image(as.numeric(rownames(tmp)),
-        as.numeric(colnames(tmp)),
-        tmp,
-        breaks = seq(0.01, max(tmp), length.out = 13),
-        col = hcl.colors(12, "YlOrRd", rev = TRUE),
-        add = TRUE)
-
-  if(plot_map){
-    plot(sf::st_geometry(land_ll), add = TRUE,
-         col = col_land, border = border_land)
-  }
-  box(lwd = 1.5)
-
-  return(invisible(NULL))
-}
-
-
-
-##' Plot the spatial distribution of hauls for each survey
-##'
-##' Plot haul density by location separately for each survey using the internal
-##' `survey_info_full` data set.
-##'
-##' The function aggregates haul counts over spatial bins derived from ICES
-##' statistical rectangles and displays them as heat maps in a multi-panel
-##' layout, with one panel per survey. Optionally, a coastline map is added if
-##' the suggested packages `maps` and `mapdata` are available.
-##'
-##' @param plot_map Logical. If `TRUE` (default), add a coastline map in the
-##'   background when the required map packages are installed.
-##' @param fixed_scale Logical. If `TRUE` (default), use a common colour scale
-##'   across surveys to make panels directly comparable. If `FALSE`, each survey
-##'   gets its own scale based on its maximum haul density.
-##' @param col A vector of colours used for the heat maps. Defaults to
-##'   `hcl.colors(12, "YlOrRd", rev = TRUE)`.
-##' @param xlim Optional numeric vector of length 2 giving the longitude limits
-##'   of the plots.
-##' @param ylim Optional numeric vector of length 2 giving the latitude limits
-##'   of the plots.
-##'
-##' @details
-##' Hauls are aggregated to a regular grid based on ICES rectangle midpoints.
-##' For each survey, the resulting frequencies are plotted with [image()] using a
-##' heat-map colour scale.
-##'
-##' If `fixed_scale = TRUE`, all panels use the same class breaks, allowing
-##' direct comparison of haul intensity among surveys. If `FALSE`, class breaks
-##' are determined separately for each survey.
-##'
-##' The map background is only drawn if both the `maps` and `mapdata` packages
-##' are available.
-##'
-##' @return Invisibly returns `NULL`.
-##'
-##' @seealso [plot_hauls()], [plot_surveys()]
-##'
-##' @examples
-##' \dontrun{
-##' ## Plot haul density for all surveys
-##' plot_hauls_by_survey()
-##'
-##' ## Use survey-specific colour scales
-##' plot_hauls_by_survey(fixed_scale = FALSE)
-##'
-##' ## Restrict the plotted region
-##' plot_hauls_by_survey(xlim = c(-10, 15), ylim = c(50, 65))
-##' }
-##'
-##' @export
-plot_hauls_by_survey <- function(plot_map = TRUE,
-                                 fixed_scale = TRUE,
-                                 col = hcl.colors(12, "YlOrRd", rev = TRUE),
-                                 xlim = NULL,
-                                 ylim = NULL) {
-
-  survey_info_full <- get("survey_info_full", envir = asNamespace("DATRASextra"))
-
-  download_map <- FALSE
-  scale <- 50
-  col_land <- grDevices::adjustcolor(grey(0.9), 0.4)
-  border_land <- grDevices::adjustcolor(grey(0.6), 0.4)
-  land_ll <- get_land(download_map, scale = scale)
-
-  sq <- unique(icesSquare(survey_info_full))
-  pol <- icesSquare2coord(sq,"polygons")
-  point <- icesSquare2coord(sq,"midpoint")
-  range <- as.data.frame(lapply(do.call("rbind",pol),range))
-  if(!is.null(xlim)) {
-    range$lon[] <- xlim
-  }
-  if(!is.null(ylim)) {
-    range$lat[] <- ylim
-  }
-  lon_breaks <- seq(min(point[,1]) - 0.5, max(point[,1]) + 0.5, by = 1)
-  lat_breaks <- seq(min(point[,2]) - 0.25, max(point[,2]) + 0.25, by = 0.5)
-  survey_info_full$lon_bin <- cut(survey_info_full$lon, breaks = lon_breaks,
-                                  labels = seq(min(point[,1]),
-                                               max(point[,1]), by = 1),
-                                  include.lowest = TRUE)
-  survey_info_full$lat_bin <- cut(survey_info_full$lat, breaks = lat_breaks,
-                                  labels = seq(min(point[,2]),
-                                               max(point[,2]), by = 0.5),
-                                  include.lowest = TRUE)
-
-  surveys <- unique(survey_info_full$Survey)
-  mfrow <- n2mfrow(length(surveys), asp = 2)
-  par(mfrow = mfrow, mar = c(0.5,0.5,0.5,0.5),
-      oma = c(4,4,1,1))
-
-  for(i in 1:length(surveys)){
-
-    subi <- subset(survey_info_full, Survey == surveys[i])
-
-    xaxt <- ifelse(i %in% (prod(mfrow) - mfrow[2]+1):prod(mfrow), "s", "n")
-    yaxt <- ifelse(i %in% seq(1, prod(mfrow), mfrow[2]), "s", "n")
-
-    plot(range,
-         type="n", las=1,
-         xaxt = xaxt,
-         yaxt = yaxt,
-         asp = 1,
-         xlab = "", ylab = "")
-
-    freq <- aggregate(Hauls ~ lon_bin + lat_bin, data = subi, FUN = sum)
-    grid <- expand.grid(
-      lon_bin = levels(subi$lon_bin),
-      lat_bin = levels(subi$lat_bin)
-    )
-    freq_full <- merge(grid, freq, by = c("lon_bin", "lat_bin"), all.x = TRUE)
-    freq_full$Hauls[is.na(freq_full$Hauls)] <- 0
-    tmp <- xtabs(Hauls ~ lon_bin + lat_bin, data = freq_full)
-
-    if (fixed_scale) {
-      breaks <- c(0.1,round(seq(5, 2500, length.out = length(col))))
-    } else {
-      breaks <- c(0.1,round(seq(5, max(tmp), length.out = length(col))))
-    }
-
-    image(as.numeric(rownames(tmp)),
-          as.numeric(colnames(tmp)),
-          tmp,
-          breaks = breaks,
-          col = col,
-          add = TRUE)
-
-    if(plot_map){
-      plot(sf::st_geometry(land_ll), add = TRUE,
-           col = col_land, border = border_land)
-    }
-
-    legend("topleft", legend = surveys[i],
-           pch = NA, bg = "white")
-
-    if (fixed_scale) {
-      if (i == length(surveys)) {
-        legend("bottomright",
-               legend =
-                 paste0("[",breaks[-length(breaks)],
-                        "-",breaks[-1],")"),
-               col = col, cex = 0.6,
-               pch = 15, pt.cex = 1.5,
-               bg = "white")
-      }
-    } else {
-      legend("bottomright",
-             legend =
-               paste0("[",breaks[-length(breaks)],
-                      "-",breaks[-1],")"),
-             col = col, cex = 0.6,
-             pch = 15, pt.cex = 1.5,
-             bg = "white")
-    }
-
-    box(lwd = 1.5)
-
-  }
-
-  mtext("Longitude", 1, 2, outer = TRUE)
-  mtext("Latitude", 2, 2, outer = TRUE)
-
-  return(invisible(NULL))
-}
-
-
-##' Plot survey spatial coverage
-##'
-##' Plot the spatial footprint of surveys using the internal `survey_info_full`
-##' data set.
-##'
-##' The function can either show each survey in a separate panel or overlay all
-##' surveys in a single map. In overlay mode, the map shows how many surveys
-##' sampled each spatial cell, optionally distinguishing survey quarters.
-##'
-##' @param plot_map Logical. If `TRUE` (default), add a coastline map in the
-##'   background when the required map packages are installed.
-##' @param fixed_axes Logical. If `TRUE` (default), use the same longitude and
-##'   latitude limits for all panels when `overlay = FALSE`. If `FALSE`, each
-##'   survey panel is scaled to its own spatial extent unless overridden by
-##'   `xlim` or `ylim`.
-##' @param overlay Logical. If `FALSE` (default), plot each survey separately.
-##'   If `TRUE`, overlay all surveys in a single map and show the number of
-##'   surveys represented in each spatial cell.
-##' @param consider_quarter Logical. Only used when `overlay = TRUE`. If
-##'   `TRUE`, survey-quarter combinations are treated as distinct survey units
-##'   when counting overlap across space.
-##' @param xlim Optional numeric vector of length 2 giving the longitude limits
-##'   of the plot.
-##' @param ylim Optional numeric vector of length 2 giving the latitude limits
-##'   of the plot.
-##'
-##' @details
-##' When `overlay = FALSE`, the function draws the ICES rectangles sampled by
-##' each survey as filled polygons, with one panel per survey.
-##'
-##' When `overlay = TRUE`, the function aggregates survey occurrence to a regular
-##' longitude-latitude grid derived from ICES rectangle midpoints and displays
-##' the number of overlapping surveys using a heat map.
-##'
-##' If `consider_quarter = TRUE`, survey-quarter combinations are counted
-##' separately in overlay mode, so the map reflects overlap among
-##' survey-quarter units rather than surveys alone.
-##'
-##' The map background is only drawn if both the `maps` and `mapdata` packages
-##' are available.
-##'
-##' @return Invisibly returns `NULL`.
-##'
-##' @seealso [plot_hauls()], [plot_hauls_by_survey()]
-##'
-##' @examples
-##' \dontrun{
-##' ## Plot each survey separately
-##' plot_surveys()
-##'
-##' ## Overlay all surveys in one map
-##' plot_surveys(overlay = TRUE)
-##'
-##' ## Overlay survey-quarter combinations
-##' plot_surveys(overlay = TRUE, consider_quarter = TRUE)
-##'
-##' ## Allow each panel to use its own spatial extent
-##' plot_surveys(fixed_axes = FALSE)
-##' }
-##'
-##' @export
-plot_surveys <- function(plot_map = TRUE,
-                         fixed_axes = TRUE,
-                         overlay = FALSE,
-                         consider_quarter = FALSE,
-                         xlim = NULL,
-                         ylim = NULL) {
-
-  survey_info_full <- get("survey_info_full", envir = asNamespace("DATRASextra"))
-
-  download_map <- FALSE
-  scale <- 50
-  col_land <- grDevices::adjustcolor(grey(0.9), 0.4)
-  border_land <- grDevices::adjustcolor(grey(0.6), 0.4)
-  land_ll <- get_land(download_map, scale = scale)
-
-  sq <- unique(icesSquare(survey_info_full))
-  pol <- icesSquare2coord(sq,"polygons")
-  point <- icesSquare2coord(sq,"midpoint")
-  range <- as.data.frame(lapply(do.call("rbind",pol),range))
-  if(!is.null(xlim)) {
-    range$lon[] <- xlim
-  }
-  if(!is.null(ylim)) {
-    range$lat[] <- ylim
-  }
-
-  surveys <- unique(survey_info_full$Survey)
-
-  if (!overlay) {
-    nsurv <- length(surveys)
-  } else {
-    nsurv <- 1
-  }
-  mfrow <- n2mfrow(nsurv, asp = 2)
-  par(mfrow = mfrow, mar = c(0.5,0.5,0.5,0.5),
-      oma = c(4,4,1,1))
-
-  if (!overlay) {
-
-    for(i in 1:nsurv){
-
-      subi <- subset(survey_info_full, Survey == surveys[i])
-      sqi <- unique(icesSquare(subi))
-      poli <- icesSquare2coord(sqi, "polygons")
-      if (!fixed_axes) {
-        range <- as.data.frame(lapply(do.call("rbind",poli), range))
-        if (!is.null(xlim)) {
-          range$lon[] <- xlim
-        }
-        if (!is.null(ylim)) {
-          range$lat[] <- ylim
-        }
-      }
-
-      xaxt <- ifelse(i %in% (prod(mfrow) - mfrow[2]+1):prod(mfrow), "s", "n")
-      yaxt <- ifelse(i %in% seq(1, prod(mfrow), mfrow[2]), "s", "n")
-
-      plot(range,
-           type="n", las=1,
-           xaxt = xaxt,
-           yaxt = yaxt,
-           asp = 1,
-           xlab = "", ylab = "")
-
-
-      poli2 <- do.call("rbind",lapply(poli,function(x)rbind(x,NA)))
-      polygon(poli2, col = adjustcolor(i, 0.8), border = adjustcolor("grey70",0.3))
-
-      if(plot_map){
-        plot(sf::st_geometry(land_ll), add = TRUE,
-             col = col_land, border = border_land)
-      }
-
-      legend("topleft", legend = surveys[i],
-             pch = NA, bg = "white")
-      box(lwd = 1.5)
-    }
-
-  } else {
-
-    lon_breaks <- seq(min(point[,1]) - 0.5, max(point[,1]) + 0.5, by = 1)
-    lat_breaks <- seq(min(point[,2]) - 0.25, max(point[,2]) + 0.25, by = 0.5)
-    survey_info_full$lon_bin <- cut(survey_info_full$lon, breaks = lon_breaks,
-                                    labels = seq(min(point[,1]),
-                                                 max(point[,1]), by = 1),
-                                    include.lowest = TRUE)
-    survey_info_full$lat_bin <- cut(survey_info_full$lat, breaks = lat_breaks,
-                                    labels = seq(min(point[,2]),
-                                                 max(point[,2]), by = 0.5),
-                                    include.lowest = TRUE)
-
-    plot(range,type="n",las=1,xlab="Longitude",ylab="Latitude")
-
-    if (consider_quarter) {
-      subi <- aggregate(list(Hauls = survey_info_full$Hauls),
-                        by = list(Survey = paste0(survey_info_full$Survey,"-",
-                                                  survey_info_full$Quarter),
-                                  lon_bin = survey_info_full$lon_bin,
-                                  lat_bin = survey_info_full$lat_bin), FUN = sum)
-    } else {
-      subi <- aggregate(list(Hauls = survey_info_full$Hauls),
-                        by = list(survey_info_full$Survey,
-                                  lon_bin = survey_info_full$lon_bin,
-                                  lat_bin = survey_info_full$lat_bin), FUN = sum)
-    }
-    subi$dummy <- 1
-    freq <- aggregate(dummy ~ lon_bin + lat_bin, data = subi, FUN = sum)
-    grid <- expand.grid(
-      lon_bin = levels(survey_info_full$lon_bin),
-      lat_bin = levels(survey_info_full$lat_bin)
-    )
-    freq_full <- merge(grid, freq, by = c("lon_bin", "lat_bin"), all.x = TRUE)
-    freq_full$dummy[is.na(freq_full$dummy)] <- 0
-    tmp <- xtabs(dummy ~ lon_bin + lat_bin, data = freq_full)
-
-    col <- hcl.colors(max(tmp)-1, "YlOrRd", rev = TRUE)
-    breaks <- round(seq(1, max(tmp), length.out = length(col)+1))
-
-    image(as.numeric(rownames(tmp)),
-          as.numeric(colnames(tmp)),
-          tmp,
-          breaks = breaks,
-          col = col,
-          add = TRUE)
-
-    if(plot_map){
-      plot(sf::st_geometry(land_ll), add = TRUE,
-           col = col_land, border = border_land)
-    }
-    labs <- breaks[-length(breaks)]
-    labs[length(labs)] <- paste0(">",labs[length(labs)])
-    legend("bottomright",
-           legend = labs,
-           col = col, cex = 0.6,
-           pch = 15, pt.cex = 1.5,
-           bg = "white")
-    box(lwd = 1.5)
-
-  }
-
-  return(invisible(NULL))
-}
-
-
-
-#' Plot haul maps through space and time
+#' Unified DATRAS overview plotting
 #'
-#' Visualise the spatial footprint of survey hauls by year using faceted maps.
-#' Point sizes can optionally be scaled by a haul-level variable or by a
-#' haul-level variable standardised by effort.
+#' Plots spatial overviews from DATRAS haul data using gridded image maps or
+#' point maps, with optional grouping and faceting.
 #'
-#' The function expects a DATRAS-like object containing a haul table
-#' \code{x[["HH"]]} with at least the columns \code{Year}, \code{lon}, and
-#' \code{lat}.
+#' @param x A DATRAS-like object containing `x[['HH']]`, or `NULL` to use
+#'   `DATRASextra::survey_info_full_raw` (fallback `survey_info_full`).
+#' @param mode Plot mode: `"grid"` or `"points"`. Default is `"points"`.
+#' @param metric Grid metric: `"sum"`, `"mean"`, `"count_hauls"`,
+#'   `"presence"`, or `"count_surveys"`.
+#' @param spatial_basis Spatial basis used for coordinates: `"raw"` uses haul
+#'   coordinates, `"statrec"` uses ICES rectangle midpoints from `StatRec`.
+#' @param by_survey,by_gear,by_quarter,by_year,by_daynight Logical grouping
+#'   toggles used to define panel groups.
+#' @param multi_panels Logical. If `TRUE`, plot one group per panel.
+#' @param value_var Optional haul-level variable to map to values.
+#' @param offset_var Optional haul-level denominator variable.
+#' @param transform Value transform: `"none"`, `"log1p"`, `"sqrt"`, `"log10"`.
+#' @param fixed_scale Logical. Use common color scale across panels in grid mode.
+#' @param fixed_axes Logical. Use common map extent across panels.
+#' @param plot_map Logical. Add land map layer.
+#' @param xlim,ylim Optional map limits.
+#' @param col Optional color palette.
+#' @param palette_rev Logical. Reverse default palette direction.
+#' @param alpha Point alpha in points mode.
+#' @param pch Point symbol.
+#' @param cex Base point size.
+#' @param size_range Point size range when value-based scaling is used.
+#' @param legend Logical. Draw legends.
+#' @param legend_mode Legend behavior: `"auto"`, `"none"`, `"global"`, or
+#'   `"per_panel"`.
+#' @param legend_outside Logical. If `TRUE`, draw the legend outside the main
+#'   plotting panel area. For multi-panel layouts, a free panel is used when
+#'   available; otherwise a narrow right-side legend panel is created.
+#' @param max_legend_items Maximum number of group legend entries.
+#' @param max_grid_legend_levels Maximum number of levels shown in grid legends.
+#' @param legend_ncol Number of columns in legend
+#' @param legend_pos position of legend. Default: NULL.
+#' @param legend_cex cex of legend. Default: NULL.
+#' @param grid_group_strategy Strategy for grouped single-panel grid maps when
+#'   multiple groups occur in the same cell: `"dominant"`, `"mixed"`, or
+#'   `"error"`.
+#' @param main Optional title for single-panel mode.
 #'
-#' @param x A DATRAS-like object containing an \code{HH} data frame.
-#' @param value_var Optional character string naming a haul-level variable in
-#'   \code{x[["HH"]]} used to scale point sizes. If \code{NULL}, point sizes are
-#'   constant unless \code{size_var} is provided.
-#' @param effort_var Optional character string naming a haul-level effort
-#'   variable in \code{x[["HH"]]}. If both \code{value_var} and
-#'   \code{effort_var} are available, point sizes are scaled by
-#'   \code{value_var / effort_var}.
-#' @param years Optional numeric or character vector specifying which years to
-#'   plot. Defaults to all available years.
-#' @param plot_map Logical; if \code{TRUE}, add land polygons in the background.
-#' @param fixed_axes Logical; if \code{TRUE}, all panels use the same
-#'   \code{xlim} and \code{ylim}. If \code{FALSE}, each panel is scaled to the
-#'   data shown in that year.
-#' @param xlim Optional numeric vector of length 2 giving x-axis limits.
-#' @param ylim Optional numeric vector of length 2 giving y-axis limits.
-#' @param size_var Deprecated alias for \code{value_var}. If supplied, it
-#'   overrides \code{value_var}.
-#' @param cex Base point size used when no scaling variable is available.
-#' @param cex_range Numeric vector of length 2 giving the minimum and maximum
-#'   point size when scaling is applied.
-#' @param col_points Colour used for haul locations.
-#' @param pch Plotting symbol used for haul locations.
-#' @param transform Character string specifying the transformation applied before
-#'   scaling point sizes. One of \code{"sqrt"}, \code{"log1p"}, or
-#'   \code{"identity"}.
-#' @param verbose Logical; if \code{TRUE}, print which variable was used for
-#'   point-size scaling.
-#'
-#' @return Invisibly returns a list with the plotted years, axis limits, panel
-#'   layout, and the variable used for scaling.
-#'
-#' @details
-#' If both \code{value_var} and \code{effort_var} are available, point sizes are
-#' based on \code{value_var / effort_var}, which can be useful for visualising a
-#' haul-level quantity standardised by effort. However, in standard DATRAS haul
-#' tables, \code{HaulN} is typically a haul identifier rather than a catch
-#' variable and is therefore generally not meaningful for this purpose.
-#'
-#' @examples
-#' \dontrun{
-#' ## Plot yearly haul maps
-#' plot_haul_map(dat)
-#'
-#' ## Restrict to selected years
-#' plot_haul_map(dat, years = 2010:2015)
-#'
-#' ## Scale point size by a haul-level variable
-#' plot_haul_map(dat, value_var = "HaulDur")
-#'
-#' ## Scale point size by a haul-level quantity standardised by effort
-#' plot_haul_map(dat, value_var = "TotalNo", effort_var = "SweptArea")
-#' }
-#'
+#' @return Invisibly returns list with processed data and plotting metadata.
 #' @export
-plot_haul_map <- function(x,
-                          value_var = "HaulN",
-                          effort_var = "SweptArea",
-                          years = NULL,
-                          plot_map = TRUE,
-                          fixed_axes = TRUE,
-                          xlim = NULL,
-                          ylim = NULL,
-                          size_var = NULL,
-                          cex = 0.8,
-                          cex_range = c(0.5, 2.5),
-                          col_points = NULL,
-                          pch = 16,
-                          transform = c("sqrt", "log1p", "identity"),
-                          show_size_legend = TRUE,
-                          legend_n = 4,
-                          legend_pos = "bottomright",
-                          legend_title = NULL,
-                          verbose = TRUE) {
-
+plot_datras_overview <- function(
+  x = NULL,
+  mode = c("points", "grid"),
+  metric = c("presence", "sum", "mean", "count_hauls", "count_surveys"),
+  spatial_basis = c("raw", "statrec"),
+  by_survey = FALSE,
+  by_gear = FALSE,
+  by_quarter = FALSE,
+  by_year = FALSE,
+  by_daynight = FALSE,
+  multi_panels = FALSE,
+  value_var = NULL,
+  offset_var = NULL,
+  transform = c("none", "log1p", "sqrt", "log10"),
+  fixed_scale = TRUE,
+  fixed_axes = TRUE,
+  plot_map = TRUE,
+  xlim = NULL,
+  ylim = NULL,
+  col = NULL,
+  palette_rev = FALSE,
+  alpha = 0.8,
+  pch = 16,
+  cex = 0.8,
+  size_range = c(0.7, 2.2),
+  legend = TRUE,
+  legend_mode = c("auto", "none", "global", "per_panel"),
+  legend_outside = FALSE,
+  max_legend_items = 30,
+  max_grid_legend_levels = 5,
+  legend_ncol = 1,
+  legend_pos = NULL,
+  legend_cex = NULL,
+  grid_group_strategy = c("dominant", "mixed", "error"),
+  main = NULL
+) {
+  mode <- match.arg(mode)
+  metric <- match.arg(metric)
+  spatial_basis <- match.arg(spatial_basis)
   transform <- match.arg(transform)
+  legend_mode <- match.arg(legend_mode)
+  grid_group_strategy <- match.arg(grid_group_strategy)
 
-  hh <- x[["HH"]]
+  hh <- .as_hh_data(x)
+  hh <- .prepare_spatial_basis(hh, spatial_basis = spatial_basis)
+  x_col <- "lon"
+  y_col <- "lat"
+  if (nrow(hh) == 0) stop("No finite coordinate rows in HH.", call. = FALSE)
 
-  if (is.null(hh)) {
-    stop("`x` must contain an 'HH' element.")
+  hh$.value <- .compute_value(hh, value_var = value_var, offset_var = offset_var, transform = transform)
+  hh$.group <- .build_group(hh, by_survey, by_gear, by_quarter, by_year, by_daynight)
+  has_grouping <- any(c(by_survey, by_gear, by_quarter, by_year, by_daynight))
+  active_dims <- .group_dims_active(by_survey, by_gear, by_quarter, by_year, by_daynight)
+
+  group_cols <- NULL
+  if (has_grouping) {
+    lev <- levels(hh$.group)
+    group_cols <- .colours_datrasextra_discrete(length(lev), rev = palette_rev)
+    names(group_cols) <- lev
   }
 
-  needed <- c("Year", "lon", "lat")
-  miss <- setdiff(needed, names(hh))
-  if (length(miss) > 0) {
-    stop("Missing required columns in `x[['HH']]`: ",
-         paste(miss, collapse = ", "))
-  }
+  if (!is.null(xlim)) hh <- hh[hh[[x_col]] >= xlim[1] & hh[[x_col]] <= xlim[2], , drop = FALSE]
+  if (!is.null(ylim)) hh <- hh[hh[[y_col]] >= ylim[1] & hh[[y_col]] <= ylim[2], , drop = FALSE]
+  if (nrow(hh) == 0) stop("No rows left after applying xlim/ylim.", call. = FALSE)
 
-  if (!is.null(size_var)) {
-    value_var <- size_var
-  }
+  grid_info <- .make_grid(hh, x_col = x_col, y_col = y_col)
+  hh <- grid_info$data
+  if (is.null(xlim)) xlim <- grid_info$xlim
+  if (is.null(ylim)) ylim <- grid_info$ylim
 
-  hh <- hh[stats::complete.cases(hh[, c("Year", "lon", "lat")]), , drop = FALSE]
-
-  if (!is.null(years)) {
-    hh <- hh[hh$Year %in% years, , drop = FALSE]
-  }
-
-  if (nrow(hh) == 0) {
-    stop("No rows available for plotting after filtering.")
-  }
-
-  years <- sort(unique(hh$Year))
-  nyears <- length(years)
-
-  if (plot_map) {
-    download_map <- FALSE
-    scale_map <- 50
-    col_land <- grDevices::adjustcolor(grey(0.9), 0.4)
-    border_land <- grDevices::adjustcolor(grey(0.6), 0.4)
-    land_ll <- get_land(download = download_map, scale = scale_map)
-  }
-
-  if (is.null(xlim)) xlim <- range(hh$lon, na.rm = TRUE)
-  if (is.null(ylim)) ylim <- range(hh$lat, na.rm = TRUE)
-
-  scale_values_raw <- NULL
-  scale_label <- "constant"
-
-  if (!is.null(value_var)) {
-    if (!value_var %in% names(hh)) {
-      warning("`value_var` not found in `x[['HH']]`: ", value_var,
-              ". Using constant point size.")
-      value_var <- NULL
-    }
-  }
-
-  if (!is.null(value_var)) {
-    vals <- hh[[value_var]]
-    vals[!is.finite(vals)] <- NA_real_
-
-    if (!is.null(effort_var) && effort_var %in% names(hh)) {
-      eff <- hh[[effort_var]]
-      eff[!is.finite(eff) | eff <= 0] <- NA_real_
-      scale_values_raw <- vals / eff
-      scale_label <- paste0(value_var, " / ", effort_var)
+  if (is.null(col)) {
+    if (metric %in% c("sum", "mean")) {
+      col <- .colours_datrasextra_continuous(12, rev = palette_rev)
     } else {
-      scale_values_raw <- vals
-      scale_label <- value_var
-    }
-
-    scale_values_raw[!is.finite(scale_values_raw) | scale_values_raw < 0] <- NA_real_
-  }
-
-  scale_values <- scale_values_raw
-  if (!is.null(scale_values)) {
-    scale_values <- switch(
-      transform,
-      sqrt = sqrt(scale_values),
-      log1p = log1p(scale_values),
-      identity = scale_values
-    )
-  }
-
-  point_cex_all <- rep(cex, nrow(hh))
-  scale_rng <- c(NA_real_, NA_real_)
-
-  if (!is.null(scale_values) && any(is.finite(scale_values))) {
-    scale_rng <- range(scale_values, na.rm = TRUE)
-    if (diff(scale_rng) > 0) {
-      point_cex_all <- cex_range[1] +
-        (cex_range[2] - cex_range[1]) * (scale_values - scale_rng[1]) / diff(scale_rng)
-      point_cex_all[!is.finite(point_cex_all)] <- cex
+      col <- .colours_datrasextra_discrete(9, rev = palette_rev)
     }
   }
 
-  if (isTRUE(verbose)) {
-    message("Point-size scaling: ", scale_label)
+  split_list <- if (isTRUE(multi_panels)) split(hh, hh$.group, drop = TRUE) else list(All = hh)
+  if (length(split_list) > 1) {
+    names(split_list) <- sapply(strsplit(names(split_list), "\\|"), function(x) paste(sapply(strsplit(x, "="), "[[", 2), collapse = "| "))
   }
 
-  panel_layout <- grDevices::n2mfrow(nyears, asp = 1.2)
-  oldpar <- graphics::par(no.readonly = TRUE)
-  on.exit(graphics::par(oldpar))
-
-  graphics::par(mfrow = panel_layout,
-                mar = c(1.5, 1.5, 2, 1),
-                oma = c(3, 3, 1, 1))
-
-  if (is.null(col_points)) col_points <- .cols_datrasextra(length(years))
-  if (length(col_points) < length(years)) {
-    col_points <- rep(col_points, length.out = length(years))
+  if (!isTRUE(fixed_axes) && isTRUE(multi_panels)) {
+    panel_limits <- lapply(split_list, function(d) list(x = range(d[[x_col]], na.rm = TRUE), y = range(d[[y_col]], na.rm = TRUE)))
+  } else {
+    panel_limits <- lapply(split_list, function(d) list(x = xlim, y = ylim))
   }
 
-  map_values_to_cex <- function(z_raw) {
-    if (is.null(scale_values_raw) || !any(is.finite(scale_values))) {
-      return(rep(cex, length(z_raw)))
+  zlim <- NULL
+  if (identical(mode, "grid") && isTRUE(fixed_scale) && length(split_list) > 1) {
+    max_vals <- vapply(split_list, function(d) {
+      ag <- .aggregate_grid(d, metric = metric)
+      v <- ag$z[is.finite(ag$z)]
+      if (length(v) == 0) 0 else max(v)
+    }, numeric(1))
+    zlim <- c(0, max(max_vals, na.rm = TRUE))
+  }
+
+  outside_active <- isTRUE(legend_outside) && isTRUE(legend) && !identical(legend_mode, "none")
+  n_panels <- length(split_list)
+  mf <- if (n_panels > 1) grDevices::n2mfrow(n_panels) else c(1, 1)
+  panel_capacity <- prod(mf)
+  use_empty_panel_for_legend <- outside_active && n_panels > 1 && panel_capacity > n_panels
+  use_side_panel_for_legend <- outside_active && !use_empty_panel_for_legend
+
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par), add = TRUE)
+
+  if (use_side_panel_for_legend) {
+    left_mat <- matrix(seq_len(panel_capacity), nrow = mf[1], ncol = mf[2], byrow = TRUE)
+    legend_id <- panel_capacity + 1L
+    lay <- cbind(left_mat, rep(legend_id, mf[1]))
+    graphics::layout(lay, widths = c(rep(1, mf[2]), 0.9))
+    par(mar = c(0.3, 0.3, 0.3, 0.3), oma = c(4.2, 4.2, 0.4, 0))
+  } else {
+    par(mfrow = mf, mar = c(0.3, 0.3, 0.3, 0.3), oma = c(4.2, 4.2, 0.4, 1))
+  }
+
+  panel_meta <- vector("list", length(split_list))
+  names(panel_meta) <- names(split_list)
+
+  panel_names <- names(split_list)
+  for (i in seq_along(panel_names)) {
+    nm <- panel_names[i]
+    d <- split_list[[nm]]
+    lim <- panel_limits[[nm]]
+    if (isTRUE(multi_panels) && isTRUE(fixed_axes)) {
+      row_i <- ((i - 1) %/% mf[2]) + 1
+      col_i <- ((i - 1) %% mf[2]) + 1
+      show_x_axis <- row_i == mf[1]
+      show_y_axis <- col_i == 1
+    } else {
+      show_x_axis <- TRUE
+      show_y_axis <- TRUE
     }
+    panel_title <- if (isTRUE(multi_panels)) NULL else main
+    panel_label <- if (isTRUE(multi_panels)) nm else NULL
 
-    z_tr <- switch(
-      transform,
-      sqrt = sqrt(z_raw),
-      log1p = log1p(z_raw),
-      identity = z_raw
-    )
-
-    if (!all(is.finite(scale_rng)) || diff(scale_rng) <= 0) {
-      return(rep(cex, length(z_raw)))
-    }
-
-    out <- cex_range[1] +
-      (cex_range[2] - cex_range[1]) * (z_tr - scale_rng[1]) / diff(scale_rng)
-
-    out[!is.finite(out)] <- cex
-    out
-  }
-
-  legend_vals <- NULL
-  legend_cex <- NULL
-
-  if (show_size_legend && !is.null(scale_values_raw) && any(is.finite(scale_values_raw))) {
-    raw_rng <- range(scale_values_raw, na.rm = TRUE)
-
-    if (diff(raw_rng) > 0) {
-      legend_vals <- pretty(raw_rng, n = legend_n)
-      legend_vals <- legend_vals[legend_vals >= raw_rng[1] & legend_vals <= raw_rng[2]]
-
-      if (length(legend_vals) < 2) {
-        legend_vals <- seq(raw_rng[1], raw_rng[2], length.out = legend_n)
+    if (identical(mode, "grid")) {
+      if (has_grouping && !isTRUE(multi_panels)) {
+        panel_meta[[nm]] <- .plot_grid_group_panel(
+          hh = d,
+          group_cols = group_cols,
+          strategy = grid_group_strategy,
+          plot_map = plot_map,
+          xlim = lim$x,
+          ylim = lim$y,
+          main = panel_title,
+          panel_label = panel_label,
+          show_x_axis = show_x_axis,
+          show_y_axis = show_y_axis
+        )
+      } else {
+        panel_meta[[nm]] <- .plot_grid_panel(
+          hh = d,
+          metric = metric,
+          col = col,
+          zlim = zlim,
+          plot_map = plot_map,
+          xlim = lim$x,
+          ylim = lim$y,
+          main = panel_title,
+          panel_label = panel_label,
+          show_x_axis = show_x_axis,
+          show_y_axis = show_y_axis
+        )
+      }
+    } else {
+      val <- d$.value
+      rng <- range(val, na.rm = TRUE)
+      if (has_grouping) {
+        pcol <- grDevices::adjustcolor(group_cols[as.character(d$.group)], alpha.f = alpha)
+        if (!is.null(value_var) && !identical(metric, "presence") && is.finite(rng[1]) && is.finite(rng[2]) && rng[1] != rng[2]) {
+          scaled <- (val - rng[1]) / (rng[2] - rng[1])
+          pcex <- size_range[1] + scaled * (size_range[2] - size_range[1])
+          pcex[!is.finite(pcex)] <- cex
+        } else {
+          pcex <- rep(cex, nrow(d))
+        }
+      } else if (identical(metric, "presence") || !is.finite(rng[1]) || !is.finite(rng[2]) || rng[1] == rng[2]) {
+        pcol <- rep(grDevices::adjustcolor(.colours_datrasextra_continuous(10, rev = palette_rev)[1], alpha.f = alpha), nrow(d))
+        pcex <- rep(cex, nrow(d))
+      } else {
+        brk <- seq(rng[1], rng[2], length.out = length(col) + 1)
+        idx <- cut(val, breaks = brk, include.lowest = TRUE, labels = FALSE)
+        pcol <- grDevices::adjustcolor(col[idx], alpha.f = alpha)
+        scaled <- (val - rng[1]) / (rng[2] - rng[1])
+        pcex <- size_range[1] + scaled * (size_range[2] - size_range[1])
+        pcex[!is.finite(pcex)] <- cex
       }
 
-      legend_cex <- map_values_to_cex(legend_vals)
-
-      if (is.null(legend_title)) {
-        legend_title <- scale_label
-      }
-    }
-  }
-
-  for (i in seq_along(years)) {
-    ind <- hh$Year == years[i]
-    subi <- hh[ind, , drop = FALSE]
-    point_cex <- point_cex_all[ind]
-
-    zero_ind <- rep(FALSE, nrow(subi))
-    if (!is.null(scale_values_raw)) {
-      zero_ind <- is.finite(scale_values_raw[ind]) & scale_values_raw[ind] == 0
-    }
-
-    panel_xlim <- xlim
-    panel_ylim <- ylim
-
-    if (!fixed_axes) {
-      panel_xlim <- range(subi$lon, na.rm = TRUE)
-      panel_ylim <- range(subi$lat, na.rm = TRUE)
-    }
-
-    graphics::plot(NA,
-                   xlim = panel_xlim,
-                   ylim = panel_ylim,
-                   xlab = "",
-                   ylab = "",
-                   xaxt = "n",
-                   yaxt = "n",
-                   asp = 1)
-
-    if (plot_map) {
-      graphics::plot(sf::st_geometry(land_ll),
-                     add = TRUE,
-                     col = col_land,
-                     border = border_land)
-    }
-
-    if (any(!zero_ind)) {
-      graphics::points(subi$lon[!zero_ind], subi$lat[!zero_ind],
-                       cex = point_cex[!zero_ind],
-                       col = col_points[i],
-                       pch = pch)
-    }
-
-    if (any(zero_ind)) {
-      graphics::points(subi$lon[zero_ind], subi$lat[zero_ind],
-                       cex = 1,
-                       col = "pink",
-                       pch = 4,
-                       lwd = 1.5)
-    }
-
-    if (i %in% seq(1, prod(panel_layout), by = panel_layout[2])) {
-      graphics::axis(2, las = 1)
-    }
-    if (i %in% (prod(panel_layout) - panel_layout[2] + 1):prod(panel_layout)) {
-      graphics::axis(1)
-    }
-
-    if (i == length(years) &&
-        show_size_legend &&
-        !is.null(legend_vals) &&
-        length(legend_vals) > 0) {
-
-      graphics::legend(
-        legend_pos,
-        legend = formatC(legend_vals, format = "fg", digits = 3),
-        pt.cex = legend_cex,
+      .plot_points_panel(
+        hh = d,
+        x_col = x_col,
+        y_col = y_col,
+        col_vec = pcol,
+        cex_vec = pcex,
         pch = pch,
-        col = "grey20",
-        pt.bg = NA,
-        title = legend_title,
-        bg = "white",
-        x.intersp = 1,
-        y.intersp = 1.2
+        plot_map = plot_map,
+        xlim = lim$x,
+        ylim = lim$y,
+        main = panel_title,
+        panel_label = panel_label,
+        show_x_axis = show_x_axis,
+        show_y_axis = show_y_axis
       )
+      panel_meta[[nm]] <- list(value_range = rng)
     }
-
-    graphics::box(lwd = 1.2)
-    graphics::title(main = years[i], cex.main = 0.95)
   }
 
-  graphics::mtext("Longitude", side = 1, outer = TRUE, line = 1.5)
-  graphics::mtext("Latitude", side = 2, outer = TRUE, line = 1.5)
+  if (length(split_list) > 1) {
+    mtext("Longitude", side = 1, line = 2.5, outer = TRUE)
+    mtext("Latitude", side = 2, line = 2.5, outer = TRUE)
+  } else {
+    ## title(xlab = "Longitude", ylab = "Latitude")
+    mtext("Longitude", side = 1, line = 2.5, outer = FALSE)
+    mtext("Latitude", side = 2, line = 2.5, outer = FALSE)
+  }
+
+  if (isTRUE(legend) && !identical(legend_mode, "none")) {
+    leg_payload <- NULL
+    if (identical(mode, "grid")) {
+      show_grid_legend <- switch(
+        legend_mode,
+        auto = (!isTRUE(multi_panels) || isTRUE(fixed_scale)),
+        global = TRUE,
+        per_panel = FALSE,
+        FALSE
+      )
+      info <- panel_meta[[1]]
+      if (show_grid_legend && !is.null(info$breaks)) {
+        if (has_grouping && !isTRUE(multi_panels)) {
+          if (length(info$legend_labels) <= max_legend_items) {
+            lg <- .format_group_legend(info$legend_labels, active_dims = active_dims)
+            leg_payload <- list(legend = lg$labels, col = info$legend_cols, title = lg$title, cex = 0.7)
+          }
+        } else if (identical(metric, "presence")) {
+          leg_payload <- list(legend = info$legend_labels, col = info$legend_cols, title = metric, cex = 0.8)
+        } else {
+          leg_labels <- info$legend_labels
+          leg_cols <- info$legend_cols
+
+          if (metric %in% c("count_hauls", "count_surveys") && length(leg_labels) > max_grid_legend_levels) {
+            vals <- suppressWarnings(as.numeric(leg_labels))
+            vals <- vals[is.finite(vals)]
+            if (length(vals) > 0) {
+              b <- unique(round(seq(min(vals), max(vals), length.out = max_grid_legend_levels + 1)))
+              if (length(b) >= 2) {
+                leg_labels <- paste0("[", b[-length(b)], ", ", b[-1], "]")
+                idx <- round(seq(1, length(info$legend_cols), length.out = length(leg_labels)))
+                leg_cols <- info$legend_cols[idx]
+              }
+            }
+          }
+          leg_payload <- list(legend = leg_labels, col = leg_cols, title = metric, cex = 0.7)
+        }
+      }
+    } else {
+      show_points_legend <- switch(
+        legend_mode,
+        auto = (!isTRUE(multi_panels) && any(c(by_survey, by_gear, by_quarter, by_year, by_daynight))),
+        global = any(c(by_survey, by_gear, by_quarter, by_year, by_daynight)),
+        per_panel = FALSE,
+        FALSE
+      )
+      if (show_points_legend) {
+        lev <- levels(hh$.group)
+        if (length(lev) <= max_legend_items) {
+          leg_cols <- if (!is.null(group_cols)) group_cols[lev] else rep("grey30", length(lev))
+          lg <- .format_group_legend(lev, active_dims = active_dims)
+          leg_payload <- list(legend = lg$labels, col = leg_cols, title = lg$title, cex = 0.7)
+        }
+      }
+    }
+
+    if (!is.null(leg_payload)) {
+      if (outside_active) {
+        if (use_empty_panel_for_legend) {
+          plot.new()
+        } else if (use_side_panel_for_legend) {
+          plot.new()
+        }
+        if (!is.null(legend_cex)) leg_payload$cex <- legend_cex
+        graphics::legend("center", legend = leg_payload$legend, pch = 15, col = leg_payload$col, cex = leg_payload$cex, bg = "white", title = leg_payload$title,
+                         ncol = legend_ncol)
+      } else {
+        if (is.null(legend_pos)) {
+          pos <- if (identical(mode, "grid")) "bottomright" else "topright"
+        } else {
+          pos <- legend_pos
+        }
+        if (!is.null(legend_cex)) leg_payload$cex <- legend_cex
+        graphics::legend(pos, legend = leg_payload$legend, pch = 15, col = leg_payload$col, cex = leg_payload$cex, bg = "white", title = leg_payload$title,
+                         ncol = legend_ncol)
+      }
+    }
+  }
 
   invisible(list(
-    years = years,
+    data = hh,
+    mode = mode,
+    metric = metric,
+    spatial_basis = spatial_basis,
+    transform = transform,
+    groups = levels(hh$.group),
+    panels = names(split_list),
+    x_col = x_col,
+    y_col = y_col
+  ))
+}
+
+
+
+## Internal functions ------------------------------------------------------------
+
+.draw_land_layer <- function(plot_map, xlim, ylim) {
+  if (!isTRUE(plot_map)) return(invisible(FALSE))
+
+  col_land <- grDevices::adjustcolor(grey(0.9), 0.7)
+  border_land <- grDevices::adjustcolor(grey(0.6), 0.5)
+
+  if (exists("get_land", mode = "function") && requireNamespace("sf", quietly = TRUE)) {
+    land_ll <- tryCatch(get_land(download_map = FALSE, scale = 50),
+                        error = function(e) NULL)
+    if (!is.null(land_ll)) {
+      try(plot(sf::st_geometry(land_ll), add = TRUE,
+               col = col_land, border = border_land), silent = TRUE)
+      return(invisible(TRUE))
+    }
+  }
+
+  if (requireNamespace("maps", quietly = TRUE)) {
+    maps::map("world", add = TRUE, fill = TRUE,
+              col = col_land, border = border_land, xlim = xlim, ylim = ylim)
+    return(invisible(TRUE))
+  }
+
+  invisible(FALSE)
+}
+
+
+.as_hh_data <- function(x = NULL) {
+  if (is.null(x)) {
+
+    hh <- get("survey_info_full_raw", envir = asNamespace("DATRASextra"))
+
+    if (is.null(hh)) {
+      stop("Could not load `survey_info_full_raw` from DATRASextra.", call. = FALSE)
+    }
+    return(as.data.frame(hh, stringsAsFactors = FALSE))
+  }
+
+  if (is.list(x) && !is.null(x[["HH"]])) {
+    return(as.data.frame(x[["HH"]], stringsAsFactors = FALSE))
+  }
+
+  stop("`x` must be NULL or a DATRAS-like list with `x[['HH']]`.", call. = FALSE)
+}
+
+
+.resolve_xy_cols <- function(hh) {
+  if (all(c("lon", "lat") %in% names(hh))) return(c("lon", "lat"))
+  if (all(c("ShootLong", "ShootLat") %in% names(hh))) return(c("ShootLong", "ShootLat"))
+  stop("HH must contain either lon/lat or ShootLong/ShootLat columns.", call. = FALSE)
+}
+
+.prepare_spatial_basis <- function(hh, spatial_basis = c("raw", "statrec")) {
+  spatial_basis <- match.arg(spatial_basis)
+  if (identical(spatial_basis, "raw")) {
+    xy <- .resolve_xy_cols(hh)
+    hh$lon <- suppressWarnings(as.numeric(hh[[xy[1]]]))
+    hh$lat <- suppressWarnings(as.numeric(hh[[xy[2]]]))
+    hh <- hh[is.finite(hh$lon) & is.finite(hh$lat), , drop = FALSE]
+    return(hh)
+  }
+
+  if (!("StatRec" %in% names(hh))) {
+    stop("`spatial_basis = 'statrec'` requires HH column `StatRec`.", call. = FALSE)
+  }
+
+  coord_fun <- NULL
+  if (exists("icesSquare2coord", mode = "function")) {
+    coord_fun <- get("icesSquare2coord", mode = "function")
+  } else if (requireNamespace("DATRAS", quietly = TRUE) && exists("icesSquare2coord", envir = asNamespace("DATRAS"), inherits = FALSE)) {
+    coord_fun <- get("icesSquare2coord", envir = asNamespace("DATRAS"), inherits = FALSE)
+  }
+  if (is.null(coord_fun)) {
+    stop("`spatial_basis = 'statrec'` requires `icesSquare2coord` (install/load package DATRAS).", call. = FALSE)
+  }
+
+  hh$StatRec <- trimws(as.character(hh$StatRec))
+  bad_code <- is.na(hh$StatRec) | !nzchar(hh$StatRec) | hh$StatRec == "-9"
+  hh <- hh[!bad_code, , drop = FALSE]
+
+  sq <- unique(hh$StatRec)
+  mid_list <- lapply(sq, function(code) {
+    one <- tryCatch(coord_fun(code, "midpoint"), error = function(e) NULL)
+    if (is.null(one)) return(NULL)
+    df <- as.data.frame(one, stringsAsFactors = FALSE)
+    df$StatRec <- code
+    df
+  })
+  mid_list <- Filter(Negate(is.null), mid_list)
+  if (length(mid_list) == 0) {
+    stop("Failed to convert any StatRec values to midpoint coordinates.", call. = FALSE)
+  }
+  mid <- do.call(rbind, mid_list)
+  dropped <- setdiff(sq, mid$StatRec)
+  if (length(dropped) > 0) {
+    warning(sprintf("Dropped %s invalid StatRec code(s) during midpoint conversion.", length(dropped)), call. = FALSE)
+  }
+  hh <- hh[, !(names(hh) %in% c("lon", "lat")), drop = FALSE]
+  hh <- merge(hh, mid[, c("StatRec", "lon", "lat")], by = "StatRec", all.x = TRUE)
+  hh <- hh[is.finite(hh$lon) & is.finite(hh$lat), , drop = FALSE]
+  hh
+}
+
+
+.compute_value <- function(hh, value_var = NULL, offset_var = NULL, transform = "none") {
+  if (is.null(value_var)) {
+    val <- if ("Hauls" %in% names(hh)) suppressWarnings(as.numeric(hh$Hauls)) else rep(1, nrow(hh))
+  } else {
+    if (!(value_var %in% names(hh))) stop("`value_var` not found in HH: ", value_var, call. = FALSE)
+    val <- suppressWarnings(as.numeric(hh[[value_var]]))
+  }
+
+  if (!is.null(offset_var)) {
+    if (!(offset_var %in% names(hh))) stop("`offset_var` not found in HH: ", offset_var, call. = FALSE)
+    off <- suppressWarnings(as.numeric(hh[[offset_var]]))
+    bad <- !is.finite(off) | off == 0
+    val[bad] <- NA_real_
+    val[!bad] <- val[!bad] / off[!bad]
+  }
+
+  out <- val
+  if (identical(transform, "log1p")) out <- log1p(out)
+  if (identical(transform, "sqrt")) out <- sqrt(out)
+  if (identical(transform, "log10")) out <- log10(out)
+  out[!is.finite(out)] <- NA_real_
+  out
+}
+
+
+.build_group <- function(hh, by_survey, by_gear, by_quarter, by_year, by_daynight) {
+  dims <- character(0)
+  if (isTRUE(by_survey)) dims <- c(dims, "Survey")
+  if (isTRUE(by_gear)) dims <- c(dims, "Gear")
+  if (isTRUE(by_quarter)) dims <- c(dims, "Quarter")
+  if (isTRUE(by_year)) dims <- c(dims, "Year")
+  if (isTRUE(by_daynight)) dims <- c(dims, "DayNight")
+
+  if (length(dims) == 0) return(factor(rep("All", nrow(hh))))
+  miss <- setdiff(dims, names(hh))
+  if (length(miss) > 0) stop("Grouping columns missing in HH: ", paste(miss, collapse = ", "), call. = FALSE)
+
+  cols <- lapply(dims, function(d) {
+    v <- trimws(as.character(hh[[d]]))
+    v[is.na(v) | !nzchar(v)] <- "NA"
+    if (identical(d, "Quarter")) v <- paste0("Q", v)
+    paste0(d, "=", v)
+  })
+  factor(do.call(paste, c(cols, list(sep = " | "))))
+}
+
+
+.group_dims_active <- function(by_survey, by_gear, by_quarter, by_year, by_daynight) {
+  dims <- character(0)
+  if (isTRUE(by_survey)) dims <- c(dims, "Survey")
+  if (isTRUE(by_gear)) dims <- c(dims, "Gear")
+  if (isTRUE(by_quarter)) dims <- c(dims, "Quarter")
+  if (isTRUE(by_year)) dims <- c(dims, "Year")
+  if (isTRUE(by_daynight)) dims <- c(dims, "DayNight")
+  dims
+}
+
+
+.format_group_legend <- function(group_levels, active_dims) {
+  if (length(active_dims) == 1) {
+    dim <- active_dims[1]
+    prefix <- paste0(dim, "=")
+    labels <- sub(paste0("^", prefix), "", group_levels)
+    title_map <- c(
+      Survey = "Surveys",
+      Gear = "Gears",
+      Quarter = "Quarters",
+      Year = "Years",
+      DayNight = "Day/Night"
+    )
+    ttl <- unname(title_map[dim])
+    if (is.na(ttl) || !nzchar(ttl)) ttl <- "Groups"
+    return(list(title = ttl, labels = labels))
+  }
+
+  labels <- gsub("(Survey|Gear|Quarter|Year|DayNight)=", "", group_levels)
+  list(title = "Groups", labels = labels)
+}
+
+
+.make_grid <- function(hh, x_col = "lon", y_col = "lat") {
+  lon <- suppressWarnings(as.numeric(hh[[x_col]]))
+  lat <- suppressWarnings(as.numeric(hh[[y_col]]))
+
+  lon0 <- floor(min(lon, na.rm = TRUE))
+  lon1 <- ceiling(max(lon, na.rm = TRUE))
+  lat0 <- floor(min(lat, na.rm = TRUE) * 2) / 2
+  lat1 <- ceiling(max(lat, na.rm = TRUE) * 2) / 2
+
+  lon_breaks <- seq(lon0 - 0.5, lon1 + 0.5, by = 1)
+  lat_breaks <- seq(lat0 - 0.25, lat1 + 0.25, by = 0.5)
+
+  hh$lon_bin <- cut(hh[[x_col]], breaks = lon_breaks, labels = seq(lon0, lon1, by = 1), include.lowest = TRUE)
+  hh$lat_bin <- cut(hh[[y_col]], breaks = lat_breaks, labels = seq(lat0, lat1, by = 0.5), include.lowest = TRUE)
+
+  list(data = hh, xlim = c(lon0 - 0.5, lon1 + 0.5), ylim = c(lat0 - 0.25, lat1 + 0.25))
+}
+
+
+.aggregate_grid <- function(hh, metric) {
+  if (identical(metric, "sum")) {
+    out <- aggregate(hh$.value, by = list(lon_bin = hh$lon_bin, lat_bin = hh$lat_bin), FUN = function(z) sum(z, na.rm = TRUE))
+    names(out)[3] <- "z"
+  } else if (identical(metric, "mean")) {
+    out <- aggregate(hh$.value, by = list(lon_bin = hh$lon_bin, lat_bin = hh$lat_bin), FUN = function(z) mean(z, na.rm = TRUE))
+    names(out)[3] <- "z"
+  } else if (identical(metric, "count_hauls")) {
+    out <- aggregate(rep(1, nrow(hh)), by = list(lon_bin = hh$lon_bin, lat_bin = hh$lat_bin), FUN = length)
+    names(out)[3] <- "z"
+  } else if (identical(metric, "presence")) {
+    out <- aggregate(rep(1, nrow(hh)), by = list(lon_bin = hh$lon_bin, lat_bin = hh$lat_bin), FUN = function(z) 1)
+    names(out)[3] <- "z"
+  } else if (identical(metric, "count_surveys")) {
+    if (!("Survey" %in% names(hh))) stop("`metric = 'count_surveys'` requires HH column `Survey`.", call. = FALSE)
+    key <- paste(hh$lon_bin, hh$lat_bin)
+    spl <- split(hh$Survey, key)
+    z <- vapply(spl, function(v) length(unique(v)), integer(1))
+    parts <- strsplit(names(z), " ", fixed = TRUE)
+    out <- data.frame(
+      lon_bin = factor(vapply(parts, `[`, character(1), 1), levels = levels(hh$lon_bin)),
+      lat_bin = factor(vapply(parts, `[`, character(1), 2), levels = levels(hh$lat_bin)),
+      z = as.numeric(z),
+      stringsAsFactors = FALSE
+    )
+  } else {
+    stop("Unsupported metric: ", metric, call. = FALSE)
+  }
+
+  template <- expand.grid(
+    lon_bin = levels(hh$lon_bin),
+    lat_bin = levels(hh$lat_bin),
+    KEEP.OUT.ATTRS = FALSE,
+    stringsAsFactors = FALSE
+  )
+  template$lon_bin <- factor(template$lon_bin, levels = levels(hh$lon_bin))
+  template$lat_bin <- factor(template$lat_bin, levels = levels(hh$lat_bin))
+
+  out <- merge(template, out, by = c("lon_bin", "lat_bin"), all.x = TRUE)
+  out
+}
+
+.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = TRUE) {
+  agg <- .aggregate_grid(hh, metric = metric)
+  mat <- xtabs(z ~ lon_bin + lat_bin, data = agg)
+
+  xvals <- as.numeric(rownames(mat))
+  yvals <- as.numeric(colnames(mat))
+  ox <- order(xvals)
+  oy <- order(yvals)
+  mat <- mat[ox, oy, drop = FALSE]
+  xvals <- xvals[ox]
+  yvals <- yvals[oy]
+
+  plot(
+    NA,
     xlim = xlim,
     ylim = ylim,
-    layout = panel_layout,
-    scale_label = scale_label,
-    legend_values = legend_vals
-  ))
+    xlab = "",
+    ylab = "",
+    asp = 1,
+    las = 1,
+    xaxt = if (isTRUE(show_x_axis)) "s" else "n",
+    yaxt = if (isTRUE(show_y_axis)) "s" else "n",
+    main = main
+  )
+
+  finite_vals <- as.numeric(mat[is.finite(mat)])
+  maxz <- if (length(finite_vals) > 0) max(finite_vals) else 0
+
+  if (identical(metric, "presence")) {
+    breaks <- c(0.5, 1.5)
+    use_col <- col[1]
+    legend_labels <- "sampled cells"
+    legend_cols <- use_col[1]
+  } else if (metric %in% c("count_hauls", "count_surveys")) {
+    uniq <- sort(unique(finite_vals))
+    if (length(uniq) == 0) uniq <- 0
+    breaks <- c(uniq - 0.5, max(uniq) + 0.5)
+    use_col <- .colours_datrasextra_discrete(length(uniq), rev = palette_rev)
+    legend_labels <- as.character(uniq)
+    legend_cols <- use_col
+  } else {
+    if (is.null(zlim)) zlim <- c(0, maxz)
+    if (zlim[2] <= zlim[1]) zlim[2] <- zlim[1] + 1
+    nb <- min(7, length(col))
+    breaks <- seq(zlim[1], zlim[2], length.out = nb + 1)
+    use_col <- col[seq_len(nb)]
+    legend_labels <- paste0("[", round(breaks[-length(breaks)], 2), ", ", round(breaks[-1], 2), ")")
+    legend_cols <- use_col
+  }
+
+  image(xvals, yvals, mat, add = TRUE, col = use_col, breaks = breaks)
+  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim)
+  if (!is.null(panel_label) && nzchar(panel_label)) {
+    graphics::legend("topleft", legend = panel_label, pch = NA, bg = "white",
+                     x.intersp = -0.3)
+  }
+  box(lwd = 1.2)
+  invisible(list(maxz = maxz, breaks = breaks, use_col = use_col, legend_labels = legend_labels, legend_cols = legend_cols))
+}
+
+
+.plot_grid_group_panel <- function(hh, group_cols, strategy = c("dominant", "mixed", "error"), plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE) {
+  strategy <- match.arg(strategy)
+
+  counts <- aggregate(rep(1, nrow(hh)), by = list(lon_bin = hh$lon_bin, lat_bin = hh$lat_bin, group = hh$.group), FUN = length)
+  names(counts)[4] <- "n"
+  split_cells <- split(counts, interaction(counts$lon_bin, counts$lat_bin, drop = TRUE))
+
+  pick <- lapply(split_cells, function(df) {
+    mx <- max(df$n)
+    top <- df[df$n == mx, , drop = FALSE]
+    if (nrow(top) == 1) {
+      data.frame(lon_bin = top$lon_bin[1], lat_bin = top$lat_bin[1], group = as.character(top$group[1]), stringsAsFactors = FALSE)
+    } else {
+      if (identical(strategy, "error")) {
+        stop("Ambiguous grouped grid cells found (multiple groups per cell). Use `grid_group_strategy = 'dominant'` or `'mixed'`, or `multi_panels = TRUE`.", call. = FALSE)
+      }
+      if (identical(strategy, "mixed")) {
+        data.frame(lon_bin = top$lon_bin[1], lat_bin = top$lat_bin[1], group = "Mixed", stringsAsFactors = FALSE)
+      } else {
+        g <- sort(as.character(top$group))[1]
+        data.frame(lon_bin = top$lon_bin[1], lat_bin = top$lat_bin[1], group = g, stringsAsFactors = FALSE)
+      }
+    }
+  })
+
+  chosen <- do.call(rbind, pick)
+  g_levels <- names(group_cols)
+  if (identical(strategy, "mixed") && any(chosen$group == "Mixed")) {
+    g_levels <- c(g_levels, "Mixed")
+    group_cols <- c(group_cols, Mixed = "#8C8C8C")
+  }
+
+  chosen$group <- factor(chosen$group, levels = g_levels)
+  chosen$gnum <- as.numeric(chosen$group)
+
+  template <- expand.grid(
+    lon_bin = levels(hh$lon_bin),
+    lat_bin = levels(hh$lat_bin),
+    KEEP.OUT.ATTRS = FALSE,
+    stringsAsFactors = FALSE
+  )
+  template$lon_bin <- factor(template$lon_bin, levels = levels(hh$lon_bin))
+  template$lat_bin <- factor(template$lat_bin, levels = levels(hh$lat_bin))
+
+  agg <- merge(template, chosen[, c("lon_bin", "lat_bin", "gnum")], by = c("lon_bin", "lat_bin"), all.x = TRUE)
+  mat <- xtabs(gnum ~ lon_bin + lat_bin, data = agg)
+  xvals <- as.numeric(rownames(mat))
+  yvals <- as.numeric(colnames(mat))
+  ox <- order(xvals)
+  oy <- order(yvals)
+  mat <- mat[ox, oy, drop = FALSE]
+  xvals <- xvals[ox]
+  yvals <- yvals[oy]
+
+  plot(
+    NA,
+    xlim = xlim,
+    ylim = ylim,
+    xlab = "",
+    ylab = "",
+    asp = 1,
+    las = 1,
+    xaxt = if (isTRUE(show_x_axis)) "s" else "n",
+    yaxt = if (isTRUE(show_y_axis)) "s" else "n",
+    main = main
+  )
+  image(
+    xvals,
+    yvals,
+    mat,
+    add = TRUE,
+    col = unname(group_cols[g_levels]),
+    breaks = seq(0.5, length(g_levels) + 0.5, by = 1)
+  )
+  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim)
+  if (!is.null(panel_label) && nzchar(panel_label)) {
+    graphics::legend("topleft", legend = panel_label, pch = NA, bg = "white",
+                     x.intersp = -0.3)
+  }
+  box(lwd = 1.2)
+
+  list(
+    breaks = seq(0.5, length(g_levels) + 0.5, by = 1),
+    use_col = unname(group_cols[g_levels]),
+    legend_labels = g_levels,
+    legend_cols = unname(group_cols[g_levels])
+  )
+}
+
+.plot_points_panel <- function(hh, x_col, y_col, col_vec, cex_vec, pch, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE) {
+  plot(
+    NA,
+    xlim = xlim,
+    ylim = ylim,
+    xlab = "",
+    ylab = "",
+    asp = 1,
+    las = 1,
+    xaxt = if (isTRUE(show_x_axis)) "s" else "n",
+    yaxt = if (isTRUE(show_y_axis)) "s" else "n",
+    main = main
+  )
+  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim)
+  points(hh[[x_col]], hh[[y_col]], pch = pch, cex = cex_vec, col = col_vec)
+  if (!is.null(panel_label) && nzchar(panel_label)) {
+    graphics::legend("topleft", legend = panel_label, pch = NA, bg = "white",
+                     x.intersp = -0.3)
+  }
+  box(lwd = 1.2)
 }

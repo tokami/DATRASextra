@@ -87,7 +87,7 @@ Or visually with:
 
 ```{r, eval = TRUE, echo = TRUE, fig.alt = "Map with available surveys in DATRAS"}
 ## Plot available DATRAS surveys
-plot_surveys()
+plot_datras_overview(by_survey = TRUE, multi_panels = TRUE)
 ```
 
 

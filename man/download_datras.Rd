@@ -52,6 +52,8 @@ downloaded.}
 downloaded data by running \code{read_datras()} on the specified path.}
 
 \item{verbose}{Logical. If \code{TRUE} (default), progress messages are printed.}
+
+\item{...}{Additional arguments for the function \code{read_datras()}.}
 }
 \value{
 Invisibly returns \code{NULL}.

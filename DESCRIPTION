@@ -25,7 +25,8 @@ Depends:
     R (>= 4.0),
     DATRAS
 Imports:
-    mgcv
+    mgcv,
+    icesDatras
 Suggests:
     mapdata,
     maps,

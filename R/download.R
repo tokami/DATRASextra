@@ -42,6 +42,7 @@
 ##' @param return_data Logical. If `TRUE` (default), the function returns the
 ##'   downloaded data by running `read_datras()` on the specified path.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
+##' @param ... Additional arguments for the function `read_datras()`.
 ##'
 ##' @details
 ##' Files are saved as zipped exchange files named

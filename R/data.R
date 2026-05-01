@@ -112,9 +112,8 @@
 #'   \item{Quarter}{Quarters}
 #'   \item{Gear}{Gear}
 #'   \item{StatRec}{ICES Statistical rectangle}
-#'   \item{Hauls}{Number of hauls}
 #'   \item{lon}{Longitude}
 #'   \item{lat}{Latitude}
 #' }
 #' @source ICES DATRAS metadata.
-"survey_info_full"
+"survey_info_full_raw"

@@ -19,6 +19,13 @@ nea_bbox <- sf::st_bbox(
   crs = sf::st_crs(4326)
 )
 
+## larger area when including Can-Mar survey
+nea_bbox <- sf::st_bbox(
+  c(xmin = -80, xmax = 40,
+    ymin = 5,  ymax = 85),
+  crs = sf::st_crs(4326)
+)
+
 ## crop to bounding box
 land <- sf::st_crop(land, nea_bbox)
 

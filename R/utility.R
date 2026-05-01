@@ -9,7 +9,7 @@
 ##' @export
 list_surveys <- function() {
 
-    survey_info_full <- get("survey_info", envir = asNamespace("DATRASextra"))
+    survey_info <- get("survey_info", envir = asNamespace("DATRASextra"))
 
     return(survey_info)
 }
@@ -289,31 +289,46 @@ get_latin <- function(x, use_worrms = FALSE) {
 
 ## Internal functions ------------------------------------------------------------
 
-.cols_datrasextra <- function(n) {
-
+.colours_datrasextra_continuous <- function(n, rev = FALSE) {
   if (length(n) != 1L || is.na(n) || !is.numeric(n) || n < 1) {
-    stop("`n` must be a single positive integer.")
+    stop("`n` must be a single positive integer.", call. = FALSE)
   }
-
   n <- as.integer(n)
 
-  ## Marine-inspired package palette
-  base_cols <- c(
-    "#0B3C5D", ## deep ocean blue
-    "#117A8B", ## teal
-    "#16A085", ## turquoise-green
-    "#4DAF7C", ## sea green
-    "#A1C181", ## soft algae
-    "#F1C27D", ## sand
-    "#E07A5F", ## coral
-    "#B56576", ## muted rose
-    "#6D597A"  ## dusk purple
+  anchors <- c(
+    "#f0e2c0", # sand (low)
+    "#A1C181", # soft algae
+    "#4DAF7C", # sea green
+    "#16A085", # turquoise-green
+    "#117A8B", # teal
+    "#0B3C5D" # deep ocean blue
+    ## "#6D597A"  # dusk purple (high)
   )
 
-  if (n <= length(base_cols)) {
-    return(base_cols[seq_len(n)])
-  }
+  pal <- grDevices::colorRampPalette(anchors)(n)
+  if (isTRUE(rev)) pal <- rev(pal)
+  pal
+}
 
+.colours_datrasextra_discrete <- function(n, rev = FALSE) {
+  if (length(n) != 1L || is.na(n) || !is.numeric(n) || n < 1) {
+    stop("`n` must be a single positive integer.", call. = FALSE)
+  }
+  n <- as.integer(n)
+
+  base_cols <- c(
+    "#f0e2c0", # sand (low)
+    "#A1C181",
+    "#4DAF7C",
+    "#16A085",
+    "#117A8B",
+    "#0B3C5D"
+    ## "#6D597A"  # high
+  )
+
+  if (isTRUE(rev)) base_cols <- rev(base_cols)
+
+  if (n <= length(base_cols)) return(base_cols[seq_len(n)])
   grDevices::colorRampPalette(base_cols)(n)
 }
 

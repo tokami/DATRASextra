@@ -35,6 +35,7 @@ articles:
 - title: Getting started
   contents:
   - datrasextra-tutorial
+  - articles/plot-datras-overview
   - articles/define-survey-domain
 - title: Advanced
   contents:

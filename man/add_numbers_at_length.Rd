@@ -4,7 +4,7 @@
 \alias{add_numbers_at_length}
 \title{Add numbers-at-length to a DATRAS object}
 \usage{
-add_numbers_at_length(x, cm_breaks = NULL, by = get_accuracy_cm(x))
+add_numbers_at_length(x, cm_breaks = NULL, by = 1)
 }
 \arguments{
 \item{x}{A \code{DATRASraw} object.}
@@ -14,7 +14,8 @@ in cm. If \code{NULL}, break points are created automatically from the observed
 range of \code{HL$LngtCm} using \code{by}.}
 
 \item{by}{Numeric scalar giving the width of the default length classes in
-cm. Only used when \code{cm_breaks = NULL}.}
+cm. Default is 1cm (for herring, sprat and other smaller species 0.5 might
+be more appropriate). Only used when \code{cm_breaks = NULL}.}
 }
 \value{
 A \code{DATRASraw} object with numbers-at-length added to the \code{HH}
