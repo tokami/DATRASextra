@@ -1,8 +1,8 @@
 # Add weight estimates to `HL` records following the FishGlob workflow
 
-Calculate weight-at-length using empirical length-weight parameters and
-add the resulting weight fields to the `HL` table of a `datras_raw` /
-`DATRASraw` object.
+Calculate weight-at-length using lookup length-weight parameters from
+the species_info table and add the resulting weight fields to the `HL`
+table of a `datras_raw` / `DATRASraw` object.
 
 ## Usage
 
@@ -28,7 +28,7 @@ additional columns:
 ## Details
 
 The function merges the `HL` table with internal species information to
-obtain empirical length-weight parameters (`aFG` and `bFG`), computes
+obtain lookup length-weight parameters (`aFG` and `bFG`), computes
 individual weight from length, and then calculates total weight for each
 length class record.
 
@@ -36,7 +36,7 @@ Weight-at-length is calculated for each `HL` record as: \$\$ Wgt\\indiv
 = aFG \times LngtCm^{bFG} \$\$
 
 where `LngtCm` is fish length in centimetres and `aFG` and `bFG` are
-empirical species-specific length-weight parameters obtained from the
+lookup species-specific length-weight parameters obtained from the
 internal `species_info` data.
 
 Total weight per record is then calculated as: \$\$ Wgt\\total =

@@ -96,8 +96,6 @@ x <- add_total_weight_by_haul(dab)
 
 ## Add total haul biomass and biomass per minute
 x <- add_total_weight_by_haul(dab, per_minute = TRUE)
-#> Warning: STATS is longer than the extent of 'dim(x)[MARGIN]'
-#> Error in array(STATS, dims[perm]): 'dim' cannot be of length 0
 
 ## Use length-weight parameters from the species_info table
 x <- add_total_weight_by_haul(dab, lw_source = "lookup")

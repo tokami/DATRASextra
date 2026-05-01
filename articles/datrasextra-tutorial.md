@@ -326,7 +326,7 @@ the result may contain separate totals for broader user-defined length
 groups.
 
 If species-specific length and weight information are available in `CA`,
-or suitable empirical length-weight relationships are available in the
+or suitable length-weight relationships are available in the
 `species_info` table, the numbers can also be converted to weight:
 
 ``` r

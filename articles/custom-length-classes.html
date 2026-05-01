@@ -239,10 +239,10 @@ midpoint of that bin may imply an unrealistically large weight. In such
 cases, it may be preferable to use the <code>plus_group</code>
 argument.</p>
 <p>If the <code>CA</code> component does not contain enough information
-to estimate a reliable length-weight relationship, empirical parameters
-can instead be taken from the <code>species_info</code> table by setting
-<code>empirical = TRUE</code>. Before doing so, it is good practice to
-inspect the stored parameters:</p>
+to estimate a reliable length-weight relationship, lookup parameters can
+instead be taken from the <code>species_info</code> table by setting
+<code>lw_source = "lookup"</code>. Before doing so, it is good practice
+to inspect the stored parameters:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">species_info</span><span class="op">[</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">species_info</span><span class="op">$</span><span class="va">ScientificName_WoRMS</span> <span class="op">==</span> <span class="st">"Limanda limanda"</span><span class="op">)</span>,</span>
@@ -250,10 +250,10 @@ inspect the stored parameters:</p>
 <span><span class="op">]</span></span>
 <span><span class="co">#&gt;          a     b</span></span>
 <span><span class="co">#&gt; 1017 0.007 3.119</span></span></code></pre></div>
-<p>If these values appear appropriate, the empirical relationship can be
-used with:</p>
+<p>If these values appear appropriate, the lookup relationship in the
+species_info table can be used with:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_weight_at_length.html">add_weight_at_length</a></span><span class="op">(</span><span class="va">dab</span>, empirical <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_weight_at_length.html">add_weight_at_length</a></span><span class="op">(</span><span class="va">dab</span>, lw_source <span class="op">=</span> <span class="st">"lookup"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="aggregate-numbers-and-weight-over-custom-length-classes">Aggregate numbers and weight over custom length classes<a class="anchor" aria-label="anchor" href="#aggregate-numbers-and-weight-over-custom-length-classes"></a>

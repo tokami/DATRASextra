@@ -357,9 +357,9 @@ classes:</p>
 <code>length_cuts</code>. In that case, the result may contain separate
 totals for broader user-defined length groups.</p>
 <p>If species-specific length and weight information are available in
-<code>CA</code>, or suitable empirical length-weight relationships are
-available in the <code>species_info</code> table, the numbers can also
-be converted to weight:</p>
+<code>CA</code>, or suitable length-weight relationships are available
+in the <code>species_info</code> table, the numbers can also be
+converted to weight:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_total_weight_by_haul.html">add_total_weight_by_haul</a></span><span class="op">(</span><span class="va">surv</span><span class="op">)</span></span></code></pre></div>
 <p>This adds <code>HaulWgt</code> to the <code>HH</code> table,

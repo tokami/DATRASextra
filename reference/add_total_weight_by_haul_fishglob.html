@@ -5,11 +5,11 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Add weight estimates to HL records following the FishGlob workflow — add_total_weight_by_haul_fishglob"><meta name="description" content="Calculate weight-at-length using empirical length-weight parameters and add
-the resulting weight fields to the HL table of a datras_raw /
-DATRASraw object."><meta property="og:description" content="Calculate weight-at-length using empirical length-weight parameters and add
-the resulting weight fields to the HL table of a datras_raw /
-DATRASraw object."><meta property="og:image" content="https://tokami.github.io/DATRASextra/logo.png"></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Add weight estimates to HL records following the FishGlob workflow — add_total_weight_by_haul_fishglob"><meta name="description" content="Calculate weight-at-length using lookup length-weight parameters from the
+species_info table and add the resulting weight fields to the HL table of
+a datras_raw / DATRASraw object."><meta property="og:description" content="Calculate weight-at-length using lookup length-weight parameters from the
+species_info table and add the resulting weight fields to the HL table of
+a datras_raw / DATRASraw object."><meta property="og:image" content="https://tokami.github.io/DATRASextra/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -56,9 +56,9 @@ DATRASraw object."><meta property="og:image" content="https://tokami.github.io/D
     </div>
 
     <div class="ref-description section level2">
-    <p>Calculate weight-at-length using empirical length-weight parameters and add
-the resulting weight fields to the <code>HL</code> table of a <code>datras_raw</code> /
-<code>DATRASraw</code> object.</p>
+    <p>Calculate weight-at-length using lookup length-weight parameters from the
+species_info table and add the resulting weight fields to the <code>HL</code> table of
+a <code>datras_raw</code> / <code>DATRASraw</code> object.</p>
     </div>
 
     <div class="section level2">
@@ -83,7 +83,7 @@ additional columns:</p><ul><li><p><code>Wgt_indiv</code>: estimated individual w
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function merges the <code>HL</code> table with internal species information to
-obtain empirical length-weight parameters (<code>aFG</code> and <code>bFG</code>), computes
+obtain lookup length-weight parameters (<code>aFG</code> and <code>bFG</code>), computes
 individual weight from length, and then calculates total weight for each
 length class record.</p>
 <p>Weight-at-length is calculated for each <code>HL</code> record as:
@@ -91,7 +91,7 @@ $$
   Wgt\_indiv = aFG \times LngtCm^{bFG}
 $$</p>
 <p>where <code>LngtCm</code> is fish length in centimetres and <code>aFG</code> and <code>bFG</code> are
-empirical species-specific length-weight parameters obtained from the
+lookup species-specific length-weight parameters obtained from the
 internal <code>species_info</code> data.</p>
 <p>Total weight per record is then calculated as:
 $$

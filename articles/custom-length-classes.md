@@ -187,8 +187,8 @@ an unrealistically large weight. In such cases, it may be preferable to
 use the `plus_group` argument.
 
 If the `CA` component does not contain enough information to estimate a
-reliable length-weight relationship, empirical parameters can instead be
-taken from the `species_info` table by setting `empirical = TRUE`.
+reliable length-weight relationship, lookup parameters can instead be
+taken from the `species_info` table by setting `lw_source = "lookup"`.
 Before doing so, it is good practice to inspect the stored parameters:
 
 ``` r
@@ -201,12 +201,12 @@ species_info[
 #> 1017 0.007 3.119
 ```
 
-If these values appear appropriate, the empirical relationship can be
-used with:
+If these values appear appropriate, the lookup relationship in the
+species_info table can be used with:
 
 ``` r
 
-dab <- add_weight_at_length(dab, empirical = TRUE)
+dab <- add_weight_at_length(dab, lw_source = "lookup")
 ```
 
 ## Aggregate numbers and weight over custom length classes
