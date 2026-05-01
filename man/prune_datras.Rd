@@ -2,46 +2,101 @@
 % Please edit documentation in R/clean_prune.R
 \name{prune_datras}
 \alias{prune_datras}
-\title{Prune a \code{datras_raw} object to core columns}
+\title{Prune a \code{datras_raw} object to selected columns}
 \usage{
-prune_datras(x, do_fishglob = FALSE)
+prune_datras(
+  x,
+  keep = NULL,
+  add = NULL,
+  drop = NULL,
+  do_fishglob = FALSE,
+  warn_missing = TRUE
+)
 }
 \arguments{
 \item{x}{A \code{datras_raw} object.}
 
+\item{keep}{Optional named list of columns to keep. List names should be
+\code{HH}, \code{HL}, and/or \code{CA}. If supplied, these columns replace the default
+columns for the named table(s).}
+
+\item{add}{Optional named list of columns to add to the default columns.
+List names should be \code{HH}, \code{HL}, and/or \code{CA}.}
+
+\item{drop}{Optional named list of columns to remove from the selected
+columns. List names should be \code{HH}, \code{HL}, and/or \code{CA}.}
+
 \item{do_fishglob}{Logical. If \code{TRUE}, apply \code{\link[=prune_fishglob]{prune_fishglob()}} instead of
 the standard DATRAS pruning rules.}
+
+\item{warn_missing}{Logical. If \code{TRUE}, warn when requested columns are not
+present in the corresponding table.}
 }
 \value{
 A pruned \code{datras_raw} object.
 }
 \description{
-Reduce a \code{datras_raw} / \code{DATRASraw} object to a smaller set of core columns
-in the \code{HH}, \code{HL}, and \code{CA} tables.
+Reduce a \code{datras_raw} / \code{DATRASraw} object to a smaller set of columns in
+the \code{HH}, \code{HL}, and \code{CA} tables.
 }
 \details{
 This is mainly intended to reduce memory use when working with large DATRAS
-data sets.
+data sets, while still allowing users to modify which columns are retained.
 
 If \code{do_fishglob = TRUE}, pruning is delegated to \code{\link[=prune_fishglob]{prune_fishglob()}}.
 
-For standard DATRAS data (\code{do_fishglob = FALSE}), the function keeps only a
-predefined set of columns in each component:
+By default, the function keeps a predefined set of core columns in each of
+the \code{HH}, \code{HL}, and \code{CA} tables. These defaults are intended to retain the
+most commonly used haul metadata, length-frequency data, and biological
+sampling information.
+
+The default columns can be inspected with \code{\link[=list_prune_datras_defaults]{list_prune_datras_defaults()}}. The
+available columns in a specific object can be inspected with
+\code{\link[=list_prune_datras_available]{list_prune_datras_available()}}.
+
+Column selection can be modified in three ways:
 \itemize{
-\item \code{CA}: age and individual-level biological information,
-\item \code{HH}: haul- and station-level metadata,
-\item \code{HL}: length-structured catch information.
+\item \code{keep} replaces the default columns for the named table(s),
+\item \code{add} adds columns to the default or selected columns,
+\item \code{drop} removes columns from the default or selected columns.
 }
 
-Any columns not included in these predefined sets are removed.
+Columns listed in \code{keep}, \code{add}, or \code{drop} for tables not present in \code{x} are
+ignored. Requested columns that are not present in a table are ignored, with
+an optional warning controlled by \code{warn_missing}.
 }
 \examples{
 \dontrun{
-## Reduce a DATRAS object to core columns
-x_small <- prune_datras(x)
-}
+## Inspect default columns retained by prune_datras()
+list_prune_datras_defaults()
 
+## Inspect available columns in a specific object
+list_prune_datras_available(x)
+
+## Reduce a DATRAS object to the default core columns
+x_small <- prune_datras(x)
+
+## Keep defaults, but retain additional environmental variables in HH
+x_small <- prune_datras(
+  x,
+  add = list(HH = c("SurTemp", "BotTemp", "SurSal", "BotSal"))
+)
+
+## Keep defaults, but remove selected columns
+x_small <- prune_datras(
+  x,
+  drop = list(HH = c("Roundfish", "timeOfYear"),
+              HL = "Count")
+)
+
+## Fully override the columns retained for HH
+x_small <- prune_datras(
+  x,
+  keep = list(HH = c("Survey", "Year", "haul.id", "lon", "lat", "Depth"))
+)
+}
 }
 \seealso{
+\code{\link[=list_prune_datras_defaults]{list_prune_datras_defaults()}}, \code{\link[=list_prune_datras_available]{list_prune_datras_available()}},
 \code{\link[=clean_datras]{clean_datras()}}, \code{\link[=prune_fishglob]{prune_fishglob()}}
 }
