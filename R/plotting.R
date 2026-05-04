@@ -96,6 +96,25 @@ plot_datras_overview <- function(
   y_col <- "lat"
   if (nrow(hh) == 0) stop("No finite coordinate rows in HH.", call. = FALSE)
 
+  value_col_names <- NULL
+  lc_multi_panels <- FALSE
+  if (!is.null(value_var) && value_var %in% names(hh)) {
+    raw_col <- hh[[value_var]]
+    if (is.matrix(raw_col) && ncol(raw_col) > 1) {
+      value_col_names <- colnames(raw_col)
+      if (is.null(value_col_names)) value_col_names <- paste0("[", seq_len(ncol(raw_col)), "]")
+      hh_list <- lapply(seq_along(value_col_names), function(j) {
+        h <- hh
+        h[[value_var]] <- raw_col[, j]
+        h$.lc_group <- value_col_names[j]
+        h
+      })
+      hh <- do.call(rbind, hh_list)
+      hh$.lc_group <- factor(hh$.lc_group, levels = value_col_names)
+      lc_multi_panels <- TRUE
+    }
+  }
+
   hh$.value <- .compute_value(hh, value_var = value_var, offset_var = offset_var, transform = transform)
   hh$.group <- .build_group(hh, by_survey, by_gear, by_quarter, by_year, by_daynight)
   has_grouping <- any(c(by_survey, by_gear, by_quarter, by_year, by_daynight))
@@ -125,9 +144,32 @@ plot_datras_overview <- function(
     }
   }
 
-  split_list <- if (isTRUE(multi_panels)) split(hh, hh$.group, drop = TRUE) else list(All = hh)
-  if (length(split_list) > 1) {
-    names(split_list) <- sapply(strsplit(names(split_list), "\\|"), function(x) paste(sapply(strsplit(x, "="), "[[", 2), collapse = "| "))
+  if (lc_multi_panels) {
+    multi_panels <- TRUE
+    other_levels <- levels(hh$.group)
+    n_lc <- length(value_col_names)
+    ordered_panel_levels <- c(sapply(other_levels, function(g) paste0(g, ":::", value_col_names)))
+    hh$.panel_group <- factor(
+      paste0(as.character(hh$.group), ":::", as.character(hh$.lc_group)),
+      levels = ordered_panel_levels)
+    split_list <- split(hh, hh$.panel_group, drop = FALSE)
+    clean_other <- if (!has_grouping) {
+      rep("", length(other_levels))
+    } else {
+      sapply(other_levels, function(g) {
+        parts <- strsplit(g, " | ", fixed = TRUE)[[1]]
+        paste(sapply(strsplit(parts, "="), function(x) paste(x[-1], collapse = "=")), collapse = " | ")
+      })
+    }
+    names(split_list) <- c(sapply(clean_other, function(g)
+      if (nzchar(g)) paste0(g, ": ", value_col_names) else value_col_names))
+  } else if (isTRUE(multi_panels)) {
+    split_list <- split(hh, hh$.group, drop = TRUE)
+    if (length(split_list) > 1) {
+      names(split_list) <- sapply(strsplit(names(split_list), "\\|"), function(x) paste(sapply(strsplit(x, "="), "[[", 2), collapse = "| "))
+    }
+  } else {
+    split_list <- list(All = hh)
   }
 
   if (!isTRUE(fixed_axes) && isTRUE(multi_panels)) {
@@ -146,9 +188,19 @@ plot_datras_overview <- function(
     zlim <- c(0, max(max_vals, na.rm = TRUE))
   }
 
+  global_points_value_range <- NULL
+  if (!identical(mode, "grid") && isTRUE(multi_panels) && !is.null(value_var)) {
+    gv <- hh$.value[is.finite(hh$.value)]
+    if (length(gv) >= 2 && diff(range(gv)) > 0) global_points_value_range <- range(gv)
+  }
+
   outside_active <- isTRUE(legend_outside) && isTRUE(legend) && !identical(legend_mode, "none")
   n_panels <- length(split_list)
-  mf <- if (n_panels > 1) grDevices::n2mfrow(n_panels) else c(1, 1)
+  if (lc_multi_panels) {
+    mf <- c(length(levels(hh$.group)), length(value_col_names))
+  } else {
+    mf <- if (n_panels > 1) grDevices::n2mfrow(n_panels) else c(1, 1)
+  }
   panel_capacity <- prod(mf)
   use_empty_panel_for_legend <- outside_active && n_panels > 1 && panel_capacity > n_panels
   use_side_panel_for_legend <- outside_active && !use_empty_panel_for_legend
@@ -218,12 +270,14 @@ plot_datras_overview <- function(
     } else {
       val <- d$.value
       rng <- range(val, na.rm = TRUE)
-      if (has_grouping) {
+      points_value_meta <- NULL
+      if (has_grouping && !isTRUE(multi_panels)) {
         pcol <- grDevices::adjustcolor(group_cols[as.character(d$.group)], alpha.f = alpha)
         if (!is.null(value_var) && !identical(metric, "presence") && is.finite(rng[1]) && is.finite(rng[2]) && rng[1] != rng[2]) {
           scaled <- (val - rng[1]) / (rng[2] - rng[1])
           pcex <- size_range[1] + scaled * (size_range[2] - size_range[1])
           pcex[!is.finite(pcex)] <- cex
+          points_value_meta <- list(size_range = size_range)
         } else {
           pcex <- rep(cex, nrow(d))
         }
@@ -231,12 +285,15 @@ plot_datras_overview <- function(
         pcol <- rep(grDevices::adjustcolor(.colours_datrasextra_continuous(10, rev = palette_rev)[1], alpha.f = alpha), nrow(d))
         pcex <- rep(cex, nrow(d))
       } else {
-        brk <- seq(rng[1], rng[2], length.out = length(col) + 1)
+        scale_rng <- if (!is.null(global_points_value_range)) global_points_value_range else rng
+        brk <- seq(scale_rng[1], scale_rng[2], length.out = length(col) + 1)
         idx <- cut(val, breaks = brk, include.lowest = TRUE, labels = FALSE)
+        idx[is.na(idx)] <- 1L
         pcol <- grDevices::adjustcolor(col[idx], alpha.f = alpha)
-        scaled <- (val - rng[1]) / (rng[2] - rng[1])
+        scaled <- pmax(0, pmin(1, (val - scale_rng[1]) / (scale_rng[2] - scale_rng[1])))
         pcex <- size_range[1] + scaled * (size_range[2] - size_range[1])
         pcex[!is.finite(pcex)] <- cex
+        points_value_meta <- list(col = col, size_range = size_range, scale_rng = scale_rng)
       }
 
       .plot_points_panel(
@@ -254,7 +311,7 @@ plot_datras_overview <- function(
         show_x_axis = show_x_axis,
         show_y_axis = show_y_axis
       )
-      panel_meta[[nm]] <- list(value_range = rng)
+      panel_meta[[nm]] <- list(value_range = rng, points_value_meta = points_value_meta)
     }
   }
 
@@ -269,6 +326,7 @@ plot_datras_overview <- function(
 
   if (isTRUE(legend) && !identical(legend_mode, "none")) {
     leg_payload <- NULL
+    size_leg_payload <- NULL
     if (identical(mode, "grid")) {
       show_grid_legend <- switch(
         legend_mode,
@@ -309,7 +367,8 @@ plot_datras_overview <- function(
       show_points_legend <- switch(
         legend_mode,
         auto = (!isTRUE(multi_panels) && any(c(by_survey, by_gear, by_quarter, by_year, by_daynight))),
-        global = any(c(by_survey, by_gear, by_quarter, by_year, by_daynight)),
+        global = (any(c(by_survey, by_gear, by_quarter, by_year, by_daynight)) &&
+                    !(isTRUE(multi_panels) && !is.null(value_var))),
         per_panel = FALSE,
         FALSE
       )
@@ -319,6 +378,28 @@ plot_datras_overview <- function(
           leg_cols <- if (!is.null(group_cols)) group_cols[lev] else rep("grey30", length(lev))
           lg <- .format_group_legend(lev, active_dims = active_dims)
           leg_payload <- list(legend = lg$labels, col = leg_cols, title = lg$title, cex = 0.7)
+        }
+      }
+      if (!is.null(value_var)) {
+        info <- panel_meta[[1]]
+        if (!is.null(info$points_value_meta) && is.finite(info$value_range[1]) && is.finite(info$value_range[2])) {
+          meta <- info$points_value_meta
+          rng_leg <- if (!is.null(meta$scale_rng)) meta$scale_rng else info$value_range
+          n_ref <- 5
+          ref_vals <- seq(rng_leg[1], rng_leg[2], length.out = n_ref)
+          ref_scaled <- (ref_vals - rng_leg[1]) / (rng_leg[2] - rng_leg[1])
+          ref_cex <- meta$size_range[1] + ref_scaled * (meta$size_range[2] - meta$size_range[1])
+          ref_labels <- format(signif(ref_vals, 3), trim = TRUE)
+          leg_title <- if (!is.null(offset_var)) paste0(value_var, " / ", offset_var) else value_var
+          if (!has_grouping || isTRUE(multi_panels)) {
+            ref_idx <- pmax(1L, pmin(length(meta$col), round(1 + ref_scaled * (length(meta$col) - 1))))
+            ref_cols <- grDevices::adjustcolor(meta$col[ref_idx], alpha.f = alpha)
+            leg_payload <- list(legend = ref_labels, col = ref_cols, title = leg_title, cex = 0.7,
+                                pt.cex = ref_cex, pch = pch)
+          } else {
+            size_leg_payload <- list(legend = ref_labels, col = rep("grey30", n_ref),
+                                     title = leg_title, cex = 0.7, pt.cex = ref_cex, pch = pch)
+          }
         }
       }
     }
@@ -331,8 +412,11 @@ plot_datras_overview <- function(
           plot.new()
         }
         if (!is.null(legend_cex)) leg_payload$cex <- legend_cex
-        graphics::legend("center", legend = leg_payload$legend, pch = 15, col = leg_payload$col, cex = leg_payload$cex, bg = "white", title = leg_payload$title,
-                         ncol = legend_ncol)
+        graphics::legend("center", legend = leg_payload$legend,
+                         pch = if (!is.null(leg_payload$pch)) leg_payload$pch else 15,
+                         pt.cex = if (!is.null(leg_payload$pt.cex)) leg_payload$pt.cex else 1,
+                         col = leg_payload$col, cex = leg_payload$cex, bg = "white",
+                         title = leg_payload$title, ncol = legend_ncol)
       } else {
         if (is.null(legend_pos)) {
           pos <- if (identical(mode, "grid")) "bottomright" else "topright"
@@ -340,9 +424,23 @@ plot_datras_overview <- function(
           pos <- legend_pos
         }
         if (!is.null(legend_cex)) leg_payload$cex <- legend_cex
-        graphics::legend(pos, legend = leg_payload$legend, pch = 15, col = leg_payload$col, cex = leg_payload$cex, bg = "white", title = leg_payload$title,
-                         ncol = legend_ncol)
+        graphics::legend(pos, legend = leg_payload$legend,
+                         pch = if (!is.null(leg_payload$pch)) leg_payload$pch else 15,
+                         pt.cex = if (!is.null(leg_payload$pt.cex)) leg_payload$pt.cex else 1,
+                         col = leg_payload$col, cex = leg_payload$cex, bg = "white",
+                         title = leg_payload$title, ncol = legend_ncol)
       }
+    }
+
+    if (!is.null(size_leg_payload)) {
+      if (!is.null(legend_cex)) size_leg_payload$cex <- legend_cex
+      graphics::legend("bottomright", legend = size_leg_payload$legend,
+                       pch = size_leg_payload$pch,
+                       pt.cex = size_leg_payload$pt.cex,
+                       col = size_leg_payload$col,
+                       cex = size_leg_payload$cex,
+                       bg = "white",
+                       title = size_leg_payload$title)
     }
   }
 
