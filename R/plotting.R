@@ -9,6 +9,11 @@
 #' @param x A DATRAS-like object containing `x[['HH']]`, or `NULL` to use
 #'   `DATRASextra::survey_info_full_raw` (fallback `survey_info_full`).
 #' @param mode Plot mode: `"grid"` or `"points"`. Default is `"points"`.
+#' @param grid_resolution Numeric vector `c(lon_step, lat_step)` in degrees
+#'   controlling the bin width for `mode = "grid"`. Default `c(1, 0.5)` gives
+#'   the original 1°×0.5° grid. Finer values such as `c(0.5, 0.25)` add
+#'   spatial detail; coarser values (e.g. `c(2, 1)`) reduce clutter for very
+#'   dense data. Has no effect in `mode = "points"`.
 #' @param metric Grid metric: `"sum"`, `"mean"`, `"count_hauls"`,
 #'   `"presence"`, or `"count_surveys"`.
 #' @param spatial_basis Spatial basis used for coordinates: `"raw"` uses haul
@@ -32,10 +37,6 @@
 #' @param legend Logical. Draw legends.
 #' @param legend_mode Legend behavior: `"auto"`, `"none"`, `"global"`, or
 #'   `"per_panel"`.
-#' @param legend_outside Logical. If `TRUE`, draw the legend outside the main
-#'   plotting panel area. For multi-panel layouts, a free panel is used when
-#'   available; otherwise a narrow right-side legend panel is created.
-#' @param max_legend_items Maximum number of group legend entries.
 #' @param max_grid_legend_levels Maximum number of levels shown in grid legends.
 #' @param legend_ncol Number of columns in legend
 #' @param legend_pos position of legend. Default: NULL.
@@ -50,6 +51,7 @@
 plot_datras_overview <- function(
   x = NULL,
   mode = c("points", "grid"),
+  grid_resolution = c(1, 0.5),
   metric = c("presence", "sum", "mean", "count_hauls", "count_surveys"),
   spatial_basis = c("raw", "statrec"),
   by_survey = FALSE,
@@ -74,8 +76,6 @@ plot_datras_overview <- function(
   size_range = c(0.7, 2.2),
   legend = TRUE,
   legend_mode = c("auto", "none", "global", "per_panel"),
-  legend_outside = FALSE,
-  max_legend_items = 30,
   max_grid_legend_levels = 5,
   legend_ncol = 1,
   legend_pos = NULL,
@@ -89,12 +89,18 @@ plot_datras_overview <- function(
   transform <- match.arg(transform)
   legend_mode <- match.arg(legend_mode)
   grid_group_strategy <- match.arg(grid_group_strategy)
+  if (!is.numeric(grid_resolution) || length(grid_resolution) != 2 || any(grid_resolution <= 0))
+    stop("`grid_resolution` must be a positive numeric vector of length 2.", call. = FALSE)
 
   hh <- .as_hh_data(x)
+  map_scale <- if (is.null(x)) 110L else 50L
   hh <- .prepare_spatial_basis(hh, spatial_basis = spatial_basis)
   x_col <- "lon"
   y_col <- "lat"
   if (nrow(hh) == 0) stop("No finite coordinate rows in HH.", call. = FALSE)
+  if (identical(mode, "points") && nrow(hh) > 50000)
+    message("Plotting ", nrow(hh), " hauls as individual points may be slow. ",
+            "Consider mode = 'grid' with e.g. grid_resolution = c(0.5, 0.25).")
 
   value_col_names <- NULL
   lc_multi_panels <- FALSE
@@ -131,7 +137,8 @@ plot_datras_overview <- function(
   if (!is.null(ylim)) hh <- hh[hh[[y_col]] >= ylim[1] & hh[[y_col]] <= ylim[2], , drop = FALSE]
   if (nrow(hh) == 0) stop("No rows left after applying xlim/ylim.", call. = FALSE)
 
-  grid_info <- .make_grid(hh, x_col = x_col, y_col = y_col)
+  grid_info <- .make_grid(hh, x_col = x_col, y_col = y_col,
+                         grid_resolution = grid_resolution)
   hh <- grid_info$data
   if (is.null(xlim)) xlim <- grid_info$xlim
   if (is.null(ylim)) ylim <- grid_info$ylim
@@ -194,29 +201,17 @@ plot_datras_overview <- function(
     if (length(gv) >= 2 && diff(range(gv)) > 0) global_points_value_range <- range(gv)
   }
 
-  outside_active <- isTRUE(legend_outside) && isTRUE(legend) && !identical(legend_mode, "none")
   n_panels <- length(split_list)
   if (lc_multi_panels) {
     mf <- c(length(levels(hh$.group)), length(value_col_names))
   } else {
     mf <- if (n_panels > 1) grDevices::n2mfrow(n_panels) else c(1, 1)
   }
-  panel_capacity <- prod(mf)
-  use_empty_panel_for_legend <- outside_active && n_panels > 1 && panel_capacity > n_panels
-  use_side_panel_for_legend <- outside_active && !use_empty_panel_for_legend
 
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par), add = TRUE)
 
-  if (use_side_panel_for_legend) {
-    left_mat <- matrix(seq_len(panel_capacity), nrow = mf[1], ncol = mf[2], byrow = TRUE)
-    legend_id <- panel_capacity + 1L
-    lay <- cbind(left_mat, rep(legend_id, mf[1]))
-    graphics::layout(lay, widths = c(rep(1, mf[2]), 0.9))
-    par(mar = c(0.3, 0.3, 0.3, 0.3), oma = c(4.2, 4.2, 0.4, 0))
-  } else {
-    par(mfrow = mf, mar = c(0.3, 0.3, 0.3, 0.3), oma = c(4.2, 4.2, 0.4, 1))
-  }
+  par(mfrow = mf, mar = c(0.3, 0.3, 0.3, 0.3), oma = c(4.2, 4.2, 0.4, 1))
 
   panel_meta <- vector("list", length(split_list))
   names(panel_meta) <- names(split_list)
@@ -250,7 +245,8 @@ plot_datras_overview <- function(
           main = panel_title,
           panel_label = panel_label,
           show_x_axis = show_x_axis,
-          show_y_axis = show_y_axis
+          show_y_axis = show_y_axis,
+          map_scale = map_scale
         )
       } else {
         panel_meta[[nm]] <- .plot_grid_panel(
@@ -264,7 +260,8 @@ plot_datras_overview <- function(
           main = panel_title,
           panel_label = panel_label,
           show_x_axis = show_x_axis,
-          show_y_axis = show_y_axis
+          show_y_axis = show_y_axis,
+          map_scale = map_scale
         )
       }
     } else {
@@ -279,11 +276,11 @@ plot_datras_overview <- function(
           pcex[!is.finite(pcex)] <- cex
           points_value_meta <- list(size_range = size_range)
         } else {
-          pcex <- rep(cex, nrow(d))
+          pcex <- cex
         }
       } else if (identical(metric, "presence") || !is.finite(rng[1]) || !is.finite(rng[2]) || rng[1] == rng[2]) {
-        pcol <- rep(grDevices::adjustcolor(.colours_datrasextra_continuous(10, rev = palette_rev)[1], alpha.f = alpha), nrow(d))
-        pcex <- rep(cex, nrow(d))
+        pcol <- grDevices::adjustcolor(.colours_datrasextra_continuous(10, rev = palette_rev)[1], alpha.f = alpha)
+        pcex <- cex
       } else {
         scale_rng <- if (!is.null(global_points_value_range)) global_points_value_range else rng
         brk <- seq(scale_rng[1], scale_rng[2], length.out = length(col) + 1)
@@ -309,7 +306,8 @@ plot_datras_overview <- function(
         main = panel_title,
         panel_label = panel_label,
         show_x_axis = show_x_axis,
-        show_y_axis = show_y_axis
+        show_y_axis = show_y_axis,
+        map_scale = map_scale
       )
       panel_meta[[nm]] <- list(value_range = rng, points_value_meta = points_value_meta)
     }
@@ -338,10 +336,8 @@ plot_datras_overview <- function(
       info <- panel_meta[[1]]
       if (show_grid_legend && !is.null(info$breaks)) {
         if (has_grouping && !isTRUE(multi_panels)) {
-          if (length(info$legend_labels) <= max_legend_items) {
-            lg <- .format_group_legend(info$legend_labels, active_dims = active_dims)
-            leg_payload <- list(legend = lg$labels, col = info$legend_cols, title = lg$title, cex = 0.7)
-          }
+          lg <- .format_group_legend(info$legend_labels, active_dims = active_dims)
+          leg_payload <- list(legend = lg$labels, col = info$legend_cols, title = lg$title, cex = 0.7)
         } else if (identical(metric, "presence")) {
           leg_payload <- list(legend = info$legend_labels, col = info$legend_cols, title = metric, cex = 0.8)
         } else {
@@ -374,11 +370,9 @@ plot_datras_overview <- function(
       )
       if (show_points_legend) {
         lev <- levels(hh$.group)
-        if (length(lev) <= max_legend_items) {
-          leg_cols <- if (!is.null(group_cols)) group_cols[lev] else rep("grey30", length(lev))
-          lg <- .format_group_legend(lev, active_dims = active_dims)
-          leg_payload <- list(legend = lg$labels, col = leg_cols, title = lg$title, cex = 0.7)
-        }
+        leg_cols <- if (!is.null(group_cols)) group_cols[lev] else rep("grey30", length(lev))
+        lg <- .format_group_legend(lev, active_dims = active_dims)
+        leg_payload <- list(legend = lg$labels, col = leg_cols, title = lg$title, cex = 0.7)
       }
       if (!is.null(value_var)) {
         info <- panel_meta[[1]]
@@ -405,31 +399,17 @@ plot_datras_overview <- function(
     }
 
     if (!is.null(leg_payload)) {
-      if (outside_active) {
-        if (use_empty_panel_for_legend) {
-          plot.new()
-        } else if (use_side_panel_for_legend) {
-          plot.new()
-        }
-        if (!is.null(legend_cex)) leg_payload$cex <- legend_cex
-        graphics::legend("center", legend = leg_payload$legend,
-                         pch = if (!is.null(leg_payload$pch)) leg_payload$pch else 15,
-                         pt.cex = if (!is.null(leg_payload$pt.cex)) leg_payload$pt.cex else 1,
-                         col = leg_payload$col, cex = leg_payload$cex, bg = "white",
-                         title = leg_payload$title, ncol = legend_ncol)
+      pos <- if (is.null(legend_pos)) {
+        if (identical(mode, "grid")) "bottomright" else "topright"
       } else {
-        if (is.null(legend_pos)) {
-          pos <- if (identical(mode, "grid")) "bottomright" else "topright"
-        } else {
-          pos <- legend_pos
-        }
-        if (!is.null(legend_cex)) leg_payload$cex <- legend_cex
-        graphics::legend(pos, legend = leg_payload$legend,
-                         pch = if (!is.null(leg_payload$pch)) leg_payload$pch else 15,
-                         pt.cex = if (!is.null(leg_payload$pt.cex)) leg_payload$pt.cex else 1,
-                         col = leg_payload$col, cex = leg_payload$cex, bg = "white",
-                         title = leg_payload$title, ncol = legend_ncol)
+        legend_pos
       }
+      if (!is.null(legend_cex)) leg_payload$cex <- legend_cex
+      graphics::legend(pos, legend = leg_payload$legend,
+                       pch = if (!is.null(leg_payload$pch)) leg_payload$pch else 15,
+                       pt.cex = if (!is.null(leg_payload$pt.cex)) leg_payload$pt.cex else 1,
+                       col = leg_payload$col, cex = leg_payload$cex, bg = "white",
+                       title = leg_payload$title, ncol = legend_ncol)
     }
 
     if (!is.null(size_leg_payload)) {
@@ -461,14 +441,14 @@ plot_datras_overview <- function(
 
 ## Internal functions ------------------------------------------------------------
 
-.draw_land_layer <- function(plot_map, xlim, ylim) {
+.draw_land_layer <- function(plot_map, xlim, ylim, map_scale = 50) {
   if (!isTRUE(plot_map)) return(invisible(FALSE))
 
-  col_land <- grDevices::adjustcolor(grey(0.9), 0.7)
-  border_land <- grDevices::adjustcolor(grey(0.6), 0.5)
+  col_land <- grDevices::adjustcolor(grey(0.97), 1)
+  border_land <- grDevices::adjustcolor(grey(0.9), 1)
 
   if (exists("get_land", mode = "function") && requireNamespace("sf", quietly = TRUE)) {
-    land_ll <- tryCatch(get_land(download_map = FALSE, scale = 50),
+    land_ll <- tryCatch(get_land(download_map = FALSE, scale = map_scale),
                         error = function(e) NULL)
     if (!is.null(land_ll)) {
       try(plot(sf::st_geometry(land_ll), add = TRUE,
@@ -644,22 +624,29 @@ plot_datras_overview <- function(
 }
 
 
-.make_grid <- function(hh, x_col = "lon", y_col = "lat") {
+.make_grid <- function(hh, x_col = "lon", y_col = "lat", grid_resolution = c(1, 0.5)) {
   lon <- suppressWarnings(as.numeric(hh[[x_col]]))
   lat <- suppressWarnings(as.numeric(hh[[y_col]]))
 
-  lon0 <- floor(min(lon, na.rm = TRUE))
-  lon1 <- ceiling(max(lon, na.rm = TRUE))
-  lat0 <- floor(min(lat, na.rm = TRUE) * 2) / 2
-  lat1 <- ceiling(max(lat, na.rm = TRUE) * 2) / 2
+  lon_step <- grid_resolution[1]
+  lat_step <- grid_resolution[2]
 
-  lon_breaks <- seq(lon0 - 0.5, lon1 + 0.5, by = 1)
-  lat_breaks <- seq(lat0 - 0.25, lat1 + 0.25, by = 0.5)
+  lon0 <- floor(min(lon, na.rm = TRUE) / lon_step) * lon_step
+  lon1 <- ceiling(max(lon, na.rm = TRUE) / lon_step) * lon_step
+  lat0 <- floor(min(lat, na.rm = TRUE) / lat_step) * lat_step
+  lat1 <- ceiling(max(lat, na.rm = TRUE) / lat_step) * lat_step
 
-  hh$lon_bin <- cut(hh[[x_col]], breaks = lon_breaks, labels = seq(lon0, lon1, by = 1), include.lowest = TRUE)
-  hh$lat_bin <- cut(hh[[y_col]], breaks = lat_breaks, labels = seq(lat0, lat1, by = 0.5), include.lowest = TRUE)
+  lon_breaks <- seq(lon0 - lon_step / 2, lon1 + lon_step / 2, by = lon_step)
+  lat_breaks <- seq(lat0 - lat_step / 2, lat1 + lat_step / 2, by = lat_step)
 
-  list(data = hh, xlim = c(lon0 - 0.5, lon1 + 0.5), ylim = c(lat0 - 0.25, lat1 + 0.25))
+  hh$lon_bin <- cut(hh[[x_col]], breaks = lon_breaks,
+                    labels = seq(lon0, lon1, by = lon_step), include.lowest = TRUE)
+  hh$lat_bin <- cut(hh[[y_col]], breaks = lat_breaks,
+                    labels = seq(lat0, lat1, by = lat_step), include.lowest = TRUE)
+
+  list(data = hh,
+       xlim = c(lon0 - lon_step / 2, lon1 + lon_step / 2),
+       ylim = c(lat0 - lat_step / 2, lat1 + lat_step / 2))
 }
 
 
@@ -705,7 +692,7 @@ plot_datras_overview <- function(
   out
 }
 
-.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = TRUE) {
+.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = TRUE, map_scale = 50) {
   agg <- .aggregate_grid(hh, metric = metric)
   mat <- xtabs(z ~ lon_bin + lat_bin, data = agg)
 
@@ -756,7 +743,7 @@ plot_datras_overview <- function(
   }
 
   image(xvals, yvals, mat, add = TRUE, col = use_col, breaks = breaks)
-  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim)
+  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim, map_scale = map_scale)
   if (!is.null(panel_label) && nzchar(panel_label)) {
     graphics::legend("topleft", legend = panel_label, pch = NA, bg = "white",
                      x.intersp = -0.3)
@@ -766,7 +753,7 @@ plot_datras_overview <- function(
 }
 
 
-.plot_grid_group_panel <- function(hh, group_cols, strategy = c("dominant", "mixed", "error"), plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE) {
+.plot_grid_group_panel <- function(hh, group_cols, strategy = c("dominant", "mixed", "error"), plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50) {
   strategy <- match.arg(strategy)
 
   counts <- aggregate(rep(1, nrow(hh)), by = list(lon_bin = hh$lon_bin, lat_bin = hh$lat_bin, group = hh$.group), FUN = length)
@@ -840,7 +827,7 @@ plot_datras_overview <- function(
     col = unname(group_cols[g_levels]),
     breaks = seq(0.5, length(g_levels) + 0.5, by = 1)
   )
-  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim)
+  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim, map_scale = map_scale)
   if (!is.null(panel_label) && nzchar(panel_label)) {
     graphics::legend("topleft", legend = panel_label, pch = NA, bg = "white",
                      x.intersp = -0.3)
@@ -855,7 +842,7 @@ plot_datras_overview <- function(
   )
 }
 
-.plot_points_panel <- function(hh, x_col, y_col, col_vec, cex_vec, pch, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE) {
+.plot_points_panel <- function(hh, x_col, y_col, col_vec, cex_vec, pch, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50) {
   plot(
     NA,
     xlim = xlim,
@@ -868,7 +855,7 @@ plot_datras_overview <- function(
     yaxt = if (isTRUE(show_y_axis)) "s" else "n",
     main = main
   )
-  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim)
+  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim, map_scale = map_scale)
   points(hh[[x_col]], hh[[y_col]], pch = pch, cex = cex_vec, col = col_vec)
   if (!is.null(panel_label) && nzchar(panel_label)) {
     graphics::legend("topleft", legend = panel_label, pch = NA, bg = "white",

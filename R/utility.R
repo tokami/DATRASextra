@@ -31,7 +31,8 @@ list_surveys <- function() {
 get_land <- function(download_map = FALSE, scale = 50) {
 
   if (!download_map) {
-    path <- system.file("extdata", "land_nea_50m.rds", package = "DATRASextra")
+    fname <- if (scale == 110) "land_nea_110m.rds" else "land_nea_50m.rds"
+    path <- system.file("extdata", fname, package = "DATRASextra")
     if (nzchar(path)) return(readRDS(path))
   }
 
