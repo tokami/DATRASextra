@@ -278,16 +278,7 @@ impute missing depth information where appropriate.</p>
 <p>After cleaning, it is often sensible to check for invalid or unusual
 values. This can be done with <code><a href="../reference/check_outliers.html">check_outliers()</a></code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_outliers.html">check_outliers</a></span><span class="op">(</span><span class="va">surv</span>, pct <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   table        var severity one</span></span>
-<span><span class="co">#&gt; 1    CA        Age  extreme   5</span></span>
-<span><span class="co">#&gt; 2    HH      Depth  extreme  50</span></span>
-<span><span class="co">#&gt; 3    HH DoorSpread  extreme  57</span></span>
-<span><span class="co">#&gt; 4    HH    HaulDur  extreme  32</span></span>
-<span><span class="co">#&gt; 5    CA     IndWgt  extreme  28</span></span>
-<span><span class="co">#&gt; 6    CA   LngtClas  extreme 149</span></span>
-<span><span class="co">#&gt; 7    HL     LngtCm  extreme 451</span></span>
-<span><span class="co">#&gt; 8    HH WingSpread  extreme  34</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_outliers.html">check_outliers</a></span><span class="op">(</span><span class="va">surv</span>, pct <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The function returns a summary of hauls with invalid values and, when
 <code>pct = TRUE</code>, also flags unusually extreme values in selected
 variables.</p>

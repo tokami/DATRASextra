@@ -67,7 +67,7 @@ Optionally adds percentile-based extreme-value flagging (group-wise).</p>
 <span>  pct <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  pct_probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.99</span><span class="op">)</span>,</span>
 <span>  pct_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>HH <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Survey"</span>, <span class="st">"Quarter"</span>, <span class="st">"Gear"</span>, <span class="st">"Ship"</span><span class="op">)</span>, HL <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Survey"</span>, <span class="st">"Quarter"</span>,</span>
-<span>    <span class="st">"Gear"</span>, <span class="st">"SpecCode"</span><span class="op">)</span>, CA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Survey"</span>, <span class="st">"Quarter"</span>, <span class="st">"Gear"</span>, <span class="st">"SpecCode"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="st">"Gear"</span>, <span class="st">"Valid_Aphia"</span><span class="op">)</span>, CA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Survey"</span>, <span class="st">"Quarter"</span>, <span class="st">"Gear"</span>, <span class="st">"Valid_Aphia"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  pct_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>HH <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"HaulDur"</span>, <span class="st">"Depth"</span>, <span class="st">"DoorSpread"</span>, <span class="st">"WingSpread"</span><span class="op">)</span>, HL <span class="op">=</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LngtCm"</span><span class="op">)</span>, CA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Age"</span>, <span class="st">"IndWgt"</span>, <span class="st">"LngtClas"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  pct_min_n <span class="op">=</span> <span class="fl">50</span>,</span>
@@ -107,7 +107,8 @@ c(0.01, 0.99).</p></dd>
 
 <dt id="arg-pct-by">pct_by<a class="anchor" aria-label="anchor" href="#arg-pct-by"></a></dt>
 <dd><p>Named list with elements HH/HL/CA giving grouping variables for
-percentile calculations.</p></dd>
+percentile calculations. Only columns present in the data are used; missing
+columns are silently dropped rather than collapsing all groups.</p></dd>
 
 
 <dt id="arg-pct-vars">pct_vars<a class="anchor" aria-label="anchor" href="#arg-pct-vars"></a></dt>

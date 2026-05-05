@@ -13,7 +13,7 @@ check_outliers(
   pct = FALSE,
   pct_probs = c(0.01, 0.99),
   pct_by = list(HH = c("Survey", "Quarter", "Gear", "Ship"), HL = c("Survey", "Quarter",
-    "Gear", "SpecCode"), CA = c("Survey", "Quarter", "Gear", "SpecCode")),
+    "Gear", "Valid_Aphia"), CA = c("Survey", "Quarter", "Gear", "Valid_Aphia")),
   pct_vars = list(HH = c("HaulDur", "Depth", "DoorSpread", "WingSpread"), HL =
     c("LngtCm"), CA = c("Age", "IndWgt", "LngtClas")),
   pct_min_n = 50,
@@ -52,7 +52,9 @@ check_outliers(
 - pct_by:
 
   Named list with elements HH/HL/CA giving grouping variables for
-  percentile calculations.
+  percentile calculations. Only columns present in the data are used;
+  missing columns are silently dropped rather than collapsing all
+  groups.
 
 - pct_vars:
 

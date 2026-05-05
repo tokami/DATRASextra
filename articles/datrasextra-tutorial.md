@@ -224,15 +224,6 @@ values. This can be done with
 ``` r
 
 surv <- check_outliers(surv, pct = TRUE)
-#>   table        var severity one
-#> 1    CA        Age  extreme   5
-#> 2    HH      Depth  extreme  50
-#> 3    HH DoorSpread  extreme  57
-#> 4    HH    HaulDur  extreme  32
-#> 5    CA     IndWgt  extreme  28
-#> 6    CA   LngtClas  extreme 149
-#> 7    HL     LngtCm  extreme 451
-#> 8    HH WingSpread  extreme  34
 ```
 
 The function returns a summary of hauls with invalid values and, when
