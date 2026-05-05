@@ -63,6 +63,7 @@ point maps, with optional grouping and faceting.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_datras_overview</span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"points"</span>, <span class="st">"grid"</span><span class="op">)</span>,</span>
+<span>  grid_resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>  metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"presence"</span>, <span class="st">"sum"</span>, <span class="st">"mean"</span>, <span class="st">"count_hauls"</span>, <span class="st">"count_surveys"</span><span class="op">)</span>,</span>
 <span>  spatial_basis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"raw"</span>, <span class="st">"statrec"</span><span class="op">)</span>,</span>
 <span>  by_survey <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -87,8 +88,6 @@ point maps, with optional grouping and faceting.</p>
 <span>  size_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fl">2.2</span><span class="op">)</span>,</span>
 <span>  legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  legend_mode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"none"</span>, <span class="st">"global"</span>, <span class="st">"per_panel"</span><span class="op">)</span>,</span>
-<span>  legend_outside <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  max_legend_items <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  max_grid_legend_levels <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  legend_ncol <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  legend_pos <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -109,6 +108,14 @@ point maps, with optional grouping and faceting.</p>
 
 <dt id="arg-mode">mode<a class="anchor" aria-label="anchor" href="#arg-mode"></a></dt>
 <dd><p>Plot mode: <code>"grid"</code> or <code>"points"</code>. Default is <code>"points"</code>.</p></dd>
+
+
+<dt id="arg-grid-resolution">grid_resolution<a class="anchor" aria-label="anchor" href="#arg-grid-resolution"></a></dt>
+<dd><p>Numeric vector <code>c(lon_step, lat_step)</code> in degrees
+controlling the bin width for <code>mode = "grid"</code>. Default <code>c(1, 0.5)</code> gives
+the original 1°×0.5° grid. Finer values such as <code>c(0.5, 0.25)</code> add
+spatial detail; coarser values (e.g. <code>c(2, 1)</code>) reduce clutter for very
+dense data. Has no effect in <code>mode = "points"</code>.</p></dd>
 
 
 <dt id="arg-metric">metric<a class="anchor" aria-label="anchor" href="#arg-metric"></a></dt>
@@ -189,16 +196,6 @@ toggles used to define panel groups.</p></dd>
 <dt id="arg-legend-mode">legend_mode<a class="anchor" aria-label="anchor" href="#arg-legend-mode"></a></dt>
 <dd><p>Legend behavior: <code>"auto"</code>, <code>"none"</code>, <code>"global"</code>, or
 <code>"per_panel"</code>.</p></dd>
-
-
-<dt id="arg-legend-outside">legend_outside<a class="anchor" aria-label="anchor" href="#arg-legend-outside"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, draw the legend outside the main
-plotting panel area. For multi-panel layouts, a free panel is used when
-available; otherwise a narrow right-side legend panel is created.</p></dd>
-
-
-<dt id="arg-max-legend-items">max_legend_items<a class="anchor" aria-label="anchor" href="#arg-max-legend-items"></a></dt>
-<dd><p>Maximum number of group legend entries.</p></dd>
 
 
 <dt id="arg-max-grid-legend-levels">max_grid_legend_levels<a class="anchor" aria-label="anchor" href="#arg-max-grid-legend-levels"></a></dt>

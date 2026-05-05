@@ -9,6 +9,7 @@ or point maps, with optional grouping and faceting.
 plot_datras_overview(
   x = NULL,
   mode = c("points", "grid"),
+  grid_resolution = c(1, 0.5),
   metric = c("presence", "sum", "mean", "count_hauls", "count_surveys"),
   spatial_basis = c("raw", "statrec"),
   by_survey = FALSE,
@@ -33,8 +34,6 @@ plot_datras_overview(
   size_range = c(0.7, 2.2),
   legend = TRUE,
   legend_mode = c("auto", "none", "global", "per_panel"),
-  legend_outside = FALSE,
-  max_legend_items = 30,
   max_grid_legend_levels = 5,
   legend_ncol = 1,
   legend_pos = NULL,
@@ -55,6 +54,14 @@ plot_datras_overview(
 - mode:
 
   Plot mode: `"grid"` or `"points"`. Default is `"points"`.
+
+- grid_resolution:
+
+  Numeric vector `c(lon_step, lat_step)` in degrees controlling the bin
+  width for `mode = "grid"`. Default `c(1, 0.5)` gives the original
+  1°×0.5° grid. Finer values such as `c(0.5, 0.25)` add spatial detail;
+  coarser values (e.g. `c(2, 1)`) reduce clutter for very dense data.
+  Has no effect in `mode = "points"`.
 
 - metric:
 
@@ -133,16 +140,6 @@ plot_datras_overview(
 - legend_mode:
 
   Legend behavior: `"auto"`, `"none"`, `"global"`, or `"per_panel"`.
-
-- legend_outside:
-
-  Logical. If `TRUE`, draw the legend outside the main plotting panel
-  area. For multi-panel layouts, a free panel is used when available;
-  otherwise a narrow right-side legend panel is created.
-
-- max_legend_items:
-
-  Maximum number of group legend entries.
 
 - max_grid_legend_levels:
 

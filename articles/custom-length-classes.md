@@ -80,13 +80,13 @@ length class:
 ``` r
 
 dab[["HH"]][["N"]][1:5, 1:5]
-#>                                  sizeGroup
-#> haul.id                           [3,4) [4,5) [5,6) [6,7) [7,8)
-#>   NS-IBTS:2020:1:DK:26D4:GOV:6:1      0     0     0     0     0
-#>   NS-IBTS:2020:1:DK:26D4:GOV:8:2      0     0     0     3     9
-#>   NS-IBTS:2020:1:DK:26D4:GOV:10:3     0     0     3     0     0
-#>   NS-IBTS:2020:1:DK:26D4:GOV:11:4     0     0     0     3     3
-#>   NS-IBTS:2020:1:DK:26D4:GOV:19:5     0     0     0     0     0
+#>                                      sizeGroup
+#> haul.id                               [3,4) [4,5) [5,6) [6,7) [7,8)
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60055:55     0     0     0     0     0
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60054:54     0     0     0     0     0
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60053:53     0     0     0     0     0
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60052:52     0     0     0     0     0
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60051:51     0     0     0     0     0
 ```
 
 By default,
@@ -125,13 +125,13 @@ The resulting matrix now has a finer length resolution:
 ``` r
 
 dab[["HH"]][["N"]][1:5, 1:5]
-#>                                  sizeGroup
-#> haul.id                           [3,3.5) [3.5,4) [4,4.5) [4.5,5) [5,5.5)
-#>   NS-IBTS:2020:1:DK:26D4:GOV:6:1        0       0       0       0       0
-#>   NS-IBTS:2020:1:DK:26D4:GOV:8:2        0       0       0       0       0
-#>   NS-IBTS:2020:1:DK:26D4:GOV:10:3       0       0       0       0       3
-#>   NS-IBTS:2020:1:DK:26D4:GOV:11:4       0       0       0       0       0
-#>   NS-IBTS:2020:1:DK:26D4:GOV:19:5       0       0       0       0       0
+#>                                      sizeGroup
+#> haul.id                               [3,3.5) [3.5,4) [4,4.5) [4.5,5) [5,5.5)
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60055:55       0       0       0       0       0
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60054:54       0       0       0       0       0
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60053:53       0       0       0       0       0
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60052:52       0       0       0       0       0
+#>   NS-IBTS:2020:1:NO:58G2:GOV:60051:51       0       0       0       0       0
 ```
 
 ## Convert numbers at length to weight at length
@@ -247,25 +247,25 @@ This returns haul-level summaries for juveniles and adults separately:
 ``` r
 
 head(dab[["HH"]][["HaulN"]])
-#>                                 (0-17.75] (17.75-Inf]
-#> NS-IBTS:2020:1:DK:26D4:GOV:6:1         26         160
-#> NS-IBTS:2020:1:DK:26D4:GOV:8:2         57         100
-#> NS-IBTS:2020:1:DK:26D4:GOV:10:3       207         229
-#> NS-IBTS:2020:1:DK:26D4:GOV:11:4        43          90
-#> NS-IBTS:2020:1:DK:26D4:GOV:19:5       233         299
-#> NS-IBTS:2020:1:DK:26D4:GOV:21:6         0           1
+#>                                     (0-17.75] (17.75-Inf]
+#> NS-IBTS:2020:1:NO:58G2:GOV:60055:55         0           0
+#> NS-IBTS:2020:1:NO:58G2:GOV:60054:54         0           0
+#> NS-IBTS:2020:1:NO:58G2:GOV:60053:53        82         221
+#> NS-IBTS:2020:1:NO:58G2:GOV:60052:52       523         543
+#> NS-IBTS:2020:1:NO:58G2:GOV:60051:51        42         144
+#> NS-IBTS:2020:1:NO:58G2:GOV:60050:50         0           0
 ```
 
 ``` r
 
 head(dab[["HH"]][["HaulWgt"]])
-#>                                 (0-17.75] (17.75-Inf]
-#> NS-IBTS:2020:1:DK:26D4:GOV:6:1    915.684   18487.350
-#> NS-IBTS:2020:1:DK:26D4:GOV:8:2   1413.448   10274.518
-#> NS-IBTS:2020:1:DK:26D4:GOV:10:3  7498.031   19681.076
-#> NS-IBTS:2020:1:DK:26D4:GOV:11:4  1577.837   10108.460
-#> NS-IBTS:2020:1:DK:26D4:GOV:19:5 11750.668   23250.572
-#> NS-IBTS:2020:1:DK:26D4:GOV:21:6     0.000      76.908
+#>                                     (0-17.75] (17.75-Inf]
+#> NS-IBTS:2020:1:NO:58G2:GOV:60055:55     0.000        0.00
+#> NS-IBTS:2020:1:NO:58G2:GOV:60054:54     0.000        0.00
+#> NS-IBTS:2020:1:NO:58G2:GOV:60053:53  4256.383    25914.94
+#> NS-IBTS:2020:1:NO:58G2:GOV:60052:52 24487.167    48769.12
+#> NS-IBTS:2020:1:NO:58G2:GOV:60051:51  1989.542    15829.06
+#> NS-IBTS:2020:1:NO:58G2:GOV:60050:50     0.000        0.00
 ```
 
 By default, the column names reflect the chosen cut points, but they can
@@ -282,13 +282,13 @@ This makes the result easier to interpret:
 ``` r
 
 head(dab[["HH"]][["HaulN"]])
-#>                                 juveniles adults
-#> NS-IBTS:2020:1:DK:26D4:GOV:6:1         26    160
-#> NS-IBTS:2020:1:DK:26D4:GOV:8:2         57    100
-#> NS-IBTS:2020:1:DK:26D4:GOV:10:3       207    229
-#> NS-IBTS:2020:1:DK:26D4:GOV:11:4        43     90
-#> NS-IBTS:2020:1:DK:26D4:GOV:19:5       233    299
-#> NS-IBTS:2020:1:DK:26D4:GOV:21:6         0      1
+#>                                     juveniles adults
+#> NS-IBTS:2020:1:NO:58G2:GOV:60055:55         0      0
+#> NS-IBTS:2020:1:NO:58G2:GOV:60054:54         0      0
+#> NS-IBTS:2020:1:NO:58G2:GOV:60053:53        82    221
+#> NS-IBTS:2020:1:NO:58G2:GOV:60052:52       523    543
+#> NS-IBTS:2020:1:NO:58G2:GOV:60051:51        42    144
+#> NS-IBTS:2020:1:NO:58G2:GOV:60050:50         0      0
 ```
 
 Of course, any number of custom length groups can be defined. For
@@ -308,21 +308,21 @@ groups:
 ``` r
 
 head(dab[["HH"]][["HaulN"]])
-#>                                 (0-10] (10-20] (20-30] (30-100]
-#> NS-IBTS:2020:1:DK:26D4:GOV:6:1       0      68     118        0
-#> NS-IBTS:2020:1:DK:26D4:GOV:8:2      24      75      58        0
-#> NS-IBTS:2020:1:DK:26D4:GOV:10:3     16     328      92        0
-#> NS-IBTS:2020:1:DK:26D4:GOV:11:4      8      58      66        1
-#> NS-IBTS:2020:1:DK:26D4:GOV:19:5      0     477      55        0
-#> NS-IBTS:2020:1:DK:26D4:GOV:21:6      0       1       0        0
+#>                                     (0-10] (10-20] (20-30] (30-100]
+#> NS-IBTS:2020:1:NO:58G2:GOV:60055:55      0       0       0        0
+#> NS-IBTS:2020:1:NO:58G2:GOV:60054:54      0       0       0        0
+#> NS-IBTS:2020:1:NO:58G2:GOV:60053:53      0     186     105       12
+#> NS-IBTS:2020:1:NO:58G2:GOV:60052:52      0     853     213        0
+#> NS-IBTS:2020:1:NO:58G2:GOV:60051:51      0      99      85        2
+#> NS-IBTS:2020:1:NO:58G2:GOV:60050:50      0       0       0        0
 head(dab[["HH"]][["HaulWgt"]])
-#>                                  (0-10]   (10-20]   (20-30] (30-100]
-#> NS-IBTS:2020:1:DK:26D4:GOV:6:1    0.000  3904.189 15498.845    0.000
-#> NS-IBTS:2020:1:DK:26D4:GOV:8:2  123.243  4278.710  7286.013    0.000
-#> NS-IBTS:2020:1:DK:26D4:GOV:10:3 115.514 17078.956  9984.637    0.000
-#> NS-IBTS:2020:1:DK:26D4:GOV:11:4  35.156  3231.022  8114.143  305.976
-#> NS-IBTS:2020:1:DK:26D4:GOV:19:5   0.000 28859.317  6141.923    0.000
-#> NS-IBTS:2020:1:DK:26D4:GOV:21:6   0.000    76.908     0.000    0.000
+#>                                     (0-10]   (10-20]  (20-30] (30-100]
+#> NS-IBTS:2020:1:NO:58G2:GOV:60055:55      0     0.000     0.00    0.000
+#> NS-IBTS:2020:1:NO:58G2:GOV:60054:54      0     0.000     0.00    0.000
+#> NS-IBTS:2020:1:NO:58G2:GOV:60053:53      0 11691.009 14499.36 3980.953
+#> NS-IBTS:2020:1:NO:58G2:GOV:60052:52      0 48278.947 24977.34    0.000
+#> NS-IBTS:2020:1:NO:58G2:GOV:60051:51      0  6120.161 10719.41  979.030
+#> NS-IBTS:2020:1:NO:58G2:GOV:60050:50      0     0.000     0.00    0.000
 ```
 
 These summaries can then be used to explore whether the spatial
