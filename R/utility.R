@@ -422,6 +422,16 @@ print.datras_raw <- function(x, ...) {
     }
   }
 
+  rpt <- attr(x, "outlier_report")
+  if (!is.null(rpt)) {
+    n_flagged <- length(attr(x, "outlier_hauls"))
+    if (n_flagged > 0) {
+      cat("Outlier check:", n_flagged, "flagged haul(s) -- see summary() for details.\n")
+    } else {
+      cat("Outlier check: no flagged hauls.\n")
+    }
+  }
+
   invisible(x)
 }
 
@@ -467,6 +477,22 @@ summary.datras_raw <- function(object, ...) {
       cat(paste(paste0("  ", sp_names, " (AphiaID ", sp_ids, ")"), collapse = "\n"), "\n")
     } else {
       cat(paste0("  AphiaID ", sp_ids, collapse = "\n"), "\n")
+    }
+  }
+
+  rpt <- attr(x, "outlier_report")
+  if (!is.null(rpt)) {
+    cat("---\nOutlier report:\n")
+    n_invalid <- length(attr(x, "outlier_hauls_invalid"))
+    n_extreme <- length(attr(x, "outlier_hauls_extreme"))
+    n_all     <- length(attr(x, "outlier_hauls"))
+    cat("  Flagged hauls:", n_all,
+        paste0("(", n_invalid, " rule-based, ", n_extreme, " percentile-based)\n"))
+    if (nrow(rpt) > 0) {
+      tmp <- transform(rpt, n = 1L)
+      tmp$severity <- ifelse(is.na(tmp$severity), "unknown", tmp$severity)
+      tbl <- stats::aggregate(n ~ table + var + severity, data = tmp, FUN = sum)
+      print(tbl, row.names = FALSE)
     }
   }
 

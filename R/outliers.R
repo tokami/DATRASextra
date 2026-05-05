@@ -13,7 +13,8 @@
 ##' @param pct_probs Numeric length-2 vector of lower/upper probabilities, e.g.
 ##'   c(0.01, 0.99).
 ##' @param pct_by Named list with elements HH/HL/CA giving grouping variables for
-##'   percentile calculations.
+##'   percentile calculations. Only columns present in the data are used; missing
+##'   columns are silently dropped rather than collapsing all groups.
 ##' @param pct_vars Named list with elements HH/HL/CA giving variables to check via percentiles.
 ##' @param pct_min_n Minimum number of non-missing observations required per group to compute percentiles.
 ##' @param pct_log_vars Named list with elements HH/HL/CA giving variables for which percentiles are computed on log-scale.
@@ -43,8 +44,8 @@ check_outliers <- function(x,
                           pct_probs = c(0.01, 0.99),
                           pct_by = list(
                             HH = c("Survey", "Quarter", "Gear", "Ship"),
-                            HL = c("Survey", "Quarter", "Gear", "SpecCode"),
-                            CA = c("Survey", "Quarter", "Gear", "SpecCode")
+                            HL = c("Survey", "Quarter", "Gear", "Valid_Aphia"),
+                            CA = c("Survey", "Quarter", "Gear", "Valid_Aphia")
                           ),
                           pct_vars = list(
                             HH = c("HaulDur", "Depth", "DoorSpread", "WingSpread"),
@@ -62,6 +63,13 @@ check_outliers <- function(x,
                           verbose = TRUE) {
 
   action <- match.arg(action)
+
+  if (isTRUE(remove_extremes) && action == "report") {
+    warning("'remove_extremes = TRUE' has no effect when action = \"report\".")
+  }
+  if (isTRUE(remove_extremes) && !isTRUE(pct)) {
+    warning("'remove_extremes = TRUE' has no effect when pct = FALSE.")
+  }
 
   ## basic checks
   if (!is.list(x)) {
@@ -193,7 +201,8 @@ check_outliers <- function(x,
 
       tmp <- transform(report, one = 1L)
       tmp$severity <- ifelse(is.na(tmp$severity), "unknown", tmp$severity)
-      print(stats::aggregate(one ~ table + var + severity, data = tmp, FUN = sum))
+      tbl <- stats::aggregate(one ~ table + var + severity, data = tmp, FUN = sum)
+      message(paste(capture.output(print(tbl)), collapse = "\n"))
     }
 
     if (action == "remove") {
@@ -220,20 +229,39 @@ check_outliers <- function(x,
 
 .datras_default_outlier_rules <- function(strict = TRUE) {
 
-  ## TODO: review these values
-  ## broad but useful defaults
-  max_hauldur   <- if (strict) 240 else 600
-  max_depth     <- if (strict) 2000 else 4000
-  max_doorspread <- if (strict) 250 else 400
-  max_wingspread <- if (strict) 80 else 150
-  max_lngtcm    <- if (strict) 200 else 400
-  max_age       <- if (strict) 80 else 120
-  max_lngtclas  <- if (strict) 2000 else 4000
-  max_indwgt    <- if (strict) 1e5 else 5e5
+  max_hauldur     <- if (strict) 240 else 360
+  max_depth       <- if (strict) 2000 else 3000
+  max_doorspread  <- if (strict) 250 else 300
+  max_wingspread  <- if (strict) 80 else 120
+  max_groundspeed <- if (strict) 6 else 8
+  max_lngtcm      <- if (strict) 200 else 300
+  max_age         <- if (strict) 50 else 80
+  max_lngtclas    <- if (strict) 2000 else 3000
+  max_indwgt      <- if (strict) 1e5 else 3e5
 
   list(
 
     HH = list(
+
+      .datras_rule(
+        vars = "Quarter",
+        reason = "Quarter outside 1-4",
+        flag_fun = function(d) {
+          if (!"Quarter" %in% names(d)) return(rep(FALSE, nrow(d)))
+          v <- suppressWarnings(as.integer(as.character(d$Quarter)))
+          !is.na(v) & (v < 1L | v > 4L)
+        }
+      ),
+
+      .datras_rule(
+        vars = "Year",
+        reason = "Year before 1965 or implausibly large",
+        flag_fun = function(d) {
+          if (!"Year" %in% names(d)) return(rep(FALSE, nrow(d)))
+          v <- suppressWarnings(as.integer(as.character(d$Year)))
+          !is.na(v) & (v < 1965L | v > as.integer(format(Sys.Date(), "%Y")))
+        }
+      ),
 
       .datras_rule(
         vars = "TimeShot",
@@ -286,6 +314,16 @@ check_outliers <- function(x,
       ),
 
       .datras_rule(
+        vars = "GroundSpeed",
+        reason = paste0("GroundSpeed outside 0-", max_groundspeed, " knots"),
+        flag_fun = function(d) {
+          if (!"GroundSpeed" %in% names(d)) return(rep(FALSE, nrow(d)))
+          v <- suppressWarnings(as.numeric(d$GroundSpeed))
+          !is.na(v) & (v <= 0 | v > max_groundspeed)
+        }
+      ),
+
+      .datras_rule(
         vars = "DoorSpread",
         reason = paste0("DoorSpread outside 0-", max_doorspread, " m"),
         flag_fun = function(d) {
@@ -307,14 +345,14 @@ check_outliers <- function(x,
 
       .datras_rule(
         vars = c("WingSpread", "DoorSpread"),
-        reason = "WingSpread >= DoorSpread",
+        reason = "WingSpread exceeds DoorSpread (physically impossible)",
         flag_fun = function(d) {
           if (!all(c("WingSpread", "DoorSpread") %in% names(d))) {
             return(rep(FALSE, nrow(d)))
           }
           ws <- suppressWarnings(as.numeric(d$WingSpread))
           ds <- suppressWarnings(as.numeric(d$DoorSpread))
-          !is.na(ws) & !is.na(ds) & (ws >= ds)
+          !is.na(ws) & !is.na(ds) & (ws > ds)
         },
         value_vars = c("WingSpread", "DoorSpread")
       )
@@ -326,9 +364,6 @@ check_outliers <- function(x,
         vars = "LngtCm",
         reason = paste0("LngtCm outside 0-", max_lngtcm, " cm"),
         flag_fun = function(d) {
-          if (is.null(d) || !is.data.frame(d) || nrow(d) == 0) {
-            return(logical(0))
-          }
           if (!"LngtCm" %in% names(d)) return(rep(FALSE, nrow(d)))
           v <- suppressWarnings(as.numeric(d$LngtCm))
           !is.na(v) & (v <= 0 | v > max_lngtcm)
@@ -342,9 +377,6 @@ check_outliers <- function(x,
         vars = "Sex",
         reason = "Sex not in allowed set ('', 'F', 'M', 'U')",
         flag_fun = function(d) {
-          if (is.null(d) || !is.data.frame(d) || nrow(d) == 0) {
-            return(logical(0))
-          }
           if (!"Sex" %in% names(d)) return(rep(FALSE, nrow(d)))
           v <- trimws(as.character(d$Sex))
           !(is.na(v) | v %in% c("", "F", "M", "U"))
@@ -355,9 +387,6 @@ check_outliers <- function(x,
         vars = "Age",
         reason = paste0("Age outside 0-", max_age),
         flag_fun = function(d) {
-          if (is.null(d) || !is.data.frame(d) || nrow(d) == 0) {
-            return(logical(0))
-          }
           if (!"Age" %in% names(d)) return(rep(FALSE, nrow(d)))
           v <- suppressWarnings(as.numeric(d$Age))
           !is.na(v) & (v < 0 | v > max_age | abs(v - round(v)) > 1e-8)
@@ -368,9 +397,6 @@ check_outliers <- function(x,
         vars = "NoAtALK",
         reason = "NoAtALK must be a non-negative integer",
         flag_fun = function(d) {
-          if (is.null(d) || !is.data.frame(d) || nrow(d) == 0) {
-            return(logical(0))
-          }
           if (!"NoAtALK" %in% names(d)) return(rep(FALSE, nrow(d)))
           v <- suppressWarnings(as.numeric(d$NoAtALK))
           !is.na(v) & (v < 0 | abs(v - round(v)) > 1e-8)
@@ -381,9 +407,6 @@ check_outliers <- function(x,
         vars = "IndWgt",
         reason = paste0("IndWgt outside 0-", max_indwgt),
         flag_fun = function(d) {
-          if (is.null(d) || !is.data.frame(d) || nrow(d) == 0) {
-            return(logical(0))
-          }
           if (!"IndWgt" %in% names(d)) return(rep(FALSE, nrow(d)))
           v <- suppressWarnings(as.numeric(d$IndWgt))
           !is.na(v) & (v <= 0 | v > max_indwgt)
@@ -394,9 +417,6 @@ check_outliers <- function(x,
         vars = "LngtCode",
         reason = "LngtCode not in allowed set ('', '.', '0', '1')",
         flag_fun = function(d) {
-          if (is.null(d) || !is.data.frame(d) || nrow(d) == 0) {
-            return(logical(0))
-          }
           if (!"LngtCode" %in% names(d)) return(rep(FALSE, nrow(d)))
           v <- trimws(as.character(d$LngtCode))
           !(is.na(v) | v %in% c("", ".", "0", "1"))
@@ -407,9 +427,6 @@ check_outliers <- function(x,
         vars = "LngtClas",
         reason = paste0("LngtClas outside 0-", max_lngtclas),
         flag_fun = function(d) {
-          if (is.null(d) || !is.data.frame(d) || nrow(d) == 0) {
-            return(logical(0))
-          }
           if (!"LngtClas" %in% names(d)) return(rep(FALSE, nrow(d)))
           v <- suppressWarnings(as.numeric(d$LngtClas))
           !is.na(v) & (v <= 0 | v > max_lngtclas | abs(v - round(v)) > 1e-8)
@@ -495,11 +512,8 @@ check_outliers <- function(x,
     return(.empty_outlier_report())
   }
 
-  ## group key
-  use_by <- by
-  if (length(use_by) > 0 && !all(use_by %in% names(d))) {
-    use_by <- character(0)
-  }
+  ## use only grouping columns that are present; partial matches still group on available cols
+  use_by <- by[by %in% names(d)]
 
   key <- if (length(use_by) > 0) {
     do.call(paste, c(d[use_by], sep = "\r"))
