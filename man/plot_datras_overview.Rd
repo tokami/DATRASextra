@@ -7,6 +7,7 @@
 plot_datras_overview(
   x = NULL,
   mode = c("points", "grid"),
+  grid_resolution = c(1, 0.5),
   metric = c("presence", "sum", "mean", "count_hauls", "count_surveys"),
   spatial_basis = c("raw", "statrec"),
   by_survey = FALSE,
@@ -31,8 +32,6 @@ plot_datras_overview(
   size_range = c(0.7, 2.2),
   legend = TRUE,
   legend_mode = c("auto", "none", "global", "per_panel"),
-  legend_outside = FALSE,
-  max_legend_items = 30,
   max_grid_legend_levels = 5,
   legend_ncol = 1,
   legend_pos = NULL,
@@ -46,6 +45,12 @@ plot_datras_overview(
 \code{DATRASextra::survey_info_full_raw} (fallback \code{survey_info_full}).}
 
 \item{mode}{Plot mode: \code{"grid"} or \code{"points"}. Default is \code{"points"}.}
+
+\item{grid_resolution}{Numeric vector \code{c(lon_step, lat_step)} in degrees
+controlling the bin width for \code{mode = "grid"}. Default \code{c(1, 0.5)} gives
+the original 1°×0.5° grid. Finer values such as \code{c(0.5, 0.25)} add
+spatial detail; coarser values (e.g. \code{c(2, 1)}) reduce clutter for very
+dense data. Has no effect in \code{mode = "points"}.}
 
 \item{metric}{Grid metric: \code{"sum"}, \code{"mean"}, \code{"count_hauls"},
 \code{"presence"}, or \code{"count_surveys"}.}
@@ -88,12 +93,6 @@ toggles used to define panel groups.}
 
 \item{legend_mode}{Legend behavior: \code{"auto"}, \code{"none"}, \code{"global"}, or
 \code{"per_panel"}.}
-
-\item{legend_outside}{Logical. If \code{TRUE}, draw the legend outside the main
-plotting panel area. For multi-panel layouts, a free panel is used when
-available; otherwise a narrow right-side legend panel is created.}
-
-\item{max_legend_items}{Maximum number of group legend entries.}
 
 \item{max_grid_legend_levels}{Maximum number of levels shown in grid legends.}
 

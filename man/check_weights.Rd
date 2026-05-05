@@ -42,7 +42,7 @@ large lengths or weights, summarizes the observed length and weight
 distributions, fits a log-log length-weight relationship, and optionally
 plots the observed data together with the fitted curve.
 
-The function first calls \code{\link[DATRAS:DATRAS-internal]{DATRAS::checkSpectrum()}} and then works on the \code{CA}
+The function first calls \code{\link[DATRAS:checkSpectrum]{DATRAS::checkSpectrum()}} and then works on the \code{CA}
 table of the input object.
 
 A linear model of the form

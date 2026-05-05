@@ -349,6 +349,129 @@ get_latin <- function(x, use_worrms = FALSE) {
 }
 
 
+##' @export
+##' @method print datras_raw
+print.datras_raw <- function(x, ...) {
+  hh <- x[["HH"]]
+  hl <- x[["HL"]]
+  ca <- x[["CA"]]
+
+  cat("Object of class 'datras_raw'\n")
+  cat("===========================\n")
+  cat("Number of hauls:", nrow(hh), "\n")
+
+  n_sp <- if ("Valid_Aphia" %in% names(hl))
+    length(unique(hl$Valid_Aphia[!is.na(hl$Valid_Aphia)]))
+  else if ("Species" %in% names(hl)) nlevels(hl$Species) else 0L
+  cat("Number of species:", n_sp, "\n")
+
+  if ("Country" %in% names(hh))
+    cat("Number of countries:", length(unique(as.character(hh$Country))), "\n")
+
+  cat("Years:", paste(levels(hh$Year), collapse = " "), "\n")
+  cat("Quarters:", paste(levels(hh$Quarter), collapse = " "), "\n")
+  cat("Gears:", paste(levels(factor(as.character(hh$Gear))), collapse = " "), "\n")
+
+  numNa <- sum(is.na(hh$HaulDur))
+  cat(paste("Haul duration:", paste(unique(range(hh$HaulDur, na.rm = TRUE)), collapse = " - "), "minutes"))
+  if (numNa) { cat(" ("); cat(numNa, "NAs removed)") }
+  cat("\n")
+
+  if ("HaulVal" %in% names(hh)) {
+    n_valid   <- sum(as.character(hh$HaulVal) == "V", na.rm = TRUE)
+    n_invalid <- nrow(hh) - n_valid
+    cat("Valid hauls:", n_valid)
+    if (n_invalid > 0) cat(" (", n_invalid, " invalid)", sep = "")
+    cat("\n")
+  }
+
+  if ("lon" %in% names(hh) && "lat" %in% names(hh)) {
+    lon_r <- round(range(hh$lon, na.rm = TRUE), 2)
+    lat_r <- round(range(hh$lat, na.rm = TRUE), 2)
+    cat("Longitude range:", lon_r[1], "-", lon_r[2], "\n")
+    cat("Latitude range:", lat_r[1], "-", lat_r[2], "\n")
+  }
+
+  if ("Depth" %in% names(hh)) {
+    d_r <- range(hh$Depth, na.rm = TRUE)
+    cat("Depth range:", d_r[1], "-", d_r[2], "m\n")
+  }
+
+  sa_cols <- grep("SweptArea", names(hh), value = TRUE, ignore.case = TRUE)
+  if (length(sa_cols) > 0) {
+    v <- hh[[sa_cols[1]]]
+    r <- signif(range(v, na.rm = TRUE), 3)
+    cat("Swept area: ", r[1], " - ", r[2], "\n", sep = "")
+  }
+
+  hn_cols <- grep("^HaulN$|^HaulN\\.", names(hh), value = TRUE, perl = TRUE)
+  if (length(hn_cols) > 0) {
+    if (!is.null(colnames(hh[[hn_cols]]))) {
+      cat("HaulN by length:", paste(colnames(hh[[hn_cols]]), collapse = ", "), "\n")
+    } else {
+      cat("HaulN present\n")
+    }
+  }
+
+  hn_cols <- grep("^HaulWgt$|^HaulWgt\\.", names(hh), value = TRUE, perl = TRUE)
+  if (length(hn_cols) > 0) {
+    if (!is.null(colnames(hh[[hn_cols]]))) {
+      cat("HaulWgt by length:", paste(colnames(hh[[hn_cols]]), collapse = ", "), "\n")
+    } else {
+      cat("HaulWgt present\n")
+    }
+  }
+
+  invisible(x)
+}
+
+
+##' @export
+##' @method summary datras_raw
+summary.datras_raw <- function(object, ...) {
+  x  <- object
+  hh <- x[["HH"]]
+  hl <- x[["HL"]]
+
+  print(x)
+
+  cat("Number of hauls by year and quarter:\n")
+  print(xtabs(~Year + Quarter, data = hh))
+
+  cat("Haul duration:\n")
+  print(summary(hh$HaulDur))
+
+  base_hh <- c("RecordType","Survey","Quarter","Country","Ship","Gear","SweepLngt","GearEx",
+                "DoorType","StNo","HaulNo","Year","Month","Day","TimeShot","DepthStratum",
+                "HaulDur","DayNight","ShootLat","ShootLong","HaulLat","HaulLong","StatRec",
+                "Depth","HaulVal","HydroStNo","StdSpecRecCode","BySpecRecCode","DataType",
+                "Netopening","Rigging","Tickler","Distance","Warplngt","Warpdia","WarpDen",
+                "DoorSurface","DoorWgt","DoorSpread","WingSpread","Buoyancy","KiteDim",
+                "WgtGroundRope","TowDir","GroundSpeed","SpeedWater","SurCurDir","SurCurSpeed",
+                "BotCurDir","BotCurSpeed","WindDir","WindSpeed","SwellDir","SwellHeight",
+                "SurTemp","BotTemp","SurSal","BotSal","ThermoCline","ThClineDepth",
+                "CodendMesh","SecchiDepth","Turbidity","TidePhase","TideSpeed","PelSampType",
+                "MinTrawlDepth","MaxTrawlDepth","DateofCalculation","haul.id","abstime",
+                "timeOfYear","TimeShotHour","lon","lat","Roundfish")
+  added_hh <- setdiff(names(hh), base_hh)
+  if (length(added_hh) > 0)
+    cat("Extra columns in HH:", paste(added_hh, collapse = ", "), "\n")
+
+  sp_ids <- if ("Valid_Aphia" %in% names(hl))
+    sort(unique(hl$Valid_Aphia[!is.na(hl$Valid_Aphia)])) else integer(0)
+  if (length(sp_ids) > 0) {
+    cat("Species:\n")
+    if ("Species" %in% names(hl)) {
+      m <- match(sp_ids, hl$Valid_Aphia)
+      sp_names <- as.character(hl$Species[m])
+      cat(paste(paste0("  ", sp_names, " (AphiaID ", sp_ids, ")"), collapse = "\n"), "\n")
+    } else {
+      cat(paste0("  AphiaID ", sp_ids, collapse = "\n"), "\n")
+    }
+  }
+
+  invisible(x)
+}
 
 
 .map2bar <- function(value, midL, bar.x) {

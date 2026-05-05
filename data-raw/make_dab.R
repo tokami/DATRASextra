@@ -15,4 +15,6 @@ dab <- subset(surv, Valid_Aphia == "127139")
 
 format(object.size(dab), units = "auto") ## 8.9 Mb
 
+class(dab)
+
 usethis::use_data(dab, overwrite = TRUE)
