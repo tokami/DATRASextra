@@ -44,6 +44,11 @@ articles:
 - title: FishGlob
   contents:
   - articles/fishglob
+- title: Common data workflows
+  contents:
+  - articles/number-biomass-by-species
+  - articles/number-biomass-effort-by-species
+  
 
 news:
   releases:
