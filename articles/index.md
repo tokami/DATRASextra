@@ -20,3 +20,10 @@
 
 - [Processing ICES DATRAS Data for
   FishGlob](https://tokami.github.io/DATRASextra/articles/fishglob.md):
+
+### Common data workflows
+
+- [Extract numbers or biomass for a single
+  species](https://tokami.github.io/DATRASextra/articles/number-biomass-by-species.md):
+- [Extract abundance or biomass per unit effort for a single
+  species](https://tokami.github.io/DATRASextra/articles/number-biomass-effort-by-species.md):
