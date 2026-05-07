@@ -439,7 +439,497 @@ plot_datras_overview <- function(
 
 
 
+##' @title Plot catch distribution by length class
+##'
+##' @description
+##' Aggregates numbers-at-length (\code{N}) and/or weight-at-length
+##' (\code{Wgt}) across hauls and plots the distribution as a bar chart, to
+##' help identify meaningful length groups. Optional cut points are overlaid as
+##' dashed vertical lines, with bars coloured by the resulting intervals.
+##'
+##' Both matrices must be present in \code{x[["HH"]]} before calling this
+##' function. Use \code{\link{add_numbers_at_length}} and/or
+##' \code{\link{add_weight_at_length}} to add them.
+##'
+##' @param x A \code{datras_raw} object with \code{N} and/or \code{Wgt}
+##'   matrices in \code{HH}.
+##' @param what Character; which quantity to plot: \code{"N"},
+##'   \code{"Wgt"}, or \code{"both"}.
+##' @param agg Character; how to aggregate across hauls: \code{"sum"}
+##'   (default) or \code{"mean"}.
+##' @param log_scale Logical; if \code{TRUE}, plot on a log scale.
+##' @param length_cuts Optional numeric vector of break points in cm to overlay
+##'   as dashed vertical lines. Bars are coloured by which interval each length
+##'   class falls in.
+##' @param col Optional colour vector. If \code{length_cuts} is supplied, one
+##'   colour per interval (length of \code{length_cuts} + 1). Otherwise a
+##'   single bar colour.
+##' @param main Optional plot title.
+##'
+##' @return Invisibly returns the aggregated values: a \code{data.frame} with
+##'   columns \code{midL}, \code{N} and/or \code{Wgt} (depending on
+##'   \code{what}).
+##'
+##' @examples
+##' \dontrun{
+##' x <- add_numbers_at_length(dab)
+##' x <- add_weight_at_length(x)
+##'
+##' ## Basic numbers distribution
+##' plot_length_distribution(x)
+##'
+##' ## Both panels, log scale
+##' plot_length_distribution(x, what = "both", log_scale = TRUE)
+##'
+##' ## Overlay proposed length groups
+##' plot_length_distribution(x, length_cuts = c(15, 25))
+##' }
+##'
+##' @export
+plot_length_distribution <- function(x,
+                                     what = c("N", "Wgt", "both", "legend"),
+                                     agg = c("sum", "mean"),
+                                     log_scale = FALSE,
+                                     length_cuts = NULL,
+                                     col = NULL,
+                                     main = NULL,
+                                     do_legend = TRUE,
+                                     legend_ncol = 1L) {
+
+  what <- match.arg(what)
+  agg  <- match.arg(agg)
+
+  .check_class_datras(x)
+
+  N   <- x[["HH"]][["N"]]
+  Wgt <- x[["HH"]][["Wgt"]]
+  has_N   <- !is.null(N)   && is.matrix(N)
+  has_Wgt <- !is.null(Wgt) && is.matrix(Wgt)
+
+  ## graceful fallback when one matrix is absent
+  if (identical(what, "both")) {
+    if (!has_N && !has_Wgt)
+      stop("Neither N nor Wgt found in HH. Run add_numbers_at_length() and/or add_weight_at_length() first.")
+    if (!has_N)  { message("N not found; plotting Wgt only.");  what <- "Wgt" }
+    if (!has_Wgt){ message("Wgt not found; plotting N only."); what <- "N" }
+  }
+  if (identical(what, "N")   && !has_N)
+    stop("No N matrix in HH. Run add_numbers_at_length() first.")
+  if (identical(what, "Wgt") && !has_Wgt)
+    stop("No Wgt matrix in HH. Run add_weight_at_length() first.")
+
+  ## midpoints from cm.breaks attribute; fall back to parsing column names
+  cm_breaks <- attr(x, "cm.breaks")
+  if (!is.null(cm_breaks) && length(cm_breaks) >= 2L) {
+    mids <- cm_breaks[-length(cm_breaks)] + diff(cm_breaks) / 2
+  } else {
+    mids <- .parse_interval_mids(colnames(if (has_N) N else Wgt))
+  }
+
+  agg_fun  <- if (identical(agg, "sum")) colSums else colMeans
+  ylab_N   <- if (identical(agg, "sum")) "Total numbers"      else "Mean numbers per haul"
+  ylab_Wgt <- if (identical(agg, "sum")) "Total weight (g)" else "Mean weight per haul (g)"
+
+  ## group colours for length_cuts
+  cuts <- sort(length_cuts)
+  n_grp <- length(cuts) + 1L
+  grp_col <- if (!is.null(col)) {
+    rep_len(col, n_grp)
+  } else if (!is.null(cuts)) {
+    .colours_datrasextra_discrete(n_grp)
+  } else {
+    .colours_datrasextra_discrete(6L)[5L]  # single default: teal
+  }
+
+  if (!is.null(cuts)) {
+    bar_grp <- findInterval(mids, cuts) + 1L
+    cut_labels <- c(
+      paste0("< ", cuts[1L]),
+      if (length(cuts) > 1L) paste0(cuts[-length(cuts)], " – ", cuts[-1L]),
+      paste0("≥ ", cuts[length(cuts)])
+    )
+  }
+
+  ## x-axis tick positions: thin for many bins so labels don't overlap
+  n_bars <- length(mids)
+  step   <- if (n_bars > 40L) 10L else if (n_bars > 20L) 5L else 1L
+  show   <- seq(1L, n_bars, by = step)
+
+  .one_panel <- function(mat, ylab, xlab = "Length (cm)", main = NULL,
+                         do_legend = TRUE, legend_only = FALSE) {
+    y <- agg_fun(mat, na.rm = TRUE)
+    if (isTRUE(log_scale)) {
+      y <- log(y)
+      y[!is.finite(y)] <- NA_real_
+      ylab <- paste0("log(", ylab, ")")
+    }
+
+    bar_fill <- if (!is.null(cuts)) grp_col[bar_grp] else grp_col[1L]
+
+    if (isFALSE(legend_only)) {
+      bar_x <- barplot(
+        y,
+        names.arg = rep("", n_bars),
+        col       = bar_fill,
+        border    = NA,
+        ylab      = "",
+        xlab      = "",
+        las       = 1L
+      )
+      axis(1L, at = bar_x[show], labels = as.character(mids[show]), tick = TRUE)
+      mtext(ylab, 2, 4.5)
+      mtext(main, 3, 1, font = 2)
+      mtext(xlab, 1, 2.5)
+      legend_pos <- "topright"
+      legend_cex <- 0.85
+    } else {
+      plot.new()
+      legend_pos <- "center"
+      legend_cex <- 1.2
+    }
+
+    if (!is.null(cuts)) {
+
+      abline(v = .map2bar(cuts, mids, bar_x), col = "grey20", lty = 2L, lwd = 1.5)
+
+      if (isTRUE(do_legend)) {
+        legend(legend_pos, legend = cut_labels,
+               fill = grp_col,
+               border = NA,
+               cex = legend_cex, bg = "white", ncol = legend_ncol)
+      }
+    }
+
+    invisible(y)
+  }
+
+  opar <- par(no.readonly = TRUE)
+  on.exit(par(opar), add = TRUE)
+
+  mar <- c(2, 6, 1, 1)
+  oma <- c(2.5, 0, 1.5, 0)
+  if (identical(what, "legend")) {
+    .one_panel(N, legend_only = TRUE)
+  } else if (identical(what, "both")) {
+    par(mfrow = c(2L, 1L), mar = mar, oma = oma)
+    y_N   <- .one_panel(N,   ylab_N, xlab = "", main = main, do_legend = do_legend)
+    y_Wgt <- .one_panel(Wgt, ylab_Wgt, main = NULL, do_legend = FALSE)
+    invisible(data.frame(midL = mids, N = unname(y_N), Wgt = unname(y_Wgt)))
+  } else if (identical(what, "N")) {
+    par(mar = mar, oma = oma)
+    y <- .one_panel(N, ylab_N, main = main, do_legend = do_legend)
+    invisible(data.frame(midL = mids, N = unname(y)))
+  } else {
+    par(mar = mar, oma = oma)
+    y <- .one_panel(Wgt, ylab_Wgt, main = main, do_legend = do_legend)
+    invisible(data.frame(midL = mids, Wgt = unname(y)))
+  }
+}
+
+
+##' @title Plot species composition by length group
+##'
+##' @description
+##' Shows the contribution of each species in \code{x[["HL"]]} to the total
+##' numbers (\code{HaulN}) and/or total weight (\code{HaulWgt}) already
+##' computed in \code{x[["HH"]]}. Length groups are taken directly from the
+##' column names of \code{HaulN}/\code{HaulWgt}; if those matrices have only
+##' one column (or are plain vectors), a single stacked bar is drawn.
+##'
+##' Numbers are aggregated from \code{HL$Count}. Weights are estimated from
+##' \code{HL} using length-weight parameters from the internal
+##' \code{species_info} table; species without parameters contribute 0 g with
+##' a warning.
+##'
+##' @param x A \code{datras_raw} object. \code{HH} must contain \code{HaulN}
+##'   and/or \code{HaulWgt} (produced by \code{\link{add_total_numbers_by_haul}}
+##'   and \code{\link{add_total_weight_by_haul}}).
+##' @param what Character; which quantity to plot: \code{"N"}, \code{"Wgt"},
+##'   or \code{"both"}.
+##' @param col Optional colour vector — one colour per species (after
+##'   collapsing to \code{max_species}). The palette cycles if too short.
+##' @param main Optional plot title.
+##' @param max_species Maximum number of species to show individually. Species
+##'   beyond this ranked by total count are collapsed into an \code{"Other"}
+##'   category.
+##' @param beside Logical. If \code{TRUE} (default), species bars are stacked
+##'   within each length group. If \code{TRUE}, bars are placed side by side.
+##' @param legend_ncol Number of columns in the species legend.
+##'
+##' @return Invisibly returns a named list with elements \code{N} and/or
+##'   \code{Wgt}: matrices of aggregated values with rows = species and
+##'   columns = length groups.
+##'
+##' @examples
+##' \dontrun{
+##' dat <- add_numbers_at_length(mini)
+##' dat <- add_weight_at_length(dat)
+##' dat <- add_total_numbers_by_haul(dat, length_cuts = c(0, 20, 35, Inf))
+##' dat <- add_total_weight_by_haul(dat, length_cuts = c(0, 20, 35, Inf))
+##'
+##' plot_species_composition(dat)
+##' plot_species_composition(dat, what = "both")
+##' plot_species_composition(dat, beside = FALSE)
+##' }
+##'
+##' @export
+plot_species_composition <- function(x,
+                                     what = c("N", "Wgt", "both", "legend"),
+                                     beside = TRUE,
+                                     col = NULL,
+                                     main = NULL,
+                                     max_species = 8L,
+                                     do_legend = TRUE,
+                                     legend_ncol = 1L) {
+
+  what <- match.arg(what)
+  .check_class_datras(x)
+
+  hl    <- x[["HL"]]
+  haulN <- x[["HH"]][["HaulN"]]
+  haulW <- x[["HH"]][["HaulWgt"]]
+
+  has_N <- !is.null(haulN)
+  has_W <- !is.null(haulW)
+
+  if (identical(what, "both")) {
+    if (!has_N && !has_W)
+      stop("Neither HaulN nor HaulWgt found. Run add_total_numbers_by_haul() and/or add_total_weight_by_haul() first.")
+    if (!has_N)  { message("HaulN not found; plotting Wgt only."); what <- "Wgt" }
+    if (!has_W)  { message("HaulWgt not found; plotting N only."); what <- "N" }
+  }
+  if (identical(what, "N")   && !has_N)
+    stop("HaulN not found in HH. Run add_total_numbers_by_haul() first.")
+  if (identical(what, "Wgt") && !has_W)
+    stop("HaulWgt not found in HH. Run add_total_weight_by_haul() first.")
+
+  if (is.null(hl) || nrow(hl) == 0L)
+    stop("HL table is empty; cannot compute species contributions.")
+  if (!"Count" %in% names(hl))
+    stop("HL must contain a 'Count' column.")
+
+  ## length groups from the column names of HaulN / HaulWgt
+  ref <- if (has_N) haulN else haulW
+  if (is.matrix(ref) && !is.null(colnames(ref))) {
+    groups <- colnames(ref)
+    breaks <- .breaks_from_colnames(groups)
+  } else {
+    groups <- "All lengths"
+    breaks <- c(-Inf, Inf)
+  }
+  n_grp <- length(groups)
+
+  ## assign each HL row to a length group
+  grp_idx <- as.integer(
+    cut(hl$LngtCm, breaks = breaks, right = TRUE, include.lowest = TRUE, labels = FALSE)
+  )
+
+  ## species present in HL
+  aphias <- sort(unique(hl$Valid_Aphia[!is.na(hl$Valid_Aphia)]))
+  if (length(aphias) == 0L)
+    stop("No valid species (Valid_Aphia) found in HL.")
+
+  sp_labels <- .get_species_labels(hl, aphias)
+
+  ## species × group matrices
+  sp_N <- .species_group_counts(hl, aphias, grp_idx, n_grp)
+  colnames(sp_N) <- groups
+
+  if (what %in% c("Wgt", "both")) {
+    sp_W <- .species_group_wgt(hl, aphias, grp_idx, n_grp)
+    colnames(sp_W) <- groups
+  }
+
+  ## order species by descending total count; collapse tail to "Other"
+  ord <- order(rowSums(sp_N), decreasing = TRUE)
+  max_species <- as.integer(max_species)
+
+  .collate <- function(mat) {
+    n <- nrow(mat)
+    if (is.numeric(max_species) && !is.na(max_species) && n > max_species) {
+      keep  <- ord[seq_len(max_species)]
+      other <- ord[(max_species + 1L):n]
+      rbind(mat[keep, , drop = FALSE],
+            Other = colSums(mat[other, , drop = FALSE], na.rm = TRUE))
+    } else {
+      mat[ord, , drop = FALSE]
+    }
+  }
+
+  sp_N_plot <- .collate(sp_N)
+  if (what %in% c("Wgt", "both")) sp_W_plot <- .collate(sp_W)
+
+  ## readable row labels
+  n_rows <- nrow(sp_N_plot)
+  rn     <- rownames(sp_N_plot)
+  has_other <- "Other" %in% rn
+  aphia_rows <- rn[rn != "Other"]
+  row_labels <- c(unname(sp_labels[aphia_rows]),
+                  if (has_other) "Other")
+  rownames(sp_N_plot) <- row_labels
+  if (what %in% c("Wgt", "both")) rownames(sp_W_plot) <- row_labels
+
+  ## colours (first species = bottom of stack)
+  bar_col <- if (!is.null(col)) rep_len(col, n_rows) else .colours_datrasextra_discrete(n_rows)
+  names(bar_col) <- row_labels
+
+  opar <- par(no.readonly = TRUE)
+  on.exit(par(opar), add = TRUE)
+
+  ## for beside = TRUE the bottom margin must accommodate group labels
+  bot_mar <- if (isTRUE(beside) && n_grp > 1L) 5 else 3
+
+  .one_panel <- function(mat, ylab, xlab = "Length group", main = NULL,
+                         do_legend = TRUE, legend_only = FALSE) {
+    if (isFALSE(legend_only)) {
+      barplot(mat,
+              beside = beside,
+              col    = bar_col,
+              border = "black",
+              ylab   = "",
+              xlab   = "",
+              las    = 1L)
+      mtext(ylab, 2, 4.5)
+      mtext(xlab, 1, 2.5)
+      mtext(main, 3, 1, font = 2)
+      legend_pos <- "topright"
+      legend_cex <- 0.85
+    } else {
+      plot.new()
+      legend_pos <- "center"
+      legend_cex <- 1.2
+    }
+    ## stacked: reverse legend so top-of-stack species appears first
+    leg_order <- if (isTRUE(beside)) seq_along(row_labels) else rev(seq_along(row_labels))
+    if (isTRUE(do_legend)) {
+      legend(legend_pos,
+             legend = row_labels[leg_order],
+             fill   = bar_col[leg_order],
+             border = "black",
+             bg = "white",
+             cex    = legend_cex,
+             ncol   = legend_ncol)
+    }
+  }
+
+  mar <- c(2, 6, 1, 1)
+  oma <- c(2.5, 0, 1.5, 0)
+  if (identical(what, "legend")) {
+    .one_panel(sp_N_plot, legend_only = TRUE)
+  } else if (identical(what, "both")) {
+    par(mfrow = c(2L, 1L), mar = mar, oma = oma)
+    .one_panel(sp_N_plot, "Total numbers", xlab = "", main = main, do_legend = do_legend)
+    .one_panel(sp_W_plot, "Total weight (g)", do_legend = FALSE, main = NULL)
+  } else if (identical(what, "N")) {
+    par(mar = mar, oma = oma)
+    .one_panel(sp_N_plot, "Total numbers", main = main, do_legend = do_legend)
+  } else {
+    par(mar = mar, oma = oma)
+    .one_panel(sp_W_plot, "Total weight (g)", main = main, do_legend = do_legend)
+  }
+
+  invisible(list(
+    N   = sp_N_plot,
+    Wgt = if (what %in% c("Wgt", "both")) sp_W_plot else NULL
+  ))
+}
+
+
 ## Internal functions ------------------------------------------------------------
+
+## Map length cut points (in cm) to barplot x-coordinates.
+.map2bar <- function(cuts, mids, bar_x) {
+  n    <- length(mids)
+  step <- if (n >= 2L) (bar_x[n] - bar_x[1L]) / (n - 1L) else 1.0
+  vapply(cuts, function(cut) {
+    idx_lo <- which(mids <= cut)
+    idx_hi <- which(mids > cut)
+    if (length(idx_lo) == 0L) return(bar_x[1L] - step / 2)
+    if (length(idx_hi) == 0L) return(bar_x[n] + step / 2)
+    (bar_x[max(idx_lo)] + bar_x[min(idx_hi)]) / 2
+  }, numeric(1L))
+}
+
+
+## Parse (lo-hi] column names (from add_total_numbers_by_haul) to a sorted numeric break vector.
+.breaks_from_colnames <- function(cn) {
+  stripped <- sub("^.", "", sub(".$", "", cn))   # strip leading ( and trailing ]
+  parts    <- strsplit(stripped, "-")
+  lo <- vapply(parts, function(p) suppressWarnings(as.numeric(p[1L])),          numeric(1L))
+  hi <- vapply(parts, function(p) suppressWarnings(as.numeric(p[length(p)])),   numeric(1L))
+  sort(unique(c(lo, hi)))
+}
+
+
+## Return a named character vector mapping AphiaID → display name.
+.get_species_labels <- function(hl, aphias) {
+  nm <- intersect(c("Species", "SpeciesName", "Latin_Name", "SpecVal"), names(hl))
+  if (length(nm) > 0L) {
+    lkp  <- hl[!duplicated(hl$Valid_Aphia), c("Valid_Aphia", nm[1L])]
+    nms  <- as.character(lkp[[nm[1L]]][match(as.character(aphias), as.character(lkp$Valid_Aphia))])
+    miss <- is.na(nms) | !nzchar(nms)
+    nms[miss] <- paste0("AphiaID ", aphias[miss])
+    return(setNames(nms, as.character(aphias)))
+  }
+  si <- tryCatch(get("species_info", envir = asNamespace("DATRASextra")), error = function(e) NULL)
+  if (!is.null(si) && all(c("WoRMS_AphiaID", "Species") %in% names(si))) {
+    nms  <- si$Species[match(aphias, si$WoRMS_AphiaID)]
+    miss <- is.na(nms)
+    nms[miss] <- paste0("AphiaID ", aphias[miss])
+    return(setNames(nms, as.character(aphias)))
+  }
+  setNames(paste0("AphiaID ", aphias), as.character(aphias))
+}
+
+
+## Aggregate HL$Count by species × length group → matrix[aphias, groups].
+.species_group_counts <- function(hl, aphias, grp_idx, n_grp) {
+  mat <- matrix(0.0, nrow = length(aphias), ncol = n_grp,
+                dimnames = list(as.character(aphias), NULL))
+  ok  <- !is.na(grp_idx) & !is.na(hl$Valid_Aphia) & !is.na(hl$Count)
+  for (j in seq_len(n_grp)) {
+    sel <- ok & grp_idx == j
+    if (!any(sel)) next
+    sub <- hl[sel, ]
+    agg <- tapply(sub$Count, as.character(sub$Valid_Aphia), sum, na.rm = TRUE)
+    idx <- match(names(agg), rownames(mat))
+    hit <- !is.na(idx)
+    mat[idx[hit], j] <- agg[hit]
+  }
+  mat
+}
+
+
+## Aggregate estimated weight (a*L^b*Count) by species × length group.
+.species_group_wgt <- function(hl, aphias, grp_idx, n_grp) {
+  mat <- matrix(0.0, nrow = length(aphias), ncol = n_grp,
+                dimnames = list(as.character(aphias), NULL))
+  si <- tryCatch(get("species_info", envir = asNamespace("DATRASextra")), error = function(e) NULL)
+  if (is.null(si) || !all(c("WoRMS_AphiaID", "a", "b") %in% names(si))) {
+    warning("species_info not available; weight contributions cannot be computed.", call. = FALSE)
+    return(mat)
+  }
+  si_idx  <- match(hl$Valid_Aphia, si$WoRMS_AphiaID)
+  a_vec   <- si$a[si_idx]
+  b_vec   <- si$b[si_idx]
+  no_par  <- unique(hl$Valid_Aphia[is.na(a_vec) | is.na(b_vec)])
+  if (length(no_par) > 0L)
+    warning("No LW parameters for AphiaID(s) ",
+            paste(no_par, collapse = ", "), "; contributing 0 g.", call. = FALSE)
+  wgt_row <- a_vec * (hl$LngtCm ^ b_vec) * hl$Count
+  wgt_row[!is.finite(wgt_row)] <- 0.0
+  ok <- !is.na(grp_idx) & !is.na(hl$Valid_Aphia)
+  for (j in seq_len(n_grp)) {
+    sel <- ok & grp_idx == j
+    if (!any(sel)) next
+    agg <- tapply(wgt_row[sel], as.character(hl$Valid_Aphia[sel]), sum, na.rm = TRUE)
+    idx <- match(names(agg), rownames(mat))
+    hit <- !is.na(idx)
+    mat[idx[hit], j] <- agg[hit]
+  }
+  mat
+}
+
 
 .draw_land_layer <- function(plot_map, xlim, ylim, map_scale = 50) {
   if (!isTRUE(plot_map)) return(invisible(FALSE))

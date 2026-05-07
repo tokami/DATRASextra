@@ -511,3 +511,11 @@ summary.datras_raw <- function(object, ...) {
 
 
 .quarter2months <- function(quarter) ((quarter - 1) * 3 + 1) : (quarter * 3)
+
+
+## Parse midpoints from interval column names such as "[3,4)" produced by cut()
+.parse_interval_mids <- function(cn) {
+  m <- regmatches(cn, regexpr("[0-9.eE+-]+,[0-9.eE+-]+", cn))
+  parts <- strsplit(m, ",")
+  vapply(parts, function(p) (as.numeric(p[1L]) + as.numeric(p[2L])) / 2, numeric(1L))
+}
