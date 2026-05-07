@@ -124,6 +124,12 @@
 - [`plot_datras_overview()`](https://tokami.github.io/DATRASextra/reference/plot_datras_overview.md)
   : Unified DATRAS overview plotting
 
+- [`plot_length_distribution()`](https://tokami.github.io/DATRASextra/reference/plot_length_distribution.md)
+  : Plot catch distribution by length class
+
+- [`plot_species_composition()`](https://tokami.github.io/DATRASextra/reference/plot_species_composition.md)
+  : Plot species composition by length group
+
 - [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)
   :
 
