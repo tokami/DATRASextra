@@ -2,6 +2,7 @@
 
 ``` r
 
+
 library(DATRASextra)
 
 # select survey
@@ -38,6 +39,7 @@ first step is to add numbers-at-length:
 
 ``` r
 
+
 surv <- add_numbers_at_length(surv)
 ```
 
@@ -47,6 +49,7 @@ modified with the `cm_breaks` or `by` arguments. The total abundance by
 haul can then be obtained by summing over length classes:
 
 ``` r
+
 
 surv <- add_total_numbers_by_haul(surv)
 ```
@@ -62,6 +65,7 @@ or suitable length-weight relationships are available in the
 
 ``` r
 
+
 surv <- add_total_weight_by_haul(surv)
 ```
 
@@ -70,6 +74,7 @@ biomass by haul. To standardize abundance and biomass by swept area, a
 swept-area estimate can be added to each haul:
 
 ``` r
+
 
 surv <- add_swept_area_simple(surv)
 ```
@@ -82,6 +87,7 @@ Abundance per unit effort and biomass per unit effort can then be
 calculated by dividing haul-level totals by swept area:
 
 ``` r
+
 
 # convert swept area from m2 to km2
 surv[['HH']]$SweptArea_km2 <- surv$HH$SweptArea / 1e6

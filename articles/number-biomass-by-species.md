@@ -1,6 +1,7 @@
 # Extract numbers or biomass for a single species
 
 ``` r
+
 library(DATRASextra)
 
 # select survey
@@ -32,6 +33,7 @@ To calculate total numbers and weight by haul, the information in the
 first step is to add numbers-at-length:
 
 ``` r
+
 surv <- add_numbers_at_length(surv)
 ```
 
@@ -43,6 +45,7 @@ The total number by haul can then be obtained by summing over length
 classes:
 
 ``` r
+
 surv <- add_total_numbers_by_haul(surv)
 ```
 
@@ -56,6 +59,7 @@ or suitable length-weight relationships are available in the
 `species_info` table, the numbers can also be converted to weight:
 
 ``` r
+
 surv <- add_total_weight_by_haul(surv)
 ```
 

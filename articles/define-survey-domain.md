@@ -20,6 +20,7 @@ to their own data and objectives.
 ## *Libraries*
 
 ``` r
+
 library(DATRASextra)
 library(sf)
 library(rnaturalearth)
@@ -36,6 +37,7 @@ and converting them into spatial points. We use observations dab in the
 survey between 2020 and 2023 as an example.
 
 ``` r
+
 ## Extract unique trawls (haul id, lon, lat, Depth)
 unique_trawls <- unique(dab[["HH"]][, c("haul.id", "lon", "lat")])
 
@@ -50,6 +52,7 @@ building a concave hull around the trawl points, buffering it by 10 km,
 and removing land areas using coastline data from Natural Earth.
 
 ``` r
+
 ## Enable spherical geometry for accurate distance calculations
 sf_use_s2(TRUE)
 
@@ -82,6 +85,7 @@ longitude and latitude coordinates from the filtered grid to create a
 data frame ready for spatial prediction.
 
 ``` r
+
 grid_resolution <- 0.1
 
 ## Create a regular grid of points (not polygons) covering bounding box of survey_at_sea

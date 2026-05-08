@@ -27,6 +27,7 @@ To get started, install the latest development version of
 **DATRASextra** from GitHub:
 
 ``` r
+
 ## Install the package
 remotes::install_github("tokami/DATRASextra")
 ```
@@ -34,6 +35,7 @@ remotes::install_github("tokami/DATRASextra")
 Then load the package into your R session:
 
 ``` r
+
 ## Load the package
 library(DATRASextra)
 ```
@@ -45,6 +47,7 @@ survey data from across the Northeast Atlantic. You can get an overview
 of the available surveys with:
 
 ``` r
+
 ## List available DATRAS surveys
 list_surveys()
 #>       survey     years                  quarters
@@ -110,6 +113,7 @@ list_surveys()
 Or visually with:
 
 ``` r
+
 ## Plot available DATRAS surveys
 plot_datras_overview(by_survey = TRUE, multi_panels = TRUE)
 ```
@@ -130,6 +134,7 @@ selected surveys and years. For example, the 2023 `SNS` survey can be
 downloaded into a temporary directory with:
 
 ``` r
+
 ## Select survey
 survey <- "SNS"
 
@@ -174,6 +179,7 @@ The downloaded survey files can then be read into R with
 [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md):
 
 ``` r
+
 surv0 <- read_datras(file.path(tmp, survey))
 ```
 
@@ -184,6 +190,7 @@ To avoid relying on an internet connection for the remainder of this
 vignette, we use the example data set `dab` included in **DATRASextra**:
 
 ``` r
+
 surv0 <- dab
 ```
 
@@ -202,6 +209,7 @@ also provides the convenience function
 for applying common cleaning steps and creating relevant subsets:
 
 ``` r
+
 surv <- clean_datras(surv0)
 ```
 
@@ -214,6 +222,7 @@ values. This can be done with
 [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md):
 
 ``` r
+
 surv <- check_outliers(surv, pct = TRUE)
 ```
 
@@ -224,6 +233,7 @@ More detailed information is available in the attributes added by the
 function:
 
 ``` r
+
 head(attr(surv, "outlier_report"))
 #>   table     var row                              haul.id value
 #> 1    HH HaulDur  20   NS-IBTS:2020:1:NO:58G2:GOV:60009:9    15
@@ -251,6 +261,7 @@ head(attr(surv, "outlier_report"))
 A shorter list of affected hauls can be obtained with:
 
 ``` r
+
 head(attr(surv, "outlier_hauls"))
 #> [1] "NS-IBTS:2020:1:NO:58G2:GOV:60009:9"  
 #> [2] "NS-IBTS:2020:1:DE:26D4:GOV:40:12"    
@@ -266,6 +277,7 @@ detected, so we proceed without further filtering.
 A quick overview of the cleaned survey data can be obtained with:
 
 ``` r
+
 plot(surv)
 #> NULL
 ```
@@ -283,6 +295,7 @@ To calculate total numbers and weight by haul, the information in the
 first step is to add numbers-at-length:
 
 ``` r
+
 surv <- add_numbers_at_length(surv)
 ```
 
@@ -294,6 +307,7 @@ The total number by haul can then be obtained by summing over length
 classes:
 
 ``` r
+
 surv <- add_total_numbers_by_haul(surv)
 ```
 
@@ -307,6 +321,7 @@ or suitable length-weight relationships are available in the
 `species_info` table, the numbers can also be converted to weight:
 
 ``` r
+
 surv <- add_total_weight_by_haul(surv)
 ```
 
