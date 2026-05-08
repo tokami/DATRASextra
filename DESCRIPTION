@@ -42,7 +42,7 @@ Suggests:
     rnaturalearthhires,
     worrms
 Remotes:
-    tokami/DATRAS/DATRAS@DATRASextra,
+    DTUAqua/DATRAS/DATRAS,
     ropensci/rnaturalearthhires,
     ices-tools-prod/icesDatras
 LazyData: true
