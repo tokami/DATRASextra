@@ -55,3 +55,7 @@ Temporary/
 DATRASextra.Rproj
 *.html
 *.pdf
+
+
+# Ignore paper for now
+/paper/
