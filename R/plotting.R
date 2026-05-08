@@ -439,36 +439,43 @@ plot_datras_overview <- function(
 
 
 
-##' @title Plot catch distribution by length class
+##' Plot catch distribution by length class
 ##'
-##' @description
-##' Aggregates numbers-at-length (\code{N}) and/or weight-at-length
-##' (\code{Wgt}) across hauls and plots the distribution as a bar chart, to
-##' help identify meaningful length groups. Optional cut points are overlaid as
-##' dashed vertical lines, with bars coloured by the resulting intervals.
+##' Aggregates numbers-at-length (`N`) and/or weight-at-length (`Wgt`) across
+##' hauls and plots the resulting length distribution as a bar chart. The
+##' function is intended to help identify meaningful length groups. Optional
+##' cut points can be overlaid as dashed vertical lines, and bars are coloured
+##' according to the resulting length intervals.
 ##'
-##' Both matrices must be present in \code{x[["HH"]]} before calling this
-##' function. Use \code{\link{add_numbers_at_length}} and/or
-##' \code{\link{add_weight_at_length}} to add them.
+##' The `N` and/or `Wgt` matrices must be present in `x[["HH"]]`, depending on
+##' the selected value of `what`. Use [add_numbers_at_length()] and/or
+##' [add_weight_at_length()] to add these matrices before plotting.
 ##'
-##' @param x A \code{datras_raw} object with \code{N} and/or \code{Wgt}
-##'   matrices in \code{HH}.
-##' @param what Character; which quantity to plot: \code{"N"},
-##'   \code{"Wgt"}, or \code{"both"}.
-##' @param agg Character; how to aggregate across hauls: \code{"sum"}
-##'   (default) or \code{"mean"}.
-##' @param log_scale Logical; if \code{TRUE}, plot on a log scale.
-##' @param length_cuts Optional numeric vector of break points in cm to overlay
-##'   as dashed vertical lines. Bars are coloured by which interval each length
-##'   class falls in.
-##' @param col Optional colour vector. If \code{length_cuts} is supplied, one
-##'   colour per interval (length of \code{length_cuts} + 1). Otherwise a
-##'   single bar colour.
+##' If `what = "both"` but only one of `N` or `Wgt` is available, the function
+##' falls back to plotting the available quantity and issues a message.
+##'
+##' @param x A `datras_raw` object with `N` and/or `Wgt` matrices in `HH`.
+##' @param what Character; which quantity to plot. One of `"N"`, `"Wgt"`,
+##'   `"both"`, or `"legend"`. The latter draws only the length-group legend.
+##' @param agg Character; how to aggregate across hauls. Either `"sum"` or
+##'   `"mean"`.
+##' @param log_scale Logical; if `TRUE`, plot log-transformed aggregated values.
+##'   Zero values are shown as missing.
+##' @param length_cuts Optional numeric vector of break points in cm. If supplied,
+##'   dashed vertical lines are drawn at these cut points and bars are coloured
+##'   by length interval.
+##' @param col Optional colour vector. If `length_cuts` is supplied, colours are
+##'   recycled to match the number of resulting intervals, i.e.
+##'   `length(length_cuts) + 1`. If `length_cuts` is not supplied, the first
+##'   colour is used for all bars.
 ##' @param main Optional plot title.
+##' @param do_legend Logical; if `TRUE`, draw a legend for the length intervals
+##'   when `length_cuts` is supplied.
+##' @param legend_ncol Integer; number of columns to use in the legend.
 ##'
-##' @return Invisibly returns the aggregated values: a \code{data.frame} with
-##'   columns \code{midL}, \code{N} and/or \code{Wgt} (depending on
-##'   \code{what}).
+##' @return Invisibly returns a `data.frame` with column `midL` and one or both
+##'   of `N` and `Wgt`, depending on `what`. If `what = "legend"`, nothing useful
+##'   is returned.
 ##'
 ##' @examples
 ##' \dontrun{
@@ -483,6 +490,14 @@ plot_datras_overview <- function(
 ##'
 ##' ## Overlay proposed length groups
 ##' plot_length_distribution(x, length_cuts = c(15, 25))
+##'
+##' ## Plot without legend
+##' plot_length_distribution(x, length_cuts = c(15, 25), do_legend = FALSE)
+##'
+##' ## Draw only the length-group legend
+##' plot_length_distribution(x, what = "legend",
+##'                          length_cuts = c(15, 25),
+##'                          legend_ncol = 3)
 ##' }
 ##'
 ##' @export
@@ -627,38 +642,42 @@ plot_length_distribution <- function(x,
 }
 
 
-##' @title Plot species composition by length group
+##' Plot species composition by length group
 ##'
-##' @description
-##' Shows the contribution of each species in \code{x[["HL"]]} to the total
-##' numbers (\code{HaulN}) and/or total weight (\code{HaulWgt}) already
-##' computed in \code{x[["HH"]]}. Length groups are taken directly from the
-##' column names of \code{HaulN}/\code{HaulWgt}; if those matrices have only
-##' one column (or are plain vectors), a single stacked bar is drawn.
+##' Shows the contribution of each species in `x[["HL"]]` to total numbers
+##' and/or total weight by length group. Length groups are taken from the
+##' column names of `x[["HH"]][["HaulN"]]` or `x[["HH"]][["HaulWgt"]]`.
+##' If these objects have only one column, or are plain vectors, a single
+##' length group representing all lengths is used.
 ##'
-##' Numbers are aggregated from \code{HL$Count}. Weights are estimated from
-##' \code{HL} using length-weight parameters from the internal
-##' \code{species_info} table; species without parameters contribute 0 g with
-##' a warning.
+##' Numbers are aggregated from `HL$Count`. Weights are estimated from `HL`
+##' using length-weight parameters from the internal `species_info` table.
+##' Species without available length-weight parameters contribute zero weight
+##' and trigger a warning.
 ##'
-##' @param x A \code{datras_raw} object. \code{HH} must contain \code{HaulN}
-##'   and/or \code{HaulWgt} (produced by \code{\link{add_total_numbers_by_haul}}
-##'   and \code{\link{add_total_weight_by_haul}}).
-##' @param what Character; which quantity to plot: \code{"N"}, \code{"Wgt"},
-##'   or \code{"both"}.
-##' @param col Optional colour vector — one colour per species (after
-##'   collapsing to \code{max_species}). The palette cycles if too short.
+##' If `what = "both"` but only one of `HaulN` or `HaulWgt` is available, the
+##' function falls back to plotting the available quantity and issues a message.
+##'
+##' @param x A `datras_raw` object. `HH` must contain `HaulN` and/or `HaulWgt`,
+##'   as produced by [add_total_numbers_by_haul()] and/or
+##'   [add_total_weight_by_haul()].
+##' @param what Character; which quantity to plot. One of `"N"`, `"Wgt"`,
+##'   `"both"`, or `"legend"`. The latter draws only the species legend.
+##' @param beside Logical; passed to [graphics::barplot()]. If `FALSE`, species
+##'   are stacked within each length group. If `TRUE`, species are shown side by
+##'   side within each length group.
+##' @param col Optional colour vector, recycled to the number of displayed
+##'   species after collapsing rare species to `"Other"`.
 ##' @param main Optional plot title.
-##' @param max_species Maximum number of species to show individually. Species
-##'   beyond this ranked by total count are collapsed into an \code{"Other"}
-##'   category.
-##' @param beside Logical. If \code{TRUE} (default), species bars are stacked
-##'   within each length group. If \code{TRUE}, bars are placed side by side.
-##' @param legend_ncol Number of columns in the species legend.
+##' @param max_species Integer; maximum number of species to show individually.
+##'   Additional species, ranked by total count, are collapsed into `"Other"`.
+##' @param do_legend Logical; if `TRUE`, draw the species legend.
+##' @param legend_ncol Integer; number of columns to use in the legend.
 ##'
-##' @return Invisibly returns a named list with elements \code{N} and/or
-##'   \code{Wgt}: matrices of aggregated values with rows = species and
-##'   columns = length groups.
+##' @return Invisibly returns a named list with elements `N` and `Wgt`. Each
+##'   element is a matrix of aggregated values with rows representing species
+##'   and columns representing length groups. `Wgt` is `NULL` unless
+##'   `what = "Wgt"` or `what = "both"`.
 ##'
 ##' @examples
 ##' \dontrun{
@@ -667,9 +686,20 @@ plot_length_distribution <- function(x,
 ##' dat <- add_total_numbers_by_haul(dat, length_cuts = c(0, 20, 35, Inf))
 ##' dat <- add_total_weight_by_haul(dat, length_cuts = c(0, 20, 35, Inf))
 ##'
+##' ## Numbers only
 ##' plot_species_composition(dat)
+##'
+##' ## Numbers and weight panels
 ##' plot_species_composition(dat, what = "both")
+##'
+##' ## Stacked bars instead of side-by-side bars
 ##' plot_species_composition(dat, beside = FALSE)
+##'
+##' ## Suppress legend
+##' plot_species_composition(dat, do_legend = FALSE)
+##'
+##' ## Draw legend only
+##' plot_species_composition(dat, what = "legend", legend_ncol = 2)
 ##' }
 ##'
 ##' @export
