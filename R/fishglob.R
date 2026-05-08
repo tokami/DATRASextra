@@ -323,16 +323,17 @@ add_swept_area_fishglob <- function(x) {
   x[["HH"]] <- merge(x[["HH"]], area2,
                      by = "haul.id", all.x = TRUE)
 
-  x$DoorSpread <- ifelse(is.na(x$DoorSpread),
-                         x$DoorSpread2,
-                         x$DoorSpread)
+  x[["HH"]]$DoorSpread <- ifelse(is.na(x[["HH"]]$DoorSpread),
+                                 x[["HH"]]$DoorSpread2,
+                                 x[["HH"]]$DoorSpread)
 
-  x$WingSpread <- ifelse(is.na(x$WingSpread),
-                         x$WingSpread2,
-                         x$WingSpread)
+  x[["HH"]]$WingSpread <- ifelse(is.na(x[["HH"]]$WingSpread),
+                                 x[["HH"]]$WingSpread2,
+                                 x[["HH"]]$WingSpread)
 
-  x$DoorSpread2 <- NULL
-  x$WingSpread2 <- NULL
+  x[["HH"]]$DoorSpread2 <- NULL
+  x[["HH"]]$WingSpread2 <- NULL
+
 
   # -------------------------------------------------
   # Distance + hrearchical speed fallback
@@ -342,7 +343,7 @@ add_swept_area_fishglob <- function(x) {
                                "GroundSpeed","HaulDur")])
 
   dist$Distance[dist$Distance <= 0 | dist$Distance > 11000] <- NA
-  x$Distance[x$Distance > 11000] <- NA
+  x[["HH"]]$Distance[x[["HH"]]$Distance > 11000] <- NA
   dist$GroundSpeed[dist$GroundSpeed <= 0 | dist$GroundSpeed > 30] <- NA
 
   # hierarchical speed imputation --------------------------------------------------------
@@ -633,6 +634,10 @@ as_fishglob <- function(x) {
   names(hh2)[names(hh2) == "Depth"]       <- "depth"
   names(hh2)[names(hh2) == "Gear"]        <- "gear"
   names(hh2)[names(hh2) == "Valid_Aphia"] <- "aphia_id"
+  names(hh2)[names(hh2) == "SweptArea"]   <- "area_swept"
+  names(hh2)[names(hh2) == "SurTemp"]   <- "sst"
+  names(hh2)[names(hh2) == "BotTemp"]   <- "sbt"
+
 
   # scientificname_worms kept for accepted_name
   hh2$accepted_name <- hh2$Species

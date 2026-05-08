@@ -40,7 +40,6 @@ articles:
 - title: Advanced
   contents:
   - articles/custom-length-classes
-  - articles/exploring-length-at-age
 - title: FishGlob
   contents:
   - articles/fishglob
@@ -48,7 +47,7 @@ articles:
   contents:
   - articles/number-biomass-by-species
   - articles/number-biomass-effort-by-species
-  
+
 
 news:
   releases:

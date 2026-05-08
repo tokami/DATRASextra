@@ -11,7 +11,7 @@
 #' @param mode Plot mode: `"grid"` or `"points"`. Default is `"points"`.
 #' @param grid_resolution Numeric vector `c(lon_step, lat_step)` in degrees
 #'   controlling the bin width for `mode = "grid"`. Default `c(1, 0.5)` gives
-#'   the original 1°×0.5° grid. Finer values such as `c(0.5, 0.25)` add
+#'   the original 1 x 0.5 degree grid. Finer values such as `c(0.5, 0.25)` add
 #'   spatial detail; coarser values (e.g. `c(2, 1)`) reduce clutter for very
 #'   dense data. Has no effect in `mode = "points"`.
 #' @param metric Grid metric: `"sum"`, `"mean"`, `"count_hauls"`,
@@ -560,8 +560,8 @@ plot_length_distribution <- function(x,
     bar_grp <- findInterval(mids, cuts) + 1L
     cut_labels <- c(
       paste0("< ", cuts[1L]),
-      if (length(cuts) > 1L) paste0(cuts[-length(cuts)], " – ", cuts[-1L]),
-      paste0("≥ ", cuts[length(cuts)])
+      if (length(cuts) > 1L) paste0(cuts[-length(cuts)], " - ", cuts[-1L]),
+      paste0(">= ", cuts[length(cuts)])
     )
   }
 
@@ -761,7 +761,7 @@ plot_species_composition <- function(x,
 
   sp_labels <- .get_species_labels(hl, aphias)
 
-  ## species × group matrices
+  ## species x group matrices
   sp_N <- .species_group_counts(hl, aphias, grp_idx, n_grp)
   colnames(sp_N) <- groups
 
@@ -891,7 +891,7 @@ plot_species_composition <- function(x,
 }
 
 
-## Return a named character vector mapping AphiaID → display name.
+## Return a named character vector mapping AphiaID -> display name.
 .get_species_labels <- function(hl, aphias) {
   nm <- intersect(c("Species", "SpeciesName", "Latin_Name", "SpecVal"), names(hl))
   if (length(nm) > 0L) {
@@ -912,7 +912,7 @@ plot_species_composition <- function(x,
 }
 
 
-## Aggregate HL$Count by species × length group → matrix[aphias, groups].
+## Aggregate HL$Count by species x length group -> matrix[aphias, groups].
 .species_group_counts <- function(hl, aphias, grp_idx, n_grp) {
   mat <- matrix(0.0, nrow = length(aphias), ncol = n_grp,
                 dimnames = list(as.character(aphias), NULL))
@@ -930,7 +930,7 @@ plot_species_composition <- function(x,
 }
 
 
-## Aggregate estimated weight (a*L^b*Count) by species × length group.
+## Aggregate estimated weight (a*L^b*Count) by species x length group.
 .species_group_wgt <- function(hl, aphias, grp_idx, n_grp) {
   mat <- matrix(0.0, nrow = length(aphias), ncol = n_grp,
                 dimnames = list(as.character(aphias), NULL))

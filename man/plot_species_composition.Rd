@@ -16,43 +16,50 @@ plot_species_composition(
 )
 }
 \arguments{
-\item{x}{A \code{datras_raw} object. \code{HH} must contain \code{HaulN}
-and/or \code{HaulWgt} (produced by \code{\link{add_total_numbers_by_haul}}
-and \code{\link{add_total_weight_by_haul}}).}
+\item{x}{A \code{datras_raw} object. \code{HH} must contain \code{HaulN} and/or \code{HaulWgt},
+as produced by \code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}} and/or
+\code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}.}
 
-\item{what}{Character; which quantity to plot: \code{"N"}, \code{"Wgt"},
-or \code{"both"}.}
+\item{what}{Character; which quantity to plot. One of \code{"N"}, \code{"Wgt"},
+\code{"both"}, or \code{"legend"}. The latter draws only the species legend.}
 
-\item{beside}{Logical. If \code{TRUE} (default), species bars are stacked
-within each length group. If \code{TRUE}, bars are placed side by side.}
+\item{beside}{Logical; passed to \code{\link[graphics:barplot]{graphics::barplot()}}. If \code{FALSE}, species
+are stacked within each length group. If \code{TRUE}, species are shown side by
+side within each length group.}
 
-\item{col}{Optional colour vector — one colour per species (after
-collapsing to \code{max_species}). The palette cycles if too short.}
+\item{col}{Optional colour vector, recycled to the number of displayed
+species after collapsing rare species to \code{"Other"}.}
 
 \item{main}{Optional plot title.}
 
-\item{max_species}{Maximum number of species to show individually. Species
-beyond this ranked by total count are collapsed into an \code{"Other"}
-category.}
+\item{max_species}{Integer; maximum number of species to show individually.
+Additional species, ranked by total count, are collapsed into \code{"Other"}.}
 
-\item{legend_ncol}{Number of columns in the species legend.}
+\item{do_legend}{Logical; if \code{TRUE}, draw the species legend.}
+
+\item{legend_ncol}{Integer; number of columns to use in the legend.}
 }
 \value{
-Invisibly returns a named list with elements \code{N} and/or
-\code{Wgt}: matrices of aggregated values with rows = species and
-columns = length groups.
+Invisibly returns a named list with elements \code{N} and \code{Wgt}. Each
+element is a matrix of aggregated values with rows representing species
+and columns representing length groups. \code{Wgt} is \code{NULL} unless
+\code{what = "Wgt"} or \code{what = "both"}.
 }
 \description{
-Shows the contribution of each species in \code{x[["HL"]]} to the total
-numbers (\code{HaulN}) and/or total weight (\code{HaulWgt}) already
-computed in \code{x[["HH"]]}. Length groups are taken directly from the
-column names of \code{HaulN}/\code{HaulWgt}; if those matrices have only
-one column (or are plain vectors), a single stacked bar is drawn.
+Shows the contribution of each species in \code{x[["HL"]]} to total numbers
+and/or total weight by length group. Length groups are taken from the
+column names of \code{x[["HH"]][["HaulN"]]} or \code{x[["HH"]][["HaulWgt"]]}.
+If these objects have only one column, or are plain vectors, a single
+length group representing all lengths is used.
+}
+\details{
+Numbers are aggregated from \code{HL$Count}. Weights are estimated from \code{HL}
+using length-weight parameters from the internal \code{species_info} table.
+Species without available length-weight parameters contribute zero weight
+and trigger a warning.
 
-Numbers are aggregated from \code{HL$Count}. Weights are estimated from
-\code{HL} using length-weight parameters from the internal
-\code{species_info} table; species without parameters contribute 0 g with
-a warning.
+If \code{what = "both"} but only one of \code{HaulN} or \code{HaulWgt} is available, the
+function falls back to plotting the available quantity and issues a message.
 }
 \examples{
 \dontrun{
@@ -61,9 +68,20 @@ dat <- add_weight_at_length(dat)
 dat <- add_total_numbers_by_haul(dat, length_cuts = c(0, 20, 35, Inf))
 dat <- add_total_weight_by_haul(dat, length_cuts = c(0, 20, 35, Inf))
 
+## Numbers only
 plot_species_composition(dat)
+
+## Numbers and weight panels
 plot_species_composition(dat, what = "both")
+
+## Stacked bars instead of side-by-side bars
 plot_species_composition(dat, beside = FALSE)
+
+## Suppress legend
+plot_species_composition(dat, do_legend = FALSE)
+
+## Draw legend only
+plot_species_composition(dat, what = "legend", legend_ncol = 2)
 }
 
 }

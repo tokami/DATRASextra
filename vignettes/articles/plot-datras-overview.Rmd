@@ -64,14 +64,14 @@ plot_datras_overview()
 
 To get an overview over the surveys:
 
-```{r quick-null-by-survey}
+```{r quick-null-surv}
 plot_datras_overview(by_survey = TRUE)
 ```
 
 If the legend is in the way, the multiple different control arguments can be
 used to place and modify the legend:
 
-```{r quick-null-by-survey-legend}
+```{r quick-null-surv-legend}
 plot_datras_overview(by_survey = TRUE,
                      legend_ncol = 6,
                      legend_pos = "bottom",
@@ -81,7 +81,7 @@ plot_datras_overview(by_survey = TRUE,
 With so many surveys and repeating colours, it might be easier to plot the
 surveys in separate panels:
 
-```{r quick-null-by-survey-multi-pannel}
+```{r null-surv}
 plot_datras_overview(by_survey = TRUE,
                      multi_panels = TRUE)
 
@@ -183,7 +183,7 @@ plot_datras_overview(mini,
 Note that this only works for the gridded mode and if requires the `multi_panels
 = TRUE` if you want to split it by another variable:
 
-```{r metric-count-hauls-year}
+```{r metric-count-hauls-y}
 plot_datras_overview(mini,
                      mode = "grid",
                      metric = "count_hauls",
@@ -193,7 +193,7 @@ plot_datras_overview(mini,
 
 Similarly, you can plot the number of surveys by quarter:
 
-```{r metric-count-surveys-quarter}
+```{r metric-count-surv-q}
 plot_datras_overview(mini,
                      mode = "grid",
                      metric = "count_surveys",

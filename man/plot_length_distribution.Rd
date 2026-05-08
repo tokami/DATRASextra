@@ -17,41 +17,52 @@ plot_length_distribution(
 )
 }
 \arguments{
-\item{x}{A \code{datras_raw} object with \code{N} and/or \code{Wgt}
-matrices in \code{HH}.}
+\item{x}{A \code{datras_raw} object with \code{N} and/or \code{Wgt} matrices in \code{HH}.}
 
-\item{what}{Character; which quantity to plot: \code{"N"},
-\code{"Wgt"}, or \code{"both"}.}
+\item{what}{Character; which quantity to plot. One of \code{"N"}, \code{"Wgt"},
+\code{"both"}, or \code{"legend"}. The latter draws only the length-group legend.}
 
-\item{agg}{Character; how to aggregate across hauls: \code{"sum"}
-(default) or \code{"mean"}.}
+\item{agg}{Character; how to aggregate across hauls. Either \code{"sum"} or
+\code{"mean"}.}
 
-\item{log_scale}{Logical; if \code{TRUE}, plot on a log scale.}
+\item{log_scale}{Logical; if \code{TRUE}, plot log-transformed aggregated values.
+Zero values are shown as missing.}
 
-\item{length_cuts}{Optional numeric vector of break points in cm to overlay
-as dashed vertical lines. Bars are coloured by which interval each length
-class falls in.}
+\item{length_cuts}{Optional numeric vector of break points in cm. If supplied,
+dashed vertical lines are drawn at these cut points and bars are coloured
+by length interval.}
 
-\item{col}{Optional colour vector. If \code{length_cuts} is supplied, one
-colour per interval (length of \code{length_cuts} + 1). Otherwise a
-single bar colour.}
+\item{col}{Optional colour vector. If \code{length_cuts} is supplied, colours are
+recycled to match the number of resulting intervals, i.e.
+\code{length(length_cuts) + 1}. If \code{length_cuts} is not supplied, the first
+colour is used for all bars.}
 
 \item{main}{Optional plot title.}
+
+\item{do_legend}{Logical; if \code{TRUE}, draw a legend for the length intervals
+when \code{length_cuts} is supplied.}
+
+\item{legend_ncol}{Integer; number of columns to use in the legend.}
 }
 \value{
-Invisibly returns the aggregated values: a \code{data.frame} with
-columns \code{midL}, \code{N} and/or \code{Wgt} (depending on
-\code{what}).
+Invisibly returns a \code{data.frame} with column \code{midL} and one or both
+of \code{N} and \code{Wgt}, depending on \code{what}. If \code{what = "legend"}, nothing useful
+is returned.
 }
 \description{
-Aggregates numbers-at-length (\code{N}) and/or weight-at-length
-(\code{Wgt}) across hauls and plots the distribution as a bar chart, to
-help identify meaningful length groups. Optional cut points are overlaid as
-dashed vertical lines, with bars coloured by the resulting intervals.
+Aggregates numbers-at-length (\code{N}) and/or weight-at-length (\code{Wgt}) across
+hauls and plots the resulting length distribution as a bar chart. The
+function is intended to help identify meaningful length groups. Optional
+cut points can be overlaid as dashed vertical lines, and bars are coloured
+according to the resulting length intervals.
+}
+\details{
+The \code{N} and/or \code{Wgt} matrices must be present in \code{x[["HH"]]}, depending on
+the selected value of \code{what}. Use \code{\link[=add_numbers_at_length]{add_numbers_at_length()}} and/or
+\code{\link[=add_weight_at_length]{add_weight_at_length()}} to add these matrices before plotting.
 
-Both matrices must be present in \code{x[["HH"]]} before calling this
-function. Use \code{\link{add_numbers_at_length}} and/or
-\code{\link{add_weight_at_length}} to add them.
+If \code{what = "both"} but only one of \code{N} or \code{Wgt} is available, the function
+falls back to plotting the available quantity and issues a message.
 }
 \examples{
 \dontrun{
@@ -66,6 +77,14 @@ plot_length_distribution(x, what = "both", log_scale = TRUE)
 
 ## Overlay proposed length groups
 plot_length_distribution(x, length_cuts = c(15, 25))
+
+## Plot without legend
+plot_length_distribution(x, length_cuts = c(15, 25), do_legend = FALSE)
+
+## Draw only the length-group legend
+plot_length_distribution(x, what = "legend",
+                         length_cuts = c(15, 25),
+                         legend_ncol = 3)
 }
 
 }
