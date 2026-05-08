@@ -1,45 +1,9 @@
 
-<!-- badges: start -->
-  [![R-CMD-check](https://github.com/tokami/DATRASextra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tokami/DATRASextra/actions/workflows/R-CMD-check.yaml)
-  [![codecov](https://codecov.io/gh/tokami/DATRASextra/graph/badge.svg?token=GLS9FJ47IP)](https://codecov.io/gh/tokami/DATRASextra)
-  [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-<!-- badges: end -->
-
-<h1 style="border-bottom:none;">DATRASextra <a href='https://github.com/tokami/DATRASextra'><img src='man/figures/DATRASextra_logo.svg' alt="DATRASextra logo" align="right" style="height:200px; margin-top:-40px;"/></a></h1>
-
-Makes working with ICES **DATRAS** **extra** easy.
-
----
-
-**DATRASextra** is an R package that simplifies working with the [ICES DATRAS
-database](https://www.ices.dk/data/data-portals/pages/datras.aspx) by providing
-practical functions and detailed documentation.
-
-It builds on [DTU Aqua’s *DATRAS* R package](https://github.com/DTUAqua/DATRAS),
-which provides the core functionality to download and modify DATRAS data —
-commonly used to prepare abundance indices for ICES stock assessments.
-
-
-**DATRASextra** adds tools for:
-- Estimating spatial distributions and abundance indices across multiple surveys
-- Calculating catch rates by custom length classes for single species or
-  aggregations
-- Streamlining the processing and preparation of *DATRAS* data for analysis
-
----
-
-
-## Table of contents
-
-- [Installation](#installation)
-- [Overview](#overview)
-- [Getting started](#getting-started)
-- [Getting help](#getting-help)
-- [Citation](#citation)
-- [Related software](#related-software)
-- [Funding](#funding)
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# DATRASextra <img src='man/figures/logo.png' align="right" height="139" />
+
+Makes working with ICES **DATRAS** **extra** easy!
 
 # Installation
 
@@ -61,22 +25,22 @@ discovering available surveys, to downloading, cleaning and checking the
 data, and finally making quick plots of survey coverage and hauls. The
 table below summarises the main user-facing functions.
 
-| Function                      | Description                                                                                      |
-|-------------------------------|--------------------------------------------------------------------------------------------------|
-| `list_surveys()`              | List available surveys in the ICES DATRAS database.                                              |
-| `plot_datras_overview()`      | Plot haul locations                                                                              |
-| `download_datras()`           | Download the full or filtered subset of the DATRAS database.                                     |
-| `read_datras()`               | Read DATRAS data into R.                                                                         |
-| `clean_datras()`              | Clean and harmonise DATRAS data.                                                                 |
-| `check_outliers()`            | Flag (and remove) hauls with invalid or extreme values.                                          |
-| `prune_datras()`              | Prune DATRAS data by removing or filtering problematic records.                                  |
-| `add_swept_area()`            | Calculate swept area per haul using gear-specific median values by gear type.                    |
-| `check_lengths()`             | Check length information and identify suspicious length distributions.                           |
-| `add_numbers_at_length()`     | Calculate the numbers by specified length classes and add it to the HH data set.                 |
-| `add_total_numbers_by_haul()` | Calculate total numbers by haul and add it to the HH data set.                                   |
-| `check_weights()`             | Check weight information and length–weight consistency.                                          |
-| `add_weight_at_length()`      | Convert the numbers at length classes to weight at length classes and add it to the HH data set. |
-| `add_total_weight_by_haul()`  | Calculate total weight by haul and add it to the HH data set.                                    |
+| Function | Description |
+|----|----|
+| `list_surveys()` | List available surveys in the ICES DATRAS database. |
+| `plot_datras_overview()` | Plot haul locations |
+| `download_datras()` | Download the full or filtered subset of the DATRAS database. |
+| `read_datras()` | Read DATRAS data into R. |
+| `clean_datras()` | Clean and harmonise DATRAS data. |
+| `check_outliers()` | Flag (and remove) hauls with invalid or extreme values. |
+| `prune_datras()` | Prune DATRAS data by removing or filtering problematic records. |
+| `add_swept_area()` | Calculate swept area per haul using gear-specific median values by gear type. |
+| `check_lengths()` | Check length information and identify suspicious length distributions. |
+| `add_numbers_at_length()` | Calculate the numbers by specified length classes and add it to the HH data set. |
+| `add_total_numbers_by_haul()` | Calculate total numbers by haul and add it to the HH data set. |
+| `check_weights()` | Check weight information and length–weight consistency. |
+| `add_weight_at_length()` | Convert the numbers at length classes to weight at length classes and add it to the HH data set. |
+| `add_total_weight_by_haul()` | Calculate total weight by haul and add it to the HH data set. |
 
 # Getting started
 

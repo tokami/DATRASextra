@@ -1,20 +1,18 @@
 ---
 output:
   github_document:
-    toc: true
-    toc_depth: 3
     df_print: "tibble"
-    includes:
-      in_header: header.md
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# DATRASextra <img src='man/figures/logo.png' align="right" height="139" />
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
+  fig.path = "man/figures/",
   out.width = "80%",
   cache = FALSE,
   autodep = TRUE,
@@ -22,6 +20,7 @@ knitr::opts_chunk$set(
   )
 ```
 
+Makes working with ICES **DATRAS** **extra** easy!
 
 # Installation
 
