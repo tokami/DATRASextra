@@ -32,7 +32,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,7 +125,7 @@ DATRAS:</p>
 <p>To get an overview over the surveys:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_datras_overview.html">plot_datras_overview</a></span><span class="op">(</span>by_survey <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="plot-datras-overview_files/figure-html/quick-null-by-survey-1.png" class="r-plt" alt="" width="768"></p>
+<p><img src="plot-datras-overview_files/figure-html/quick-null-surv-1.png" class="r-plt" alt="" width="768"></p>
 <p>If the legend is in the way, the multiple different control arguments
 can be used to place and modify the legend:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -133,13 +133,13 @@ can be used to place and modify the legend:</p>
 <span>                     legend_ncol <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>                     legend_pos <span class="op">=</span> <span class="st">"bottom"</span>,</span>
 <span>                     legend_cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
-<p><img src="plot-datras-overview_files/figure-html/quick-null-by-survey-legend-1.png" class="r-plt" alt="" width="768"></p>
+<p><img src="plot-datras-overview_files/figure-html/quick-null-surv-legend-1.png" class="r-plt" alt="" width="768"></p>
 <p>With so many surveys and repeating colours, it might be easier to
 plot the surveys in separate panels:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_datras_overview.html">plot_datras_overview</a></span><span class="op">(</span>by_survey <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                     multi_panels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="plot-datras-overview_files/figure-html/quick-null-by-survey-multi-pannel-1.png" class="r-plt" alt="" width="768"></p>
+<p><img src="plot-datras-overview_files/figure-html/null-surv-1.png" class="r-plt" alt="" width="768"></p>
 <p>Besides the general overview over all surveys, the function also
 allows to create a visual overview of a specific data set, using for
 example the <code>mini</code> data set of <code>DATRASextra</code>:</p>
@@ -226,7 +226,7 @@ variable:</p>
 <span>                     metric <span class="op">=</span> <span class="st">"count_hauls"</span>,</span>
 <span>                     by_year <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                     multi_panels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="plot-datras-overview_files/figure-html/metric-count-hauls-year-1.png" class="r-plt" alt="" width="768"></p>
+<p><img src="plot-datras-overview_files/figure-html/metric-count-hauls-y-1.png" class="r-plt" alt="" width="768"></p>
 <p>Similarly, you can plot the number of surveys by quarter:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_datras_overview.html">plot_datras_overview</a></span><span class="op">(</span><span class="va">mini</span>,</span>
@@ -234,7 +234,7 @@ variable:</p>
 <span>                     metric <span class="op">=</span> <span class="st">"count_surveys"</span>,</span>
 <span>                     by_quarter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                     multi_panels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="plot-datras-overview_files/figure-html/metric-count-surveys-quarter-1.png" class="r-plt" alt="" width="768"></p>
+<p><img src="plot-datras-overview_files/figure-html/metric-count-surv-q-1.png" class="r-plt" alt="" width="768"></p>
 <p>Other options of the <code>metric</code> argument are
 <code>"sum"</code> or <code>"mean"</code>, but they become more
 meaningful when combined with the <code>value_var</code> argument (see

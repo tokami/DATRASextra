@@ -5,19 +5,15 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Plot catch distribution by length class — plot_length_distribution"><meta name="description" content='Aggregates numbers-at-length (N) and/or weight-at-length
-(Wgt) across hauls and plots the distribution as a bar chart, to
-help identify meaningful length groups. Optional cut points are overlaid as
-dashed vertical lines, with bars coloured by the resulting intervals.
-Both matrices must be present in x[["HH"]] before calling this
-function. Use add_numbers_at_length and/or
-add_weight_at_length to add them.'><meta property="og:description" content='Aggregates numbers-at-length (N) and/or weight-at-length
-(Wgt) across hauls and plots the distribution as a bar chart, to
-help identify meaningful length groups. Optional cut points are overlaid as
-dashed vertical lines, with bars coloured by the resulting intervals.
-Both matrices must be present in x[["HH"]] before calling this
-function. Use add_numbers_at_length and/or
-add_weight_at_length to add them.'><meta property="og:image" content="https://tokami.github.io/DATRASextra/logo.png"></head><body>
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Plot catch distribution by length class — plot_length_distribution"><meta name="description" content="Aggregates numbers-at-length (N) and/or weight-at-length (Wgt) across
+hauls and plots the resulting length distribution as a bar chart. The
+function is intended to help identify meaningful length groups. Optional
+cut points can be overlaid as dashed vertical lines, and bars are coloured
+according to the resulting length intervals."><meta property="og:description" content="Aggregates numbers-at-length (N) and/or weight-at-length (Wgt) across
+hauls and plots the resulting length distribution as a bar chart. The
+function is intended to help identify meaningful length groups. Optional
+cut points can be overlaid as dashed vertical lines, and bars are coloured
+according to the resulting length intervals."><meta property="og:image" content="https://tokami.github.io/DATRASextra/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -25,7 +21,7 @@ add_weight_at_length to add them.'><meta property="og:image" content="https://to
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,13 +60,11 @@ add_weight_at_length to add them.'><meta property="og:image" content="https://to
     </div>
 
     <div class="ref-description section level2">
-    <p>Aggregates numbers-at-length (<code>N</code>) and/or weight-at-length
-(<code>Wgt</code>) across hauls and plots the distribution as a bar chart, to
-help identify meaningful length groups. Optional cut points are overlaid as
-dashed vertical lines, with bars coloured by the resulting intervals.</p>
-<p>Both matrices must be present in <code>x[["HH"]]</code> before calling this
-function. Use <code><a href="add_numbers_at_length.html">add_numbers_at_length</a></code> and/or
-<code><a href="add_weight_at_length.html">add_weight_at_length</a></code> to add them.</p>
+    <p>Aggregates numbers-at-length (<code>N</code>) and/or weight-at-length (<code>Wgt</code>) across
+hauls and plots the resulting length distribution as a bar chart. The
+function is intended to help identify meaningful length groups. Optional
+cut points can be overlaid as dashed vertical lines, and bars are coloured
+according to the resulting length intervals.</p>
     </div>
 
     <div class="section level2">
@@ -93,45 +87,63 @@ function. Use <code><a href="add_numbers_at_length.html">add_numbers_at_length</
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A <code>datras_raw</code> object with <code>N</code> and/or <code>Wgt</code>
-matrices in <code>HH</code>.</p></dd>
+<dd><p>A <code>datras_raw</code> object with <code>N</code> and/or <code>Wgt</code> matrices in <code>HH</code>.</p></dd>
 
 
 <dt id="arg-what">what<a class="anchor" aria-label="anchor" href="#arg-what"></a></dt>
-<dd><p>Character; which quantity to plot: <code>"N"</code>,
-<code>"Wgt"</code>, or <code>"both"</code>.</p></dd>
+<dd><p>Character; which quantity to plot. One of <code>"N"</code>, <code>"Wgt"</code>,
+<code>"both"</code>, or <code>"legend"</code>. The latter draws only the length-group legend.</p></dd>
 
 
 <dt id="arg-agg">agg<a class="anchor" aria-label="anchor" href="#arg-agg"></a></dt>
-<dd><p>Character; how to aggregate across hauls: <code>"sum"</code>
-(default) or <code>"mean"</code>.</p></dd>
+<dd><p>Character; how to aggregate across hauls. Either <code>"sum"</code> or
+<code>"mean"</code>.</p></dd>
 
 
 <dt id="arg-log-scale">log_scale<a class="anchor" aria-label="anchor" href="#arg-log-scale"></a></dt>
-<dd><p>Logical; if <code>TRUE</code>, plot on a log scale.</p></dd>
+<dd><p>Logical; if <code>TRUE</code>, plot log-transformed aggregated values.
+Zero values are shown as missing.</p></dd>
 
 
 <dt id="arg-length-cuts">length_cuts<a class="anchor" aria-label="anchor" href="#arg-length-cuts"></a></dt>
-<dd><p>Optional numeric vector of break points in cm to overlay
-as dashed vertical lines. Bars are coloured by which interval each length
-class falls in.</p></dd>
+<dd><p>Optional numeric vector of break points in cm. If supplied,
+dashed vertical lines are drawn at these cut points and bars are coloured
+by length interval.</p></dd>
 
 
 <dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>
-<dd><p>Optional colour vector. If <code>length_cuts</code> is supplied, one
-colour per interval (length of <code>length_cuts</code> + 1). Otherwise a
-single bar colour.</p></dd>
+<dd><p>Optional colour vector. If <code>length_cuts</code> is supplied, colours are
+recycled to match the number of resulting intervals, i.e.
+<code>length(length_cuts) + 1</code>. If <code>length_cuts</code> is not supplied, the first
+colour is used for all bars.</p></dd>
 
 
 <dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p>Optional plot title.</p></dd>
 
+
+<dt id="arg-do-legend">do_legend<a class="anchor" aria-label="anchor" href="#arg-do-legend"></a></dt>
+<dd><p>Logical; if <code>TRUE</code>, draw a legend for the length intervals
+when <code>length_cuts</code> is supplied.</p></dd>
+
+
+<dt id="arg-legend-ncol">legend_ncol<a class="anchor" aria-label="anchor" href="#arg-legend-ncol"></a></dt>
+<dd><p>Integer; number of columns to use in the legend.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Invisibly returns the aggregated values: a <code>data.frame</code> with
-columns <code>midL</code>, <code>N</code> and/or <code>Wgt</code> (depending on
-<code>what</code>).</p>
+    <p>Invisibly returns a <code>data.frame</code> with column <code>midL</code> and one or both
+of <code>N</code> and <code>Wgt</code>, depending on <code>what</code>. If <code>what = "legend"</code>, nothing useful
+is returned.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The <code>N</code> and/or <code>Wgt</code> matrices must be present in <code>x[["HH"]]</code>, depending on
+the selected value of <code>what</code>. Use <code><a href="add_numbers_at_length.html">add_numbers_at_length()</a></code> and/or
+<code><a href="add_weight_at_length.html">add_weight_at_length()</a></code> to add these matrices before plotting.</p>
+<p>If <code>what = "both"</code> but only one of <code>N</code> or <code>Wgt</code> is available, the function
+falls back to plotting the available quantity and issues a message.</p>
     </div>
 
     <div class="section level2">
@@ -148,6 +160,14 @@ columns <code>midL</code>, <code>N</code> and/or <code>Wgt</code> (depending on
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Overlay proposed length groups</span></span></span>
 <span class="r-in"><span><span class="fu">plot_length_distribution</span><span class="op">(</span><span class="va">x</span>, length_cuts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">25</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot without legend</span></span></span>
+<span class="r-in"><span><span class="fu">plot_length_distribution</span><span class="op">(</span><span class="va">x</span>, length_cuts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">25</span><span class="op">)</span>, do_legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Draw only the length-group legend</span></span></span>
+<span class="r-in"><span><span class="fu">plot_length_distribution</span><span class="op">(</span><span class="va">x</span>, what <span class="op">=</span> <span class="st">"legend"</span>,</span></span>
+<span class="r-in"><span>                         length_cuts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">25</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                         legend_ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

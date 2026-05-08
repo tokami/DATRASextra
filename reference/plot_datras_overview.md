@@ -58,10 +58,10 @@ plot_datras_overview(
 - grid_resolution:
 
   Numeric vector `c(lon_step, lat_step)` in degrees controlling the bin
-  width for `mode = "grid"`. Default `c(1, 0.5)` gives the original
-  1°×0.5° grid. Finer values such as `c(0.5, 0.25)` add spatial detail;
-  coarser values (e.g. `c(2, 1)`) reduce clutter for very dense data.
-  Has no effect in `mode = "points"`.
+  width for `mode = "grid"`. Default `c(1, 0.5)` gives the original 1 x
+  0.5 degree grid. Finer values such as `c(0.5, 0.25)` add spatial
+  detail; coarser values (e.g. `c(2, 1)`) reduce clutter for very dense
+  data. Has no effect in `mode = "points"`.
 
 - metric:
 

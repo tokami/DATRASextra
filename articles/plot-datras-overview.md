@@ -45,7 +45,7 @@ To get an overview over the surveys:
 plot_datras_overview(by_survey = TRUE)
 ```
 
-![](plot-datras-overview_files/figure-html/quick-null-by-survey-1.png)
+![](plot-datras-overview_files/figure-html/quick-null-surv-1.png)
 
 If the legend is in the way, the multiple different control arguments
 can be used to place and modify the legend:
@@ -58,7 +58,7 @@ plot_datras_overview(by_survey = TRUE,
                      legend_cex = 0.8)
 ```
 
-![](plot-datras-overview_files/figure-html/quick-null-by-survey-legend-1.png)
+![](plot-datras-overview_files/figure-html/quick-null-surv-legend-1.png)
 
 With so many surveys and repeating colours, it might be easier to plot
 the surveys in separate panels:
@@ -69,7 +69,7 @@ plot_datras_overview(by_survey = TRUE,
                      multi_panels = TRUE)
 ```
 
-![](plot-datras-overview_files/figure-html/quick-null-by-survey-multi-pannel-1.png)
+![](plot-datras-overview_files/figure-html/null-surv-1.png)
 
 Besides the general overview over all surveys, the function also allows
 to create a visual overview of a specific data set, using for example
@@ -205,7 +205,7 @@ plot_datras_overview(mini,
                      multi_panels = TRUE)
 ```
 
-![](plot-datras-overview_files/figure-html/metric-count-hauls-year-1.png)
+![](plot-datras-overview_files/figure-html/metric-count-hauls-y-1.png)
 
 Similarly, you can plot the number of surveys by quarter:
 
@@ -218,7 +218,7 @@ plot_datras_overview(mini,
                      multi_panels = TRUE)
 ```
 
-![](plot-datras-overview_files/figure-html/metric-count-surveys-quarter-1.png)
+![](plot-datras-overview_files/figure-html/metric-count-surv-q-1.png)
 
 Other options of the `metric` argument are `"sum"` or `"mean"`, but they
 become more meaningful when combined with the `value_var` argument (see

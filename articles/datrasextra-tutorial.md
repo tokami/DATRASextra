@@ -170,8 +170,8 @@ such cases, setting `download_ca = FALSE` can reduce download time and
 memory use. Similarly, when the focus is on individual biological data
 rather than catch-at-length information, `HL` can be omitted by setting
 `download_hl = FALSE`. See the
-[`vignette("articles/exploring-length-at-age")`](https://tokami.github.io/DATRASextra/articles/exploring-length-at-age.md)
-for an example when working only with CA might be useful.
+`vignette("articles/exploring-length-at-age")` for an example when
+working only with CA might be useful.
 
 ## Read DATRAS data into R
 

@@ -179,20 +179,20 @@ head(datras)
     ## 110 multi-countries     <NA>    europe     43G0    <NA>    <NA> 2015     2  24
     ## 111 multi-countries     <NA>    europe     41G2    <NA>    <NA> 2015     2  27
     ## 112 multi-countries     <NA>    europe     41G2    <NA>    <NA> 2015     2  27
-    ##     quarter latitude longitude haul_dur gear depth     num num_cpue   num_cpua
-    ## 2         1  54.4427   10.6547      0.5  TVS    19   1.000    2.000   12.99120
-    ## 4         1  54.4513   11.3738      0.5  TVS    20   1.000    2.000   11.94887
-    ## 44        1  54.9908   13.3447      0.5  TVS    47   1.000    2.000   11.04183
-    ## 110       1  57.4721   10.6695      0.5  TVS    26  90.573  181.146 1262.57974
-    ## 111       1  56.1206   12.4688      0.5  TVS    26   1.000    2.000   15.36125
-    ## 112       1  56.1206   12.4688      0.5  TVS    26 118.635  237.270 1822.38158
-    ##            wgt   wgt_cpue   wgt_cpua verbatim_name verbatim_aphia_id
-    ## 2   0.01259440  0.0251888  0.1636164          <NA>                NA
-    ## 4   0.06313433  0.1262687  0.7543837          <NA>                NA
-    ## 44  0.05369922  0.1073984  0.5929377          <NA>                NA
-    ## 110 2.06026668  4.1205334 28.7199381          <NA>                NA
-    ## 111 2.93347786  5.8669557 45.0618790          <NA>                NA
-    ## 112 5.13663026 10.2732605 78.9050479          <NA>                NA
+    ##     quarter latitude longitude haul_dur area_swept gear depth     num num_cpue
+    ## 2         1  54.4427   10.6547      0.5 0.07697517  TVS    19   1.000    2.000
+    ## 4         1  54.4513   11.3738      0.5 0.08368994  TVS    20   1.000    2.000
+    ## 44        1  54.9908   13.3447      0.5 0.09056468  TVS    47   1.000    2.000
+    ## 110       1  57.4721   10.6695      0.5 0.07173646  TVS    26  90.573  181.146
+    ## 111       1  56.1206   12.4688      0.5 0.06509888  TVS    26   1.000    2.000
+    ## 112       1  56.1206   12.4688      0.5 0.06509888  TVS    26 118.635  237.270
+    ##       num_cpua        wgt   wgt_cpue   wgt_cpua verbatim_name verbatim_aphia_id
+    ## 2     12.99120 0.01259440  0.0251888  0.1636164          <NA>                NA
+    ## 4     11.94887 0.06313433  0.1262687  0.7543837          <NA>                NA
+    ## 44    11.04183 0.05369922  0.1073984  0.5929377          <NA>                NA
+    ## 110 1262.57974 2.06026668  4.1205334 28.7199381          <NA>                NA
+    ## 111   15.36125 2.93347786  5.8669557 45.0618790          <NA>                NA
+    ## 112 1822.38158 5.13663026 10.2732605 78.9050479          <NA>                NA
     ##                    accepted_name aphia_id          class             order
     ## 2   Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes
     ## 4   Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes

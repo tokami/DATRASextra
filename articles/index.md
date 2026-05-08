@@ -13,8 +13,6 @@
 
 - [Deriving numbers and weight by haul and custom length
   classes](https://tokami.github.io/DATRASextra/articles/custom-length-classes.md):
-- [Extracting Length-at-Age (LAA) from
-  DATRAS](https://tokami.github.io/DATRASextra/articles/exploring-length-at-age.md):
 
 ### FishGlob
 
