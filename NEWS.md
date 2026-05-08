@@ -1,5 +1,21 @@
 # DATRASextra (development version)
 
+# DATRASextra 0.1.1
+
+## New features
+
+* ...
+
+## Minor changes
+
+* ...
+
+## Bug fixes
+
+* ...
+
+
+
 # DATRASextra 0.1.0
 
 ## Initial beta release
