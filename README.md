@@ -23,6 +23,11 @@ Key features include:
 - Tools for species harmonisation, taxonomic standardisation, and
   exploratory diagnostics
 
+:warning: **Beta version:** `DATRASextra` is currently under active
+development and some functions or workflows may change in future
+versions. Please report bugs, issues, or feature requests here:
+<https://github.com/tokami/DATRASextra/issues>
+
 # Installation
 
 *DATRASextra* can be installed from GitHub:
