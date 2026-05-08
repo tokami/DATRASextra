@@ -101,11 +101,11 @@
 <p><em>DATRASextra</em> can be installed from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Install the package</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tokami/DATRASextra"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"tokami/DATRASextra"</span><span class="op">)</span></span></code></pre></div>
 <p>Or the development version:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Install the package</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tokami/DATRASextra"</span>, ref <span class="op">=</span> <span class="st">"dev"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"tokami/DATRASextra"</span>, ref <span class="op">=</span> <span class="st">"dev"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
@@ -113,67 +113,67 @@
 <p><em>DATRASextra</em> provides a set of powerful functions that guide you through a typical workflow with the ICES DATRAS database: from discovering available surveys, to downloading, cleaning and checking the data, and finally making quick plots of survey coverage and hauls. The table below summarises the main user-facing functions.</p>
 <table class="table">
 <colgroup>
-<col width="50%">
-<col width="50%">
+<col width="24%">
+<col width="75%">
 </colgroup>
-<thead><tr>
+<thead><tr class="header">
 <th>Function</th>
 <th>Description</th>
 </tr></thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/list_surveys.html">list_surveys()</a></code></td>
 <td>List available surveys in the ICES DATRAS database.</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/plot_datras_overview.html">plot_datras_overview()</a></code></td>
 <td>Plot haul locations</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/download_datras.html">download_datras()</a></code></td>
 <td>Download the full or filtered subset of the DATRAS database.</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/read_datras.html">read_datras()</a></code></td>
 <td>Read DATRAS data into R.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/clean_datras.html">clean_datras()</a></code></td>
 <td>Clean and harmonise DATRAS data.</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/check_outliers.html">check_outliers()</a></code></td>
 <td>Flag (and remove) hauls with invalid or extreme values.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/prune_datras.html">prune_datras()</a></code></td>
 <td>Prune DATRAS data by removing or filtering problematic records.</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/add_swept_area.html">add_swept_area()</a></code></td>
 <td>Calculate swept area per haul using gear-specific median values by gear type.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/check_lengths.html">check_lengths()</a></code></td>
 <td>Check length information and identify suspicious length distributions.</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/add_numbers_at_length.html">add_numbers_at_length()</a></code></td>
 <td>Calculate the numbers by specified length classes and add it to the HH data set.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/add_total_numbers_by_haul.html">add_total_numbers_by_haul()</a></code></td>
 <td>Calculate total numbers by haul and add it to the HH data set.</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/check_weights.html">check_weights()</a></code></td>
 <td>Check weight information and length–weight consistency.</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code><a href="reference/add_weight_at_length.html">add_weight_at_length()</a></code></td>
 <td>Convert the numbers at length classes to weight at length classes and add it to the HH data set.</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code><a href="reference/add_total_weight_by_haul.html">add_total_weight_by_haul()</a></code></td>
 <td>Calculate total weight by haul and add it to the HH data set.</td>
 </tr>

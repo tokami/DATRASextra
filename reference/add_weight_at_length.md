@@ -87,7 +87,6 @@ species_info table.
 ## Examples
 
 ``` r
-
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
 

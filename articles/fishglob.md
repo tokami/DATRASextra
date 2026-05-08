@@ -38,7 +38,6 @@ The workflow can be applied to a single species or to multiple species.
 For illustration, this vignette uses `mini`.
 
 ``` r
-
 data("mini_fishglob", package = "DATRASextra")
 ```
 
@@ -60,14 +59,12 @@ ICES Database on Trawl Surveys (DATRAS), ICES, Copenhagen, Denmark.
 ## Libraries
 
 ``` r
-
 library(DATRASextra)
 ```
 
     ## Loading required package: DATRAS
 
 ``` r
-
 library(ggplot2)
 library(dplyr)
 ```
@@ -86,7 +83,6 @@ library(dplyr)
 ## Load the dataset
 
 ``` r
-
 data(mini_fishglob)
 ```
 
@@ -105,7 +101,6 @@ This step ensures:
 - standardized taxonomic classification
 
 ``` r
-
 dat <- clean_fishglob(mini_fishglob)
 ```
 
@@ -120,7 +115,6 @@ function removes unnecessary columns to reduce memory usage and improve
 processing speed.
 
 ``` r
-
 dat <- prune_fishglob(dat)
 ```
 
@@ -135,7 +129,6 @@ The function below:
 - imputes missing values when necessary
 
 ``` r
-
 dat <- add_swept_area_fishglob(dat)
 ```
 
@@ -149,7 +142,6 @@ function converts length data to weight using species-specific
 **length–weight relationships**.
 
 ``` r
-
 dat <- add_total_weight_by_haul_fishglob(dat)
 ```
 
@@ -159,7 +151,6 @@ Finally, the dataset is formatted to match the **FishGlob data
 structure**.
 
 ``` r
-
 datras <- as_fishglob(dat)
 
 head(datras)
@@ -213,7 +204,6 @@ head(datras)
 ### Download FishGlob
 
 ``` r
-
 # load survey data
 fishglob_url <- "https://github.com/AquaAuma/FishGlob_data/raw/d71dfa03c2912b4e9d9cd10412ae2af52ba56ae5/outputs/Compiled_data/FishGlob_public_std_clean.RData" # stick with this version
 options(timeout = 300) # increase timeout to 5 minutes
@@ -224,7 +214,6 @@ fishglob <- data
 ### Get the surveys in common
 
 ``` r
-
 common_surveys <- intersect(fishglob$survey, datras$survey)
 
 fishglob_common <- fishglob[fishglob$survey %in% common_surveys, ]
@@ -259,7 +248,6 @@ am_dab <- merged_agg %>%
 ### Plot it
 
 ``` r
-
 ggplot(am_dab, aes(x = num_fishglob,
                    y = num_datras)) +
 
@@ -278,7 +266,6 @@ ggplot(am_dab, aes(x = num_fishglob,
 ![](fishglob_files/figure-html/unnamed-chunk-11-1.png)
 
 ``` r
-
 ggplot(am_dab, aes(x = wgt_cpua_fishglob,
                    y = wgt_cpua_datras)) +
 
@@ -307,7 +294,6 @@ lightweight. To reproduce the **DATRAS part of the FishGlob dataset**,
 the full set of surveys used in FishGlob can be downloaded like this:
 
 ``` r
-
 library(DATRASextra)
 
 surveys <- c("NS-IBTS", "EVHOE", "SWC-IBTS", "BITS", "IE-IGFS",

@@ -22,7 +22,6 @@ data set. Specifically, the function supports:
 Load the package with:
 
 ``` r
-
 library(DATRASextra)
 ```
 
@@ -32,7 +31,6 @@ If no object is supplied (`x = NULL`), the function uses package survey
 overview data, which contains all surveys and hauls in DATRAS:
 
 ``` r
-
 plot_datras_overview()
 ```
 
@@ -41,7 +39,6 @@ plot_datras_overview()
 To get an overview over the surveys:
 
 ``` r
-
 plot_datras_overview(by_survey = TRUE)
 ```
 
@@ -51,7 +48,6 @@ If the legend is in the way, the multiple different control arguments
 can be used to place and modify the legend:
 
 ``` r
-
 plot_datras_overview(by_survey = TRUE,
                      legend_ncol = 6,
                      legend_pos = "bottom",
@@ -64,7 +60,6 @@ With so many surveys and repeating colours, it might be easier to plot
 the surveys in separate panels:
 
 ``` r
-
 plot_datras_overview(by_survey = TRUE,
                      multi_panels = TRUE)
 ```
@@ -76,7 +71,6 @@ to create a visual overview of a specific data set, using for example
 the `mini` data set of `DATRASextra`:
 
 ``` r
-
 plot_datras_overview(mini)
 ```
 
@@ -88,7 +82,6 @@ Besides surveys, the function allows to quickly create a comparison
 between gears:
 
 ``` r
-
 plot_datras_overview(mini, by_gear = TRUE)
 ```
 
@@ -97,7 +90,6 @@ plot_datras_overview(mini, by_gear = TRUE)
 by quarter:
 
 ``` r
-
 plot_datras_overview(mini, by_quarter = TRUE)
 ```
 
@@ -106,7 +98,6 @@ plot_datras_overview(mini, by_quarter = TRUE)
 by year:
 
 ``` r
-
 plot_datras_overview(mini, by_year = TRUE)
 ```
 
@@ -115,7 +106,6 @@ plot_datras_overview(mini, by_year = TRUE)
 or day and night:
 
 ``` r
-
 plot_datras_overview(mini, by_daynight = TRUE)
 ```
 
@@ -124,7 +114,6 @@ plot_datras_overview(mini, by_daynight = TRUE)
 or any combination of them:
 
 ``` r
-
 plot_datras_overview(mini,
                      by_gear = TRUE,
                      by_survey = TRUE)
@@ -136,7 +125,6 @@ setting the `multi_panel` argument to `TRUE` avoids the overlap and
 might help interpretation:
 
 ``` r
-
 plot_datras_overview(mini, by_gear = TRUE,
                      by_survey = TRUE,
                      multi_panel = TRUE)
@@ -151,7 +139,6 @@ be preferrable to aggregate the hauls and plot them by ICES statistical
 rectangle midpoints by setting the argument `spatial_basis = "statrec"`:
 
 ``` r
-
 plot_datras_overview(mini,
                      by_gear = TRUE,
                      spatial_basis = "statrec")
@@ -169,7 +156,6 @@ plot an gridded image plot. This can be done by setting the
 `mode = "grid"`:
 
 ``` r
-
 plot_datras_overview(mini, by_gear = TRUE, mode = "grid")
 ```
 
@@ -185,7 +171,6 @@ to plot various quantities by using the `metric` argument. We can for
 example plot the number of hauls with:
 
 ``` r
-
 plot_datras_overview(mini,
                      mode = "grid",
                      metric = "count_hauls")
@@ -197,7 +182,6 @@ Note that this only works for the gridded mode and if requires the
 `multi_panels = TRUE` if you want to split it by another variable:
 
 ``` r
-
 plot_datras_overview(mini,
                      mode = "grid",
                      metric = "count_hauls",
@@ -210,7 +194,6 @@ plot_datras_overview(mini,
 Similarly, you can plot the number of surveys by quarter:
 
 ``` r
-
 plot_datras_overview(mini,
                      mode = "grid",
                      metric = "count_surveys",
@@ -232,7 +215,6 @@ both grid and point modes. For example, a quick map of mean `Depth` can
 be created by:
 
 ``` r
-
 plot_datras_overview(mini,
                      metric = "mean",
                      value_var = "Depth")
@@ -243,7 +225,6 @@ plot_datras_overview(mini,
 or as gridded version with squareroot transformation:
 
 ``` r
-
 plot_datras_overview(mini,
                      mode = "grid",
                      metric = "mean",
@@ -257,7 +238,6 @@ If your data set contains the number of individuals for example by using
 the `DATRASextra` workflow:
 
 ``` r
-
 dab <- add_total_numbers_by_haul(dab)
 ```
 
@@ -265,7 +245,6 @@ Then the plotting function can be used to generate an overview of the
 hauls with the largest number of individuals:
 
 ``` r
-
 plot_datras_overview(dab,
                      metric = "mean",
                      value_var = "HaulN")
@@ -276,7 +255,6 @@ plot_datras_overview(dab,
 or as a gridded version:
 
 ``` r
-
 plot_datras_overview(dab,
                      mode = "grid",
                      metric = "mean",
@@ -289,7 +267,6 @@ If in addition, a meaningful offset variable is available, such as haul
 duration or swept area for example by:
 
 ``` r
-
 dab <- add_swept_area(dab)
 ```
 
@@ -297,7 +274,6 @@ Then this information can also be incorporated and the hauls with the
 largest numbers of individuals per offset can be plotted:
 
 ``` r
-
 plot_datras_overview(dab,
                      metric = "mean",
                      value_var = "HaulN",
@@ -309,7 +285,6 @@ plot_datras_overview(dab,
 or as a gridded version with swept area:
 
 ``` r
-
 plot_datras_overview(dab,
                      mode = "grid",
                      metric = "mean",
