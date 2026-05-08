@@ -52,22 +52,22 @@ discovering available surveys, to downloading, cleaning and checking the
 data, and finally making quick plots of survey coverage and hauls. The
 table below summarises the main user-facing functions.
 
-| Function | Description |
-|----|----|
-| `list_surveys()` | List available surveys in the ICES DATRAS database. |
-| `plot_datras_overview()` | Plot haul locations |
-| `download_datras()` | Download the full or filtered subset of the DATRAS database. |
-| `read_datras()` | Read DATRAS data into R. |
-| `clean_datras()` | Clean and harmonise DATRAS data. |
-| `check_outliers()` | Flag (and remove) hauls with invalid or extreme values. |
-| `prune_datras()` | Prune DATRAS data by removing or filtering problematic records. |
-| `add_swept_area()` | Calculate swept area per haul using gear-specific median values by gear type. |
-| `check_lengths()` | Check length information and identify suspicious length distributions. |
-| `add_numbers_at_length()` | Calculate the numbers by specified length classes and add it to the HH data set. |
-| `add_total_numbers_by_haul()` | Calculate total numbers by haul and add it to the HH data set. |
-| `check_weights()` | Check weight information and length–weight consistency. |
-| `add_weight_at_length()` | Convert the numbers at length classes to weight at length classes and add it to the HH data set. |
-| `add_total_weight_by_haul()` | Calculate total weight by haul and add it to the HH data set. |
+| Function                      | Description                                                                                      |
+|-------------------------------|--------------------------------------------------------------------------------------------------|
+| `list_surveys()`              | List available surveys in the ICES DATRAS database.                                              |
+| `plot_datras_overview()`      | Plot haul locations                                                                              |
+| `download_datras()`           | Download the full or filtered subset of the DATRAS database.                                     |
+| `read_datras()`               | Read DATRAS data into R.                                                                         |
+| `clean_datras()`              | Clean and harmonise DATRAS data.                                                                 |
+| `check_outliers()`            | Flag (and remove) hauls with invalid or extreme values.                                          |
+| `prune_datras()`              | Prune DATRAS data by removing or filtering problematic records.                                  |
+| `add_swept_area()`            | Calculate swept area per haul using gear-specific median values by gear type.                    |
+| `check_lengths()`             | Check length information and identify suspicious length distributions.                           |
+| `add_numbers_at_length()`     | Calculate the numbers by specified length classes and add it to the HH data set.                 |
+| `add_total_numbers_by_haul()` | Calculate total numbers by haul and add it to the HH data set.                                   |
+| `check_weights()`             | Check weight information and length–weight consistency.                                          |
+| `add_weight_at_length()`      | Convert the numbers at length classes to weight at length classes and add it to the HH data set. |
+| `add_total_weight_by_haul()`  | Calculate total weight by haul and add it to the HH data set.                                    |
 
 # Getting started
 
