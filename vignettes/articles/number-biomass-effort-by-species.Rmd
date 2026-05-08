@@ -9,7 +9,7 @@ output:
     toc_depth: 2
 
 vignette: >
-  %\VignetteIndexEntry{number-biomass-effort-by-species}
+  %\VignetteIndexEntry{Extract abundance or biomass per unit effort for a single species}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

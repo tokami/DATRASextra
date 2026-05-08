@@ -5,16 +5,38 @@
 
 Makes working with ICES **DATRAS** **extra** easy!
 
+**DATRASextra** is an R package that extends the functionality of the
+[ICES DATRAS
+database](https://www.ices.dk/data/data-portals/pages/datras.aspx) and
+the [DTU Aqua *DATRAS* R package](https://github.com/DTUAqua/DATRAS),
+providing practical tools for downloading, cleaning, standardising,
+analysing, and visualising bottom-trawl survey data.
+
+Key features include:
+
+- Streamlined workflows for downloading, cleaning, and preparing DATRAS
+  data
+- Calculation and visualisation of swept area, catch rates, biomass, and
+  numbers-at-length for custom length classes
+- Support for reproducing key components of the FishGlob data-processing
+  workflow
+- Tools for species harmonisation, taxonomic standardisation, and
+  exploratory diagnostics
+
 # Installation
 
-The current version of the package allows to follow recommended data
-processing protocols, reproduce the FishGlobe data set, estimate swept
-area indices, and plot results. *DATRASextra* can be installed from
-GitHub:
+*DATRASextra* can be installed from GitHub:
 
 ``` r
 ## Install the package
 remotes::install_github("tokami/DATRASextra")
+```
+
+Or the development version:
+
+``` r
+## Install the package
+remotes::install_github("tokami/DATRASextra", ref = "dev")
 ```
 
 # Overview

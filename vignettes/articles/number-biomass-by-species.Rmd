@@ -8,7 +8,7 @@ output:
     toc: true
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Extract number or biomass for a single species}
+  %\VignetteIndexEntry{Extract numbers or biomass for a single species}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
