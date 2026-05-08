@@ -85,14 +85,26 @@
 </h1>
 </div>
 <p>Makes working with ICES <strong>DATRAS</strong> <strong>extra</strong> easy!</p>
+<p><strong>DATRASextra</strong> is an R package that extends the functionality of the <a href="https://www.ices.dk/data/data-portals/pages/datras.aspx" class="external-link">ICES DATRAS database</a> and the <a href="https://github.com/DTUAqua/DATRAS" class="external-link">DTU Aqua <em>DATRAS</em> R package</a>, providing practical tools for downloading, cleaning, standardising, analysing, and visualising bottom-trawl survey data.</p>
+<p>Key features include:</p>
+<ul>
+<li>Streamlined workflows for downloading, cleaning, and preparing DATRAS data</li>
+<li>Calculation and visualisation of swept area, catch rates, biomass, and numbers-at-length for custom length classes</li>
+<li>Support for reproducing key components of the FishGlob data-processing workflow</li>
+<li>Tools for species harmonisation, taxonomic standardisation, and exploratory diagnostics</li>
+</ul>
 </div>
 <div class="section level1">
 <h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h1>
-<p>The current version of the package allows to follow recommended data processing protocols, reproduce the FishGlobe data set, estimate swept area indices, and plot results. <em>DATRASextra</em> can be installed from GitHub:</p>
+<p><em>DATRASextra</em> can be installed from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Install the package</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tokami/DATRASextra"</span><span class="op">)</span></span></code></pre></div>
+<p>Or the development version:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Install the package</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tokami/DATRASextra"</span>, ref <span class="op">=</span> <span class="st">"dev"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
@@ -171,7 +183,7 @@
 <h1 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h1>
 <p>A good way to start working with <em>DATRASextra</em> is the tutorial vignette. You can access it with:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"tutorial"</span><span class="op">)</span></span></code></pre></div>
 <p>The tutorial and other vignettes guide you through the full workflow: from downloading the complete DATRAS database (or selected subsets), through processing and cleaning the data following recommended good-practice guidelines, to calculating swept-area indices and biomass estimates per species and haul.</p>
 </div>
@@ -179,10 +191,10 @@
 <h1 id="getting-help">Getting help<a class="anchor" aria-label="anchor" href="#getting-help"></a>
 </h1>
 <p>All functions in <em>DATRASextra</em> are documented and include example code. You can access the help pages with <code>help(function_name)</code> or <code>?function_name</code>, for example:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">check_lengths</span></span></code></pre></div>
 <p>The package also includes several vignettes and articles that demonstrate common workflows and show how to use DATRAS data for your own research questions. To see all available vignettes, use:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span><span class="st">"DATRASextra"</span><span class="op">)</span></span></code></pre></div>
 <p>An overview of pkgdown articles is available at: <a href="https://tokami.github.io/DATRASextra/" class="uri">https://tokami.github.io/DATRASextra/</a></p>
 <p>If your question is not answered by the package documentation or the pkgdown site, you are welcome to contact the maintainer, <a href="mailto:t.k.mildenberger@gmail.com">Tobias Mildenberger</a>. If you find a bug or would like to request a feature, please open an issue on GitHub: <a href="https://github.com/tokami/DATRASextra/issues" class="external-link uri">https://github.com/tokami/DATRASextra/issues</a></p>
@@ -191,7 +203,7 @@
 <h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h1>
 <p>To see how to cite <em>DATRASextra</em> in your work, run:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"DATRASextra"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
