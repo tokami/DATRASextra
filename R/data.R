@@ -117,3 +117,18 @@
 #' }
 #' @source ICES DATRAS metadata.
 "survey_info_full_raw"
+
+
+#' Wolffish survey data (example dataset)
+#'
+#' Example ICES DATRAS data for *Anarhichas lupus* (wolffish) from survey
+#' NS-IBTS Q1 in years 1991-2024.
+#'
+#' @format A list of class 'datras_raw' with 3 elements:
+#' \describe{
+#'   \item{CA}{Biological data}
+#'   \item{HH}{Survey level information}
+#'   \item{HL}{Length measurements}
+#' }
+#' @source ICES DATRAS database \url{https://datras.ices.dk}
+"wolffish"
