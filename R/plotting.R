@@ -15,7 +15,11 @@
 #'   spatial detail; coarser values (e.g. `c(2, 1)`) reduce clutter for very
 #'   dense data. Has no effect in `mode = "points"`.
 #' @param metric Grid metric: `"sum"`, `"mean"`, `"count_hauls"`,
-#'   `"presence"`, or `"count_surveys"`.
+#'   `"presence"`, `"count_surveys"`, or `"species_richness"`. The
+#'   `"species_richness"` option counts unique species (via `Valid_Aphia`) per
+#'   haul in points mode and per grid cell (pooled across hauls) in grid mode;
+#'   it requires `x` to contain an `HL` table with `haul.id` and `Valid_Aphia`
+#'   columns.
 #' @param spatial_basis Spatial basis used for coordinates: `"raw"` uses haul
 #'   coordinates, `"statrec"` uses ICES rectangle midpoints from `StatRec`.
 #' @param by_survey,by_gear,by_quarter,by_year,by_daynight Logical grouping
@@ -52,7 +56,7 @@ plot_datras_overview <- function(
   x = NULL,
   mode = c("points", "grid"),
   grid_resolution = c(1, 0.5),
-  metric = c("presence", "sum", "mean", "count_hauls", "count_surveys"),
+  metric = c("presence", "sum", "mean", "count_hauls", "count_surveys", "species_richness"),
   spatial_basis = c("raw", "statrec"),
   by_survey = FALSE,
   by_gear = FALSE,
@@ -101,6 +105,20 @@ plot_datras_overview <- function(
   if (identical(mode, "points") && nrow(hh) > 50000)
     message("Plotting ", nrow(hh), " hauls as individual points may be slow. ",
             "Consider mode = 'grid' with e.g. grid_resolution = c(0.5, 0.25).")
+
+  hl <- NULL
+  if (identical(metric, "species_richness")) {
+    if (is.null(x) || !is.list(x) || is.null(x[["HL"]]))
+      stop("`metric = 'species_richness'` requires `x` to be a datras_raw object with an `HL` table.", call. = FALSE)
+    hl <- as.data.frame(x[["HL"]], stringsAsFactors = FALSE)
+    if (!all(c("haul.id", "Valid_Aphia") %in% names(hl)))
+      stop("`HL` must contain `haul.id` and `Valid_Aphia` columns for `metric = 'species_richness'`.", call. = FALSE)
+    haul_rich <- tapply(hl$Valid_Aphia, hl$haul.id,
+                        function(v) length(unique(v[!is.na(v)])))
+    hh$species_richness <- as.integer(haul_rich[match(hh$haul.id, names(haul_rich))])
+    hh$species_richness[is.na(hh$species_richness)] <- 0L
+    value_var <- "species_richness"
+  }
 
   value_col_names <- NULL
   lc_multi_panels <- FALSE
@@ -188,7 +206,7 @@ plot_datras_overview <- function(
   zlim <- NULL
   if (identical(mode, "grid") && isTRUE(fixed_scale) && length(split_list) > 1) {
     max_vals <- vapply(split_list, function(d) {
-      ag <- .aggregate_grid(d, metric = metric)
+      ag <- .aggregate_grid(d, metric = metric, hl = hl)
       v <- ag$z[is.finite(ag$z)]
       if (length(v) == 0) 0 else max(v)
     }, numeric(1))
@@ -261,7 +279,9 @@ plot_datras_overview <- function(
           panel_label = panel_label,
           show_x_axis = show_x_axis,
           show_y_axis = show_y_axis,
-          map_scale = map_scale
+          map_scale = map_scale,
+          hl = hl,
+          palette_rev = palette_rev
         )
       }
     } else {
@@ -344,7 +364,7 @@ plot_datras_overview <- function(
           leg_labels <- info$legend_labels
           leg_cols <- info$legend_cols
 
-          if (metric %in% c("count_hauls", "count_surveys") && length(leg_labels) > max_grid_legend_levels) {
+          if (metric %in% c("count_hauls", "count_surveys", "species_richness") && length(leg_labels) > max_grid_legend_levels) {
             vals <- suppressWarnings(as.numeric(leg_labels))
             vals <- vals[is.finite(vals)]
             if (length(vals) > 0) {
@@ -1170,7 +1190,7 @@ plot_species_composition <- function(x,
 }
 
 
-.aggregate_grid <- function(hh, metric) {
+.aggregate_grid <- function(hh, metric, hl = NULL) {
   if (identical(metric, "sum")) {
     out <- aggregate(hh$.value, by = list(lon_bin = hh$lon_bin, lat_bin = hh$lat_bin), FUN = function(z) sum(z, na.rm = TRUE))
     names(out)[3] <- "z"
@@ -1195,6 +1215,23 @@ plot_species_composition <- function(x,
       z = as.numeric(z),
       stringsAsFactors = FALSE
     )
+  } else if (identical(metric, "species_richness")) {
+    if (is.null(hl))
+      stop("`metric = 'species_richness'` requires `hl` to be passed to `.aggregate_grid()`.", call. = FALSE)
+    haul_ids <- unique(hh$haul.id)
+    hl_sub <- hl[hl$haul.id %in% haul_ids, c("haul.id", "Valid_Aphia"), drop = FALSE]
+    hl_binned <- merge(hh[, c("haul.id", "lon_bin", "lat_bin"), drop = FALSE],
+                       hl_sub, by = "haul.id", all.x = FALSE)
+    cell_key <- paste(hl_binned$lon_bin, hl_binned$lat_bin)
+    cell_rich <- vapply(split(hl_binned$Valid_Aphia, cell_key),
+                        function(v) length(unique(v[!is.na(v)])), integer(1))
+    parts <- strsplit(names(cell_rich), " ", fixed = TRUE)
+    out <- data.frame(
+      lon_bin = factor(vapply(parts, `[`, character(1), 1), levels = levels(hh$lon_bin)),
+      lat_bin = factor(vapply(parts, `[`, character(1), 2), levels = levels(hh$lat_bin)),
+      z = as.numeric(cell_rich),
+      stringsAsFactors = FALSE
+    )
   } else {
     stop("Unsupported metric: ", metric, call. = FALSE)
   }
@@ -1212,8 +1249,8 @@ plot_species_composition <- function(x,
   out
 }
 
-.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = TRUE, map_scale = 50) {
-  agg <- .aggregate_grid(hh, metric = metric)
+.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = FALSE, map_scale = 50, hl = NULL) {
+  agg <- .aggregate_grid(hh, metric = metric, hl = hl)
   mat <- xtabs(z ~ lon_bin + lat_bin, data = agg)
 
   xvals <- as.numeric(rownames(mat))
@@ -1245,7 +1282,7 @@ plot_species_composition <- function(x,
     use_col <- col[1]
     legend_labels <- "sampled cells"
     legend_cols <- use_col[1]
-  } else if (metric %in% c("count_hauls", "count_surveys")) {
+  } else if (metric %in% c("count_hauls", "count_surveys", "species_richness")) {
     uniq <- sort(unique(finite_vals))
     if (length(uniq) == 0) uniq <- 0
     breaks <- c(uniq - 0.5, max(uniq) + 0.5)

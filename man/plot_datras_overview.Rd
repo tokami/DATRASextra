@@ -8,7 +8,8 @@ plot_datras_overview(
   x = NULL,
   mode = c("points", "grid"),
   grid_resolution = c(1, 0.5),
-  metric = c("presence", "sum", "mean", "count_hauls", "count_surveys"),
+  metric = c("presence", "sum", "mean", "count_hauls", "count_surveys",
+    "species_richness"),
   spatial_basis = c("raw", "statrec"),
   by_survey = FALSE,
   by_gear = FALSE,
@@ -53,7 +54,11 @@ spatial detail; coarser values (e.g. \code{c(2, 1)}) reduce clutter for very
 dense data. Has no effect in \code{mode = "points"}.}
 
 \item{metric}{Grid metric: \code{"sum"}, \code{"mean"}, \code{"count_hauls"},
-\code{"presence"}, or \code{"count_surveys"}.}
+\code{"presence"}, \code{"count_surveys"}, or \code{"species_richness"}. The
+\code{"species_richness"} option counts unique species (via \code{Valid_Aphia}) per
+haul in points mode and per grid cell (pooled across hauls) in grid mode;
+it requires \code{x} to contain an \code{HL} table with \code{haul.id} and \code{Valid_Aphia}
+columns.}
 
 \item{spatial_basis}{Spatial basis used for coordinates: \code{"raw"} uses haul
 coordinates, \code{"statrec"} uses ICES rectangle midpoints from \code{StatRec}.}
