@@ -183,7 +183,7 @@ check_lengths <- function(x,
               lPars = lVals,
               nAbove = nAbove)
 
-  return(res)
+  return(invisible(res))
 }
 
 

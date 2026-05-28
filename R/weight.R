@@ -160,7 +160,7 @@ check_weights <- function (x,
               parEst = data.frame(a = a, b = b),
               parEmp = data.frame(a = aEmp, b = bEmp))
 
-  return(res)
+  return(invisible(res))
 }
 
 
