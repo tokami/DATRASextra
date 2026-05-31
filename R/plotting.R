@@ -281,7 +281,8 @@ plot_datras_overview <- function(
           show_y_axis = show_y_axis,
           map_scale = map_scale,
           hl = hl,
-          palette_rev = palette_rev
+          palette_rev = palette_rev,
+          transform = transform
         )
       }
     } else {
@@ -403,7 +404,7 @@ plot_datras_overview <- function(
           ref_vals <- seq(rng_leg[1], rng_leg[2], length.out = n_ref)
           ref_scaled <- (ref_vals - rng_leg[1]) / (rng_leg[2] - rng_leg[1])
           ref_cex <- meta$size_range[1] + ref_scaled * (meta$size_range[2] - meta$size_range[1])
-          ref_labels <- format(signif(ref_vals, 3), trim = TRUE)
+          ref_labels <- format(signif(.back_transform(ref_vals, transform), 3), trim = TRUE)
           leg_title <- if (!is.null(offset_var)) paste0(value_var, " / ", offset_var) else value_var
           if (!has_grouping || isTRUE(multi_panels)) {
             ref_idx <- pmax(1L, pmin(length(meta$col), round(1 + ref_scaled * (length(meta$col) - 1))))
@@ -1108,6 +1109,15 @@ plot_species_composition <- function(x,
   out
 }
 
+.back_transform <- function(x, transform) {
+  switch(transform,
+    log1p = expm1(x),
+    sqrt = x^2,
+    log10 = 10^x,
+    x
+  )
+}
+
 
 .build_group <- function(hh, by_survey, by_gear, by_quarter, by_year, by_daynight) {
   dims <- character(0)
@@ -1249,7 +1259,7 @@ plot_species_composition <- function(x,
   out
 }
 
-.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = FALSE, map_scale = 50, hl = NULL) {
+.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = FALSE, map_scale = 50, hl = NULL, transform = "none") {
   agg <- .aggregate_grid(hh, metric = metric, hl = hl)
   mat <- xtabs(z ~ lon_bin + lat_bin, data = agg)
 
@@ -1295,7 +1305,9 @@ plot_species_composition <- function(x,
     nb <- min(7, length(col))
     breaks <- seq(zlim[1], zlim[2], length.out = nb + 1)
     use_col <- col[seq_len(nb)]
-    legend_labels <- paste0("[", round(breaks[-length(breaks)], 2), ", ", round(breaks[-1], 2), ")")
+    disp <- .back_transform(breaks, transform)
+    legend_labels <- paste0("[", format(signif(disp[-length(disp)], 3), trim = TRUE), ", ",
+                            format(signif(disp[-1], 3), trim = TRUE), ")")
     legend_cols <- use_col
   }
 
