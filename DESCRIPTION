@@ -40,7 +40,8 @@ Suggests:
     rnaturalearth,
     rnaturalearthdata,
     rnaturalearthhires,
-    worrms
+    worrms,
+    RANN
 Remotes:
     DTUAqua/DATRAS/DATRAS,
     ropensci/rnaturalearthhires,
