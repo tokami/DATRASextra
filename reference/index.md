@@ -152,6 +152,9 @@
 - [`survey_info_full_raw`](https://tokami.github.io/DATRASextra/reference/survey_info_full_raw.md)
   : Full survey information table
 
+- [`wolffish`](https://tokami.github.io/DATRASextra/reference/wolffish.md)
+  : Wolffish survey data (example dataset)
+
 - [`write_exchange()`](https://tokami.github.io/DATRASextra/reference/write_exchange.md)
   :
 

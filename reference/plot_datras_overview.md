@@ -10,7 +10,8 @@ plot_datras_overview(
   x = NULL,
   mode = c("points", "grid"),
   grid_resolution = c(1, 0.5),
-  metric = c("presence", "sum", "mean", "count_hauls", "count_surveys"),
+  metric = c("presence", "sum", "mean", "count_hauls", "count_surveys",
+    "species_richness"),
   spatial_basis = c("raw", "statrec"),
   by_survey = FALSE,
   by_gear = FALSE,
@@ -65,8 +66,11 @@ plot_datras_overview(
 
 - metric:
 
-  Grid metric: `"sum"`, `"mean"`, `"count_hauls"`, `"presence"`, or
-  `"count_surveys"`.
+  Grid metric: `"sum"`, `"mean"`, `"count_hauls"`, `"presence"`,
+  `"count_surveys"`, or `"species_richness"`. The `"species_richness"`
+  option counts unique species (via `Valid_Aphia`) per haul in points
+  mode and per grid cell (pooled across hauls) in grid mode; it requires
+  `x` to contain an `HL` table with `haul.id` and `Valid_Aphia` columns.
 
 - spatial_basis:
 
