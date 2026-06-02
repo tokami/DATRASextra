@@ -288,6 +288,59 @@ get_latin <- function(x, use_worrms = FALSE) {
 
 
 
+##' Make a regular prediction grid from coordinate vectors
+##'
+##' Creates an equally spaced grid covering the range of the supplied
+##' coordinates.  Works with any coordinate system (UTM metres, UTM
+##' kilometres, lon/lat degrees, etc.) — \code{resolution} and the
+##' coordinates must simply be in the same units.  The grid origin is
+##' snapped down to the nearest \code{resolution} multiple below each
+##' coordinate minimum.  Optionally repeats the spatial grid for every
+##' element of \code{time}, adding a \code{year} column.  Optionally
+##' removes grid nodes that are farther than \code{max_dist} from any
+##' observation (requires the \pkg{RANN} package).
+##'
+##' @param x Numeric vector of X coordinates (any units).
+##' @param y Numeric vector of Y coordinates (same units as \code{x}).
+##' @param resolution Step size between grid nodes, in the same units as
+##'   \code{x} and \code{y}.
+##' @param max_dist Optional distance threshold in the same units as
+##'   \code{x} and \code{y}.  Grid nodes whose nearest observation is
+##'   farther than \code{max_dist} are dropped.  Uses a k-d tree via
+##'   \pkg{RANN} for efficiency.
+##' @param time Optional vector of time values (e.g. \code{1990:2000}).
+##'   When supplied the spatial grid is crossed with \code{time} and a
+##'   \code{year} column is added.
+##'
+##' @return A data.frame with columns \code{X}, \code{Y}, and (if
+##'   \code{time} is supplied) \code{year}.
+##'
+##' @export
+make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL) {
+  snap <- function(v) resolution * floor(v / resolution)
+  xs <- seq(snap(min(x, na.rm = TRUE)), max(x, na.rm = TRUE), by = resolution)
+  ys <- seq(snap(min(y, na.rm = TRUE)), max(y, na.rm = TRUE), by = resolution)
+  grid <- expand.grid(X = xs, Y = ys)
+
+  if (!is.null(max_dist)) {
+    if (!requireNamespace("RANN", quietly = TRUE))
+      stop("Package 'RANN' is required for max_dist filtering. Install with install.packages('RANN').")
+    obs <- unique(na.omit(cbind(x, y)))
+    nn_dist <- RANN::nn2(data = obs, query = as.matrix(grid), k = 1L)$nn.dists[, 1L]
+    grid <- grid[nn_dist <= max_dist, ]
+    rownames(grid) <- NULL
+  }
+
+  if (!is.null(time)) {
+    grid <- merge(grid, data.frame(year = time), by = NULL)
+  }
+
+  grid
+}
+
+
+
+
 ## Internal functions ------------------------------------------------------------
 
 .colours_datrasextra_continuous <- function(n, rev = FALSE) {

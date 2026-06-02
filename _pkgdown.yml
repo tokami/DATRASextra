@@ -37,6 +37,7 @@ navbar:
 articles:
 - title: Getting started
   contents:
+  - articles/datras-raw-object
   - datrasextra-tutorial
   - articles/plot-datras-overview
   - articles/define-survey-domain

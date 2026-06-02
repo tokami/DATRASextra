@@ -1,0 +1,164 @@
+---
+title: "The datras_raw object"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    number_sections: true
+    df_print: paged
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{The datras_raw object}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  cache = FALSE,
+  warning = FALSE,
+  eval = TRUE,
+  error = FALSE,
+  message = FALSE,
+  include = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.show = "hold",
+  fig.width = 8,
+  fig.height = 7
+)
+```
+
+This article describes the `datras_raw` object, the data structure used
+throughout **DATRASextra**. We use the example data set `dab` (dab,
+*Limanda limanda*, from NS-IBTS in 2020-2023).
+
+```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+## Load the package
+library(DATRASextra)
+
+## Load the example data
+data(dab)
+```
+
+
+# Structure
+
+A `datras_raw` object is a list of three data frames, with classes
+`datras_raw` and `DATRASraw`:
+
+```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+## Class and elements
+class(dab)
+names(dab)
+```
+
+The `DATRASraw` class is kept for backward compatibility with the [**DATRAS** R
+package](https://github.com/DTUAqua/DATRAS), so its functions keep working on a
+`datras_raw` object.
+
+The three tables follow the DATRAS exchange format:
+
+- `HH`: haul data. One row per haul (position, time, depth, gear,
+  environment).
+- `HL`: length data. Catch-at-length per species and length class.
+- `CA`: age-length data. Individual length, weight, sex, maturity, age.
+
+They are linked by `haul.id`, which is present in all three tables.
+
+Printing the object gives a survey overview:
+
+```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+## Survey overview
+dab
+```
+
+
+# Indexing
+
+Use `[[ ]]` to reach a table:
+
+```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+## The haul table
+hh <- dab[["HH"]]
+dim(hh)
+```
+
+Within a table, columns are accessed and assigned with `$` as usual:
+
+```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+## A single column and a few columns
+head(dab[["HH"]]$Depth)
+head(dab[["HH"]][, c("Year", "Quarter", "Gear", "Depth")])
+
+## Add or modify a column
+dab[["HH"]]$DepthLog <- log(dab[["HH"]]$Depth)
+head(dab[["HH"]]$DepthLog)
+```
+
+`subset()` filters the whole object and keeps the three tables consistent
+(dropping a haul from `HH` also drops its `HL` and `CA` records):
+
+```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+## Keep valid hauls from quarter 1
+q1 <- subset(dab, Quarter == 1 & HaulVal == "V")
+q1
+```
+
+
+# Coded variables (ICES vocabulary)
+
+Many variables are stored as codes (`Gear`, `Country`, `Ship`, `StatRec`),
+and species as a WoRMS AphiaID in `Valid_Aphia`:
+
+```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+## Gear codes and species AphiaID
+levels(factor(as.character(dab[["HH"]][["Gear"]])))
+unique(dab[["HL"]][["Valid_Aphia"]])
+```
+
+Definitions for these codes are in the [ICES
+vocabulary](https://vocab.ices.dk/) and the [DATRAS data
+resources](https://datras.ices.dk/Data_products/DataResources.aspx). The
+`species_info` table also maps AphiaIDs to scientific names and ecological
+groups.
+
+
+# Numbers-at-length: the `N` matrix
+
+`add_numbers_at_length()` raises the `HL` counts to the haul level and stores
+the result as a matrix `N` in `HH`, one row per haul and one column per length
+class:
+
+```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+## Add numbers-at-length
+dab <- add_numbers_at_length(dab)
+
+## One row per haul, one column per length class
+## (showing the five largest catches and a few length classes)
+big <- head(order(rowSums(dab[["HH"]][["N"]]), decreasing = TRUE), 5)
+dab[["HH"]][["N"]][big, 13:17]
+```
+
+Length classes can be changed with `cm_breaks` or `by`; see
+`vignette("articles/custom-length-classes")`.
+
+
+# Weight-at-length: the `Wgt` matrix
+
+`add_weight_at_length()` converts numbers to weight using a length-weight
+relationship and adds a matrix `Wgt` to `HH` with the same shape as `N`:
+
+```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+## Add weight-at-length
+dab <- add_weight_at_length(dab)
+
+## Same hauls and length classes as above, now in weight
+dab[["HH"]][["Wgt"]][big, 13:17]
+```
+
+Summing these matrices over their columns gives total numbers and weight per
+haul, via `add_total_numbers_by_haul()` and `add_total_weight_by_haul()` (see
+the [step-by-step guide](../articles/datrasextra-tutorial.html)).
