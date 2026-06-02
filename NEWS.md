@@ -4,15 +4,26 @@
 
 ## New features
 
-* ...
+* New `make_survey_grid()` function creates a regular prediction grid from
+  coordinate vectors. Supports any coordinate system, optional pruning of
+  grid nodes by maximum distance to observations (via `RANN`), and optional
+  crossing with a time vector.
 
 ## Minor changes
 
-* ...
+* Added vignette *Working with datras_raw objects* introducing the
+  `datras_raw` / `DATRASraw` class structure and common workflows.
 
 ## Bug fixes
 
-* ...
+* Fixed `$` and `$<-` dispatch on `datras_raw` objects (#38). The `DATRAS`
+  package defines `$.DATRASraw` to look inside `x[[2]]`, which was written
+  for an older internal structure and caused `x$HH` to return `NULL` instead
+  of the HH data frame. New `$.datras_raw` and `$<-.datras_raw` methods
+  intercept dispatch before the broken method is reached: if the name matches
+  a top-level table (`CA`, `HH`, or `HL`) the table is returned or replaced;
+  otherwise the call is routed to the HH data frame, preserving the existing
+  column-shortcut convention used internally (e.g. `x$SweptArea <- ...`).
 
 
 

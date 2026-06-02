@@ -55,5 +55,5 @@ articles:
 
 news:
   releases:
-  - text: Version 0.0.0.9000
+  - text: Version 0.1.1
     href: https://github.com/tokami/DATRASextra/blob/main/NEWS.md
