@@ -47,6 +47,7 @@ Remotes:
     ropensci/rnaturalearthhires,
     ices-tools-prod/icesDatras
 LazyData: true
+LazyDataCompression: xz
 License: GPL-3
 URL: https://tokami.github.io/DATRASextra/, https://github.com/tokami/DATRASextra
 BugReports: https://github.com/tokami/DATRASextra/issues

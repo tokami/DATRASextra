@@ -10,3 +10,9 @@
 ^vignettes/.*/precompute\.R$
 ^\.travis\.yml$
 ^data-raw$
+^_pkgdown\.yml$
+^codecov\.yml$
+^header\.md$
+^Licence\.txt$
+^pkgdown$
+^wget-log$
