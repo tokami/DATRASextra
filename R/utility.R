@@ -577,6 +577,27 @@ summary.datras_raw <- function(object, ...) {
 .quarter2months <- function(quarter) ((quarter - 1) * 3 + 1) : (quarter * 3)
 
 
+## $.DATRASraw in the DATRAS package uses x[[2]][[name]], written for an older
+## structure where x[[2]] was a sub-list of all tables. The current structure is
+## a flat named list (CA=[[1]], HH=[[2]], HL=[[3]]), so that method looks for a
+## column inside the HH data frame instead of a top-level table. Defining these
+## methods on datras_raw (the first class of DATRASextra objects) intercepts $
+## dispatch before the broken DATRASraw method is reached.
+
+##' @export
+"$.datras_raw" <- function(x, name) {
+  if (name %in% names(x)) .subset2(x, name)
+  else .subset2(x, "HH")[[name]]
+}
+
+##' @export
+"$<-.datras_raw" <- function(x, name, value) {
+  if (name %in% names(x)) x[[name]] <- value
+  else x[["HH"]][[name]] <- value
+  x
+}
+
+
 ## Parse midpoints from interval column names such as "[3,4)" produced by cut()
 .parse_interval_mids <- function(cn) {
   m <- regmatches(cn, regexpr("[0-9.eE+-]+,[0-9.eE+-]+", cn))
