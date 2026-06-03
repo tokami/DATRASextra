@@ -483,7 +483,7 @@ add_total_weight_by_haul <- function (x,
     if (n_aphia == 1) {
       stop(txt)
     } else {
-      if (verbose) message(txt, " Skipping: ", aphia[i])
+      if (verbose) message(txt, " Skipping: ", aphia)
       return(NULL)
     }
   }
@@ -498,7 +498,7 @@ add_total_weight_by_haul <- function (x,
     if (n_aphia == 1) {
       stop(txt)
     } else {
-      if (verbose) message(txt, " Skipping: ", aphia[i])
+      if (verbose) message(txt, " Skipping: ", aphia)
       return(NULL)
     }
   }
@@ -507,7 +507,7 @@ add_total_weight_by_haul <- function (x,
     if (n_aphia == 1) {
       stop(txt)
     } else {
-      if (verbose) message(txt, " Skipping: ", aphia[i])
+      if (verbose) message(txt, " Skipping: ", aphia)
       return(NULL)
     }
   }
@@ -524,8 +524,7 @@ add_total_weight_by_haul <- function (x,
   if (n_aphia > 1) {
     xsub <- add_numbers_at_length(xsub,
                                   cm_breaks = cm_breaks,
-                                  by = cm_breaks[2] -
-                                    cm_breaks[1])
+                                  by = cm_breaks[2] - cm_breaks[1])
   }
 
   Wgt <- sweep(xsub[["HH"]]$N, 2, LW, "*")
