@@ -23,7 +23,7 @@ Description: DATRASextra is an R package for working with ICES DATRAS survey
     analyses in fisheries science.
 Depends:
     R (>= 4.0),
-    DATRAS
+    DATRAS (>= 1.01.1)
 Imports:
     mgcv,
     icesDatras
