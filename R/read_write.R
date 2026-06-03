@@ -20,6 +20,10 @@
 ##' @param paths A character vector of file paths or directory paths. Paths can
 ##'   point either to individual DATRAS `.zip` exchange files or to directories
 ##'   containing such files.
+##' @param surveys Optional character vector of survey acronyms to read (e.g.
+##'   `c("NS-IBTS", "BITS")`). When supplied and `paths` contains directories,
+##'   only zip files whose names contain one of the specified survey strings are
+##'   read. Matching is case-sensitive and literal (not a regular expression).
 ##' @param years Optional integer vector of years to read. When supplied and
 ##'   `paths` contains directories, only zip files matching those years are
 ##'   read.
@@ -60,6 +64,12 @@
 ##' ## Read selected years from a folder
 ##' x <- read_datras("data/NS-IBTS", years = 2018:2020)
 ##'
+##' ## Read selected surveys from a folder containing the whole database
+##' x <- read_datras("data/DATRAS", surveys = c("NS-IBTS", "BITS"))
+##'
+##' ## Combine survey and year filtering
+##' x <- read_datras("data/DATRAS", surveys = "NS-IBTS", years = 2018:2020)
+##'
 ##' ## Read multiple zip files directly
 ##' files <- c("data/NS-IBTS/NS-IBTS_2020.zip",
 ##'            "data/NS-IBTS/NS-IBTS_2021.zip")
@@ -73,6 +83,7 @@
 ##'
 ##' @export
 read_datras <- function(paths,
+                        surveys = NULL,
                         years = NULL,
                         recursive = TRUE,
                         min_file_size = 1e4,
@@ -86,16 +97,28 @@ read_datras <- function(paths,
 
   if (any(dir.exists(paths))) {
 
-    if (!is.null(years)) {
+    if (!is.null(years) || !is.null(surveys)) {
 
       paths <- dir(paths0,
                    full.names = TRUE,
                    recursive = recursive)
       paths <- paths[grep("\\.zip$", paths)]
       if (length(paths) == 0) stop("No zip files found in the specified paths. Did you specify the correct path? Consider setting recursive = TRUE and run again.")
-      paths <- paths[sort(unlist(lapply(years,
-                                        function(x)
-                                          grep(as.character(x), paths))))]
+
+      if (!is.null(surveys)) {
+        paths <- paths[sort(unlist(lapply(surveys,
+                                          function(x)
+                                            grep(x, paths, fixed = TRUE))))]
+        if (length(paths) == 0) stop("No zip files found matching the specified surveys.")
+      }
+
+      if (!is.null(years)) {
+        paths <- paths[sort(unlist(lapply(years,
+                                          function(x)
+                                            grep(as.character(x), paths))))]
+        if (length(paths) == 0) stop("No zip files found matching the specified years.")
+      }
+
       ind <- which(file.size(paths) <= min_file_size)
       if(length(ind) > 0 && verbose){
         writeLines(paste0("These files are suspiciously small, are you sure that they were downloaded correctly? They will be removed from the list as they likely give errors. Please check the files or change the 'min_file_size' argument!\n",
@@ -130,7 +153,7 @@ read_datras <- function(paths,
         tmp <- tmp[-idx]
       }
 
-      tmp <- .remove_duplicated_haul_id(tmp)
+      tmp <- .remove_duplicated_haul_id(tmp, verbose = verbose)
 
       if (prune) {
         if(verbose) message("Pruning files")
@@ -245,7 +268,7 @@ write_exchange <- function(x,
 ## Internal functions -----------------------------------------------------
 
 
-.remove_duplicated_haul_id <- function(args) {
+.remove_duplicated_haul_id <- function(args, verbose = TRUE) {
   x <- lapply(args, function(x) as.character(x$haul.id))
   x2 <- lapply(args, function(x) x[["HH"]]$Survey)
   ind <- which(duplicated(unlist(x)))
