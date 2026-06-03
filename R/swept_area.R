@@ -168,16 +168,7 @@ add_swept_area_simple <- function(x,
   badDist <- abs((x$Distance - Distance2)/x$Distance) > max_dist_dev
   x$Distance[ badDist ] <- NA
 
-  x2 <- x[["HH"]]
-
-  ## Impute missing wing spreads (median within gear)
-  wtab <- aggregate(WingSpread ~ Gear, data=x2, FUN=median, na.rm=TRUE)
-  for(i in 1:nrow(wtab)){
-    sel <- which(x$Gear==wtab$Gear[i] & is.na(x$WingSpread))
-    x$WingSpread[ sel ] <- wtab$WingSpread[i]
-  }
-  x$WingSpread2 <- NULL
-
+  ## Beam trawl "wing spreads"
   x$WingSpread[x$Gear == "BT12"]   <- 12
   x$WingSpread[x$Gear == "BT8"]    <- 8
   x$WingSpread[x$Gear == "BT4A"]   <- 4
@@ -190,6 +181,19 @@ add_swept_area_simple <- function(x,
 
   ## For Beam trawls, GearEx == "DB" means double beam, i.e. catches from two beam trawls added.
   x$BeamWidth[ !is.na(x$GearEx) & x$GearEx=="DB" ] <- x$BeamWidth[ !is.na(x$GearEx) & x$GearEx=="DB" ]*2
+
+  ## Impute missing wing spreads (median within gear)
+  x2 <- x[["HH"]]
+  if (sum(!is.na(x2$WingSpread)) > 0) {
+    wtab <- aggregate(WingSpread ~ Gear, data=x2, FUN=median, na.rm=TRUE)
+    for(i in 1:nrow(wtab)){
+      sel <- which(x$Gear==wtab$Gear[i] & is.na(x$WingSpread))
+      x$WingSpread[ sel ] <- wtab$WingSpread[i]
+    }
+    x$WingSpread2 <- NULL
+  } else {
+    stop("All wing spread are NA. Cannot calculated swept area, please check x[['HH']]$WingSpread.")
+  }
 
   ## There are probably errors in recorded in wing spread and unclear how CPUE correlates with wing spread.
   ## It might therefore be a more robust assumption to use a fixed (median) Wingspread for each gear type.
