@@ -9,6 +9,7 @@ files in one or more directories, into a single `datras_raw` /
 ``` r
 read_datras(
   paths,
+  surveys = NULL,
   years = NULL,
   recursive = TRUE,
   min_file_size = 10000,
@@ -24,6 +25,14 @@ read_datras(
   A character vector of file paths or directory paths. Paths can point
   either to individual DATRAS `.zip` exchange files or to directories
   containing such files.
+
+- surveys:
+
+  Optional character vector of survey acronyms to read (e.g.
+  `c("NS-IBTS", "BITS")`). When supplied and `paths` contains
+  directories, only zip files whose names contain one of the specified
+  survey strings are read. Matching is case-sensitive and literal (not a
+  regular expression).
 
 - years:
 
@@ -99,6 +108,12 @@ x <- read_datras("data/NS-IBTS")
 
 ## Read selected years from a folder
 x <- read_datras("data/NS-IBTS", years = 2018:2020)
+
+## Read selected surveys from a folder containing the whole database
+x <- read_datras("data/DATRAS", surveys = c("NS-IBTS", "BITS"))
+
+## Combine survey and year filtering
+x <- read_datras("data/DATRAS", surveys = "NS-IBTS", years = 2018:2020)
 
 ## Read multiple zip files directly
 files <- c("data/NS-IBTS/NS-IBTS_2020.zip",
