@@ -52,41 +52,39 @@
 #'
 #' @return Invisibly returns list with processed data and plotting metadata.
 #' @export
-plot_datras_overview <- function(
-  x = NULL,
-  mode = c("points", "grid"),
-  grid_resolution = c(1, 0.5),
-  metric = c("presence", "sum", "mean", "count_hauls", "count_surveys", "species_richness"),
-  spatial_basis = c("raw", "statrec"),
-  by_survey = FALSE,
-  by_gear = FALSE,
-  by_quarter = FALSE,
-  by_year = FALSE,
-  by_daynight = FALSE,
-  multi_panels = FALSE,
-  value_var = NULL,
-  offset_var = NULL,
-  transform = c("none", "log1p", "sqrt", "log10"),
-  fixed_scale = TRUE,
-  fixed_axes = TRUE,
-  plot_map = TRUE,
-  xlim = NULL,
-  ylim = NULL,
-  col = NULL,
-  palette_rev = FALSE,
-  alpha = 0.8,
-  pch = 16,
-  cex = 0.8,
-  size_range = c(0.7, 2.2),
-  legend = TRUE,
-  legend_mode = c("auto", "none", "global", "per_panel"),
-  max_grid_legend_levels = 5,
-  legend_ncol = 1,
-  legend_pos = NULL,
-  legend_cex = NULL,
-  grid_group_strategy = c("dominant", "mixed", "error"),
-  main = NULL
-) {
+plot_datras_overview <- function(x = NULL,
+                                 mode = c("points", "grid"),
+                                 grid_resolution = c(1, 0.5),
+                                 metric = c("presence", "sum", "mean", "count_hauls", "count_surveys", "species_richness"),
+                                 spatial_basis = c("raw", "statrec"),
+                                 by_survey = FALSE,
+                                 by_gear = FALSE,
+                                 by_quarter = FALSE,
+                                 by_year = FALSE,
+                                 by_daynight = FALSE,
+                                 multi_panels = FALSE,
+                                 value_var = NULL,
+                                 offset_var = NULL,
+                                 transform = c("none", "log1p", "sqrt", "log10"),
+                                 fixed_scale = TRUE,
+                                 fixed_axes = TRUE,
+                                 plot_map = TRUE,
+                                 xlim = NULL,
+                                 ylim = NULL,
+                                 col = NULL,
+                                 palette_rev = FALSE,
+                                 alpha = 0.8,
+                                 pch = 16,
+                                 cex = 0.8,
+                                 size_range = c(0.7, 2.2),
+                                 legend = TRUE,
+                                 legend_mode = c("auto", "none", "global", "per_panel"),
+                                 max_grid_legend_levels = 5,
+                                 legend_ncol = 1,
+                                 legend_pos = NULL,
+                                 legend_cex = NULL,
+                                 grid_group_strategy = c("dominant", "mixed", "error"),
+                                 main = NULL) {
   mode <- match.arg(mode)
   metric <- match.arg(metric)
   spatial_basis <- match.arg(spatial_basis)
@@ -147,7 +145,11 @@ plot_datras_overview <- function(
   group_cols <- NULL
   if (has_grouping) {
     lev <- levels(hh$.group)
-    group_cols <- .colours_datrasextra_discrete(length(lev), rev = palette_rev)
+    if (is.null(col)) {
+      group_cols <- .colours_datrasextra_discrete(length(lev), rev = palette_rev)
+    } else {
+      group_cols <- col
+    }
     names(group_cols) <- lev
   }
 
@@ -253,43 +255,39 @@ plot_datras_overview <- function(
 
     if (identical(mode, "grid")) {
       if (has_grouping && !isTRUE(multi_panels)) {
-        panel_meta[[nm]] <- .plot_grid_group_panel(
-          hh = d,
-          group_cols = group_cols,
-          strategy = grid_group_strategy,
-          plot_map = plot_map,
-          xlim = lim$x,
-          ylim = lim$y,
-          main = panel_title,
-          panel_label = panel_label,
-          show_x_axis = show_x_axis,
-          show_y_axis = show_y_axis,
-          map_scale = map_scale
-        )
+        panel_meta[[nm]] <- .plot_grid_group_panel(hh = d,
+                                                   group_cols = group_cols,
+                                                   strategy = grid_group_strategy,
+                                                   plot_map = plot_map,
+                                                   xlim = lim$x,
+                                                   ylim = lim$y,
+                                                   main = panel_title,
+                                                   panel_label = panel_label,
+                                                   show_x_axis = show_x_axis,
+                                                   show_y_axis = show_y_axis,
+                                                   map_scale = map_scale)
       } else {
-        panel_meta[[nm]] <- .plot_grid_panel(
-          hh = d,
-          metric = metric,
-          col = col,
-          zlim = zlim,
-          plot_map = plot_map,
-          xlim = lim$x,
-          ylim = lim$y,
-          main = panel_title,
-          panel_label = panel_label,
-          show_x_axis = show_x_axis,
-          show_y_axis = show_y_axis,
-          map_scale = map_scale,
-          hl = hl,
-          palette_rev = palette_rev,
-          transform = transform
-        )
+        panel_meta[[nm]] <- .plot_grid_panel(hh = d,
+                                             metric = metric,
+                                             col = col,
+                                             zlim = zlim,
+                                             plot_map = plot_map,
+                                             xlim = lim$x,
+                                             ylim = lim$y,
+                                             main = panel_title,
+                                             panel_label = panel_label,
+                                             show_x_axis = show_x_axis,
+                                             show_y_axis = show_y_axis,
+                                             map_scale = map_scale,
+                                             hl = hl,
+                                             palette_rev = palette_rev,
+                                             transform = transform)
       }
     } else {
       val <- d$.value
       rng <- range(val, na.rm = TRUE)
       points_value_meta <- NULL
-      if (has_grouping && !isTRUE(multi_panels)) {
+      if (has_grouping) {
         pcol <- grDevices::adjustcolor(group_cols[as.character(d$.group)], alpha.f = alpha)
         if (!is.null(value_var) && !identical(metric, "presence") && is.finite(rng[1]) && is.finite(rng[2]) && rng[1] != rng[2]) {
           scaled <- (val - rng[1]) / (rng[2] - rng[1])
@@ -314,22 +312,20 @@ plot_datras_overview <- function(
         points_value_meta <- list(col = col, size_range = size_range, scale_rng = scale_rng)
       }
 
-      .plot_points_panel(
-        hh = d,
-        x_col = x_col,
-        y_col = y_col,
-        col_vec = pcol,
-        cex_vec = pcex,
-        pch = pch,
-        plot_map = plot_map,
-        xlim = lim$x,
-        ylim = lim$y,
-        main = panel_title,
-        panel_label = panel_label,
-        show_x_axis = show_x_axis,
-        show_y_axis = show_y_axis,
-        map_scale = map_scale
-      )
+      .plot_points_panel(hh = d,
+                         x_col = x_col,
+                         y_col = y_col,
+                         col_vec = pcol,
+                         cex_vec = pcex,
+                         pch = pch,
+                         plot_map = plot_map,
+                         xlim = lim$x,
+                         ylim = lim$y,
+                         main = panel_title,
+                         panel_label = panel_label,
+                         show_x_axis = show_x_axis,
+                         show_y_axis = show_y_axis,
+                         map_scale = map_scale)
       panel_meta[[nm]] <- list(value_range = rng, points_value_meta = points_value_meta)
     }
   }
@@ -445,17 +441,15 @@ plot_datras_overview <- function(
     }
   }
 
-  invisible(list(
-    data = hh,
-    mode = mode,
-    metric = metric,
-    spatial_basis = spatial_basis,
-    transform = transform,
-    groups = levels(hh$.group),
-    panels = names(split_list),
-    x_col = x_col,
-    y_col = y_col
-  ))
+  invisible(list(data = hh,
+                 mode = mode,
+                 metric = metric,
+                 spatial_basis = spatial_basis,
+                 transform = transform,
+                 groups = levels(hh$.group),
+                 panels = names(split_list),
+                 x_col = x_col,
+                 y_col = y_col))
 }
 
 
