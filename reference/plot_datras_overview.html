@@ -75,6 +75,7 @@ point maps, with optional grouping and faceting.</p>
 <span>  multi_panels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  value_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  offset_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  positive_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  transform <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"log1p"</span>, <span class="st">"sqrt"</span>, <span class="st">"log10"</span><span class="op">)</span>,</span>
 <span>  fixed_scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  fixed_axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -148,6 +149,13 @@ toggles used to define panel groups.</p></dd>
 
 <dt id="arg-offset-var">offset_var<a class="anchor" aria-label="anchor" href="#arg-offset-var"></a></dt>
 <dd><p>Optional haul-level denominator variable.</p></dd>
+
+
+<dt id="arg-positive-only">positive_only<a class="anchor" aria-label="anchor" href="#arg-positive-only"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, only hauls with a strictly positive
+value (after dividing by <code>offset_var</code> if supplied) are plotted. Zero-catch
+hauls are dropped before grid aggregation or point rendering. Default
+<code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-transform">transform<a class="anchor" aria-label="anchor" href="#arg-transform"></a></dt>

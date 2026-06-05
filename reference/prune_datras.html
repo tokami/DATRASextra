@@ -65,6 +65,8 @@ the <code>HH</code>, <code>HL</code>, and <code>CA</code> tables.</p>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  add <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  drop <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  remove_hl <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  remove_ca <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  do_fishglob <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  warn_missing <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -92,6 +94,16 @@ List names should be <code>HH</code>, <code>HL</code>, and/or <code>CA</code>.</
 <dt id="arg-drop">drop<a class="anchor" aria-label="anchor" href="#arg-drop"></a></dt>
 <dd><p>Optional named list of columns to remove from the selected
 columns. List names should be <code>HH</code>, <code>HL</code>, and/or <code>CA</code>.</p></dd>
+
+
+<dt id="arg-remove-hl">remove_hl<a class="anchor" aria-label="anchor" href="#arg-remove-hl"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, set the <code>HL</code> table to <code>NULL</code>. See also
+<code><a href="drop_hl.html">drop_hl()</a></code>.</p></dd>
+
+
+<dt id="arg-remove-ca">remove_ca<a class="anchor" aria-label="anchor" href="#arg-remove-ca"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, set the <code>CA</code> table to <code>NULL</code>. See also
+<code><a href="drop_ca.html">drop_ca()</a></code>.</p></dd>
 
 
 <dt id="arg-do-fishglob">do_fishglob<a class="anchor" aria-label="anchor" href="#arg-do-fishglob"></a></dt>
@@ -130,7 +142,7 @@ an optional warning controlled by <code>warn_missing</code>.</p>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="list_prune_datras_defaults.html">list_prune_datras_defaults()</a></code>, <code><a href="list_prune_datras_available.html">list_prune_datras_available()</a></code>,
-<code><a href="clean_datras.html">clean_datras()</a></code>, <code><a href="prune_fishglob.html">prune_fishglob()</a></code></p></div>
+<code><a href="drop_hl.html">drop_hl()</a></code>, <code><a href="drop_ca.html">drop_ca()</a></code>, <code><a href="clean_datras.html">clean_datras()</a></code>, <code><a href="prune_fishglob.html">prune_fishglob()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -163,6 +175,9 @@ an optional warning controlled by <code>warn_missing</code>.</p>
 <span class="r-in"><span>  <span class="va">x</span>,</span></span>
 <span class="r-in"><span>  keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>HH <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Survey"</span>, <span class="st">"Year"</span>, <span class="st">"haul.id"</span>, <span class="st">"lon"</span>, <span class="st">"lat"</span>, <span class="st">"Depth"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Prune columns and drop the CA table entirely</span></span></span>
+<span class="r-in"><span><span class="va">x_small</span> <span class="op">&lt;-</span> <span class="fu">prune_datras</span><span class="op">(</span><span class="va">x</span>, remove_ca <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

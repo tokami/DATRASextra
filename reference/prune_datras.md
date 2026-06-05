@@ -11,6 +11,8 @@ prune_datras(
   keep = NULL,
   add = NULL,
   drop = NULL,
+  remove_hl = FALSE,
+  remove_ca = FALSE,
   do_fishglob = FALSE,
   warn_missing = TRUE
 )
@@ -37,6 +39,16 @@ prune_datras(
 
   Optional named list of columns to remove from the selected columns.
   List names should be `HH`, `HL`, and/or `CA`.
+
+- remove_hl:
+
+  Logical. If `TRUE`, set the `HL` table to `NULL`. See also
+  [`drop_hl()`](https://tokami.github.io/DATRASextra/reference/drop_hl.md).
+
+- remove_ca:
+
+  Logical. If `TRUE`, set the `CA` table to `NULL`. See also
+  [`drop_ca()`](https://tokami.github.io/DATRASextra/reference/drop_ca.md).
 
 - do_fishglob:
 
@@ -88,6 +100,8 @@ ignored, with an optional warning controlled by `warn_missing`.
 
 [`list_prune_datras_defaults()`](https://tokami.github.io/DATRASextra/reference/list_prune_datras_defaults.md),
 [`list_prune_datras_available()`](https://tokami.github.io/DATRASextra/reference/list_prune_datras_available.md),
+[`drop_hl()`](https://tokami.github.io/DATRASextra/reference/drop_hl.md),
+[`drop_ca()`](https://tokami.github.io/DATRASextra/reference/drop_ca.md),
 [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md),
 [`prune_fishglob()`](https://tokami.github.io/DATRASextra/reference/prune_fishglob.md)
 
@@ -122,5 +136,8 @@ x_small <- prune_datras(
   x,
   keep = list(HH = c("Survey", "Year", "haul.id", "lon", "lat", "Depth"))
 )
+
+## Prune columns and drop the CA table entirely
+x_small <- prune_datras(x, remove_ca = TRUE)
 } # }
 ```

@@ -21,6 +21,7 @@ plot_datras_overview(
   multi_panels = FALSE,
   value_var = NULL,
   offset_var = NULL,
+  positive_only = FALSE,
   transform = c("none", "log1p", "sqrt", "log10"),
   fixed_scale = TRUE,
   fixed_axes = TRUE,
@@ -92,6 +93,13 @@ plot_datras_overview(
 - offset_var:
 
   Optional haul-level denominator variable.
+
+- positive_only:
+
+  Logical. If `TRUE`, only hauls with a strictly positive value (after
+  dividing by `offset_var` if supplied) are plotted. Zero-catch hauls
+  are dropped before grid aggregation or point rendering. Default
+  `FALSE`.
 
 - transform:
 

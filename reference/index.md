@@ -94,6 +94,16 @@
 - [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
   : Download ICES DATRAS survey data
 
+- [`drop_ca()`](https://tokami.github.io/DATRASextra/reference/drop_ca.md)
+  :
+
+  Remove the CA table from a `datras_raw` object
+
+- [`drop_hl()`](https://tokami.github.io/DATRASextra/reference/drop_hl.md)
+  :
+
+  Remove the HL table from a `datras_raw` object
+
 - [`get_accuracy_cm()`](https://tokami.github.io/DATRASextra/reference/get_accuracy_cm.md)
   : Get length measurement accuracy in cm
 
