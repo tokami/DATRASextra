@@ -7,7 +7,7 @@ tmp <- tempdir()
 
 download_datras(surveys = "NS-IBTS", dir = tmp)
 
-surv0 <- read_datras(file.path(tmp, "NS-IBTS"), years = 1991:2024)
+surv0 <- read_datras(file.path(tmp, "NS-IBTS"), years = 1983:2024)
 
 wolffish <- clean_datras(surv0, aphias = "126758")
 

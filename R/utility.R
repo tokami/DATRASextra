@@ -2,11 +2,17 @@
 ##' DATRASextra package
 ##'
 ##' @keywords internal
-##' @importFrom graphics abline axis barplot box hist image layout legend lines mtext par plot.new points
+##' @importFrom graphics abline axis barplot box hist image layout legend lines mtext par plot.new points polygon
 ##' @importFrom grDevices grey
-##' @importFrom stats approx coefficients lm median na.omit predict quantile reshape setNames weighted.mean xtabs
+##' @importFrom stats approx coefficients lm median na.omit predict quantile qt reshape setNames var weighted.mean xtabs
 ##' @importFrom utils capture.output data getFromNamespace setTxtProgressBar txtProgressBar write.table
 "_PACKAGE"
+
+utils::globalVariables(c(
+  "DataType", "Depth", "Gear", "HaulVal", "IndWgt", "Quarter",
+  "SpecVal", "StdSpecRecCode", "Survey", "Valid_Aphia", "Year",
+  "haul.id", "species_info"
+))
 
 
 

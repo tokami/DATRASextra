@@ -15,4 +15,5 @@
 ^header\.md$
 ^Licence\.txt$
 ^pkgdown$
+^docs$
 ^wget-log$
