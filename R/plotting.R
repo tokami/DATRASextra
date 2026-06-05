@@ -299,7 +299,7 @@ plot_datras_overview <- function(x = NULL,
       val <- d$.value
       rng <- range(val, na.rm = TRUE)
       points_value_meta <- NULL
-      if (has_grouping) {
+      if (has_grouping && !isTRUE(multi_panels)) {
         pcol <- grDevices::adjustcolor(group_cols[as.character(d$.group)], alpha.f = alpha)
         if (!is.null(value_var) && !identical(metric, "presence") && is.finite(rng[1]) && is.finite(rng[2]) && rng[1] != rng[2]) {
           scaled <- (val - rng[1]) / (rng[2] - rng[1])
