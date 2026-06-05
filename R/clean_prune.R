@@ -205,6 +205,10 @@ list_prune_datras_available <- function(x) {
 ##'   List names should be `HH`, `HL`, and/or `CA`.
 ##' @param drop Optional named list of columns to remove from the selected
 ##'   columns. List names should be `HH`, `HL`, and/or `CA`.
+##' @param remove_hl Logical. If `TRUE`, set the `HL` table to `NULL`. See also
+##'   [drop_hl()].
+##' @param remove_ca Logical. If `TRUE`, set the `CA` table to `NULL`. See also
+##'   [drop_ca()].
 ##' @param do_fishglob Logical. If `TRUE`, apply [prune_fishglob()] instead of
 ##'   the standard DATRAS pruning rules.
 ##' @param warn_missing Logical. If `TRUE`, warn when requested columns are not
@@ -234,7 +238,7 @@ list_prune_datras_available <- function(x) {
 ##' @return A pruned `datras_raw` object.
 ##'
 ##' @seealso [list_prune_datras_defaults()], [list_prune_datras_available()],
-##'   [clean_datras()], [prune_fishglob()]
+##'   [drop_hl()], [drop_ca()], [clean_datras()], [prune_fishglob()]
 ##'
 ##' @examples
 ##' \dontrun{
@@ -265,12 +269,17 @@ list_prune_datras_available <- function(x) {
 ##'   x,
 ##'   keep = list(HH = c("Survey", "Year", "haul.id", "lon", "lat", "Depth"))
 ##' )
+##'
+##' ## Prune columns and drop the CA table entirely
+##' x_small <- prune_datras(x, remove_ca = TRUE)
 ##' }
 ##' @export
 prune_datras <- function(x,
                          keep = NULL,
                          add = NULL,
                          drop = NULL,
+                         remove_hl = FALSE,
+                         remove_ca = FALSE,
                          do_fishglob = FALSE,
                          warn_missing = TRUE) {
 
@@ -304,6 +313,8 @@ prune_datras <- function(x,
 
   for (nm in intersect(names(cols), names(x))) {
 
+    if (is.null(x[[nm]])) next
+
     missing_cols <- setdiff(cols[[nm]], names(x[[nm]]))
 
     if (warn_missing && length(missing_cols) > 0) {
@@ -318,9 +329,56 @@ prune_datras <- function(x,
     x[[nm]] <- x[[nm]][cols_present]
   }
 
+  if (isTRUE(remove_hl)) x <- drop_hl(x)
+  if (isTRUE(remove_ca)) x <- drop_ca(x)
+
   x
 }
 
+
+
+##' Remove the HL table from a `datras_raw` object
+##'
+##' Set the `HL` (length-frequency) table of a `datras_raw` object to `NULL`.
+##'
+##' @param x A `datras_raw` object.
+##'
+##' @return The input object with `HL` set to `NULL`.
+##'
+##' @seealso [drop_ca()], [prune_datras()]
+##'
+##' @examples
+##' \dontrun{
+##' x_no_hl <- drop_hl(x)
+##' }
+##' @export
+drop_hl <- function(x) {
+  # x[["HL"]] <- NULL would remove the element; list(NULL) sets it in-place
+  x["HL"] <- list(NULL)
+  x
+}
+
+
+##' Remove the CA table from a `datras_raw` object
+##'
+##' Set the `CA` (biological sampling) table of a `datras_raw` object to `NULL`.
+##'
+##' @param x A `datras_raw` object.
+##'
+##' @return The input object with `CA` set to `NULL`.
+##'
+##' @seealso [drop_hl()], [prune_datras()]
+##'
+##' @examples
+##' \dontrun{
+##' x_no_ca <- drop_ca(x)
+##' }
+##' @export
+drop_ca <- function(x) {
+  # x[["CA"]] <- NULL would remove the element; list(NULL) sets it in-place
+  x["CA"] <- list(NULL)
+  x
+}
 
 
 ##' Standardize and correct species information in a `datras_raw` object
