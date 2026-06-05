@@ -27,6 +27,10 @@
 #' @param multi_panels Logical. If `TRUE`, plot one group per panel.
 #' @param value_var Optional haul-level variable to map to values.
 #' @param offset_var Optional haul-level denominator variable.
+#' @param positive_only Logical. If `TRUE`, only hauls with a strictly positive
+#'   value (after dividing by `offset_var` if supplied) are plotted. Zero-catch
+#'   hauls are dropped before grid aggregation or point rendering. Default
+#'   `FALSE`.
 #' @param transform Value transform: `"none"`, `"log1p"`, `"sqrt"`, `"log10"`.
 #' @param fixed_scale Logical. Use common color scale across panels in grid mode.
 #' @param fixed_axes Logical. Use common map extent across panels.
@@ -65,6 +69,7 @@ plot_datras_overview <- function(x = NULL,
                                  multi_panels = FALSE,
                                  value_var = NULL,
                                  offset_var = NULL,
+                                 positive_only = FALSE,
                                  transform = c("none", "log1p", "sqrt", "log10"),
                                  fixed_scale = TRUE,
                                  fixed_axes = TRUE,
@@ -138,6 +143,8 @@ plot_datras_overview <- function(x = NULL,
   }
 
   hh$.value <- .compute_value(hh, value_var = value_var, offset_var = offset_var, transform = transform)
+  if (isTRUE(positive_only))
+    hh <- hh[!is.na(hh$.value) & hh$.value > 0, , drop = FALSE]
   hh$.group <- .build_group(hh, by_survey, by_gear, by_quarter, by_year, by_daynight)
   has_grouping <- any(c(by_survey, by_gear, by_quarter, by_year, by_daynight))
   active_dims <- .group_dims_active(by_survey, by_gear, by_quarter, by_year, by_daynight)
@@ -228,6 +235,9 @@ plot_datras_overview <- function(x = NULL,
     mf <- if (n_panels > 1) grDevices::n2mfrow(n_panels) else c(1, 1)
   }
 
+  land_layer <- .fetch_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim,
+                                   map_scale = map_scale)
+
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par), add = TRUE)
 
@@ -265,7 +275,8 @@ plot_datras_overview <- function(x = NULL,
                                                    panel_label = panel_label,
                                                    show_x_axis = show_x_axis,
                                                    show_y_axis = show_y_axis,
-                                                   map_scale = map_scale)
+                                                   map_scale = map_scale,
+                                                   land_layer = land_layer)
       } else {
         panel_meta[[nm]] <- .plot_grid_panel(hh = d,
                                              metric = metric,
@@ -281,7 +292,8 @@ plot_datras_overview <- function(x = NULL,
                                              map_scale = map_scale,
                                              hl = hl,
                                              palette_rev = palette_rev,
-                                             transform = transform)
+                                             transform = transform,
+                                             land_layer = land_layer)
       }
     } else {
       val <- d$.value
@@ -325,7 +337,8 @@ plot_datras_overview <- function(x = NULL,
                          panel_label = panel_label,
                          show_x_axis = show_x_axis,
                          show_y_axis = show_y_axis,
-                         map_scale = map_scale)
+                         map_scale = map_scale,
+                         land_layer = land_layer)
       panel_meta[[nm]] <- list(value_range = rng, points_value_meta = points_value_meta)
     }
   }
@@ -976,11 +989,17 @@ plot_species_composition <- function(x,
 }
 
 
-.draw_land_layer <- function(plot_map, xlim, ylim, map_scale = 50) {
+.draw_land_layer <- function(plot_map, xlim, ylim, map_scale = 50, land_layer = NULL) {
   if (!isTRUE(plot_map)) return(invisible(FALSE))
 
   col_land <- grDevices::adjustcolor(grey(0.97), 1)
   border_land <- grDevices::adjustcolor(grey(0.9), 1)
+
+  if (!is.null(land_layer) && requireNamespace("sf", quietly = TRUE)) {
+    try(plot(sf::st_geometry(land_layer), add = TRUE,
+             col = col_land, border = border_land), silent = TRUE)
+    return(invisible(TRUE))
+  }
 
   if (exists("get_land", mode = "function") && requireNamespace("sf", quietly = TRUE)) {
     land_ll <- tryCatch(get_land(download_map = FALSE, scale = map_scale),
@@ -999,6 +1018,20 @@ plot_species_composition <- function(x,
   }
 
   invisible(FALSE)
+}
+
+
+.fetch_land_layer <- function(plot_map, xlim, ylim, map_scale = 50) {
+  if (!isTRUE(plot_map)) return(NULL)
+  if (!exists("get_land", mode = "function") || !requireNamespace("sf", quietly = TRUE))
+    return(NULL)
+  land <- tryCatch(get_land(download_map = FALSE, scale = map_scale),
+                   error = function(e) NULL)
+  if (is.null(land)) return(NULL)
+  bbox <- sf::st_bbox(c(xmin = xlim[1], xmax = xlim[2],
+                        ymin = ylim[1], ymax = ylim[2]),
+                      crs = sf::st_crs(land))
+  tryCatch(sf::st_crop(land, bbox), error = function(e) land)
 }
 
 
@@ -1253,7 +1286,7 @@ plot_species_composition <- function(x,
   out
 }
 
-.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = FALSE, map_scale = 50, hl = NULL, transform = "none") {
+.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = FALSE, map_scale = 50, hl = NULL, transform = "none", land_layer = NULL) {
   agg <- .aggregate_grid(hh, metric = metric, hl = hl)
   mat <- xtabs(z ~ lon_bin + lat_bin, data = agg)
 
@@ -1306,7 +1339,8 @@ plot_species_composition <- function(x,
   }
 
   image(xvals, yvals, mat, add = TRUE, col = use_col, breaks = breaks)
-  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim, map_scale = map_scale)
+  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim, map_scale = map_scale,
+                   land_layer = land_layer)
   if (!is.null(panel_label) && nzchar(panel_label)) {
     graphics::legend("topleft", legend = panel_label, pch = NA, bg = "white",
                      x.intersp = -0.3)
@@ -1316,7 +1350,7 @@ plot_species_composition <- function(x,
 }
 
 
-.plot_grid_group_panel <- function(hh, group_cols, strategy = c("dominant", "mixed", "error"), plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50) {
+.plot_grid_group_panel <- function(hh, group_cols, strategy = c("dominant", "mixed", "error"), plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50, land_layer = NULL) {
   strategy <- match.arg(strategy)
 
   counts <- aggregate(rep(1, nrow(hh)), by = list(lon_bin = hh$lon_bin, lat_bin = hh$lat_bin, group = hh$.group), FUN = length)
@@ -1390,7 +1424,8 @@ plot_species_composition <- function(x,
     col = unname(group_cols[g_levels]),
     breaks = seq(0.5, length(g_levels) + 0.5, by = 1)
   )
-  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim, map_scale = map_scale)
+  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim, map_scale = map_scale,
+                   land_layer = land_layer)
   if (!is.null(panel_label) && nzchar(panel_label)) {
     graphics::legend("topleft", legend = panel_label, pch = NA, bg = "white",
                      x.intersp = -0.3)
@@ -1405,7 +1440,7 @@ plot_species_composition <- function(x,
   )
 }
 
-.plot_points_panel <- function(hh, x_col, y_col, col_vec, cex_vec, pch, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50) {
+.plot_points_panel <- function(hh, x_col, y_col, col_vec, cex_vec, pch, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50, land_layer = NULL) {
   plot(
     NA,
     xlim = xlim,
@@ -1418,7 +1453,8 @@ plot_species_composition <- function(x,
     yaxt = if (isTRUE(show_y_axis)) "s" else "n",
     main = main
   )
-  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim, map_scale = map_scale)
+  .draw_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim, map_scale = map_scale,
+                   land_layer = land_layer)
   points(hh[[x_col]], hh[[y_col]], pch = pch, cex = cex_vec, col = col_vec)
   if (!is.null(panel_label) && nzchar(panel_label)) {
     graphics::legend("topleft", legend = panel_label, pch = NA, bg = "white",

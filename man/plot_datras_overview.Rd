@@ -19,6 +19,7 @@ plot_datras_overview(
   multi_panels = FALSE,
   value_var = NULL,
   offset_var = NULL,
+  positive_only = FALSE,
   transform = c("none", "log1p", "sqrt", "log10"),
   fixed_scale = TRUE,
   fixed_axes = TRUE,
@@ -71,6 +72,11 @@ toggles used to define panel groups.}
 \item{value_var}{Optional haul-level variable to map to values.}
 
 \item{offset_var}{Optional haul-level denominator variable.}
+
+\item{positive_only}{Logical. If \code{TRUE}, only hauls with a strictly positive
+value (after dividing by \code{offset_var} if supplied) are plotted. Zero-catch
+hauls are dropped before grid aggregation or point rendering. Default
+\code{FALSE}.}
 
 \item{transform}{Value transform: \code{"none"}, \code{"log1p"}, \code{"sqrt"}, \code{"log10"}.}
 
