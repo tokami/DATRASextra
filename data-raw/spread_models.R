@@ -18,9 +18,9 @@ download_datras(surveys = surveys, dir = tmp, download_hl = FALSE, download_ca =
 raw <- read_datras(file.path(tmp, surveys))
 
 # only hh
-hh <- raw[['HH']] 
+hh <- raw[['HH']]
 
-# remove unwanted gears 
+# remove unwanted gears
 hh <- hh %>% filter(
   !(Survey == "NS-IBTS" &
       Gear %in% c('ABD','BOT','DHT','FOT','GRT',
@@ -51,7 +51,7 @@ hh <- hh %>%
     ds_iqr = ds_q3 - ds_q1,
     ds_low = ds_q1 - 1.5 * ds_iqr,
     ds_high = ds_q3 + 1.5 * ds_iqr,
-    
+
     ws_q1 = quantile(WingSpread, 0.25, na.rm = TRUE),
     ws_q3 = quantile(WingSpread, 0.75, na.rm = TRUE),
     ws_iqr = ws_q3 - ws_q1,
@@ -322,7 +322,7 @@ spread_models <- list(
     door_primary   = door_ns_primary,
     door_fallback1 = door_ns_fallback,
     door_fallback2 = door_ns_fallback2,
-    
+
     wing_primary   = wing_ns,
     wing_fallback1 = wing_ns_fallback
   ),
@@ -338,13 +338,13 @@ spread_models <- list(
     door_primary   = door_bits_primary,
     door_fallback1 = door_bits_fallback,
     door_fallback2 = door_bits_fallback2,
-    
+
     wing_primary   = wing_bits
   ),
   "IE-IGFS" = list(
     door_primary   = door_igfs,
     door_fallback1 = door_igfs_fallback,
-    
+
     wing_primary   = wing_igfs,
     wing_fallback1 = wing_igfs_fallback
   ),
@@ -379,3 +379,6 @@ spread_models <- list(
 )
 
 usethis::use_data(spread_models, internal = TRUE, overwrite = TRUE)
+
+## re-run script to add ices areas to sysdata.rda
+source("make_ices_area_lookup.R")
