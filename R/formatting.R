@@ -19,6 +19,13 @@
 ##' If `type = "long"`, the object is converted using [as_long_format()].
 ##' If `type = "wide"`, the object is converted using [as_wide_format()].
 ##'
+##' When `type = "long"`, columns `HaulN`, `HaulWgt`, and `SweptArea` are
+##' included automatically whenever they are present in `HH`. If `HaulN` or
+##' `HaulWgt` is a matrix (produced by passing `length_cuts` to
+##' [add_total_numbers_by_haul()] or [add_total_weight_by_haul()]), the output
+##' is expanded to one row per haul x length group and a `LengthGroup` column is
+##' added.
+##'
 ##' @return A data frame in the requested format.
 ##'
 ##' @seealso [as_long_format()], [as_wide_format()]
@@ -83,6 +90,18 @@ as_table <- function(x, type = "long", ...) {
 ##' Variables requested in `vars` that are not present in either `HH` or `HL`
 ##' are ignored and reported with a warning.
 ##'
+##' In addition to the explicitly requested `vars`, the function automatically
+##' appends `HaulN`, `HaulWgt`, and `SweptArea` to the
+##' output whenever those columns are present in `HH` (e.g., after calling
+##' [add_total_numbers_by_haul()], [add_total_weight_by_haul()], or
+##' [add_swept_area()]).
+##'
+##' If `HaulN` or `HaulWgt` is a matrix (created by passing `length_cuts` to
+##' [add_total_numbers_by_haul()] or [add_total_weight_by_haul()]), the output
+##' is automatically expanded to one row per haul × length group. A
+##' `LengthGroup` column is added that identifies the length bin, and `HaulN`
+##' / `HaulWgt` become scalar columns containing the per-bin values.
+##'
 ##' @return A data frame in long format.
 ##'
 ##' @seealso [read_datras()], [clean_datras()]
@@ -99,6 +118,12 @@ as_table <- function(x, type = "long", ...) {
 ##' ## Request variables from both HH and HL
 ##' tab <- as_long_format(x, vars = c("Survey", "Gear", "Year",
 ##'                                   "Species", "Valid_Aphia"))
+##'
+##' ## HaulN/HaulWgt/SweptArea included automatically when present
+##' x <- add_total_numbers_by_haul(x, length_cuts = c(0, 20, Inf))
+##' x <- add_total_weight_by_haul(x, length_cuts = c(0, 20, Inf))
+##' x <- add_swept_area(x)
+##' tab <- as_long_format(x)  ## one row per haul x length group; LengthGroup column added
 ##' }
 ##'
 ##' @export
@@ -149,6 +174,12 @@ as_long_format <- function(
     )
   }
 
+  ## auto-include HaulN, HaulWgt, SweptArea if present in HH
+  auto_candidates <- c("HaulN", "HaulWgt", "SweptArea")
+  auto_add <- intersect(auto_candidates, names(hh))
+  auto_add <- setdiff(auto_add, hh_vars)
+  hh_vars <- unique(c(hh_vars, auto_add))
+
   ## start from HH
   res <- hh[, unique(c("haul.id", hh_vars)), drop = FALSE]
 
@@ -187,14 +218,38 @@ as_long_format <- function(
     }
   }
 
-  ## keep output order close to requested vars
+  ## keep output order close to requested vars; auto-added columns go at end
   wanted <- c(
     if ("haul.id" %in% names(res) && !("haul.id" %in% vars_std) && !("haul_id" %in% vars_in)) "haul.id",
-    vars_in[vars_std %in% c(names(hh), names(hl))]
+    vars_in[vars_std %in% c(names(hh), names(hl))],
+    auto_add
   )
 
   wanted <- wanted[wanted %in% names(res)]
   res <- res[, unique(wanted), drop = FALSE]
+
+  ## expand matrix columns (HaulN / HaulWgt with length_cuts) to long format
+  mat_cols <- names(res)[vapply(names(res), function(nm) is.matrix(res[[nm]]), logical(1))]
+
+  if (length(mat_cols) > 0) {
+    bin_names <- colnames(res[[mat_cols[1]]])
+    n_bins <- length(bin_names)
+    n_hauls <- nrow(res)
+
+    idx <- rep(seq_len(n_hauls), each = n_bins)
+    scalar_cols <- setdiff(names(res), mat_cols)
+    res_exp <- res[idx, scalar_cols, drop = FALSE]
+    res_exp$LengthGroup <- rep(bin_names, times = n_hauls)
+
+    for (mc in mat_cols) {
+      ## as.vector(t(mat)) gives row-major order: haul1-bin1, haul1-bin2, haul2-bin1, ...
+      res_exp[[mc]] <- as.vector(t(res[[mc]]))
+    }
+
+    ## put LengthGroup just before the matrix-derived columns
+    other_cols <- setdiff(names(res_exp), c("LengthGroup", mat_cols))
+    res <- res_exp[, c(other_cols, "LengthGroup", mat_cols), drop = FALSE]
+  }
 
   rownames(res) <- NULL
   return(res)

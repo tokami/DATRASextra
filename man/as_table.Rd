@@ -28,6 +28,13 @@ This is a convenience wrapper around \code{\link[=as_long_format]{as_long_format
 
 If \code{type = "long"}, the object is converted using \code{\link[=as_long_format]{as_long_format()}}.
 If \code{type = "wide"}, the object is converted using \code{\link[=as_wide_format]{as_wide_format()}}.
+
+When \code{type = "long"}, columns \code{HaulN}, \code{HaulWgt}, and \code{SweptArea} are
+included automatically whenever they are present in \code{HH}. If \code{HaulN} or
+\code{HaulWgt} is a matrix (produced by passing \code{length_cuts} to
+\code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}} or \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}), the output
+is expanded to one row per haul x length group and a \code{LengthGroup} column is
+added.
 }
 \examples{
 \dontrun{

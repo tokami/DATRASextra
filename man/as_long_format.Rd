@@ -42,6 +42,18 @@ covariates such as year, quarter, gear, or position.
 
 Variables requested in \code{vars} that are not present in either \code{HH} or \code{HL}
 are ignored and reported with a warning.
+
+In addition to the explicitly requested \code{vars}, the function automatically
+appends \code{HaulN}, \code{HaulWgt}, and \code{SweptArea} to the
+output whenever those columns are present in \code{HH} (e.g., after calling
+\code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}}, \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}, or
+\code{\link[=add_swept_area]{add_swept_area()}}).
+
+If \code{HaulN} or \code{HaulWgt} is a matrix (created by passing \code{length_cuts} to
+\code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}} or \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}), the output
+is automatically expanded to one row per haul × length group. A
+\code{LengthGroup} column is added that identifies the length bin, and \code{HaulN}
+/ \code{HaulWgt} become scalar columns containing the per-bin values.
 }
 \examples{
 \dontrun{
@@ -55,6 +67,12 @@ tab <- as_long_format(x, vars = c("Survey", "Year", "haul.id",
 ## Request variables from both HH and HL
 tab <- as_long_format(x, vars = c("Survey", "Gear", "Year",
                                   "Species", "Valid_Aphia"))
+
+## HaulN/HaulWgt/SweptArea included automatically when present
+x <- add_total_numbers_by_haul(x, length_cuts = c(0, 20, Inf))
+x <- add_total_weight_by_haul(x, length_cuts = c(0, 20, Inf))
+x <- add_swept_area(x)
+tab <- as_long_format(x)  ## one row per haul x length group; LengthGroup column added
 }
 
 }
