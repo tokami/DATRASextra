@@ -54,7 +54,7 @@
 ##' @return Invisibly returns `NULL`.
 ##'
 ##' @importFrom DATRAS downloadExchange getDatrasExchange
-##' @importFrom icesDatras getSurveyList getSurveyYearList
+##' @importFrom icesDatras getSurveyList getSurveyYearList getSurveyYearQuarterList
 ##'
 ##' @examples
 ##' \dontrun{
@@ -97,8 +97,8 @@ download_datras <- function(surveys = NULL,
   if(is.null(dir)) dir <- dir0
 
   ## Surveys
-  if(is.null(surveys)){
-    surveys <- icesDatras::getSurveyList()
+  if (is.null(surveys)) {
+    surveys <- .get_survey_list()
   }
   surveys_with_issues <- c("NS-IDPS", "IS-IDPS",
                            "Test-DATRAS", "NS-IBTS_UNIFtest")
@@ -110,13 +110,13 @@ download_datras <- function(surveys = NULL,
   }
 
   ## Dowload data for each survey
-  for(s in seq_along(surveys)){
+  for (s in seq_along(surveys)) {
     survey <- surveys[s]
 
     print(paste0("Doing survey: ", survey))
 
     ## Create directory if doesn't exist
-    if(!dir.exists(file.path(dir, survey))) dir.create(file.path(dir, survey))
+    if (!dir.exists(file.path(dir, survey))) dir.create(file.path(dir, survey))
 
     ## Download data to directory
     setwd(file.path(dir, survey))
@@ -124,37 +124,21 @@ download_datras <- function(surveys = NULL,
     ## if (.Platform$OS.type == "windows") {
     if (!use_php) {
 
-      years <- icesDatras::getSurveyYearList(survey)
-      if (!is.null(yearsin)) {
-        years <- years[years %in% yearsin]
-      }
+      years <- .get_survey_year_list(survey, dir, yearsin)
       for (y in seq_along(years)) {
         year <- years[y]
-        quarters <- icesDatras::getSurveyYearQuarterList(survey, year)
+        zip_path <- file.path(dir, survey, paste0(survey, "_", year, ".zip"))
 
-        if (download_missing_only) {
-          if (!file.exists(file.path(dir, survey,
-                                     paste0(survey,"_",year,".zip")))) {
-            datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
-                                                    strict = TRUE,
-                                                    download.hl = download_hl,
-                                                    download.ca = download_ca)
-            datras_raw <- .add_class_datras(datras_raw)
-            datras_clean <- .remove_extra_variables(datras_raw)
-            write_exchange(datras_clean, file.path(dir, survey,
-                                                   paste0(survey,"_",year,".zip")))
-          }
-        } else {
-          datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
-                                                  strict = TRUE,
-                                                  download.hl = download_hl,
-                                                  download.ca = download_ca)
-          datras_raw <- .add_class_datras(datras_raw)
-          datras_clean <- .remove_extra_variables(datras_raw)
-          write_exchange(datras_clean,
-                         file.path(dir, survey,
-                                   paste0(survey,"_",year,".zip")))
-        }
+        if (download_missing_only && file.exists(zip_path)) next
+
+        quarters <- icesDatras::getSurveyYearQuarterList(survey, year)
+        datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
+                                                strict = TRUE,
+                                                download.hl = download_hl,
+                                                download.ca = download_ca)
+        datras_raw <- .add_class_datras(datras_raw)
+        datras_clean <- .remove_extra_variables(datras_raw)
+        write_exchange(datras_clean, zip_path)
       }
 
     } else {
@@ -162,22 +146,16 @@ download_datras <- function(surveys = NULL,
       if ((!download_hl || !download_ca) && verbose) message("Note that this functionality is not yet implemented, php always downloads HL and CA. Consider setting use_php = FALSE.")
 
       if (download_missing_only) {
-        years <- icesDatras::getSurveyYearList(survey)
-        if (!is.null(yearsin)) {
-          years <- years[years %in% yearsin]
-        }
-        for (y in 1:length(years)) {
+        years <- .get_survey_year_list(survey, dir, yearsin)
+        for (y in seq_along(years)) {
           year <- years[y]
           if (!file.exists(file.path(dir, survey,
-                                     paste0(survey,"_",year,".zip")))) {
+                                     paste0(survey, "_", year, ".zip")))) {
             tmp <- DATRAS::downloadExchange(survey, year)
           }
         }
       } else {
-        if (!is.null(yearsin)) {
-          years <- icesDatras::getSurveyYearList(survey)
-          years <- years[years %in% yearsin]
-        }
+        years <- if (!is.null(yearsin)) yearsin else icesDatras::getSurveyYearList(survey)
         tmp <- DATRAS::downloadExchange(survey, years)
       }
 
@@ -199,6 +177,44 @@ download_datras <- function(surveys = NULL,
 
 
 ## Internal functions -----------------------------------------------------
+
+
+## Attempt icesDatras::getSurveyList(); fall back to a cached list when offline.
+.get_survey_list <- function() {
+  tryCatch(
+    icesDatras::getSurveyList(),
+    error = function(e) {
+      message("No internet connection — using cached survey list.")
+      c("BITS", "BTS", "BTS-GSA17", "BTS-VIII", "Can-Mar", "CODS-Q4",
+        "DWS", "DYFS", "EVHOE", "FR-CGFS", "FR-WCGFS", "IE-IAMS",
+        "IE-IGFS", "IS-IDPS", "NIGFS", "NL-BSAS", "NS-IBTS",
+        "NS-IBTS_UNIFtest", "NS-IDPS", "NSSS", "PT-IBTS", "ROCKALL",
+        "SCOROC", "SCOWCGFS", "SE-SOUND", "SNS", "SP-ARSA", "SP-NORTH",
+        "SP-PORC", "SWC-IBTS", "Test-DATRAS")
+    }
+  )
+}
+
+
+## Attempt icesDatras::getSurveyYearList(); fall back to years inferred from
+## locally present zip files when offline.  yearsin, if non-NULL, is applied as
+## a filter in both the online and offline paths.
+.get_survey_year_list <- function(survey, dir, yearsin = NULL) {
+  years <- tryCatch(
+    icesDatras::getSurveyYearList(survey),
+    error = function(e) {
+      files <- list.files(file.path(dir, survey),
+                          pattern = paste0("^", survey, "_[0-9]{4}\\.zip$"))
+      if (length(files) == 0)
+        stop("No internet connection and no local files found for survey '",
+             survey, "' in '", file.path(dir, survey), "'.")
+      message("No internet connection — inferring years from local files for ", survey)
+      as.integer(sub(paste0("^", survey, "_([0-9]{4})\\.zip$"), "\\1", files))
+    }
+  )
+  if (!is.null(yearsin)) years <- years[years %in% yearsin]
+  years
+}
 
 
 .remove_extra_variables <- function(x) {
