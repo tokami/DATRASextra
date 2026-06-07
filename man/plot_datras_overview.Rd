@@ -17,6 +17,7 @@ plot_datras_overview(
   by_year = FALSE,
   by_daynight = FALSE,
   multi_panels = FALSE,
+  panel_layout = c("auto", "horizontal", "vertical"),
   value_var = NULL,
   offset_var = NULL,
   positive_only = FALSE,
@@ -39,7 +40,9 @@ plot_datras_overview(
   legend_pos = NULL,
   legend_cex = NULL,
   grid_group_strategy = c("dominant", "mixed", "error"),
-  main = NULL
+  main = NULL,
+  asp = "auto",
+  add = FALSE
 )
 }
 \arguments{
@@ -69,18 +72,31 @@ toggles used to define panel groups.}
 
 \item{multi_panels}{Logical. If \code{TRUE}, plot one group per panel.}
 
+\item{panel_layout}{Arrangement of panels when \code{multi_panels = TRUE}. \code{"auto"}
+(default) uses \code{\link[grDevices:n2mfrow]{grDevices::n2mfrow()}} to choose a roughly square layout;
+\code{"horizontal"} places all panels in a single row; \code{"vertical"} places them
+in a single column. For matrix-valued \code{value_var} (length-class panels
+crossed with groups), \code{"horizontal"} transposes the row/column assignment.}
+
 \item{value_var}{Optional haul-level variable to map to values.}
 
 \item{offset_var}{Optional haul-level denominator variable.}
 
 \item{positive_only}{Logical. If \code{TRUE}, only hauls with a strictly positive
-value (after dividing by \code{offset_var} if supplied) are plotted. Zero-catch
-hauls are dropped before grid aggregation or point rendering. Default
-\code{FALSE}.}
+value are plotted. When \code{value_var} is supplied, positivity is determined
+from that variable (after dividing by \code{offset_var} if supplied). When
+\code{value_var} is \code{NULL}, the function falls back to total \code{HaulN} or
+\code{HaulWgt} from \code{HH} (whichever is found first); a warning is issued if
+neither is available. Default \code{FALSE}.}
 
 \item{transform}{Value transform: \code{"none"}, \code{"log1p"}, \code{"sqrt"}, \code{"log10"}.}
 
-\item{fixed_scale}{Logical. Use common color scale across panels in grid mode.}
+\item{fixed_scale}{Logical. If \code{TRUE} (default), a common value scale is used
+across groups or panels: in grid mode the colour scale is shared across
+panels; in points mode point sizes are scaled relative to the global value
+range. If \code{FALSE}, each group (single-panel grouped mode) or each panel
+(multi-panel mode) is scaled independently, so point sizes reflect relative
+abundance within the group or panel rather than in absolute terms.}
 
 \item{fixed_axes}{Logical. Use common map extent across panels.}
 
@@ -118,6 +134,22 @@ multiple groups occur in the same cell: \code{"dominant"}, \code{"mixed"}, or
 \code{"error"}.}
 
 \item{main}{Optional title for single-panel mode.}
+
+\item{asp}{Aspect ratio passed to \code{\link[graphics:plot]{graphics::plot()}}. \code{"auto"} (default)
+uses the latitude-corrected value \code{1 / cos(mean(ylim) * pi / 180)}, which
+gives equal physical distances per degree of longitude and latitude at the
+mean latitude. Pass \code{1} for a simpler equal-degrees ratio, or \code{NULL} to
+leave the aspect ratio determined by the device dimensions (current
+behaviour of base \code{plot()}). Fixing \code{asp} prevents the map from distorting
+when figure margins or device dimensions change.}
+
+\item{add}{Logical. If \code{FALSE} (default), the function configures its own
+graphics device via \code{\link[graphics:par]{graphics::par()}} (\code{mfrow}, \code{mar}, \code{oma}) and restores
+the previous settings on exit. If \code{TRUE}, no \code{par()} changes are made: the
+plot is drawn into whatever panel or layout is already active, allowing the
+function to be embedded in figures created with \code{par(mfrow = ...)} or
+\code{\link[graphics:layout]{graphics::layout()}}. When \code{add = TRUE}, the caller is responsible for
+setting appropriate margins.}
 }
 \value{
 Invisibly returns list with processed data and plotting metadata.

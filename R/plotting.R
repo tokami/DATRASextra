@@ -25,14 +25,26 @@
 #' @param by_survey,by_gear,by_quarter,by_year,by_daynight Logical grouping
 #'   toggles used to define panel groups.
 #' @param multi_panels Logical. If `TRUE`, plot one group per panel.
+#' @param panel_layout Arrangement of panels when `multi_panels = TRUE`. `"auto"`
+#'   (default) uses [grDevices::n2mfrow()] to choose a roughly square layout;
+#'   `"horizontal"` places all panels in a single row; `"vertical"` places them
+#'   in a single column. For matrix-valued `value_var` (length-class panels
+#'   crossed with groups), `"horizontal"` transposes the row/column assignment.
 #' @param value_var Optional haul-level variable to map to values.
 #' @param offset_var Optional haul-level denominator variable.
 #' @param positive_only Logical. If `TRUE`, only hauls with a strictly positive
-#'   value (after dividing by `offset_var` if supplied) are plotted. Zero-catch
-#'   hauls are dropped before grid aggregation or point rendering. Default
-#'   `FALSE`.
+#'   value are plotted. When `value_var` is supplied, positivity is determined
+#'   from that variable (after dividing by `offset_var` if supplied). When
+#'   `value_var` is `NULL`, the function falls back to total `HaulN` or
+#'   `HaulWgt` from `HH` (whichever is found first); a warning is issued if
+#'   neither is available. Default `FALSE`.
 #' @param transform Value transform: `"none"`, `"log1p"`, `"sqrt"`, `"log10"`.
-#' @param fixed_scale Logical. Use common color scale across panels in grid mode.
+#' @param fixed_scale Logical. If `TRUE` (default), a common value scale is used
+#'   across groups or panels: in grid mode the colour scale is shared across
+#'   panels; in points mode point sizes are scaled relative to the global value
+#'   range. If `FALSE`, each group (single-panel grouped mode) or each panel
+#'   (multi-panel mode) is scaled independently, so point sizes reflect relative
+#'   abundance within the group or panel rather than in absolute terms.
 #' @param fixed_axes Logical. Use common map extent across panels.
 #' @param plot_map Logical. Add land map layer.
 #' @param xlim,ylim Optional map limits.
@@ -53,6 +65,20 @@
 #'   multiple groups occur in the same cell: `"dominant"`, `"mixed"`, or
 #'   `"error"`.
 #' @param main Optional title for single-panel mode.
+#' @param asp Aspect ratio passed to [graphics::plot()]. `"auto"` (default)
+#'   uses the latitude-corrected value `1 / cos(mean(ylim) * pi / 180)`, which
+#'   gives equal physical distances per degree of longitude and latitude at the
+#'   mean latitude. Pass `1` for a simpler equal-degrees ratio, or `NULL` to
+#'   leave the aspect ratio determined by the device dimensions (current
+#'   behaviour of base `plot()`). Fixing `asp` prevents the map from distorting
+#'   when figure margins or device dimensions change.
+#' @param add Logical. If `FALSE` (default), the function configures its own
+#'   graphics device via [graphics::par()] (`mfrow`, `mar`, `oma`) and restores
+#'   the previous settings on exit. If `TRUE`, no `par()` changes are made: the
+#'   plot is drawn into whatever panel or layout is already active, allowing the
+#'   function to be embedded in figures created with `par(mfrow = ...)` or
+#'   [graphics::layout()]. When `add = TRUE`, the caller is responsible for
+#'   setting appropriate margins.
 #'
 #' @return Invisibly returns list with processed data and plotting metadata.
 #' @export
@@ -67,6 +93,7 @@ plot_datras_overview <- function(x = NULL,
                                  by_year = FALSE,
                                  by_daynight = FALSE,
                                  multi_panels = FALSE,
+                                 panel_layout = c("auto", "horizontal", "vertical"),
                                  value_var = NULL,
                                  offset_var = NULL,
                                  positive_only = FALSE,
@@ -89,15 +116,22 @@ plot_datras_overview <- function(x = NULL,
                                  legend_pos = NULL,
                                  legend_cex = NULL,
                                  grid_group_strategy = c("dominant", "mixed", "error"),
-                                 main = NULL) {
+                                 main = NULL,
+                                 asp = "auto",
+                                 add = FALSE) {
   mode <- match.arg(mode)
   metric <- match.arg(metric)
   spatial_basis <- match.arg(spatial_basis)
   transform <- match.arg(transform)
   legend_mode <- match.arg(legend_mode)
+  panel_layout <- match.arg(panel_layout)
   grid_group_strategy <- match.arg(grid_group_strategy)
   if (!is.numeric(grid_resolution) || length(grid_resolution) != 2 || any(grid_resolution <= 0))
     stop("`grid_resolution` must be a positive numeric vector of length 2.", call. = FALSE)
+  if (identical(mode, "points") && metric %in% c("count_hauls", "count_surveys"))
+    message("`metric = '", metric, "'` counts observations per grid cell and has no ",
+            "per-point meaning in points mode (every haul contributes a count of 1). ",
+            "Use `mode = 'grid'` to visualise ", metric, " spatially.")
 
   hh <- .as_hh_data(x)
   map_scale <- if (is.null(x)) 110L else 50L
@@ -143,8 +177,27 @@ plot_datras_overview <- function(x = NULL,
   }
 
   hh$.value <- .compute_value(hh, value_var = value_var, offset_var = offset_var, transform = transform)
-  if (isTRUE(positive_only))
-    hh <- hh[!is.na(hh$.value) & hh$.value > 0, , drop = FALSE]
+  if (isTRUE(positive_only)) {
+    if (!is.null(value_var)) {
+      hh <- hh[!is.na(hh$.value) & hh$.value > 0, , drop = FALSE]
+    } else {
+      ## Without value_var, .value is all-1s and the filter would keep everything.
+      ## Use HaulN or HaulWgt totals if available (as.data.frame expands matrix
+      ## columns so we match both "HaulN" and "HaulN.(0-20]" style names).
+      hn_cols <- grep("^HaulN$|^HaulN\\.", names(hh), value = TRUE, perl = TRUE)
+      hw_cols <- grep("^HaulWgt$|^HaulWgt\\.", names(hh), value = TRUE, perl = TRUE)
+      if (length(hn_cols) > 0) {
+        haul_total <- rowSums(hh[, hn_cols, drop = FALSE], na.rm = TRUE)
+        hh <- hh[!is.na(haul_total) & haul_total > 0, , drop = FALSE]
+      } else if (length(hw_cols) > 0) {
+        haul_total <- rowSums(hh[, hw_cols, drop = FALSE], na.rm = TRUE)
+        hh <- hh[!is.na(haul_total) & haul_total > 0, , drop = FALSE]
+      } else {
+        warning("`positive_only = TRUE` has no effect: specify `value_var` or add HaulN/HaulWgt to HH first.",
+                call. = FALSE)
+      }
+    }
+  }
   hh$.group <- .build_group(hh, by_survey, by_gear, by_quarter, by_year, by_daynight)
   has_grouping <- any(c(by_survey, by_gear, by_quarter, by_year, by_daynight))
   active_dims <- .group_dims_active(by_survey, by_gear, by_quarter, by_year, by_daynight)
@@ -170,6 +223,11 @@ plot_datras_overview <- function(x = NULL,
   if (is.null(xlim)) xlim <- grid_info$xlim
   if (is.null(ylim)) ylim <- grid_info$ylim
 
+  if (identical(asp, "auto")) {
+    asp <- 1 / cos(mean(ylim) * pi / 180)
+  }
+
+  user_col <- col  ## remember whether the user supplied a colour before auto-fill
   if (is.null(col)) {
     if (metric %in% c("sum", "mean")) {
       col <- .colours_datrasextra_continuous(12, rev = palette_rev)
@@ -182,7 +240,14 @@ plot_datras_overview <- function(x = NULL,
     multi_panels <- TRUE
     other_levels <- levels(hh$.group)
     n_lc <- length(value_col_names)
-    ordered_panel_levels <- c(sapply(other_levels, function(g) paste0(g, ":::", value_col_names)))
+    n_grp <- length(other_levels)
+    # "horizontal" with multiple groups: LCs vary across rows, groups across columns
+    lc_horiz <- identical(panel_layout, "horizontal") && n_grp > 1L
+    if (lc_horiz) {
+      ordered_panel_levels <- c(sapply(value_col_names, function(lc) paste0(other_levels, ":::", lc)))
+    } else {
+      ordered_panel_levels <- c(sapply(other_levels, function(g) paste0(g, ":::", value_col_names)))
+    }
     hh$.panel_group <- factor(
       paste0(as.character(hh$.group), ":::", as.character(hh$.lc_group)),
       levels = ordered_panel_levels)
@@ -195,8 +260,13 @@ plot_datras_overview <- function(x = NULL,
         paste(sapply(strsplit(parts, "="), function(x) paste(x[-1], collapse = "=")), collapse = " | ")
       })
     }
-    names(split_list) <- c(sapply(clean_other, function(g)
-      if (nzchar(g)) paste0(g, ": ", value_col_names) else value_col_names))
+    if (lc_horiz) {
+      names(split_list) <- c(sapply(value_col_names, function(lc)
+        sapply(clean_other, function(g) if (nzchar(g)) paste0(g, ": ", lc) else lc)))
+    } else {
+      names(split_list) <- c(sapply(clean_other, function(g)
+        if (nzchar(g)) paste0(g, ": ", value_col_names) else value_col_names))
+    }
   } else if (isTRUE(multi_panels)) {
     split_list <- split(hh, hh$.group, drop = TRUE)
     if (length(split_list) > 1) {
@@ -223,25 +293,32 @@ plot_datras_overview <- function(x = NULL,
   }
 
   global_points_value_range <- NULL
-  if (!identical(mode, "grid") && isTRUE(multi_panels) && !is.null(value_var)) {
+  if (!identical(mode, "grid") && isTRUE(multi_panels) && !is.null(value_var) && isTRUE(fixed_scale)) {
     gv <- hh$.value[is.finite(hh$.value)]
     if (length(gv) >= 2 && diff(range(gv)) > 0) global_points_value_range <- range(gv)
   }
 
   n_panels <- length(split_list)
   if (lc_multi_panels) {
-    mf <- c(length(levels(hh$.group)), length(value_col_names))
+    mf <- if (lc_horiz) c(n_lc, n_grp) else c(n_grp, n_lc)
+  } else if (n_panels > 1) {
+    mf <- switch(panel_layout,
+      horizontal = c(1L, n_panels),
+      vertical   = c(n_panels, 1L),
+      grDevices::n2mfrow(n_panels)
+    )
   } else {
-    mf <- if (n_panels > 1) grDevices::n2mfrow(n_panels) else c(1, 1)
+    mf <- c(1L, 1L)
   }
 
   land_layer <- .fetch_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim,
                                    map_scale = map_scale)
 
-  old_par <- par(no.readonly = TRUE)
-  on.exit(par(old_par), add = TRUE)
-
-  par(mfrow = mf, mar = c(0.3, 0.3, 0.3, 0.3), oma = c(4.2, 4.2, 0.4, 1))
+  if (!isTRUE(add)) {
+    old_par <- par(no.readonly = TRUE)
+    on.exit(par(old_par), add = TRUE)
+    par(mfrow = mf, mar = c(0.3, 0.3, 0.3, 0.3), oma = c(4.2, 4.2, 0.4, 1))
+  }
 
   panel_meta <- vector("list", length(split_list))
   names(panel_meta) <- names(split_list)
@@ -271,6 +348,7 @@ plot_datras_overview <- function(x = NULL,
                                                    plot_map = plot_map,
                                                    xlim = lim$x,
                                                    ylim = lim$y,
+                                                   asp = asp,
                                                    main = panel_title,
                                                    panel_label = panel_label,
                                                    show_x_axis = show_x_axis,
@@ -285,6 +363,7 @@ plot_datras_overview <- function(x = NULL,
                                              plot_map = plot_map,
                                              xlim = lim$x,
                                              ylim = lim$y,
+                                             asp = asp,
                                              main = panel_title,
                                              panel_label = panel_label,
                                              show_x_axis = show_x_axis,
@@ -299,20 +378,8 @@ plot_datras_overview <- function(x = NULL,
       val <- d$.value
       rng <- range(val, na.rm = TRUE)
       points_value_meta <- NULL
-      if (has_grouping && !isTRUE(multi_panels)) {
-        pcol <- grDevices::adjustcolor(group_cols[as.character(d$.group)], alpha.f = alpha)
-        if (!is.null(value_var) && !identical(metric, "presence") && is.finite(rng[1]) && is.finite(rng[2]) && rng[1] != rng[2]) {
-          scaled <- (val - rng[1]) / (rng[2] - rng[1])
-          pcex <- size_range[1] + scaled * (size_range[2] - size_range[1])
-          pcex[!is.finite(pcex)] <- cex
-          points_value_meta <- list(size_range = size_range)
-        } else {
-          pcex <- cex
-        }
-      } else if (identical(metric, "presence") || !is.finite(rng[1]) || !is.finite(rng[2]) || rng[1] == rng[2]) {
-        pcol <- grDevices::adjustcolor(.colours_datrasextra_continuous(10, rev = palette_rev)[1], alpha.f = alpha)
-        pcex <- cex
-      } else {
+      if (!is.null(value_var) && !identical(metric, "presence") &&
+          is.finite(rng[1]) && is.finite(rng[2]) && rng[1] != rng[2]) {
         scale_rng <- if (!is.null(global_points_value_range)) global_points_value_range else rng
         brk <- seq(scale_rng[1], scale_rng[2], length.out = length(col) + 1)
         idx <- cut(val, breaks = brk, include.lowest = TRUE, labels = FALSE)
@@ -322,6 +389,13 @@ plot_datras_overview <- function(x = NULL,
         pcex <- size_range[1] + scaled * (size_range[2] - size_range[1])
         pcex[!is.finite(pcex)] <- cex
         points_value_meta <- list(col = col, size_range = size_range, scale_rng = scale_rng)
+      } else if (has_grouping) {
+        pcol <- grDevices::adjustcolor(group_cols[as.character(d$.group)], alpha.f = alpha)
+        pcex <- cex
+      } else {
+        pt_col <- if (!is.null(user_col)) col[1] else .colours_datrasextra_continuous(10, rev = palette_rev)[1]
+        pcol <- grDevices::adjustcolor(pt_col, alpha.f = alpha)
+        pcex <- cex
       }
 
       .plot_points_panel(hh = d,
@@ -333,6 +407,7 @@ plot_datras_overview <- function(x = NULL,
                          plot_map = plot_map,
                          xlim = lim$x,
                          ylim = lim$y,
+                         asp = asp,
                          main = panel_title,
                          panel_label = panel_label,
                          show_x_axis = show_x_axis,
@@ -392,9 +467,9 @@ plot_datras_overview <- function(x = NULL,
     } else {
       show_points_legend <- switch(
         legend_mode,
-        auto = (!isTRUE(multi_panels) && any(c(by_survey, by_gear, by_quarter, by_year, by_daynight))),
-        global = (any(c(by_survey, by_gear, by_quarter, by_year, by_daynight)) &&
-                    !(isTRUE(multi_panels) && !is.null(value_var))),
+        auto = (!isTRUE(multi_panels) && any(c(by_survey, by_gear, by_quarter, by_year, by_daynight)) &&
+                  is.null(value_var)),
+        global = (any(c(by_survey, by_gear, by_quarter, by_year, by_daynight)) && is.null(value_var)),
         per_panel = FALSE,
         FALSE
       )
@@ -415,14 +490,11 @@ plot_datras_overview <- function(x = NULL,
           ref_cex <- meta$size_range[1] + ref_scaled * (meta$size_range[2] - meta$size_range[1])
           ref_labels <- format(signif(.back_transform(ref_vals, transform), 3), trim = TRUE)
           leg_title <- if (!is.null(offset_var)) paste0(value_var, " / ", offset_var) else value_var
-          if (!has_grouping || isTRUE(multi_panels)) {
+          if (!is.null(meta$col)) {
             ref_idx <- pmax(1L, pmin(length(meta$col), round(1 + ref_scaled * (length(meta$col) - 1))))
             ref_cols <- grDevices::adjustcolor(meta$col[ref_idx], alpha.f = alpha)
             leg_payload <- list(legend = ref_labels, col = ref_cols, title = leg_title, cex = 0.7,
                                 pt.cex = ref_cex, pch = pch)
-          } else {
-            size_leg_payload <- list(legend = ref_labels, col = rep("grey30", n_ref),
-                                     title = leg_title, cex = 0.7, pt.cex = ref_cex, pch = pch)
           }
         }
       }
@@ -1286,7 +1358,7 @@ plot_species_composition <- function(x,
   out
 }
 
-.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = FALSE, map_scale = 50, hl = NULL, transform = "none", land_layer = NULL) {
+.plot_grid_panel <- function(hh, metric, col, zlim, plot_map, xlim, ylim, asp = NULL, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, palette_rev = FALSE, map_scale = 50, hl = NULL, transform = "none", land_layer = NULL) {
   agg <- .aggregate_grid(hh, metric = metric, hl = hl)
   mat <- xtabs(z ~ lon_bin + lat_bin, data = agg)
 
@@ -1302,9 +1374,9 @@ plot_species_composition <- function(x,
     NA,
     xlim = xlim,
     ylim = ylim,
+    asp = asp,
     xlab = "",
     ylab = "",
-    asp = 1,
     las = 1,
     xaxt = if (isTRUE(show_x_axis)) "s" else "n",
     yaxt = if (isTRUE(show_y_axis)) "s" else "n",
@@ -1350,7 +1422,7 @@ plot_species_composition <- function(x,
 }
 
 
-.plot_grid_group_panel <- function(hh, group_cols, strategy = c("dominant", "mixed", "error"), plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50, land_layer = NULL) {
+.plot_grid_group_panel <- function(hh, group_cols, strategy = c("dominant", "mixed", "error"), plot_map, xlim, ylim, asp = NULL, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50, land_layer = NULL) {
   strategy <- match.arg(strategy)
 
   counts <- aggregate(rep(1, nrow(hh)), by = list(lon_bin = hh$lon_bin, lat_bin = hh$lat_bin, group = hh$.group), FUN = length)
@@ -1408,9 +1480,9 @@ plot_species_composition <- function(x,
     NA,
     xlim = xlim,
     ylim = ylim,
+    asp = asp,
     xlab = "",
     ylab = "",
-    asp = 1,
     las = 1,
     xaxt = if (isTRUE(show_x_axis)) "s" else "n",
     yaxt = if (isTRUE(show_y_axis)) "s" else "n",
@@ -1440,14 +1512,14 @@ plot_species_composition <- function(x,
   )
 }
 
-.plot_points_panel <- function(hh, x_col, y_col, col_vec, cex_vec, pch, plot_map, xlim, ylim, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50, land_layer = NULL) {
+.plot_points_panel <- function(hh, x_col, y_col, col_vec, cex_vec, pch, plot_map, xlim, ylim, asp = NULL, main = NULL, panel_label = NULL, show_x_axis = TRUE, show_y_axis = TRUE, map_scale = 50, land_layer = NULL) {
   plot(
     NA,
     xlim = xlim,
     ylim = ylim,
+    asp = asp,
     xlab = "",
     ylab = "",
-    asp = 1,
     las = 1,
     xaxt = if (isTRUE(show_x_axis)) "s" else "n",
     yaxt = if (isTRUE(show_y_axis)) "s" else "n",
