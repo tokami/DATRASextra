@@ -9,7 +9,8 @@ add_swept_area_simple(
   min_speed = 1,
   min_dist = 0,
   max_dist_dev = 0.2,
-  impute_missing = FALSE
+  impute_missing = FALSE,
+  width = "WingSpread"
 )
 }
 \arguments{
@@ -27,13 +28,18 @@ Distances with larger deviations are treated as missing. Defaults to \code{0.2}.
 
 \item{impute_missing}{Logical. Currently included for compatibility, but not
 used explicitly in the present implementation.}
+
+\item{width}{Character string specifying which spread column to use as trawl
+width. Must be either \code{"WingSpread"} (default) or \code{"DoorSpread"}. Use
+\code{"DoorSpread"} for surveys that record door spread but not wing spread.
+Note that the fixed beam-trawl widths and the gear-specific plausibility
+bounds are only applied when \code{width = "WingSpread"}.}
 }
 \value{
 A \code{datras_raw} object with two additional swept-area fields:
 \itemize{
-\item \code{SweptArea}: swept area based on haul-specific \code{WingSpread},
-\item \code{SweptArea.median}: swept area based on gear-specific median wing
-spread.
+\item \code{SweptArea}: swept area based on haul-specific spread,
+\item \code{SweptArea.median}: swept area based on gear-specific median spread.
 }
 }
 \description{
@@ -48,25 +54,26 @@ from \code{HaulDur} and \code{GroundSpeed}, and returns two swept-area estimates
 
 Swept area is calculated in \eqn{m^2} as:
 \deqn{
-  SweptArea = WingSpread \times Distance
+  SweptArea = Spread \times Distance
 }
+where \eqn{Spread} is taken from the column selected by \code{width}.
 
 A second estimate, \code{SweptArea.median}, is also returned. This uses a
-gear-specific median wing spread rather than the haul-specific recorded or
-imputed wing spread:
+gear-specific median spread rather than the haul-specific recorded or
+imputed spread:
 \deqn{
-  SweptArea.median = WingSpread.median \times Distance
+  SweptArea.median = Spread.median \times Distance
 }
 
 The function applies the following steps:
 \itemize{
-\item removes implausible values of \code{GroundSpeed}, \code{Distance}, and
-\code{WingSpread},
+\item removes implausible values of \code{GroundSpeed}, \code{Distance}, and the
+selected spread column,
 \item removes distance values that differ too much from reconstructed
 distance based on speed and haul duration,
-\item imputes missing wing spread using gear-specific medians,
-\item applies fixed widths for selected beam trawl gear codes,
-\item accounts for double-beam trawls via \code{GearEx == "DB"},
+\item when \code{width = "WingSpread"}: applies fixed widths for selected beam
+trawl gear codes and accounts for double-beam trawls via \code{GearEx == "DB"},
+\item imputes missing spread values using gear-specific medians,
 \item imputes missing ground speed using gear-specific medians,
 \item reconstructs missing towing distance from haul duration and ground
 speed.

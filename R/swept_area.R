@@ -26,6 +26,9 @@
 ##'   `method = "simple"`. Defaults to `0.2`.
 ##' @param impute_missing Logical. Passed to [add_swept_area_simple()]. Only used
 ##'   when `method = "simple"`. Defaults to `FALSE`.
+##' @param width Character string specifying which spread column to use as trawl
+##'   width. Must be either `"WingSpread"` (default) or `"DoorSpread"`. Only
+##'   used when `method = "simple"`; ignored for `method = "fishglob"`.
 ##'
 ##' @details
 ##' If `method = "simple"`, swept area is calculated using
@@ -60,7 +63,8 @@ add_swept_area <- function(x,
                            min_speed = 1,
                            min_dist = 0,
                            max_dist_dev = 0.2,
-                           impute_missing = FALSE) {
+                           impute_missing = FALSE,
+                           width = "WingSpread") {
 
   .check_class_datras(x)
 
@@ -70,10 +74,13 @@ add_swept_area <- function(x,
                                min_speed = min_speed,
                                min_dist = min_dist,
                                max_dist_dev = max_dist_dev,
-                               impute_missing = impute_missing)
+                               impute_missing = impute_missing,
+                               width = width)
 
   } else if (method == "fishglob") {
 
+    if (!missing(width) && width != "WingSpread")
+      message("The 'width' argument is ignored when method = \"fishglob\".")
     x <- add_swept_area_fishglob(x)
 
   } else stop("Unknown method. Use 'simple' or 'fishglob'.")
@@ -104,29 +111,35 @@ add_swept_area <- function(x,
 ##'   Distances with larger deviations are treated as missing. Defaults to `0.2`.
 ##' @param impute_missing Logical. Currently included for compatibility, but not
 ##'   used explicitly in the present implementation.
+##' @param width Character string specifying which spread column to use as trawl
+##'   width. Must be either `"WingSpread"` (default) or `"DoorSpread"`. Use
+##'   `"DoorSpread"` for surveys that record door spread but not wing spread.
+##'   Note that the fixed beam-trawl widths and the gear-specific plausibility
+##'   bounds are only applied when `width = "WingSpread"`.
 ##'
 ##' @details
 ##' Swept area is calculated in \eqn{m^2} as:
 ##' \deqn{
-##'   SweptArea = WingSpread \times Distance
+##'   SweptArea = Spread \times Distance
 ##' }
+##' where \eqn{Spread} is taken from the column selected by `width`.
 ##'
 ##' A second estimate, `SweptArea.median`, is also returned. This uses a
-##' gear-specific median wing spread rather than the haul-specific recorded or
-##' imputed wing spread:
+##' gear-specific median spread rather than the haul-specific recorded or
+##' imputed spread:
 ##' \deqn{
-##'   SweptArea.median = WingSpread.median \times Distance
+##'   SweptArea.median = Spread.median \times Distance
 ##' }
 ##'
 ##' The function applies the following steps:
 ##' \itemize{
-##'   \item removes implausible values of `GroundSpeed`, `Distance`, and
-##'   `WingSpread`,
+##'   \item removes implausible values of `GroundSpeed`, `Distance`, and the
+##'   selected spread column,
 ##'   \item removes distance values that differ too much from reconstructed
 ##'   distance based on speed and haul duration,
-##'   \item imputes missing wing spread using gear-specific medians,
-##'   \item applies fixed widths for selected beam trawl gear codes,
-##'   \item accounts for double-beam trawls via `GearEx == "DB"`,
+##'   \item when `width = "WingSpread"`: applies fixed widths for selected beam
+##'   trawl gear codes and accounts for double-beam trawls via `GearEx == "DB"`,
+##'   \item imputes missing spread values using gear-specific medians,
 ##'   \item imputes missing ground speed using gear-specific medians,
 ##'   \item reconstructs missing towing distance from haul duration and ground
 ##'   speed.
@@ -134,9 +147,8 @@ add_swept_area <- function(x,
 ##'
 ##' @return A `datras_raw` object with two additional swept-area fields:
 ##' \itemize{
-##'   \item `SweptArea`: swept area based on haul-specific `WingSpread`,
-##'   \item `SweptArea.median`: swept area based on gear-specific median wing
-##'   spread.
+##'   \item `SweptArea`: swept area based on haul-specific spread,
+##'   \item `SweptArea.median`: swept area based on gear-specific median spread.
 ##' }
 ##'
 ##' @seealso [add_swept_area_fishglob()]
@@ -154,58 +166,72 @@ add_swept_area_simple <- function(x,
                                   min_speed = 1,
                                   min_dist = 0,
                                   max_dist_dev = 0.2,
-                                  impute_missing = FALSE) {
+                                  impute_missing = FALSE,
+                                  width = "WingSpread") {
 
   .check_class_datras(x)
 
+  width <- match.arg(width, c("WingSpread", "DoorSpread"))
+
+  if (!width %in% names(x[["HH"]]))
+    stop("Column '", width, "' not found in x[['HH']]. ",
+         "Check names(x[['HH']]) to see available columns.")
+
   x$GroundSpeed[ x$GroundSpeed < min_speed ] <- NA
   x$Distance[ x$Distance < min_dist ] <- NA
-  x$WingSpread[ x$WingSpread <= 0 ] <- NA
-  x$WingSpread[ x$Gear == "GOV" & ( x$WingSpread < 5 | x$WingSpread > 40 ) ] <- NA
+  x[["HH"]][[width]][ x[["HH"]][[width]] <= 0 ] <- NA
+
+  if (width == "WingSpread") {
+    x$WingSpread[ x$Gear == "GOV" & ( x$WingSpread < 5 | x$WingSpread > 40 ) ] <- NA
+  }
 
   ## Remove some distance outliers
   Distance2 <- (x$HaulDur / 60 * 1852 * x$GroundSpeed)
   badDist <- abs((x$Distance - Distance2)/x$Distance) > max_dist_dev
   x$Distance[ badDist ] <- NA
 
-  ## Beam trawl "wing spreads"
-  x$WingSpread[x$Gear == "BT12"]   <- 12
-  x$WingSpread[x$Gear == "BT8"]    <- 8
-  x$WingSpread[x$Gear == "BT4A"]   <- 4
-  x$WingSpread[x$Gear == "BT7"]    <- 7
-  x$WingSpread[x$Gear == "BT4AI"]  <- 4
-  x$WingSpread[x$Gear == "BT4S"]   <- 4
-  x$WingSpread[x$Gear == "BT4P"]   <- 4
-  x$WingSpread[x$Gear == "BT6"]    <- 6
-  x$WingSpread[x$Gear == "BT3"]    <- 3
+  if (width == "WingSpread") {
+    ## Beam trawl "wing spreads"
+    x$WingSpread[x$Gear == "BT12"]   <- 12
+    x$WingSpread[x$Gear == "BT8"]    <- 8
+    x$WingSpread[x$Gear == "BT4A"]   <- 4
+    x$WingSpread[x$Gear == "BT7"]    <- 7
+    x$WingSpread[x$Gear == "BT4AI"]  <- 4
+    x$WingSpread[x$Gear == "BT4S"]   <- 4
+    x$WingSpread[x$Gear == "BT4P"]   <- 4
+    x$WingSpread[x$Gear == "BT6"]    <- 6
+    x$WingSpread[x$Gear == "BT3"]    <- 3
 
-  ## For Beam trawls, GearEx == "DB" means double beam, i.e. catches from two beam trawls added.
-  x$BeamWidth[ !is.na(x$GearEx) & x$GearEx=="DB" ] <- x$BeamWidth[ !is.na(x$GearEx) & x$GearEx=="DB" ]*2
-
-  ## Impute missing wing spreads (median within gear)
-  x2 <- x[["HH"]]
-  if (sum(!is.na(x2$WingSpread)) > 0) {
-    wtab <- aggregate(WingSpread ~ Gear, data=x2, FUN=median, na.rm=TRUE)
-    for(i in 1:nrow(wtab)){
-      sel <- which(x$Gear==wtab$Gear[i] & is.na(x$WingSpread))
-      x$WingSpread[ sel ] <- wtab$WingSpread[i]
-    }
-    x$WingSpread2 <- NULL
-  } else {
-    stop("All wing spread are NA. Cannot calculated swept area, please check x[['HH']]$WingSpread.")
+    ## For Beam trawls, GearEx == "DB" means double beam, i.e. catches from two beam trawls added.
+    x$BeamWidth[ !is.na(x$GearEx) & x$GearEx=="DB" ] <- x$BeamWidth[ !is.na(x$GearEx) & x$GearEx=="DB" ]*2
   }
 
-  ## There are probably errors in recorded in wing spread and unclear how CPUE correlates with wing spread.
-  ## It might therefore be a more robust assumption to use a fixed (median) Wingspread for each gear type.
-  x$WingSpread.median <- x$WingSpread
-  for(i in 1:nrow(wtab)){
-    sel <- which(x$Gear==wtab$Gear[i])
-    x$WingSpread.median[ sel ] <- wtab$WingSpread[i]
+  ## Impute missing spread values (median within gear)
+  x2 <- x[["HH"]]
+  if (sum(!is.na(x2[[width]])) > 0) {
+    wtab <- aggregate(x2[[width]], list(Gear = x2$Gear), FUN = median, na.rm = TRUE)
+    names(wtab)[2] <- width
+    for (i in 1:nrow(wtab)) {
+      sel <- which(x$Gear == wtab$Gear[i] & is.na(x[["HH"]][[width]]))
+      x[["HH"]][[width]][ sel ] <- wtab[[width]][i]
+    }
+    if (width == "WingSpread") x$WingSpread2 <- NULL
+  } else {
+    stop("All ", width, " values are NA. Cannot calculate swept area, ",
+         "please check x[['HH']]$", width, ".")
+  }
+
+  ## Gear-level median spread (more robust against recording errors)
+  spread_med <- paste0(width, ".median")
+  x[["HH"]][[spread_med]] <- x[["HH"]][[width]]
+  for (i in 1:nrow(wtab)) {
+    sel <- which(x$Gear == wtab$Gear[i])
+    x[["HH"]][[spread_med]][ sel ] <- wtab[[width]][i]
   }
 
   ## Impute missing ground speeds
   x2 <- x[["HH"]]
-  stab <- aggregate(GroundSpeed~Gear,data=x2,FUN=median,na.rm=TRUE) ## TODO Gear + Survey?
+  stab <- aggregate(GroundSpeed~Gear,data=x2,FUN=median,na.rm=TRUE)
   for(i in 1:nrow(stab)){
     if(!is.na(stab$GroundSpeed[i])){
       x$GroundSpeed[ is.na(x$GroundSpeed) & x$Gear==stab$Gear[i]  ] <- stab$GroundSpeed[i]
@@ -220,8 +246,8 @@ add_swept_area_simple <- function(x,
   noDist <- which( is.na(x$Distance) )
   x$Distance[ noDist ] <- (x$HaulDur[noDist] / 60 * 1852 * x$GroundSpeed[noDist])
 
-  x$SweptArea <- x$WingSpread * x$Distance
-  x$SweptArea.median <- x$WingSpread.median * x$Distance
+  x$SweptArea <- x[["HH"]][[width]] * x$Distance
+  x$SweptArea.median <- x[["HH"]][[spread_med]] * x$Distance
 
   return(x)
 }

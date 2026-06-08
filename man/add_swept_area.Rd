@@ -10,7 +10,8 @@ add_swept_area(
   min_speed = 1,
   min_dist = 0,
   max_dist_dev = 0.2,
-  impute_missing = FALSE
+  impute_missing = FALSE,
+  width = "WingSpread"
 )
 }
 \arguments{
@@ -34,6 +35,10 @@ Distances with larger deviations are treated as missing. Only used when
 
 \item{impute_missing}{Logical. Passed to \code{\link[=add_swept_area_simple]{add_swept_area_simple()}}. Only used
 when \code{method = "simple"}. Defaults to \code{FALSE}.}
+
+\item{width}{Character string specifying which spread column to use as trawl
+width. Must be either \code{"WingSpread"} (default) or \code{"DoorSpread"}. Only
+used when \code{method = "simple"}; ignored for \code{method = "fishglob"}.}
 }
 \value{
 A \code{datras_raw} object with swept-area estimates added.
