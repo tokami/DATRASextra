@@ -94,7 +94,11 @@ download_datras <- function(surveys = NULL,
   dir0 <- getwd()
   on.exit(setwd(dir0), add = TRUE)
 
-  if(is.null(dir)) dir <- dir0
+  if (is.null(dir)) dir <- dir0
+
+  ## Resolve dir to an absolute path now, before any setwd() calls change
+  ## the working directory and make relative paths ambiguous.
+  dir <- normalizePath(path.expand(dir), mustWork = FALSE)
 
   ## Surveys
   if (is.null(surveys)) {
@@ -109,16 +113,27 @@ download_datras <- function(surveys = NULL,
     surveys <- surveys[-ind]
   }
 
-  ## Dowload data for each survey
+  ## Pre-flight: verify all target directories are writable before downloading
+  for (survey in surveys) {
+    survey_dir <- file.path(dir, survey)
+    if (!dir.exists(survey_dir)) {
+      ok <- dir.create(survey_dir, recursive = TRUE, showWarnings = FALSE)
+      if (!ok) stop("Cannot create output directory: ", survey_dir,
+                    "\nPlease check that the path exists and is writable.")
+    } else {
+      test_path <- file.path(survey_dir, ".write_test")
+      ok <- tryCatch({writeLines("", test_path); TRUE}, error = function(e) FALSE)
+      if (ok) unlink(test_path) else
+        stop("Output directory is not writable: ", survey_dir)
+    }
+  }
+
+  ## Download data for each survey
   for (s in seq_along(surveys)) {
     survey <- surveys[s]
 
     print(paste0("Doing survey: ", survey))
 
-    ## Create directory if doesn't exist
-    if (!dir.exists(file.path(dir, survey))) dir.create(file.path(dir, survey))
-
-    ## Download data to directory
     setwd(file.path(dir, survey))
 
     ## if (.Platform$OS.type == "windows") {
@@ -184,7 +199,7 @@ download_datras <- function(surveys = NULL,
   tryCatch(
     icesDatras::getSurveyList(),
     error = function(e) {
-      message("No internet connection — using cached survey list.")
+      message("No internet connection - using cached survey list.")
       c("BITS", "BTS", "BTS-GSA17", "BTS-VIII", "Can-Mar", "CODS-Q4",
         "DWS", "DYFS", "EVHOE", "FR-CGFS", "FR-WCGFS", "IE-IAMS",
         "IE-IGFS", "IS-IDPS", "NIGFS", "NL-BSAS", "NS-IBTS",
@@ -208,7 +223,7 @@ download_datras <- function(surveys = NULL,
       if (length(files) == 0)
         stop("No internet connection and no local files found for survey '",
              survey, "' in '", file.path(dir, survey), "'.")
-      message("No internet connection — inferring years from local files for ", survey)
+      message("No internet connection - inferring years from local files for ", survey)
       as.integer(sub(paste0("^", survey, "_([0-9]{4})\\.zip$"), "\\1", files))
     }
   )
