@@ -2,6 +2,7 @@
 
 S3method("$",datras_raw)
 S3method("$<-",datras_raw)
+S3method(c,datras_raw)
 S3method(print,datras_raw)
 S3method(summary,datras_raw)
 export(add_ices_areas)

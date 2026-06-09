@@ -591,6 +591,14 @@ summary.datras_raw <- function(object, ...) {
 ## dispatch before the broken DATRASraw method is reached.
 
 ##' @export
+##' @method c datras_raw
+c.datras_raw <- function(...) {
+  ans <- getFromNamespace("c.DATRASraw", "DATRAS")(...)
+  .add_class_datras(ans)
+}
+
+
+##' @export
 "$.datras_raw" <- function(x, name) {
   if (name %in% names(x)) .subset2(x, name)
   else .subset2(x, "HH")[[name]]
