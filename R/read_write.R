@@ -22,8 +22,10 @@
 ##'   containing such files.
 ##' @param surveys Optional character vector of survey acronyms to read (e.g.
 ##'   `c("NS-IBTS", "BITS")`). When supplied and `paths` contains directories,
-##'   only zip files whose names contain one of the specified survey strings are
-##'   read. Matching is case-sensitive and literal (not a regular expression).
+##'   only zip files whose **immediate parent folder name** exactly matches one
+##'   of the specified strings are read. This avoids false matches between
+##'   similarly named folders (e.g. `"NS-IBTS"` will not match `"NS-IBTS_old"`).
+##'   Matching is case-sensitive.
 ##' @param years Optional integer vector of years to read. When supplied and
 ##'   `paths` contains directories, only zip files matching those years are
 ##'   read.
@@ -90,9 +92,6 @@ read_datras <- function(paths,
                         prune = FALSE,
                         verbose = TRUE) {
 
-  ## import internal function from DATRAS
-  c.datras_raw <- getFromNamespace("c.DATRASraw", "DATRAS")
-
   paths0 <- paths
 
   if (any(dir.exists(paths))) {
@@ -106,9 +105,7 @@ read_datras <- function(paths,
       if (length(paths) == 0) stop("No zip files found in the specified paths. Did you specify the correct path? Consider setting recursive = TRUE and run again.")
 
       if (!is.null(surveys)) {
-        paths <- paths[sort(unlist(lapply(surveys,
-                                          function(x)
-                                            grep(x, paths, fixed = TRUE))))]
+        paths <- paths[basename(dirname(paths)) %in% surveys]
         if (length(paths) == 0) stop("No zip files found matching the specified surveys.")
       }
 
@@ -120,7 +117,7 @@ read_datras <- function(paths,
       }
 
       ind <- which(file.size(paths) <= min_file_size)
-      if(length(ind) > 0 && verbose){
+      if (length(ind) > 0 && verbose) {
         writeLines(paste0("These files are suspiciously small, are you sure that they were downloaded correctly? They will be removed from the list as they likely give errors. Please check the files or change the 'min_file_size' argument!\n",
                           paste(paths[ind], collapse = "\n")))
       }

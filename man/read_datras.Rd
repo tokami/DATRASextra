@@ -21,8 +21,10 @@ containing such files.}
 
 \item{surveys}{Optional character vector of survey acronyms to read (e.g.
 \code{c("NS-IBTS", "BITS")}). When supplied and \code{paths} contains directories,
-only zip files whose names contain one of the specified survey strings are
-read. Matching is case-sensitive and literal (not a regular expression).}
+only zip files whose \strong{immediate parent folder name} exactly matches one
+of the specified strings are read. This avoids false matches between
+similarly named folders (e.g. \code{"NS-IBTS"} will not match \code{"NS-IBTS_old"}).
+Matching is case-sensitive.}
 
 \item{years}{Optional integer vector of years to read. When supplied and
 \code{paths} contains directories, only zip files matching those years are
