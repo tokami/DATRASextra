@@ -323,6 +323,11 @@ plot_datras_overview <- function(x = NULL,
   panel_meta <- vector("list", length(split_list))
   names(panel_meta) <- names(split_list)
 
+  draw_per_panel_legend <- isTRUE(legend) && !identical(legend_mode, "none") && (
+    identical(legend_mode, "per_panel") ||
+    (identical(legend_mode, "auto") && !isTRUE(fixed_scale) && isTRUE(multi_panels))
+  )
+
   panel_names <- names(split_list)
   for (i in seq_along(panel_names)) {
     nm <- panel_names[i]
@@ -416,6 +421,73 @@ plot_datras_overview <- function(x = NULL,
                          land_layer = land_layer)
       panel_meta[[nm]] <- list(value_range = rng, points_value_meta = points_value_meta)
     }
+
+    if (draw_per_panel_legend) {
+      pp_pos <- if (is.null(legend_pos)) {
+        if (identical(mode, "grid")) "bottomright" else "topright"
+      } else {
+        legend_pos
+      }
+      pp_leg <- NULL
+      if (identical(mode, "grid") && !(has_grouping && !isTRUE(multi_panels))) {
+        info <- panel_meta[[nm]]
+        if (!is.null(info$breaks)) {
+          ll <- info$legend_labels
+          lc <- info$legend_cols
+          if (identical(metric, "presence")) {
+            pp_leg <- list(legend = ll, col = lc, title = metric, cex = 0.8)
+          } else {
+            if (metric %in% c("count_hauls", "count_surveys", "species_richness") && length(ll) > max_grid_legend_levels) {
+              vals <- suppressWarnings(as.numeric(ll))
+              vals <- vals[is.finite(vals)]
+              if (length(vals) > 0) {
+                b <- unique(round(seq(min(vals), max(vals), length.out = max_grid_legend_levels + 1)))
+                if (length(b) >= 2) {
+                  ll <- paste0("[", b[-length(b)], ", ", b[-1], "]")
+                  idx <- round(seq(1, length(lc), length.out = length(ll)))
+                  lc <- lc[idx]
+                }
+              }
+            }
+            pp_leg <- list(legend = ll, col = lc, title = metric, cex = 0.7)
+          }
+          if (!is.null(legend_cex)) pp_leg$cex <- legend_cex
+        }
+      } else if (!identical(mode, "grid")) {
+        info <- panel_meta[[nm]]
+        if (!is.null(value_var) && !is.null(info$points_value_meta) &&
+            is.finite(info$value_range[1]) && is.finite(info$value_range[2])) {
+          meta <- info$points_value_meta
+          rng_leg <- if (!is.null(meta$scale_rng)) meta$scale_rng else info$value_range
+          n_ref <- 5
+          ref_vals <- seq(rng_leg[1], rng_leg[2], length.out = n_ref)
+          ref_scaled <- (ref_vals - rng_leg[1]) / (rng_leg[2] - rng_leg[1])
+          ref_cex <- meta$size_range[1] + ref_scaled * (meta$size_range[2] - meta$size_range[1])
+          ref_labels <- format(signif(.back_transform(ref_vals, transform), 3), trim = TRUE)
+          leg_title <- if (!is.null(offset_var)) paste0(value_var, " / ", offset_var) else value_var
+          if (!is.null(meta$col)) {
+            ref_idx <- pmax(1L, pmin(length(meta$col), round(1 + ref_scaled * (length(meta$col) - 1))))
+            ref_cols <- grDevices::adjustcolor(meta$col[ref_idx], alpha.f = alpha)
+            pp_leg <- list(legend = ref_labels, col = ref_cols, title = leg_title, cex = 0.7,
+                           pt.cex = ref_cex, pch = pch)
+            if (!is.null(legend_cex)) pp_leg$cex <- legend_cex
+          }
+        } else if (has_grouping && is.null(value_var)) {
+          grp_lev <- as.character(unique(d$.group))
+          pp_cols <- if (!is.null(group_cols)) group_cols[grp_lev] else rep("grey30", length(grp_lev))
+          pp_lg <- .format_group_legend(grp_lev, active_dims = active_dims)
+          pp_leg <- list(legend = pp_lg$labels, col = pp_cols, title = pp_lg$title, cex = 0.7)
+          if (!is.null(legend_cex)) pp_leg$cex <- legend_cex
+        }
+      }
+      if (!is.null(pp_leg)) {
+        graphics::legend(pp_pos, legend = pp_leg$legend,
+                         pch = if (!is.null(pp_leg$pch)) pp_leg$pch else 15,
+                         pt.cex = if (!is.null(pp_leg$pt.cex)) pp_leg$pt.cex else 1,
+                         col = pp_leg$col, cex = pp_leg$cex, bg = "white",
+                         title = pp_leg$title, ncol = legend_ncol)
+      }
+    }
   }
 
   if (length(split_list) > 1) {
@@ -479,7 +551,7 @@ plot_datras_overview <- function(x = NULL,
         lg <- .format_group_legend(lev, active_dims = active_dims)
         leg_payload <- list(legend = lg$labels, col = leg_cols, title = lg$title, cex = 0.7)
       }
-      if (!is.null(value_var)) {
+      if (!is.null(value_var) && !draw_per_panel_legend) {
         info <- panel_meta[[1]]
         if (!is.null(info$points_value_meta) && is.finite(info$value_range[1]) && is.finite(info$value_range[2])) {
           meta <- info$points_value_meta
