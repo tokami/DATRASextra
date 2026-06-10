@@ -10,7 +10,7 @@ plot_spatial_indicators(
   x_var = NULL,
   col = NULL,
   lwd = 2,
-  pch = 16,
+  pch = NULL,
   legend = TRUE,
   legend_pos = "topright",
   layout = TRUE,
@@ -32,7 +32,8 @@ the DATRASextra discrete palette.}
 
 \item{lwd}{Line width. Default \code{2}.}
 
-\item{pch}{Point symbol. Default \code{16}.}
+\item{pch}{Integer vector of point symbols, one per unique \code{group}. If
+\code{NULL} (default), a built-in sequence of distinct symbols is used.}
 
 \item{legend}{Logical; draw a legend for group colours. Default \code{TRUE};
 suppressed automatically when there is only one group.}

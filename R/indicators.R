@@ -112,10 +112,7 @@ calc_spatial_indicators <- function(x,
     by_key <- .make_composite_key(hh_sub, by)
     by_groups_idx <- split(seq_len(nrow(hh_sub)), by_key, drop = TRUE)
     by_vals_list <- lapply(by_groups_idx, function(idx) {
-      row <- hh_sub[idx[1L], by, drop = FALSE]
-      for (col in names(row))
-        if (is.factor(row[[col]])) row[[col]] <- as.character(row[[col]])
-      as.list(row)
+      as.list(hh_sub[idx[1L], by, drop = FALSE])
     })
   }
 
@@ -178,7 +175,8 @@ calc_spatial_indicators <- function(x,
 #' @param col Character vector of colours, one per unique `group`. Defaults to
 #'   the DATRASextra discrete palette.
 #' @param lwd Line width. Default `2`.
-#' @param pch Point symbol. Default `16`.
+#' @param pch Integer vector of point symbols, one per unique `group`. If
+#'   `NULL` (default), a built-in sequence of distinct symbols is used.
 #' @param legend Logical; draw a legend for group colours. Default `TRUE`;
 #'   suppressed automatically when there is only one group.
 #' @param legend_pos Legend position string passed to [graphics::legend()].
@@ -209,7 +207,7 @@ plot_spatial_indicators <- function(x,
                                     x_var = NULL,
                                     col = NULL,
                                     lwd = 2,
-                                    pch = 16,
+                                    pch = NULL,
                                     legend = TRUE,
                                     legend_pos = "topright",
                                     layout = TRUE,
@@ -256,6 +254,11 @@ plot_spatial_indicators <- function(x,
   col <- rep_len(col, n_groups)
   names(col) <- group_levels
 
+  pch_default <- c(16L, 17L, 15L, 18L, 1L, 2L, 0L, 5L)
+  if (is.null(pch)) pch <- pch_default
+  pch <- rep_len(pch, n_groups)
+  names(pch) <- group_levels
+
   ## --- layout ----------------------------------------------------------------
   n_panels <- length(vars)
   if (n_panels > 1 && isTRUE(layout)) {
@@ -272,9 +275,16 @@ plot_spatial_indicators <- function(x,
     cog_lon = "CoG longitude (\u00b0E)"
   )
 
-  ## --- x range ---------------------------------------------------------------
-  xall <- suppressWarnings(as.numeric(as.character(x[[x_var]])))
-  xlim_use <- if (!is.null(xlim)) xlim else range(xall, na.rm = TRUE) + c(-0.5, 0.5)
+  ## --- x-axis type: numeric gets lines; factor/character gets points only ----
+  x_is_numeric <- is.numeric(x[[x_var]]) || is.integer(x[[x_var]])
+  if (x_is_numeric) {
+    xall <- suppressWarnings(as.numeric(x[[x_var]]))
+    xlim_use <- if (!is.null(xlim)) xlim else range(xall, na.rm = TRUE) + c(-0.5, 0.5)
+    x_levels <- NULL
+  } else {
+    x_levels <- if (is.factor(x[[x_var]])) levels(x[[x_var]]) else sort(unique(as.character(x[[x_var]])))
+    xlim_use <- if (!is.null(xlim)) xlim else c(0.5, length(x_levels) + 0.5)
+  }
 
   ## --- draw panels -----------------------------------------------------------
   for (pi in seq_along(vars)) {
@@ -303,18 +313,27 @@ plot_spatial_indicators <- function(x,
          xlab = x_var,
          ylab = ylab,
          main = panel_title,
-         las = 1)
+         las = 1,
+         xaxt = if (x_is_numeric) "s" else "n")
+    if (!x_is_numeric)
+      axis(1, at = seq_along(x_levels), labels = x_levels)
 
     for (gi in seq_along(group_levels)) {
       grp <- group_levels[gi]
       sub <- x[as.character(x$group) == grp, , drop = FALSE]
-      sub <- sub[order(suppressWarnings(as.numeric(as.character(sub[[x_var]])))), ]
-      xvals <- suppressWarnings(as.numeric(as.character(sub[[x_var]])))
+      if (x_is_numeric) {
+        sub <- sub[order(suppressWarnings(as.numeric(sub[[x_var]]))), ]
+        xvals <- suppressWarnings(as.numeric(sub[[x_var]]))
+      } else {
+        sub <- sub[order(match(as.character(sub[[x_var]]), x_levels)), ]
+        xvals <- match(as.character(sub[[x_var]]), x_levels)
+      }
       yvals <- suppressWarnings(as.numeric(sub[[var]]))
       ok <- is.finite(xvals) & is.finite(yvals)
       if (any(ok)) {
-        lines(xvals[ok], yvals[ok], col = col[grp], lwd = lwd)
-        points(xvals[ok], yvals[ok], pch = pch, col = col[grp])
+        if (x_is_numeric)
+          lines(xvals[ok], yvals[ok], col = col[grp], lwd = lwd)
+        points(xvals[ok], yvals[ok], pch = pch[grp], col = col[grp])
       }
     }
 
@@ -322,8 +341,9 @@ plot_spatial_indicators <- function(x,
       graphics::legend(legend_pos,
                        legend = group_levels,
                        col = col[group_levels],
-                       lwd = lwd,
-                       pch = pch,
+                       lwd = if (x_is_numeric) lwd else NA,
+                       lty = if (x_is_numeric) 1L else 0L,
+                       pch = pch[group_levels],
                        bg = "white",
                        title = "Length group",
                        cex = 0.8)
