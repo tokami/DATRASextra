@@ -593,7 +593,35 @@ summary.datras_raw <- function(object, ...) {
 ##' @export
 ##' @method c datras_raw
 c.datras_raw <- function(...) {
-  ans <- getFromNamespace("c.DATRASraw", "DATRAS")(...)
+  args <- list(...)
+
+  ## rbind.data.frame silently corrupts data when the same column is a factor
+  ## in some years and a plain integer/numeric in others: it uses the factor's
+  ## level vector as the type and then interprets the other year's integer
+  ## values as factor codes. If those codes exceed the number of levels they
+  ## become NA. (Example: HH$HydroStNo is a factor with composite-string
+  ## levels in early BITS years but a plain integer in later years.)
+  ## Fix: convert any column that mixes factor with non-factor types across
+  ## years to character in every year, so rbind gets a uniform type.
+  for (tbl in c("CA", "HH", "HL")) {
+    all_cols <- unique(unlist(lapply(args, function(a) names(a[[tbl]]))))
+    for (col in all_cols) {
+      classes <- vapply(args, function(a) {
+        v <- a[[tbl]][[col]]
+        if (is.null(v)) NA_character_ else class(v)[1L]
+      }, character(1L))
+      classes <- classes[!is.na(classes)]
+      if (length(classes) < 2L) next
+      if ("factor" %in% classes && !all(classes == "factor")) {
+        for (i in seq_along(args)) {
+          v <- args[[i]][[tbl]][[col]]
+          if (!is.null(v)) args[[i]][[tbl]][[col]] <- as.character(v)
+        }
+      }
+    }
+  }
+
+  ans <- do.call(getFromNamespace("c.DATRASraw", "DATRAS"), args)
   .add_class_datras(ans)
 }
 

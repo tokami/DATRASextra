@@ -152,12 +152,12 @@ read_datras <- function(paths,
 
       tmp <- .remove_duplicated_haul_id(tmp, verbose = verbose)
 
-      if (prune) {
+      if (isTRUE(prune)) {
         if(verbose) message("Pruning files")
         tmp <- lapply(tmp, prune_datras)
       }
 
-      if(verbose) message("Combining files")
+      if (isTRUE(verbose)) message("Combining files")
 
       surv0 <- do.call(c.datras_raw, tmp)
 
