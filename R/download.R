@@ -104,14 +104,14 @@ download_datras <- function(surveys = NULL,
   ## Surveys
   if (is.null(surveys)) {
     surveys <- .get_survey_list()
-  }
-  surveys_with_issues <- c("NS-IDPS", "IS-IDPS",
-                           "Test-DATRAS", "NS-IBTS_UNIFtest")
+    surveys_with_issues <- c(## "NS-IDPS", "IS-IDPS",
+      "Test-DATRAS", "NS-IBTS_UNIFtest")
 
-  ind <- which(surveys %in% surveys_with_issues)
-  if (length(ind) > 0 && !isTRUE(include_flagged)) {
-    message("These surveys are test surveys or do not contain all required data and will not be downloaded: ", paste(surveys[ind], collapse = ", "), " Please use include_flagged=TRUE if you want to download these surveys.")
-    surveys <- surveys[-ind]
+    ind <- which(surveys %in% surveys_with_issues)
+    if (length(ind) > 0 && !isTRUE(include_flagged)) {
+      message("These surveys are test surveys or do not contain all required data and will not be downloaded: ", paste(surveys[ind], collapse = ", "), " Please use include_flagged=TRUE if you want to download these surveys.")
+      surveys <- surveys[-ind]
+    }
   }
 
   ## Pre-flight: verify all target directories are writable before downloading

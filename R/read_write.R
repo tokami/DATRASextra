@@ -21,13 +21,13 @@
 ##'   point either to an individual DATRAS `.zip` exchange file or to a directory
 ##'   containing such files.
 ##' @param surveys Optional character vector of survey acronyms to read (e.g.
-##'   `c("NS-IBTS", "BITS")`). When supplied and `paths` contains directories,
+##'   `c("NS-IBTS", "BITS")`). When supplied and `path` contains directories,
 ##'   only zip files whose **immediate parent folder name** exactly matches one
 ##'   of the specified strings are read. This avoids false matches between
 ##'   similarly named folders (e.g. `"NS-IBTS"` will not match `"NS-IBTS_old"`).
 ##'   Matching is case-sensitive.
 ##' @param years Optional integer vector of years to read. When supplied and
-##'   `paths` contains directories, only zip files matching those years are
+##'   `path` contains directories, only zip files matching those years are
 ##'   read.
 ##' @param recursive logical. Should the listing recurse into directories?
 ##'   (Default: `TRUE`).
