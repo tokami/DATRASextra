@@ -7,12 +7,12 @@
 download_datras(
   surveys = NULL,
   years = NULL,
-  download_missing_only = TRUE,
+  path = NULL,
+  overwrite = FALSE,
   download_hl = TRUE,
   download_ca = TRUE,
   use_php = FALSE,
-  dir = NULL,
-  force = FALSE,
+  include_flagged = FALSE,
   return_data = TRUE,
   verbose = TRUE,
   ...
@@ -26,8 +26,13 @@ used.}
 \item{years}{An integer vector of years to download. If \code{NULL}, all
 available years for each selected survey are used.}
 
-\item{download_missing_only}{Logical. If \code{TRUE} (default), only survey-year
-files that do not already exist in \code{dir} are downloaded.}
+\item{path}{Character string giving the directory where downloaded files
+should be stored. Survey-specific subdirectories are created within this
+directory. If \code{NULL}, the current working directory is used.}
+
+\item{overwrite}{Logical. If \code{FALSE} (default), survey-year files that
+already exist in \code{path} are skipped. Set to \code{TRUE} to re-download and
+overwrite existing files.}
 
 \item{download_hl}{Logical. If \code{TRUE} (default), length-frequency data are
 also downloaded where available. This option is only used when \code{use_php = FALSE}.}
@@ -40,13 +45,9 @@ data are also downloaded where available. This option is only used when
 \code{DATRAS::getDatrasExchange()}. If \code{TRUE}, the legacy
 \code{DATRAS::downloadExchange()} method is used.}
 
-\item{dir}{Character string giving the directory where downloaded files
-should be stored. Survey-specific subdirectories are created within this
-directory. If \code{NULL}, the current working directory is used.}
-
-\item{force}{Logical. If \code{FALSE} (default), surveys known to be test surveys
-or surveys with incomplete data may be skipped. If \code{TRUE}, they are also
-downloaded.}
+\item{include_flagged}{Logical. If \code{FALSE} (default), surveys known to be
+test surveys or surveys with incomplete data are skipped. Set to \code{TRUE} to
+download them anyway.}
 
 \item{return_data}{Logical. If \code{TRUE} (default), the function returns the
 downloaded data by running \code{read_datras()} on the specified path.}
@@ -88,14 +89,14 @@ dat <- download_datras(surveys = "NS-IBTS")
 dat <- download_datras(
   surveys = c("NS-IBTS", "BITS"),
   years = 2010:2012,
-  dir = "data/datras"
+  path = "data/datras"
 )
 
 ## Re-download existing files
 dat <- download_datras(
   surveys = "NS-IBTS",
   years = 2020,
-  download_missing_only = FALSE
+  overwrite = TRUE
 )
 }
 

@@ -7,7 +7,7 @@ tmp <- tempdir()
 
 ## tmp <- "~/Documents/data/makeData/DATRAS"
 
-surv0 <- download_datras(surveys = "NS-IBTS", dir = tmp, years = 1983:2024)
+surv0 <- download_datras(surveys = "NS-IBTS", path = tmp, years = 1983:2024)
 
 ## surv0 <- read_datras(file.path(tmp, "NS-IBTS"), years = 1983:2024)
 

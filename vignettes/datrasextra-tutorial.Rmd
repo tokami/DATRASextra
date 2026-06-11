@@ -109,12 +109,12 @@ survey <- "SNS"
 tmp <- tempdir()
 
 ## Download SNS data for 2023
-download_datras(surveys = survey, years = 2023, dir = tmp)
+download_datras(surveys = survey, years = 2023, path = tmp)
 ```
 
 Note that `download_datras()` does not load the data directly into R. Instead,
 it downloads, compresses, and stores the files on disk. If no directory is
-specified via `dir`, the files are saved to the current working directory, which
+specified via `path`, the files are saved to the current working directory, which
 you can inspect with `getwd()`.
 
 Downloaded files are stored as zipped DATRAS exchange files. If a year is

@@ -12,7 +12,7 @@ surveys <- c("NS-IBTS", "EVHOE", "SWC-IBTS", "BITS", "IE-IGFS",
 tmp <- tempdir()
 
 # download
-download_datras(surveys = surveys, dir = tmp, download_hl = FALSE, download_ca = FALSE)
+download_datras(surveys = surveys, path = tmp, download_hl = FALSE, download_ca = FALSE)
 
 # read in
 raw <- read_datras(file.path(tmp, surveys))

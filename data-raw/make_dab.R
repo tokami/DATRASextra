@@ -5,7 +5,7 @@ library(DATRASextra)
 
 tmp <- tempdir()
 
-download_datras(surveys = "NS-IBTS", years = 2020:2023, dir = tmp)
+download_datras(surveys = "NS-IBTS", years = 2020:2023, path = tmp)
 
 surv0 <- read_datras(file.path(tmp, "NS-IBTS"))
 

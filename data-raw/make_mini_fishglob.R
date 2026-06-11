@@ -9,7 +9,7 @@ download_datras(surveys = c("NS-IBTS",
                             "BTS",
                             "EVHOE",
                             "BITS"),
-                years = 2015:2020, dir = tmp)
+                years = 2015:2020, path = tmp)
 
 surv0 <- read_datras(file.path(tmp, c("NS-IBTS",
                                       "BTS",

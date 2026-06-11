@@ -17,8 +17,8 @@
 ##' files are often incomplete or corrupted and may fail in the underlying
 ##' DATRAS reader functions.
 ##'
-##' @param paths A character vector of file paths or directory paths. Paths can
-##'   point either to individual DATRAS `.zip` exchange files or to directories
+##' @param path A character vector of file or directory paths. Each element can
+##'   point either to an individual DATRAS `.zip` exchange file or to a directory
 ##'   containing such files.
 ##' @param surveys Optional character vector of survey acronyms to read (e.g.
 ##'   `c("NS-IBTS", "BITS")`). When supplied and `paths` contains directories,
@@ -75,7 +75,7 @@
 ##' ## Read multiple zip files directly
 ##' files <- c("data/NS-IBTS/NS-IBTS_2020.zip",
 ##'            "data/NS-IBTS/NS-IBTS_2021.zip")
-##' x <- read_datras(files)
+##' x <- read_datras(path = files)
 ##'
 ##' ## Read and prune to reduce memory use
 ##' x <- read_datras("data/NS-IBTS", prune = TRUE)
@@ -84,7 +84,7 @@
 ##' @importFrom DATRAS downloadExchange
 ##'
 ##' @export
-read_datras <- function(paths,
+read_datras <- function(path,
                         surveys = NULL,
                         years = NULL,
                         recursive = TRUE,
@@ -92,51 +92,51 @@ read_datras <- function(paths,
                         prune = FALSE,
                         verbose = TRUE) {
 
-  paths0 <- paths
+  path0 <- path
 
-  if (any(dir.exists(paths))) {
+  if (any(dir.exists(path))) {
 
     if (!is.null(years) || !is.null(surveys)) {
 
-      paths <- dir(paths0,
-                   full.names = TRUE,
-                   recursive = recursive)
-      paths <- paths[grep("\\.zip$", paths)]
-      if (length(paths) == 0) stop("No zip files found in the specified paths. Did you specify the correct path? Consider setting recursive = TRUE and run again.")
+      path <- dir(path0,
+                  full.names = TRUE,
+                  recursive = recursive)
+      path <- path[grep("\\.zip$", path)]
+      if (length(path) == 0) stop("No zip files found in the specified path. Did you specify the correct path? Consider setting recursive = TRUE and run again.")
 
       if (!is.null(surveys)) {
-        paths <- paths[basename(dirname(paths)) %in% surveys]
-        if (length(paths) == 0) stop("No zip files found matching the specified surveys.")
+        path <- path[basename(dirname(path)) %in% surveys]
+        if (length(path) == 0) stop("No zip files found matching the specified surveys.")
       }
 
       if (!is.null(years)) {
-        paths <- paths[sort(unlist(lapply(years,
-                                          function(x)
-                                            grep(as.character(x), paths))))]
-        if (length(paths) == 0) stop("No zip files found matching the specified years.")
+        path <- path[sort(unlist(lapply(years,
+                                        function(x)
+                                          grep(as.character(x), path))))]
+        if (length(path) == 0) stop("No zip files found matching the specified years.")
       }
 
-      ind <- which(file.size(paths) <= min_file_size)
+      ind <- which(file.size(path) <= min_file_size)
       if (length(ind) > 0 && verbose) {
         writeLines(paste0("These files are suspiciously small, are you sure that they were downloaded correctly? They will be removed from the list as they likely give errors. Please check the files or change the 'min_file_size' argument!\n",
-                          paste(paths[ind], collapse = "\n")))
+                          paste(path[ind], collapse = "\n")))
       }
-      paths <- paths[file.size(paths) > min_file_size]
+      path <- path[file.size(path) > min_file_size]
 
-      np <- length(paths)
+      np <- length(path)
       if(verbose) message("Reading in zip files...")
       if(verbose) pb <- txtProgressBar(min = 0, max = np, style = 3)
       tmp <- vector("list", np)
       for (i in 1:np) {
         invisible(capture.output({
-          tmp[[i]] <- tryCatch({DATRAS::readExchange(paths[i], strict = FALSE)
+          tmp[[i]] <- tryCatch({DATRAS::readExchange(path[i], strict = FALSE)
           }, error = function(err) {
-            message(paste0("Error with: ", paths[i]))
+            message(paste0("Error with: ", path[i]))
             return(NULL)
           })
         }))
         if (is.null(tmp[[i]]) && verbose) {
-          message(paste0("Error with: ", paths[i]))
+          message(paste0("Error with: ", path[i]))
         }
         if(verbose) setTxtProgressBar(pb, i)
       }
@@ -166,23 +166,23 @@ read_datras <- function(paths,
       ## TODO what if the path includes R files and and can it be the mother folder with the surveys as children?
 
       invisible(capture.output({
-        surv0 <- DATRAS::readExchangeDir(paths,
+        surv0 <- DATRAS::readExchangeDir(path,
                                          pattern = ".zip",
                                          strict = FALSE)
       }))
     }
 
-  } else if (any(file.exists(paths))) {
+  } else if (any(file.exists(path))) {
 
-    paths <- paths[grep("\\.zip$", paths)]
+    path <- path[grep("\\.zip$", path)]
     invisible(capture.output({
-      surv0 <- DATRAS::readExchange(paths, strict = FALSE)
+      surv0 <- DATRAS::readExchange(path, strict = FALSE)
     }))
 
-  }else {
+  } else {
 
     stop(paste0("Cannot find a file or folder under path: ",
-                paste(paths, collapse = ", ")))
+                paste(path, collapse = ", ")))
 
   }
 

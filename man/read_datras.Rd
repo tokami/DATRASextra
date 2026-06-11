@@ -5,7 +5,7 @@
 \title{Read ICES DATRAS survey data from zipped exchange files}
 \usage{
 read_datras(
-  paths,
+  path,
   surveys = NULL,
   years = NULL,
   recursive = TRUE,
@@ -15,8 +15,8 @@ read_datras(
 )
 }
 \arguments{
-\item{paths}{A character vector of file paths or directory paths. Paths can
-point either to individual DATRAS \code{.zip} exchange files or to directories
+\item{path}{A character vector of file or directory paths. Each element can
+point either to an individual DATRAS \code{.zip} exchange file or to a directory
 containing such files.}
 
 \item{surveys}{Optional character vector of survey acronyms to read (e.g.
@@ -93,7 +93,7 @@ x <- read_datras("data/DATRAS", surveys = "NS-IBTS", years = 2018:2020)
 ## Read multiple zip files directly
 files <- c("data/NS-IBTS/NS-IBTS_2020.zip",
            "data/NS-IBTS/NS-IBTS_2021.zip")
-x <- read_datras(files)
+x <- read_datras(path = files)
 
 ## Read and prune to reduce memory use
 x <- read_datras("data/NS-IBTS", prune = TRUE)

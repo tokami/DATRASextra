@@ -22,8 +22,9 @@
 ##'   used.
 ##' @param years An integer vector of years to download. If `NULL`, all
 ##'   available years for each selected survey are used.
-##' @param download_missing_only Logical. If `TRUE` (default), only survey-year
-##'   files that do not already exist in `dir` are downloaded.
+##' @param overwrite Logical. If `FALSE` (default), survey-year files that
+##'   already exist in `path` are skipped. Set to `TRUE` to re-download and
+##'   overwrite existing files.
 ##' @param download_hl Logical. If `TRUE` (default), length-frequency data are
 ##'   also downloaded where available. This option is only used when `use_php =
 ##'   FALSE`.
@@ -33,12 +34,12 @@
 ##' @param use_php Logical. If `FALSE` (default), data are downloaded via
 ##'   `DATRAS::getDatrasExchange()`. If `TRUE`, the legacy
 ##'   `DATRAS::downloadExchange()` method is used.
-##' @param dir Character string giving the directory where downloaded files
+##' @param path Character string giving the directory where downloaded files
 ##'   should be stored. Survey-specific subdirectories are created within this
 ##'   directory. If `NULL`, the current working directory is used.
-##' @param force Logical. If `FALSE` (default), surveys known to be test surveys
-##'   or surveys with incomplete data may be skipped. If `TRUE`, they are also
-##'   downloaded.
+##' @param include_flagged Logical. If `FALSE` (default), surveys known to be
+##'   test surveys or surveys with incomplete data are skipped. Set to `TRUE` to
+##'   download them anyway.
 ##' @param return_data Logical. If `TRUE` (default), the function returns the
 ##'   downloaded data by running `read_datras()` on the specified path.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
@@ -65,26 +66,26 @@
 ##' dat <- download_datras(
 ##'   surveys = c("NS-IBTS", "BITS"),
 ##'   years = 2010:2012,
-##'   dir = "data/datras"
+##'   path = "data/datras"
 ##' )
 ##'
 ##' ## Re-download existing files
 ##' dat <- download_datras(
 ##'   surveys = "NS-IBTS",
 ##'   years = 2020,
-##'   download_missing_only = FALSE
+##'   overwrite = TRUE
 ##' )
 ##' }
 ##'
 ##' @export
 download_datras <- function(surveys = NULL,
                             years = NULL,
-                            download_missing_only = TRUE,
+                            path = NULL,
+                            overwrite = FALSE,
                             download_hl = TRUE,
                             download_ca = TRUE,
                             use_php = FALSE,
-                            dir = NULL,
-                            force = FALSE,
+                            include_flagged = FALSE,
                             return_data = TRUE,
                             verbose = TRUE,
                             ...) {
@@ -94,11 +95,11 @@ download_datras <- function(surveys = NULL,
   dir0 <- getwd()
   on.exit(setwd(dir0), add = TRUE)
 
-  if (is.null(dir)) dir <- dir0
+  if (is.null(path)) path <- dir0
 
-  ## Resolve dir to an absolute path now, before any setwd() calls change
+  ## Resolve path to an absolute path now, before any setwd() calls change
   ## the working directory and make relative paths ambiguous.
-  dir <- normalizePath(path.expand(dir), mustWork = FALSE)
+  path <- normalizePath(path.expand(path), mustWork = FALSE)
 
   ## Surveys
   if (is.null(surveys)) {
@@ -108,14 +109,14 @@ download_datras <- function(surveys = NULL,
                            "Test-DATRAS", "NS-IBTS_UNIFtest")
 
   ind <- which(surveys %in% surveys_with_issues)
-  if (length(ind) > 0 && !isTRUE(force)) {
-    message("These surveys are test surveys or do not contain all required data and will not be downloaded: ", paste(surveys[ind], collapse = ", "), " Please use force=TRUE if you want to download these surveys.")
+  if (length(ind) > 0 && !isTRUE(include_flagged)) {
+    message("These surveys are test surveys or do not contain all required data and will not be downloaded: ", paste(surveys[ind], collapse = ", "), " Please use include_flagged=TRUE if you want to download these surveys.")
     surveys <- surveys[-ind]
   }
 
   ## Pre-flight: verify all target directories are writable before downloading
   for (survey in surveys) {
-    survey_dir <- file.path(dir, survey)
+    survey_dir <- file.path(path, survey)
     if (!dir.exists(survey_dir)) {
       ok <- dir.create(survey_dir, recursive = TRUE, showWarnings = FALSE)
       if (!ok) stop("Cannot create output directory: ", survey_dir,
@@ -134,17 +135,17 @@ download_datras <- function(surveys = NULL,
 
     print(paste0("Doing survey: ", survey))
 
-    setwd(file.path(dir, survey))
+    setwd(file.path(path, survey))
 
     ## if (.Platform$OS.type == "windows") {
     if (!use_php) {
 
-      years <- .get_survey_year_list(survey, dir, yearsin)
+      years <- .get_survey_year_list(survey, path, yearsin)
       for (y in seq_along(years)) {
         year <- years[y]
-        zip_path <- file.path(dir, survey, paste0(survey, "_", year, ".zip"))
+        zip_path <- file.path(path, survey, paste0(survey, "_", year, ".zip"))
 
-        if (download_missing_only && file.exists(zip_path)) next
+        if (!overwrite && file.exists(zip_path)) next
 
         quarters <- icesDatras::getSurveyYearQuarterList(survey, year)
         datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
@@ -160,11 +161,11 @@ download_datras <- function(surveys = NULL,
 
       if ((!download_hl || !download_ca) && verbose) message("Note that this functionality is not yet implemented, php always downloads HL and CA. Consider setting use_php = FALSE.")
 
-      if (download_missing_only) {
-        years <- .get_survey_year_list(survey, dir, yearsin)
+      if (!overwrite) {
+        years <- .get_survey_year_list(survey, path, yearsin)
         for (y in seq_along(years)) {
           year <- years[y]
-          if (!file.exists(file.path(dir, survey,
+          if (!file.exists(file.path(path, survey,
                                      paste0(survey, "_", year, ".zip")))) {
             tmp <- DATRAS::downloadExchange(survey, year)
           }
@@ -177,13 +178,13 @@ download_datras <- function(surveys = NULL,
     }
   }
 
-  if(verbose) message("Survey information has been downloaded and saved in folder for each survey at: ", dir)
+  if(verbose) message("Survey information has been downloaded and saved in folder for each survey at: ", path)
 
   if (isTRUE(return_data)) {
-    dat <- read_datras(paths = dir, surveys = surveys, years = years, ...)
+    dat <- read_datras(path = path, surveys = surveys, years = years, ...)
     return(dat)
   } else {
-    return(invisible(dir))
+    return(invisible(path))
   }
 }
 

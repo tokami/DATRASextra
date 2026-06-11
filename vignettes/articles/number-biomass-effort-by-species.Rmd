@@ -52,7 +52,7 @@ dir.create(tmp, recursive = TRUE, showWarnings = FALSE)
 download_datras(
   surveys = survey,
   years = 2021,
-  dir = tmp
+  path = tmp
 )
 
 # read in
