@@ -9,10 +9,17 @@
   grid nodes by maximum distance to observations (via `RANN`), and optional
   crossing with a time vector.
 
+* New `spawning_info` dataset: a lookup table of spawning months by species and
+  ICES area, including the WoRMS AphiaID for each species.
+
 ## Minor changes
 
 * Added vignette *Working with datras_raw objects* introducing the
   `datras_raw` / `DATRASraw` class structure and common workflows.
+
+* Added the *Getting started* article *The datras_raw object*, describing the
+  object structure, indexing, ICES vocabulary lookups, and the numbers- and
+  weight-at-length matrices.
 
 ## Bug fixes
 
