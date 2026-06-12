@@ -311,8 +311,7 @@ plot_datras_overview <- function(x = NULL,
     mf <- c(1L, 1L)
   }
 
-  land_layer <- .fetch_land_layer(plot_map = plot_map, xlim = xlim, ylim = ylim,
-                                   map_scale = map_scale)
+  land_layer <- .fetch_land_layer(plot_map = plot_map, map_scale = map_scale)
 
   if (!isTRUE(add)) {
     old_par <- par(no.readonly = TRUE)
@@ -1165,17 +1164,14 @@ plot_species_composition <- function(x,
 }
 
 
-.fetch_land_layer <- function(plot_map, xlim, ylim, map_scale = 50) {
+.fetch_land_layer <- function(plot_map, map_scale = 50) {
   if (!isTRUE(plot_map)) return(NULL)
   if (!exists("get_land", mode = "function") || !requireNamespace("sf", quietly = TRUE))
     return(NULL)
   land <- tryCatch(get_land(download_map = FALSE, scale = map_scale),
                    error = function(e) NULL)
   if (is.null(land)) return(NULL)
-  bbox <- sf::st_bbox(c(xmin = xlim[1], xmax = xlim[2],
-                        ymin = ylim[1], ymax = ylim[2]),
-                      crs = sf::st_crs(land))
-  tryCatch(sf::st_crop(land, bbox), error = function(e) land)
+  land
 }
 
 

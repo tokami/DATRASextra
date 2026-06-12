@@ -20,14 +20,14 @@ point either to an individual DATRAS \code{.zip} exchange file or to a directory
 containing such files.}
 
 \item{surveys}{Optional character vector of survey acronyms to read (e.g.
-\code{c("NS-IBTS", "BITS")}). When supplied and \code{paths} contains directories,
+\code{c("NS-IBTS", "BITS")}). When supplied and \code{path} contains directories,
 only zip files whose \strong{immediate parent folder name} exactly matches one
 of the specified strings are read. This avoids false matches between
 similarly named folders (e.g. \code{"NS-IBTS"} will not match \code{"NS-IBTS_old"}).
 Matching is case-sensitive.}
 
 \item{years}{Optional integer vector of years to read. When supplied and
-\code{paths} contains directories, only zip files matching those years are
+\code{path} contains directories, only zip files matching those years are
 read.}
 
 \item{recursive}{logical. Should the listing recurse into directories?
