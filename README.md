@@ -95,7 +95,6 @@ biomass index calculations.
 
 The tutorial is available on the package website under **Articles →
 Getting started**:
-
 <https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.html>
 
 If you installed the package with `build_vignettes = TRUE`, you can also
@@ -116,15 +115,13 @@ pages can be accessed using `help()` or `?`, for example:
 
 Additional tutorials and worked examples are available on the package
 website, demonstrating common workflows and applications of DATRAS
-survey data:
-
-<https://tokami.github.io/DATRASextra/>
+survey data: <https://tokami.github.io/DATRASextra/>
 
 If your question is not answered by the package documentation or the
 `pkgdown` site, you are welcome to contact the maintainer, [Tobias
 Mildenberger](mailto:t.k.mildenberger@gmail.com). If you find a bug or
-would like to request a feature, please open an issue on GitHub:
-<https://tokami.github.io/DATRASextra/articles/index.html>
+would like to request a feature, please open an issue on GitHub with:
+<https://github.com/tokami/DATRASextra/issues/new/choose>
 
 # Citation
 
