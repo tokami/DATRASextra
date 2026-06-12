@@ -108,6 +108,10 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Install the package</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tokami/DATRASextra"</span>, ref <span class="op">=</span> <span class="st">"dev"</span><span class="op">)</span></span></code></pre></div>
+<p>Note that if you want to install vignettes locally, you have to use an extra argument:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Install the package with vignettes</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"tokami/DATRASextra"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
@@ -115,8 +119,8 @@
 <p><em>DATRASextra</em> provides a set of powerful functions that guide you through a typical workflow with the ICES DATRAS database: from discovering available surveys, to downloading, cleaning and checking the data, and finally making quick plots of survey coverage and hauls. The table below summarises the main user-facing functions.</p>
 <table class="table">
 <colgroup>
-<col width="50%">
-<col width="50%">
+<col width="24%">
+<col width="75%">
 </colgroup>
 <thead><tr>
 <th>Function</th>
@@ -185,22 +189,20 @@
 <div class="section level1">
 <h1 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h1>
-<p>A good way to start working with <em>DATRASextra</em> is the tutorial vignette. You can access it with:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"tutorial"</span><span class="op">)</span></span></code></pre></div>
-<p>The tutorial and other vignettes guide you through the full workflow: from downloading the complete DATRAS database (or selected subsets), through processing and cleaning the data following recommended good-practice guidelines, to calculating swept-area indices and biomass estimates per species and haul.</p>
+<p>The best introduction to <em>DATRASextra</em> is the tutorial vignette, which walks through a complete workflow: downloading data from the DATRAS database, performing recommended quality checks and data processing steps, and transforming survey observations into standardised numbers and biomass by species, haul, and length class for use in abundance and biomass index calculations.</p>
+<p>The tutorial is available on the package website under <strong>Articles → Getting started</strong>: <a href="https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.html" class="uri">https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.html</a></p>
+<p>If you installed the package with <code>build_vignettes = TRUE</code>, you can also open the tutorial directly from R:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"datrasextra-tutorial"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="getting-help">Getting help<a class="anchor" aria-label="anchor" href="#getting-help"></a>
 </h1>
-<p>All functions in <em>DATRASextra</em> are documented and include example code. You can access the help pages with <code>help(function_name)</code> or <code>?function_name</code>, for example:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">?</span><span class="va">check_lengths</span></span></code></pre></div>
-<p>The package also includes several vignettes and articles that demonstrate common workflows and show how to use DATRAS data for your own research questions. To see all available vignettes, use:</p>
+<p>All functions in <em>DATRASextra</em> are documented and include examples. Help pages can be accessed using <code><a href="https://rdrr.io/r/utils/help.html" class="external-link">help()</a></code> or <code>?</code>, for example:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span><span class="st">"DATRASextra"</span><span class="op">)</span></span></code></pre></div>
-<p>An overview of pkgdown articles is available at: <a href="https://tokami.github.io/DATRASextra/" class="uri">https://tokami.github.io/DATRASextra/</a></p>
-<p>If your question is not answered by the package documentation or the pkgdown site, you are welcome to contact the maintainer, <a href="mailto:t.k.mildenberger@gmail.com">Tobias Mildenberger</a>. If you find a bug or would like to request a feature, please open an issue on GitHub: <a href="https://github.com/tokami/DATRASextra/issues" class="external-link uri">https://github.com/tokami/DATRASextra/issues</a></p>
+<code class="sourceCode R"><span><span class="op">?</span><span class="va">check_lengths</span></span></code></pre></div>
+<p>Additional tutorials and worked examples are available on the package website, demonstrating common workflows and applications of DATRAS survey data: <a href="https://tokami.github.io/DATRASextra/" class="uri">https://tokami.github.io/DATRASextra/</a></p>
+<p>If your question is not answered by the package documentation or the <code>pkgdown</code> site, you are welcome to contact the maintainer, <a href="mailto:t.k.mildenberger@gmail.com">Tobias Mildenberger</a>. If you find a bug or would like to request a feature, please open an issue on GitHub with: <a href="https://github.com/tokami/DATRASextra/issues/new/choose" class="external-link uri">https://github.com/tokami/DATRASextra/issues/new/choose</a></p>
 </div>
 <div class="section level1">
 <h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -212,8 +214,8 @@
 <div class="section level1">
 <h1 id="related-software">Related software<a class="anchor" aria-label="anchor" href="#related-software"></a>
 </h1>
-<p>The foundation of <em>DATRASextra</em> is the R package <a href="https://github.com/DTUAqua/DATRAS" class="external-link"><em>DATRAS</em></a>, which provides the core tools for downloading and pre-processing DATRAS data.</p>
-<p>An alternative R package for working with the DATRAS database is <a href="https://github.com/ices-tools-prod/icesDatras" class="external-link"><em>icesDatras</em></a>, maintained by ICES.</p>
+<p><em>DATRASextra</em> was originally developed to extend the functionality of the R package <em>DATRAS</em>, which provides tools for accessing and working with ICES DATRAS survey data. While <em>DATRASextra</em> continues to build on some of this functionality, it has evolved into a broader framework for downloading, managing, processing, and analysing DATRAS data, with an increasing share of functionality implemented directly within the package.</p>
+<p>An alternative R package for accessing DATRAS data is <em>icesDatras</em>, which is maintained by ICES and provides a direct interface to the DATRAS database.</p>
 </div>
 <div class="section level1">
 <h1 id="funding">Funding<a class="anchor" aria-label="anchor" href="#funding"></a>
