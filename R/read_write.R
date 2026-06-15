@@ -38,6 +38,9 @@
 ##'   [prune_datras()] before combining files. This can substantially reduce
 ##'   memory use when reading many files.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
+##' @param ncores Integer. Number of parallel workers to use when reading zip
+##'   files. Defaults to `1` (sequential). Values greater than 1 use
+##'   [parallel::mclapply()] and are only effective on non-Windows systems.
 ##'
 ##' @details
 ##' DATRAS zip archives are typically much larger than a few kilobytes, so very
@@ -90,7 +93,8 @@ read_datras <- function(path,
                         recursive = TRUE,
                         min_file_size = 1e4,
                         prune = FALSE,
-                        verbose = TRUE) {
+                        verbose = TRUE,
+                        ncores = 1) {
 
   path0 <- path
 
@@ -124,23 +128,43 @@ read_datras <- function(path,
       path <- path[file.size(path) > min_file_size]
 
       np <- length(path)
-      if(verbose) message("Reading in zip files...")
-      if(verbose) pb <- txtProgressBar(min = 0, max = np, style = 3)
-      tmp <- vector("list", np)
-      for (i in 1:np) {
-        invisible(capture.output({
-          tmp[[i]] <- tryCatch({DATRAS::readExchange(path[i], strict = FALSE)
-          }, error = function(err) {
-            message(paste0("Error with: ", path[i]))
-            return(NULL)
-          })
-        }))
-        if (is.null(tmp[[i]]) && verbose) {
-          message(paste0("Error with: ", path[i]))
+      use_parallel <- ncores > 1 && .Platform$OS.type != "windows"
+      if (verbose) {
+        if (use_parallel) {
+          message("Reading in ", np, " zip files using ", ncores, " cores...")
+        } else {
+          message("Reading in zip files...")
         }
-        if(verbose) setTxtProgressBar(pb, i)
       }
-      if(verbose) close(pb)
+
+      ## Each call gets its own temp subdirectory so parallel workers do not
+      ## overwrite each other's extracted CSV (all zips contain "DATRAS.csv").
+      .reader <- function(p) {
+        tryCatch({
+          td <- tempfile(pattern = "datras_")
+          dir.create(td, showWarnings = FALSE)
+          on.exit(unlink(td, recursive = TRUE), add = TRUE)
+          csvfile <- unzip(p, exdir = td)[1]
+          invisible(capture.output(
+            res <- DATRAS::readICES(csvfile, strict = FALSE)
+          ))
+          res
+        }, error = function(err) NULL)
+      }
+
+      if (use_parallel) {
+        tmp <- parallel::mclapply(path, .reader, mc.cores = ncores)
+      } else {
+        if (verbose) pb <- txtProgressBar(min = 0, max = np, style = 3)
+        tmp <- vector("list", np)
+        for (i in seq_len(np)) {
+          tmp[[i]] <- .reader(path[i])
+          if (is.null(tmp[[i]]) && verbose)
+            message(paste0("Error with: ", path[i]))
+          if (verbose) setTxtProgressBar(pb, i)
+        }
+        if (verbose) close(pb)
+      }
 
       idx <- which(sapply(tmp,is.null))
       if (length(idx) > 0) {

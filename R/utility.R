@@ -605,18 +605,23 @@ c.datras_raw <- function(...) {
   ## years to character in every year, so rbind gets a uniform type.
   for (tbl in c("CA", "HH", "HL")) {
     all_cols <- unique(unlist(lapply(args, function(a) names(a[[tbl]]))))
-    for (col in all_cols) {
-      classes <- vapply(args, function(a) {
+    if (length(all_cols) == 0L) next
+    ## Build a (n_cols x n_args) matrix of first class names in one pass.
+    cls_mat <- vapply(args, function(a) {
+      vapply(all_cols, function(col) {
         v <- a[[tbl]][[col]]
         if (is.null(v)) NA_character_ else class(v)[1L]
       }, character(1L))
-      classes <- classes[!is.na(classes)]
-      if (length(classes) < 2L) next
-      if ("factor" %in% classes && !all(classes == "factor")) {
-        for (i in seq_along(args)) {
-          v <- args[[i]][[tbl]][[col]]
-          if (!is.null(v)) args[[i]][[tbl]][[col]] <- as.character(v)
-        }
+    }, character(length(all_cols)))
+    ## Identify columns where factor mixes with non-factor types.
+    is_factor <- cls_mat == "factor"
+    has_factor <- rowSums(is_factor, na.rm = TRUE) > 0L
+    all_factor <- rowSums(!is_factor & !is.na(cls_mat)) == 0L
+    mixed_cols <- all_cols[has_factor & !all_factor]
+    for (col in mixed_cols) {
+      for (i in seq_along(args)) {
+        v <- args[[i]][[tbl]][[col]]
+        if (!is.null(v)) args[[i]][[tbl]][[col]] <- as.character(v)
       }
     }
   }

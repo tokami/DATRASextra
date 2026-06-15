@@ -11,7 +11,8 @@ read_datras(
   recursive = TRUE,
   min_file_size = 10000,
   prune = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  ncores = 1
 )
 }
 \arguments{
@@ -42,6 +43,10 @@ may cause errors when being read. Defaults to \code{1e4}.}
 memory use when reading many files.}
 
 \item{verbose}{Logical. If \code{TRUE} (default), progress messages are printed.}
+
+\item{ncores}{Integer. Number of parallel workers to use when reading zip
+files. Defaults to \code{1} (sequential). Values greater than 1 use
+\code{\link[parallel:mclapply]{parallel::mclapply()}} and are only effective on non-Windows systems.}
 }
 \value{
 A combined DATRAS survey object with classes \code{datras_raw} and
