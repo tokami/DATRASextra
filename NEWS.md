@@ -12,6 +12,10 @@
 * New `spawning_info` dataset: a lookup table of spawning months by species and
   ICES area, including the WoRMS AphiaID for each species.
 
+* `read_datras()` gains a `ncores` argument (default `1`) for parallel reading
+  of zip files using `parallel::mclapply()`. Effective on non-Windows systems;
+  falls back silently to sequential on Windows.
+
 ## Minor changes
 
 * Added vignette *Working with datras_raw objects* introducing the
@@ -20,6 +24,12 @@
 * Added the *Getting started* article *The datras_raw object*, describing the
   object structure, indexing, ICES vocabulary lookups, and the numbers- and
   weight-at-length matrices.
+
+* `download_datras()` gains a `timeout` argument (default `10` seconds). When
+  the ICES DATRAS server does not respond within the given time (e.g. due to
+  firewall restrictions), the function now falls back to cached survey/year
+  information instead of hanging indefinitely. The timeout also applies to the
+  internal survey-list lookup.
 
 ## Bug fixes
 
