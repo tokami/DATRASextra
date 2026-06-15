@@ -15,6 +15,7 @@ download_datras(
   include_flagged = FALSE,
   return_data = TRUE,
   verbose = TRUE,
+  timeout = 10,
   ...
 )
 }
@@ -53,6 +54,12 @@ download them anyway.}
 downloaded data by running \code{read_datras()} on the specified path.}
 
 \item{verbose}{Logical. If \code{TRUE} (default), progress messages are printed.}
+
+\item{timeout}{Numeric. Maximum number of seconds to wait for the ICES
+DATRAS server to respond when retrieving the list of available surveys or
+years. If the server does not respond within this time (e.g. because a
+firewall blocks the connection), the function falls back to locally cached
+information. Default is 10 seconds.}
 
 \item{...}{Additional arguments for the function \code{read_datras()}.}
 }

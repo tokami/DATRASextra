@@ -43,6 +43,11 @@
 ##' @param return_data Logical. If `TRUE` (default), the function returns the
 ##'   downloaded data by running `read_datras()` on the specified path.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
+##' @param timeout Numeric. Maximum number of seconds to wait for the ICES
+##'   DATRAS server to respond when retrieving the list of available surveys or
+##'   years. If the server does not respond within this time (e.g. because a
+##'   firewall blocks the connection), the function falls back to locally cached
+##'   information. Default is 10 seconds.
 ##' @param ... Additional arguments for the function `read_datras()`.
 ##'
 ##' @details
@@ -88,6 +93,7 @@ download_datras <- function(surveys = NULL,
                             include_flagged = FALSE,
                             return_data = TRUE,
                             verbose = TRUE,
+                            timeout = 10,
                             ...) {
 
   yearsin <- years
@@ -103,7 +109,7 @@ download_datras <- function(surveys = NULL,
 
   ## Surveys
   if (is.null(surveys)) {
-    surveys <- .get_survey_list()
+    surveys <- .get_survey_list(timeout = timeout)
     surveys_with_issues <- c(## "NS-IDPS", "IS-IDPS",
       "Test-DATRAS", "NS-IBTS_UNIFtest")
 
@@ -137,14 +143,15 @@ download_datras <- function(surveys = NULL,
 
     setwd(file.path(path, survey))
 
+    years <- .get_survey_year_list(survey, path, yearsin, timeout = timeout)
+
     ## if (.Platform$OS.type == "windows") {
     if (!use_php) {
 
-      years <- .get_survey_year_list(survey, path, yearsin)
       for (y in seq_along(years)) {
         year <- years[y]
-        zip_path <- file.path(path, survey, paste0(survey, "_", year, ".zip"))
 
+        zip_path <- file.path(path, survey, paste0(survey, "_", year, ".zip"))
         if (!overwrite && file.exists(zip_path)) next
 
         quarters <- icesDatras::getSurveyYearQuarterList(survey, year)
@@ -162,16 +169,14 @@ download_datras <- function(surveys = NULL,
       if ((!download_hl || !download_ca) && verbose) message("Note that this functionality is not yet implemented, php always downloads HL and CA. Consider setting use_php = FALSE.")
 
       if (!overwrite) {
-        years <- .get_survey_year_list(survey, path, yearsin)
         for (y in seq_along(years)) {
           year <- years[y]
-          if (!file.exists(file.path(path, survey,
-                                     paste0(survey, "_", year, ".zip")))) {
-            tmp <- DATRAS::downloadExchange(survey, year)
-          }
+          zip_path <- file.path(path, survey, paste0(survey, "_", year, ".zip"))
+          if (file.exists(zip_path)) next
+
+          tmp <- DATRAS::downloadExchange(survey, year)
         }
       } else {
-        years <- if (!is.null(yearsin)) yearsin else icesDatras::getSurveyYearList(survey)
         tmp <- DATRAS::downloadExchange(survey, years)
       }
 
@@ -195,39 +200,46 @@ download_datras <- function(surveys = NULL,
 ## Internal functions -----------------------------------------------------
 
 
-## Attempt icesDatras::getSurveyList(); fall back to a cached list when offline.
-.get_survey_list <- function() {
-  tryCatch(
-    icesDatras::getSurveyList(),
-    error = function(e) {
-      message("No internet connection - using cached survey list.")
-      c("BITS", "BTS", "BTS-GSA17", "BTS-VIII", "Can-Mar", "CODS-Q4",
-        "DWS", "DYFS", "EVHOE", "FR-CGFS", "FR-WCGFS", "IE-IAMS",
-        "IE-IGFS", "IS-IDPS", "NIGFS", "NL-BSAS", "NS-IBTS",
-        "NS-IBTS_UNIFtest", "NS-IDPS", "NSSS", "PT-IBTS", "ROCKALL",
-        "SCOROC", "SCOWCGFS", "SE-SOUND", "SNS", "SP-ARSA", "SP-NORTH",
-        "SP-PORC", "SWC-IBTS", "Test-DATRAS")
-    }
-  )
+## Attempt icesDatras::getSurveyList(); fall back to a cached list when offline
+## or when the server does not respond within `timeout` seconds.
+.get_survey_list <- function(timeout = 10) {
+  on.exit(setTimeLimit(elapsed = Inf, transient = TRUE), add = TRUE)
+  tryCatch({
+    setTimeLimit(elapsed = timeout, transient = TRUE)
+    icesDatras::getSurveyList()
+  }, error = function(e) {
+    message("Could not reach DATRAS server within ", timeout,
+            " seconds - using cached survey list. (Consider increasing timeout).")
+    c("BITS", "BTS", "BTS-GSA17", "BTS-VIII", "Can-Mar", "CODS-Q4",
+      "DWS", "DYFS", "EVHOE", "FR-CGFS", "FR-WCGFS", "IE-IAMS",
+      "IE-IGFS", "IS-IDPS", "NIGFS", "NL-BSAS", "NS-IBTS",
+      "NS-IBTS_UNIFtest", "NS-IDPS", "NSSS", "PT-IBTS", "ROCKALL",
+      "SCOROC", "SCOWCGFS", "SE-SOUND", "SNS", "SP-ARSA", "SP-NORTH",
+      "SP-PORC", "SWC-IBTS", "Test-DATRAS")
+  })
 }
 
 
 ## Attempt icesDatras::getSurveyYearList(); fall back to years inferred from
-## locally present zip files when offline.  yearsin, if non-NULL, is applied as
-## a filter in both the online and offline paths.
-.get_survey_year_list <- function(survey, dir, yearsin = NULL) {
-  years <- tryCatch(
-    icesDatras::getSurveyYearList(survey),
-    error = function(e) {
-      files <- list.files(file.path(dir, survey),
-                          pattern = paste0("^", survey, "_[0-9]{4}\\.zip$"))
-      if (length(files) == 0)
-        stop("No internet connection and no local files found for survey '",
-             survey, "' in '", file.path(dir, survey), "'.")
-      message("No internet connection - inferring years from local files for ", survey)
-      as.integer(sub(paste0("^", survey, "_([0-9]{4})\\.zip$"), "\\1", files))
-    }
-  )
+## locally present zip files when offline or when the server does not respond
+## within `timeout` seconds.  yearsin, if non-NULL, is applied as a filter in
+## both the online and offline paths.
+.get_survey_year_list <- function(survey, dir, yearsin = NULL, timeout = 10) {
+  on.exit(setTimeLimit(elapsed = Inf, transient = TRUE), add = TRUE)
+  years <- tryCatch({
+    setTimeLimit(elapsed = timeout, transient = TRUE)
+    icesDatras::getSurveyYearList(survey)
+  }, error = function(e) {
+    files <- list.files(file.path(dir, survey),
+                        pattern = paste0("^", survey, "_[0-9]{4}\\.zip$"))
+    if (length(files) == 0)
+      stop("Could not reach DATRAS server and no local files found for survey '",
+           survey, "' in '", file.path(dir, survey), "'.")
+    message("Could not reach DATRAS server within ", timeout,
+            " seconds - inferring available years from local files for ",
+            survey, ". (Consider increasing timeout).")
+    as.integer(sub(paste0("^", survey, "_([0-9]{4})\\.zip$"), "\\1", files))
+  })
   if (!is.null(yearsin)) years <- years[years %in% yearsin]
   years
 }
