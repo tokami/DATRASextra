@@ -128,7 +128,7 @@ read_datras <- function(path,
       path <- path[file.size(path) > min_file_size]
 
       np <- length(path)
-      use_parallel <- ncores > 1 && .Platform$OS.type != "windows"
+      use_parallel <- ncores > 1
       if (verbose) {
         if (use_parallel) {
           message("Reading in ", np, " zip files using ", ncores, " cores...")
@@ -153,7 +153,14 @@ read_datras <- function(path,
       }
 
       if (use_parallel) {
-        tmp <- parallel::mclapply(path, .reader, mc.cores = ncores)
+        if (.Platform$OS.type == "windows") {
+          cl <- parallel::makeCluster(ncores, type = "PSOCK")
+          on.exit(parallel::stopCluster(cl), add = TRUE)
+          parallel::clusterExport(cl, ".reader", envir = environment())
+          tmp <- parallel::parLapply(cl, path, .reader)
+        } else {
+          tmp <- parallel::mclapply(path, .reader, mc.cores = ncores)
+        }
       } else {
         if (verbose) pb <- txtProgressBar(min = 0, max = np, style = 3)
         tmp <- vector("list", np)
