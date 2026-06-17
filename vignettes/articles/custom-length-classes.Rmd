@@ -77,7 +77,7 @@ object. Before aggregating these data, it is useful to inspect the available
 length measurements:
 
 ```{r}
-lpars <- check_lengths(dab)
+dab <- check_lengths(dab)
 ```
 
 This function provides summary statistics and diagnostic plots of the recorded
@@ -116,7 +116,7 @@ For example, the following code creates numbers at length using 0.5 cm bins:
 by <- 0.5
 
 ## Define custom length bins
-cm_breaks <- seq(lpars$lPars$min, lpars$lPars$maxEmp, by = by)
+cm_breaks <- seq(attr(dab, "length_check")$lPars$min, attr(dab, "length_check")$lPars$maxEmp, by = by)
 
 ## Recalculate numbers at length using custom bins
 dab <- add_numbers_at_length(dab, cm_breaks = cm_breaks, by = by)
@@ -139,7 +139,7 @@ stored in the `CA` component to estimate a length-weight relationship. Before
 doing so, it is useful to inspect the available weight data:
 
 ```{r}
-wpars <- check_weights(dab)
+dab <- check_weights(dab)
 ```
 
 This function provides summary statistics and diagnostic plots for the weight

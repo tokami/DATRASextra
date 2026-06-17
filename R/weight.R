@@ -43,7 +43,9 @@
 ##' If available, lookup length-weight parameters are also retrieved from
 ##' `species_info` for comparison.
 ##'
-##' @return A list with four elements:
+##' @return The input `datras_raw` object returned invisibly, with a
+##' `"weight_check"` attribute attached. That attribute is a list with four
+##' elements:
 ##' \itemize{
 ##'   \item `lPars`: a data frame with summary statistics for observed lengths,
 ##'   \item `wPars`: a data frame with summary statistics for observed weights,
@@ -60,10 +62,11 @@
 ##' ## Add numbers at length
 ##' dab <- add_numbers_at_length(dab)
 ##'
-##' res <- check_weights(dab)
+##' dab <- check_weights(dab)
+##' attr(dab, "weight_check")$parEst
 ##'
 ##' ## Restrict to plausible values
-##' res <- check_weights(dab, max_length = 100, max_weight = 10000)
+##' dab <- check_weights(dab, max_length = 100, max_weight = 10000)
 ##'
 ##' @export
 check_weights <- function (x,
@@ -155,12 +158,12 @@ check_weights <- function (x,
     }
   }
 
-  res <- list(lPars = lPars,
-              wPars = wPars,
-              parEst = data.frame(a = a, b = b),
-              parEmp = data.frame(a = aEmp, b = bEmp))
+  attr(x, "weight_check") <- list(lPars = lPars,
+                                   wPars = wPars,
+                                   parEst = data.frame(a = a, b = b),
+                                   parEmp = data.frame(a = aEmp, b = bEmp))
 
-  return(invisible(res))
+  return(invisible(x))
 }
 
 

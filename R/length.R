@@ -43,7 +43,9 @@
 ##' If multiple species are present in the `HL` table, the combined spectrum
 ##' across all species is used and a warning is issued.
 ##'
-##' @return A list with three elements:
+##' @return The input `datras_raw` object returned invisibly, with a
+##' `"length_check"` attribute attached. That attribute is a list with three
+##' elements:
 ##' \itemize{
 ##'   \item `N`: a haul-by-length count matrix,
 ##'   \item `lPars`: a data frame of summary statistics for the length
@@ -56,13 +58,14 @@
 ##'
 ##' @examples
 ##' \dontrun{
-##' res <- check_lengths(x)
+##' x <- check_lengths(x)
+##' attr(x, "length_check")$lPars
 ##'
 ##' ## Use custom length bins
-##' res <- check_lengths(x, cm_breaks = seq(0, 100, by = 1))
+##' x <- check_lengths(x, cm_breaks = seq(0, 100, by = 1))
 ##'
 ##' ## Use an automatically generated spectrum with 0.5 cm bins
-##' res <- check_lengths(x, by = 0.5)
+##' x <- check_lengths(x, by = 0.5)
 ##' }
 ##'
 ##' @export
@@ -179,11 +182,11 @@ check_lengths <- function(x,
     abline(v = .map2bar(percL, midL, bar_x), col = 2, lty = 2, lwd = 2)
   }
 
-  res <- list(N = nout,
-              lPars = lVals,
-              nAbove = nAbove)
+  attr(x, "length_check") <- list(N = nout,
+                                   lPars = lVals,
+                                   nAbove = nAbove)
 
-  return(invisible(res))
+  return(invisible(x))
 }
 
 

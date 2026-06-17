@@ -29,7 +29,9 @@ of the observed length distribution. Defaults to \code{99.9999}.}
 and log count scales.}
 }
 \value{
-A list with three elements:
+The input \code{datras_raw} object returned invisibly, with a
+\code{"length_check"} attribute attached. That attribute is a list with three
+elements:
 \itemize{
 \item \code{N}: a haul-by-length count matrix,
 \item \code{lPars}: a data frame of summary statistics for the length
@@ -70,13 +72,14 @@ across all species is used and a warning is issued.
 }
 \examples{
 \dontrun{
-res <- check_lengths(x)
+x <- check_lengths(x)
+attr(x, "length_check")$lPars
 
 ## Use custom length bins
-res <- check_lengths(x, cm_breaks = seq(0, 100, by = 1))
+x <- check_lengths(x, cm_breaks = seq(0, 100, by = 1))
 
 ## Use an automatically generated spectrum with 0.5 cm bins
-res <- check_lengths(x, by = 0.5)
+x <- check_lengths(x, by = 0.5)
 }
 
 }

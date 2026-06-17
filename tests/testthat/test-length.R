@@ -3,10 +3,10 @@
 
 
 test_that("check_lengths works", {
-  lpars <- check_lengths(dab)
-  expect_type(lpars, "list")
-  expect_equal(length(lpars), 3)
-  expect_true(!is.na(lpars$lPars$min))
+  out <- check_lengths(dab)
+  expect_equal(class(out), class(dab))
+  expect_false(is.null(attr(out, "length_check")))
+  expect_true(!is.na(attr(out, "length_check")$lPars$min))
   expect_error(check_lengths(NULL))
   ## expect_warning(check_lengths(NA))
 })

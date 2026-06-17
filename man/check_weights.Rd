@@ -22,7 +22,9 @@ observed length-weight relationship and marginal histograms of length and
 weight.}
 }
 \value{
-A list with four elements:
+The input \code{datras_raw} object returned invisibly, with a
+\code{"weight_check"} attribute attached. That attribute is a list with four
+elements:
 \itemize{
 \item \code{lPars}: a data frame with summary statistics for observed lengths,
 \item \code{wPars}: a data frame with summary statistics for observed weights,
@@ -67,10 +69,11 @@ If available, lookup length-weight parameters are also retrieved from
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
 
-res <- check_weights(dab)
+dab <- check_weights(dab)
+attr(dab, "weight_check")$parEst
 
 ## Restrict to plausible values
-res <- check_weights(dab, max_length = 100, max_weight = 10000)
+dab <- check_weights(dab, max_length = 100, max_weight = 10000)
 
 }
 \seealso{

@@ -1,5 +1,15 @@
 # DATRASextra (development version)
 
+## Breaking changes
+
+* `check_lengths()` and `check_weights()` now return the input `datras_raw`
+  object invisibly (consistent with `check_outliers()`), instead of a plain
+  list. Results are attached as attributes: `attr(x, "length_check")` and
+  `attr(x, "weight_check")`, respectively. Code that assigned the return value
+  to a separate variable (e.g. `res <- check_lengths(x)`) and then accessed
+  `res$lPars` should be updated to `x <- check_lengths(x)` and
+  `attr(x, "length_check")$lPars`.
+
 # DATRASextra 0.1.1
 
 ## New features
