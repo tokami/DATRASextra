@@ -10,3 +10,8 @@ pre.tiny-output code {
 h1 {
     border-bottom: none !important;
 }
+
+/* Keep plot backgrounds white in dark mode */
+[data-bs-theme="dark"] .contents img {
+    background-color: #ffffff;
+}
