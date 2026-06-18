@@ -9,6 +9,11 @@
   to a separate variable (e.g. `res <- check_lengths(x)`) and then accessed
   `res$lPars` should be updated to `x <- check_lengths(x)` and
   `attr(x, "length_check")$lPars`.
+  
+* Added the article *Matching EMODnet seabed habitats to hauls*, showing how to
+  download EUSeaMap polygons from the EMODnet Seabed Habitats WFS and attach a
+  seabed habitat class to each haul in `HH` with a spatial join.
+
 
 # DATRASextra 0.1.1
 
