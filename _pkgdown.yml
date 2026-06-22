@@ -40,7 +40,7 @@ articles:
   - articles/datras-raw-object
   - datrasextra-tutorial
   - articles/plot-datras-overview
-  - articles/define-survey-domain
+  - articles/make_spatiotemporal_grid
 - title: Advanced
   contents:
   - articles/custom-length-classes
