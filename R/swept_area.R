@@ -229,22 +229,29 @@ add_swept_area_simple <- function(x,
     x[["HH"]][[spread_med]][ sel ] <- wtab[[width]][i]
   }
 
-  ## Impute missing ground speeds
-  x2 <- x[["HH"]]
-  stab <- aggregate(GroundSpeed~Gear,data=x2,FUN=median,na.rm=TRUE)
-  for(i in 1:nrow(stab)){
-    if(!is.na(stab$GroundSpeed[i])){
-      x$GroundSpeed[ is.na(x$GroundSpeed) & x$Gear==stab$Gear[i]  ] <- stab$GroundSpeed[i]
-    }
-  }
-  for(i in 1:nrow(stab)){
-    sel <- which(x$Gear==stab$Gear[i] & is.na(x$GroundSpeed))
-    x$GroundSpeed[ sel ] <- stab$GroundSpeed[i]
-  }
-
   ## Impute missing distances
-  noDist <- which( is.na(x$Distance) )
-  x$Distance[ noDist ] <- (x$HaulDur[noDist] / 60 * 1852 * x$GroundSpeed[noDist])
+  if (any(is.na(x$Distance))) {
+
+    ## TODO: try this, if all GroundSpeed missing, then just omit those rows and
+    ## print warning?
+
+    ## Impute missing ground speeds
+    x2 <- x[["HH"]]
+    stab <- aggregate(GroundSpeed~Gear,data=x2,FUN=median,na.rm=TRUE)
+    for(i in 1:nrow(stab)){
+      if(!is.na(stab$GroundSpeed[i])){
+        x$GroundSpeed[ is.na(x$GroundSpeed) & x$Gear==stab$Gear[i]  ] <- stab$GroundSpeed[i]
+      }
+    }
+    for(i in 1:nrow(stab)){
+      sel <- which(x$Gear==stab$Gear[i] & is.na(x$GroundSpeed))
+      x$GroundSpeed[ sel ] <- stab$GroundSpeed[i]
+    }
+
+    ## Impute missing distances
+    noDist <- which( is.na(x$Distance) )
+    x$Distance[ noDist ] <- (x$HaulDur[noDist] / 60 * 1852 * x$GroundSpeed[noDist])
+  }
 
   x$SweptArea <- x[["HH"]][[width]] * x$Distance
   x$SweptArea.median <- x[["HH"]][[spread_med]] * x$Distance
