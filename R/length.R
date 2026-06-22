@@ -291,12 +291,41 @@ add_total_numbers_by_haul <- function(x,
                                       length_cuts = NULL) {
   .check_class_datras(x)
 
+  ## When HL has no length data (LngtCm all NA) and no length_cuts are
+  ## requested, skip the N matrix path and compute HaulN directly.
+  has_lengths <- any(is.finite(x[["HL"]][["LngtCm"]]))
+  if (!has_lengths && is.null(length_cuts)) {
+    hl <- x[["HL"]]
+    hh_ids <- as.character(x[["HH"]][["haul.id"]])
+
+    if (any(is.finite(hl$Count))) {
+      ## Count is available: sum per-length-class raised numbers by haul.
+      ## This gives the same result as rowSums(N) in the normal path.
+      message("Note: LngtCm is all NA - computing HaulN by summing Count per haul.")
+      totals <- tapply(as.numeric(hl$Count), as.character(hl$haul.id),
+                       sum, na.rm = TRUE)
+    } else {
+      ## Count is also unavailable (e.g. catch table with one row per species
+      ## per haul and no length breakdown). TotalNo is repeated per length
+      ## class, so deduplicate by haul x species before summing.
+      message("Note: LngtCm and Count are both NA - computing HaulN by summing TotalNo per species per haul.")
+      key <- paste(as.character(hl$haul.id), as.character(hl$SpecCode), sep = ":")
+      hl_dedup <- hl[!duplicated(key), ]
+      totals <- tapply(as.numeric(hl_dedup$TotalNo),
+                       as.character(hl_dedup$haul.id),
+                       sum, na.rm = TRUE)
+    }
+
+    haul_n <- as.numeric(totals[hh_ids])
+    haul_n[is.na(haul_n)] <- 0  # hauls with no HL records -> 0 catch
+    x[["HH"]][["HaulN"]] <- haul_n
+    return(x)
+  }
+
   if (!.has_numbers_at_length(x)) {
-    x <- add_numbers_at_length(
-      x,
-      cm_breaks = cm_breaks,
-      by = by
-    )
+    x <- add_numbers_at_length(x,
+                               cm_breaks = cm_breaks,
+                               by = by)
   }
 
   if (!is.null(length_cuts)) {
