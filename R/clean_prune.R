@@ -93,10 +93,6 @@ clean_datras <- function(x,
     ## 3	Roundfish standard species recorded
     ## 4	Individual standard species recorded
 
-    ## Only keep TVL and TVS in BITS
-    ## x <- subset(x, Survey != "BITS" |
-    ##                (Survey == "BITS" & Gear %in% c("TVS","TVL")))
-
     ## Impute depths ------------------------------
     if (impute_missing_depth && any(is.na(x[[2]]$Depth))) {
       dmodel <- mgcv::gam(log(Depth) ~ s(lon, lat, k = 200), data = x[[2]])
@@ -488,6 +484,9 @@ correct_species <- function(x) {
       aphias[ind] <- keep.genus$aphia[keep.genus$genus == "Argentina"]
       ranks[ind] <- "genus"
     }
+
+
+    ## TODO: check for Psetta maxima?
 
 
     ## Species name corrections -----------------------------------------

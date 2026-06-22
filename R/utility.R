@@ -438,8 +438,8 @@ print.datras_raw <- function(x, ...) {
   if ("Country" %in% names(hh))
     cat("Number of countries:", length(unique(as.character(hh$Country))), "\n")
 
-  cat("Years:", paste(levels(hh$Year), collapse = " "), "\n")
-  cat("Quarters:", paste(levels(hh$Quarter), collapse = " "), "\n")
+  cat("Years:", paste(sort(unique(as.integer(as.character(hh$Year)))), collapse = " "), "\n")
+  cat("Quarters:", paste(sort(unique(as.integer(as.character(hh$Quarter)))), collapse = " "), "\n")
   cat("Gears:", paste(levels(factor(as.character(hh$Gear))), collapse = " "), "\n")
 
   numNa <- sum(is.na(hh$HaulDur))
