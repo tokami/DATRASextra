@@ -40,7 +40,7 @@ articles:
   - articles/datras-raw-object
   - datrasextra-tutorial
   - articles/plot-datras-overview
-  - articles/define-survey-domain
+  - articles/make_spatiotemporal_grid
 - title: Advanced
   contents:
   - articles/custom-length-classes
@@ -51,6 +51,7 @@ articles:
   contents:
   - articles/number-biomass-by-species
   - articles/number-biomass-effort-by-species
+  - articles/match-emodnet-habitats
 
 
 news:
