@@ -60,7 +60,7 @@
 ##' @return Invisibly returns `NULL`.
 ##'
 ##' @importFrom DATRAS downloadExchange getDatrasExchange
-##' @importFrom icesDatras getSurveyList getSurveyYearList getSurveyYearQuarterList
+##' @importFrom utils URLencode
 ##'
 ##' @examples
 ##' \dontrun{
@@ -154,7 +154,7 @@ download_datras <- function(surveys = NULL,
         zip_path <- file.path(path, survey, paste0(survey, "_", year, ".zip"))
         if (!overwrite && file.exists(zip_path)) next
 
-        quarters <- icesDatras::getSurveyYearQuarterList(survey, year)
+        quarters <- .get_survey_year_quarter_list(survey, year, timeout = timeout)
         datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
                                                 strict = TRUE,
                                                 download.hl = download_hl,
@@ -200,13 +200,13 @@ download_datras <- function(surveys = NULL,
 ## Internal functions -----------------------------------------------------
 
 
-## Attempt icesDatras::getSurveyList(); fall back to a cached list when offline
-## or when the server does not respond within `timeout` seconds.
+## Attempt to fetch the survey list from the DATRAS API; fall back to a cached
+## list when offline or when the server does not respond within `timeout` seconds.
 .get_survey_list <- function(timeout = 10) {
   on.exit(setTimeLimit(elapsed = Inf, transient = TRUE), add = TRUE)
   tryCatch({
     setTimeLimit(elapsed = timeout, transient = TRUE)
-    icesDatras::getSurveyList()
+    .datras_api_get("getSurveyList", tag = "Survey")
   }, error = function(e) {
     message("Could not reach DATRAS server within ", timeout,
             " seconds - using cached survey list. (Consider increasing timeout).")
@@ -220,15 +220,18 @@ download_datras <- function(surveys = NULL,
 }
 
 
-## Attempt icesDatras::getSurveyYearList(); fall back to years inferred from
-## locally present zip files when offline or when the server does not respond
-## within `timeout` seconds.  yearsin, if non-NULL, is applied as a filter in
-## both the online and offline paths.
+## Attempt to fetch available years from the DATRAS API; fall back to years
+## inferred from locally present zip files when offline or when the server does
+## not respond within `timeout` seconds.  yearsin, if non-NULL, is applied as a
+## filter in both the online and offline paths.
 .get_survey_year_list <- function(survey, dir, yearsin = NULL, timeout = 10) {
   on.exit(setTimeLimit(elapsed = Inf, transient = TRUE), add = TRUE)
   years <- tryCatch({
     setTimeLimit(elapsed = timeout, transient = TRUE)
-    icesDatras::getSurveyYearList(survey)
+    as.integer(.datras_api_get("getSurveyYearList",
+                               paste0("survey=",
+                                      URLencode(survey, reserved = TRUE)),
+                               tag = "Year"))
   }, error = function(e) {
     files <- list.files(file.path(dir, survey),
                         pattern = paste0("^", survey, "_[0-9]{4}\\.zip$"))
@@ -242,6 +245,39 @@ download_datras <- function(surveys = NULL,
   })
   if (!is.null(yearsin)) years <- years[years %in% yearsin]
   years
+}
+
+
+## Attempt to fetch available quarters from the DATRAS API; fall back to 1:4
+## when offline or when the server does not respond within `timeout` seconds.
+.get_survey_year_quarter_list <- function(survey, year, timeout = 10) {
+  on.exit(setTimeLimit(elapsed = Inf, transient = TRUE), add = TRUE)
+  tryCatch({
+    setTimeLimit(elapsed = timeout, transient = TRUE)
+    as.integer(.datras_api_get("getSurveyYearQuarterList",
+                               paste0("survey=",
+                                      URLencode(survey, reserved = TRUE),
+                                      "&year=", year),
+                               tag = "Quarter"))
+  }, error = function(e) {
+    message("Could not reach DATRAS server within ", timeout,
+            " seconds - falling back to all quarters 1:4 for ",
+            survey, " ", year, ". (Consider increasing timeout).")
+    1:4
+  })
+}
+
+
+## Make a GET request to the ICES DATRAS web service and return the values of
+## `tag` elements from the XML response as a character vector.
+.datras_api_get <- function(endpoint, query = "", tag) {
+  base <- "https://datras.ices.dk/WebServices/DATRASWebService.asmx/"
+  addr <- if (nchar(query) > 0) paste0(base, endpoint, "?", query) else paste0(base, endpoint)
+  con <- url(addr)
+  on.exit(close(con), add = TRUE)
+  txt <- paste(readLines(con, warn = FALSE), collapse = "")
+  m <- gregexpr(paste0("(?<=<", tag, ">)[^<]+"), txt, perl = TRUE)
+  regmatches(txt, m)[[1]]
 }
 
 

@@ -85,6 +85,7 @@
 ##' }
 ##'
 ##' @importFrom DATRAS downloadExchange
+##' @importFrom utils unzip
 ##'
 ##' @export
 read_datras <- function(path,

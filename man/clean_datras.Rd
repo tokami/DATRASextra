@@ -10,7 +10,7 @@ clean_datras(
   years = NULL,
   quarters = NULL,
   gears = NULL,
-  impute_missing_depth = TRUE,
+  impute_missing_depth = FALSE,
   correct_species = TRUE,
   do_fishglob = FALSE
 )
@@ -27,8 +27,9 @@ clean_datras(
 
 \item{gears}{Optional character vector of gear codes to retain.}
 
-\item{impute_missing_depth}{Logical. If \code{TRUE} (default), missing haul depths
-are imputed using a smooth spatial GAM fitted to observed depths.}
+\item{impute_missing_depth}{Logical. If \code{TRUE}, missing haul depths are
+imputed using a smooth spatial GAM fitted to observed depths. Default:
+\code{FALSE}.}
 
 \item{correct_species}{Logical. If \code{TRUE} (default), species information is
 corrected using \code{\link[=correct_species]{correct_species()}}.}
@@ -57,8 +58,9 @@ applied before any optional subsetting:
 \item only records with \code{StdSpecRecCode == 1} are retained.
 }
 
-If \code{impute_missing_depth = TRUE}, missing \code{Depth} values are predicted from a
-GAM of \code{log(Depth)} on a two-dimensional smooth of longitude and latitude.
+If \code{impute_missing_depth = TRUE}, missing \code{Depth} values are predicted from
+a GAM of \code{log(Depth)} on a two-dimensional smooth of longitude and latitude.
+Note that this requires the R package mgcv to be installed.
 
 Optional filtering by \code{aphias}, \code{years}, \code{quarters}, and \code{gears} is applied
 after cleaning.

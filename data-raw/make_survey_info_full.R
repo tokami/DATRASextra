@@ -1,17 +1,24 @@
 ## Build canonical raw survey overview dataset for DATRASextra
 ## created: 2026-04-30
 
-library(icesDatras)
 library(DATRASextra)
 
 ci <- 1
 res.list <- list()
-surveys <- icesDatras::getSurveyList()
+surveys <- DATRASextra:::.datras_api_get("getSurveyList", tag = "Survey")
 
 for (si in seq_along(surveys)) {
-  years <- icesDatras::getSurveyYearList(surveys[si])
+  years <- as.integer(DATRASextra:::.datras_api_get(
+    "getSurveyYearList",
+    paste0("survey=", URLencode(surveys[si], reserved = TRUE)),
+    tag = "Year"
+  ))
   for (yi in seq_along(years)) {
-    quarters <- icesDatras::getSurveyYearQuarterList(surveys[si], years[yi])
+    quarters <- as.integer(DATRASextra:::.datras_api_get(
+      "getSurveyYearQuarterList",
+      paste0("survey=", URLencode(surveys[si], reserved = TRUE), "&year=", years[yi]),
+      tag = "Quarter"
+    ))
     for (qi in seq_along(quarters)) {
       tmp <- getHHdata(surveys[si], years[yi], quarters[qi])
       res.list[[ci]] <- tmp[

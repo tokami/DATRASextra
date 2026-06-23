@@ -1,4 +1,4 @@
-# DATRASextra (development version)
+# DATRASextra 0.2.1
 
 ## Breaking changes
 
@@ -9,7 +9,17 @@
   to a separate variable (e.g. `res <- check_lengths(x)`) and then accessed
   `res$lPars` should be updated to `x <- check_lengths(x)` and
   `attr(x, "length_check")$lPars`.
-  
+
+* The default for `impute_missing_depth` in `clean_datras()` has changed from
+  `TRUE` to `FALSE`. Enable explicitly with `impute_missing_depth = TRUE` if
+  needed (requires the `mgcv` package).
+
+## Minor changes
+
+* `mgcv` and `icesDatras` are no longer hard dependencies. Both have been
+  removed from `Imports`; `mgcv` is now listed under `Suggests`. The DATRAS
+  API calls previously handled by `icesDatras` are now made directly in base R.
+
 * Added the article *Matching EMODnet seabed habitats to hauls*, showing how to
   download EUSeaMap polygons from the EMODnet Seabed Habitats WFS and attach a
   seabed habitat class to each haul in `HH` with a spatial join.
@@ -17,6 +27,7 @@
 * Replaced the article *Constructing a prediction grid within a survey domain*
   with *Building a spatiotemporal prediction grid*, which uses the new
   `make_survey_grid()` function to build the grid and add a year dimension.
+
 
 
 # DATRASextra 0.1.1

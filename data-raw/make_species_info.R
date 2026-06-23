@@ -3,7 +3,6 @@
 
 ## TODO revise when gear indices ready!
 
-library(icesDatras)
 library(DATRASextra)
 library(worrms)
 library(rfishbase)

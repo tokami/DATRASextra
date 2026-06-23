@@ -1,6 +1,6 @@
 Package: DATRASextra
 Title: Extra functions for DTU Aquas DATRAS R package
-Version: 0.2.0
+Version: 0.2.1
 Authors@R:
     c(person("Tobias", "Mildenberger",
            role = c("aut", "cre"),
@@ -24,10 +24,8 @@ Description: DATRASextra is an R package for working with ICES DATRAS survey
 Depends:
     R (>= 4.0),
     DATRAS (>= 1.01.1)
-Imports:
-    mgcv,
-    icesDatras
 Suggests:
+    mgcv,
     mapdata,
     maps,
     parallel,
@@ -44,8 +42,7 @@ Suggests:
     RANN
 Remotes:
     DTUAqua/DATRAS/DATRAS,
-    ropensci/rnaturalearthhires,
-    ices-tools-prod/icesDatras
+    ropensci/rnaturalearthhires
 LazyData: true
 LazyDataCompression: xz
 License: GPL-3

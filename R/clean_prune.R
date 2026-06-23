@@ -19,8 +19,9 @@
 ##' @param years Optional integer vector of years to retain.
 ##' @param quarters Optional integer vector of quarters to retain.
 ##' @param gears Optional character vector of gear codes to retain.
-##' @param impute_missing_depth Logical. If `TRUE` (default), missing haul depths
-##'   are imputed using a smooth spatial GAM fitted to observed depths.
+##' @param impute_missing_depth Logical. If `TRUE`, missing haul depths are
+##'   imputed using a smooth spatial GAM fitted to observed depths. Default:
+##'   `FALSE`.
 ##' @param correct_species Logical. If `TRUE` (default), species information is
 ##'   corrected using [correct_species()].
 ##' @param do_fishglob Logical. If `TRUE`, apply [clean_fishglob()] instead of
@@ -34,8 +35,9 @@
 ##'   \item only records with `StdSpecRecCode == 1` are retained.
 ##' }
 ##'
-##' If `impute_missing_depth = TRUE`, missing `Depth` values are predicted from a
-##' GAM of `log(Depth)` on a two-dimensional smooth of longitude and latitude.
+##' If `impute_missing_depth = TRUE`, missing `Depth` values are predicted from
+##' a GAM of `log(Depth)` on a two-dimensional smooth of longitude and latitude.
+##' Note that this requires the R package mgcv to be installed.
 ##'
 ##' Optional filtering by `aphias`, `years`, `quarters`, and `gears` is applied
 ##' after cleaning.
@@ -56,15 +58,13 @@
 ##' x_clean <- clean_datras(x, aphias = c(126417, 126436))
 ##' }
 ##'
-##' @importFrom mgcv gam s predict.gam
-##'
 ##' @export
 clean_datras <- function(x,
                          aphias = NULL,
                          years = NULL,
                          quarters = NULL,
                          gears = NULL,
-                         impute_missing_depth = TRUE,
+                         impute_missing_depth = FALSE,
                          correct_species = TRUE,
                          do_fishglob = FALSE) {
 
@@ -95,11 +95,16 @@ clean_datras <- function(x,
 
     ## Impute depths ------------------------------
     if (impute_missing_depth && any(is.na(x[[2]]$Depth))) {
-      dmodel <- mgcv::gam(log(Depth) ~ s(lon, lat, k = 200), data = x[[2]])
-      sel <- subset(x, is.na(Depth))
-      sel$Depth <- 0 ## Guard against NA-error
-      x$Depth[is.na(x$Depth)] <- exp(mgcv::predict.gam(dmodel, newdata = sel[[2]]))
-      sel <- dmodel <- NULL; gc()
+      if (!requireNamespace("mgcv", quietly = TRUE)) {
+        warning("Package 'mgcv' is needed for depth imputation but is not installed. ",
+                "Skipping imputation. Install with: install.packages(\"mgcv\")")
+      } else {
+        dmodel <- mgcv::gam(log(Depth) ~ mgcv::s(lon, lat, k = 200), data = x[[2]])
+        sel <- subset(x, is.na(Depth))
+        sel$Depth <- 0 ## Guard against NA-error
+        x$Depth[is.na(x$Depth)] <- exp(mgcv::predict.gam(dmodel, newdata = sel[[2]]))
+        sel <- dmodel <- NULL; gc()
+      }
     }
 
 

@@ -1,11 +1,8 @@
 ## survey info
 ## created: 04/03/2026
 
-library(icesDatras)
-
-
 ## check with
-icesDatras::getSurveyList()
+DATRASextra:::.datras_api_get("getSurveyList", tag = "Survey")
 
 
 surveys <- c("NS-IBTS", "BITS", "SWC-IBTS", "EVHOE", "SP-PORC", "SP-NORTH",
@@ -39,8 +36,8 @@ description <- c("North Sea International Bottom Trawl Survey",
                  "North Sea Sandeel Survey",
                  "French Western English Channel Ground Fish Survey")
 
-## years created with icesDatras (takes a second):
-## tmp <- sapply(surveys, icesDatras::getSurveyYearList)
+## years (takes a second):
+## tmp <- sapply(surveys, function(x) DATRASextra:::.datras_api_get("getSurveyYearList", paste0("survey=", x), tag = "Year"))
 ## years <- apply(sapply(tmp, range), 2, paste, collapse = "-")
 years <- c("1965-2025","1991-2025","1985-2010","1997-2024","2001-2024",
            "1990-2024","1996-2024","2002-2023","1988-2024","2005-2024",
@@ -49,10 +46,10 @@ years <- c("1965-2025","1991-2025","1985-2010","1997-2024","2001-2024",
            "2016-2023","2016-2024","1985-2024","1970-2021","2011-2023",
            "2019-2024","2008-2024","2018-2024")
 
-## quarters created with icesDatras (takes few seconds):
+## quarters (takes few seconds):
 ## tmp2 <- lapply(surveys, function(x){
 ##     tmpi <- sapply(tmp[[x]],
-##                    function(y) icesDatras::getSurveyYearQuarterList(x,y))
+##                    function(y) DATRASextra:::.datras_api_get("getSurveyYearQuarterList", paste0("survey=", x, "&year=", y), tag = "Quarter"))
 ##     tabi <- table(unlist(tmpi))
 ##     paste(paste0(names(tabi), "(", tabi, ")"), collapse = ", ")
 ## })
