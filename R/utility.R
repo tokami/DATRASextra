@@ -450,7 +450,11 @@ print.datras_raw <- function(x, ...) {
   if ("Country" %in% names(hh))
     cat("Number of countries:", length(unique(as.character(hh$Country))), "\n")
 
-  cat("Years:", paste(sort(unique(as.integer(as.character(hh$Year)))), collapse = " "), "\n")
+  yrs <- sort(unique(as.integer(as.character(hh$Year))))
+  cat("Years:", yrs[1], "-", yrs[length(yrs)], "\n")
+  missing_yrs <- setdiff(seq(yrs[1], yrs[length(yrs)]), yrs)
+  if (length(missing_yrs) > 0)
+    cat("Missing years:", paste(missing_yrs, collapse = ", "), "\n")
   cat("Quarters:", paste(sort(unique(as.integer(as.character(hh$Quarter)))), collapse = " "), "\n")
   cat("Gears:", paste(levels(factor(as.character(hh$Gear))), collapse = " "), "\n")
 
@@ -465,6 +469,18 @@ print.datras_raw <- function(x, ...) {
     cat("Valid hauls:", n_valid)
     if (n_invalid > 0) cat(" (", n_invalid, " invalid)", sep = "")
     cat("\n")
+  }
+
+  if (!is.null(hl) && nrow(hl) > 0 && "haul.id" %in% names(hl) && "haul.id" %in% names(hh)) {
+    count_col <- if ("Count" %in% names(hl)) "Count" else if ("HLNoAtLngt" %in% names(hl)) "HLNoAtLngt" else NULL
+    pos_ids <- if (!is.null(count_col)) {
+      unique(hl$haul.id[!is.na(hl[[count_col]]) & hl[[count_col]] > 0])
+    } else {
+      unique(hl$haul.id)
+    }
+    n_nonzero <- sum(hh$haul.id %in% pos_ids)
+    cat("Hauls with catch:", n_nonzero,
+        "(zero catch:", nrow(hh) - n_nonzero, ")\n")
   }
 
   if ("lon" %in% names(hh) && "lat" %in% names(hh)) {
