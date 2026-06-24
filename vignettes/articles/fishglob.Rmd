@@ -224,7 +224,7 @@ surveys <- c("NS-IBTS", "EVHOE", "SWC-IBTS", "BITS", "IE-IGFS",
 tmp <- tempdir()
 
 # download survey data
-download_datras(surveys = surveys, path = tmp)
+download_datras(path = tmp, surveys = surveys)
 
 # read raw DATRAS tables
 raw <- read_datras(file.path(tmp, surveys))

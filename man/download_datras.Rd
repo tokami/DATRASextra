@@ -5,9 +5,9 @@
 \title{Download ICES DATRAS survey data}
 \usage{
 download_datras(
+  path = NULL,
   surveys = NULL,
   years = NULL,
-  path = NULL,
   overwrite = FALSE,
   download_hl = TRUE,
   download_ca = TRUE,
@@ -20,16 +20,16 @@ download_datras(
 )
 }
 \arguments{
+\item{path}{Character string giving the directory where downloaded files
+should be stored. Survey-specific subdirectories are created within this
+directory. If \code{NULL}, the current working directory is used.}
+
 \item{surveys}{A character vector of DATRAS survey names to download, for
 example \code{"NS-IBTS"} or \code{"BITS"}. If \code{NULL}, all available surveys are
 used.}
 
 \item{years}{An integer vector of years to download. If \code{NULL}, all
 available years for each selected survey are used.}
-
-\item{path}{Character string giving the directory where downloaded files
-should be stored. Survey-specific subdirectories are created within this
-directory. If \code{NULL}, the current working directory is used.}
 
 \item{overwrite}{Logical. If \code{FALSE} (default), survey-year files that
 already exist in \code{path} are skipped. Set to \code{TRUE} to re-download and

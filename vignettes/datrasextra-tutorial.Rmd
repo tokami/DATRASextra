@@ -109,7 +109,7 @@ survey <- "SNS"
 tmp <- tempdir()
 
 ## Download SNS data for 2023
-download_datras(surveys = survey, years = 2023, path = tmp)
+download_datras(path = tmp, surveys = survey, years = 2023)
 ```
 
 Note that `download_datras()` does not load the data directly into R. Instead,

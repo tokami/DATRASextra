@@ -17,6 +17,9 @@
 ##' Alternatively, the legacy PHP-based download route from
 ##' `DATRAS::downloadExchange()` can be used by setting `use_php = TRUE`.
 ##'
+##' @param path Character string giving the directory where downloaded files
+##'   should be stored. Survey-specific subdirectories are created within this
+##'   directory. If `NULL`, the current working directory is used.
 ##' @param surveys A character vector of DATRAS survey names to download, for
 ##'   example `"NS-IBTS"` or `"BITS"`. If `NULL`, all available surveys are
 ##'   used.
@@ -34,9 +37,6 @@
 ##' @param use_php Logical. If `FALSE` (default), data are downloaded via
 ##'   `DATRAS::getDatrasExchange()`. If `TRUE`, the legacy
 ##'   `DATRAS::downloadExchange()` method is used.
-##' @param path Character string giving the directory where downloaded files
-##'   should be stored. Survey-specific subdirectories are created within this
-##'   directory. If `NULL`, the current working directory is used.
 ##' @param include_flagged Logical. If `FALSE` (default), surveys known to be
 ##'   test surveys or surveys with incomplete data are skipped. Set to `TRUE` to
 ##'   download them anyway.
@@ -83,9 +83,9 @@
 ##' }
 ##'
 ##' @export
-download_datras <- function(surveys = NULL,
+download_datras <- function(path = NULL,
+                            surveys = NULL,
                             years = NULL,
-                            path = NULL,
                             overwrite = FALSE,
                             download_hl = TRUE,
                             download_ca = TRUE,
