@@ -72,6 +72,8 @@
 #'   leave the aspect ratio determined by the device dimensions (current
 #'   behaviour of base `plot()`). Fixing `asp` prevents the map from distorting
 #'   when figure margins or device dimensions change.
+#' @param years Optional integer vector of years to include. If `NULL`
+#'   (default), all years in the data are plotted.
 #' @param add Logical. If `FALSE` (default), the function configures its own
 #'   graphics device via [graphics::par()] (`mfrow`, `mar`, `oma`) and restores
 #'   the previous settings on exit. If `TRUE`, no `par()` changes are made: the
@@ -117,6 +119,7 @@ plot_datras_overview <- function(x = NULL,
                                  legend_cex = NULL,
                                  grid_group_strategy = c("dominant", "mixed", "error"),
                                  main = NULL,
+                                 years = NULL,
                                  asp = "auto",
                                  add = FALSE) {
   mode <- match.arg(mode)
@@ -138,6 +141,13 @@ plot_datras_overview <- function(x = NULL,
   hh <- .prepare_spatial_basis(hh, spatial_basis = spatial_basis)
   x_col <- "lon"
   y_col <- "lat"
+  if (!is.null(years)) {
+    if ("Year" %in% names(hh)) {
+      hh <- hh[hh$Year %in% years, , drop = FALSE]
+    } else {
+      warning("`years` supplied but no `Year` column found in HH; ignoring.", call. = FALSE)
+    }
+  }
   if (nrow(hh) == 0) stop("No finite coordinate rows in HH.", call. = FALSE)
   if (identical(mode, "points") && nrow(hh) > 50000)
     message("Plotting ", nrow(hh), " hauls as individual points may be slow. ",
