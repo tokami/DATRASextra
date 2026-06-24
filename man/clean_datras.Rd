@@ -12,7 +12,9 @@ clean_datras(
   gears = NULL,
   impute_missing_depth = FALSE,
   correct_species = TRUE,
-  do_fishglob = FALSE
+  do_fishglob = FALSE,
+  verbose = TRUE,
+  explain_codes = FALSE
 )
 }
 \arguments{
@@ -36,6 +38,14 @@ corrected using \code{\link[=correct_species]{correct_species()}}.}
 
 \item{do_fishglob}{Logical. If \code{TRUE}, apply \code{\link[=clean_fishglob]{clean_fishglob()}} instead of
 the standard DATRAS cleaning steps.}
+
+\item{verbose}{Logical. If \code{TRUE} (default), print a summary of \code{HaulVal}
+and \code{StdSpecRecCode} category counts and the number of hauls with missing
+\code{Depth} before cleaning. Ignored when \code{do_fishglob = TRUE}.}
+
+\item{explain_codes}{Logical. If \code{TRUE}, include a description of each
+\code{HaulVal}, \code{StdSpecRecCode}, and \code{BySpecRecCode} code in the printed
+summary. Default: \code{FALSE}. Only used when \code{verbose = TRUE}.}
 }
 \value{
 A cleaned \code{datras_raw} object.

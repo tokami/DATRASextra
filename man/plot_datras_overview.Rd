@@ -41,6 +41,7 @@ plot_datras_overview(
   legend_cex = NULL,
   grid_group_strategy = c("dominant", "mixed", "error"),
   main = NULL,
+  years = NULL,
   asp = "auto",
   add = FALSE
 )
@@ -134,6 +135,9 @@ multiple groups occur in the same cell: \code{"dominant"}, \code{"mixed"}, or
 \code{"error"}.}
 
 \item{main}{Optional title for single-panel mode.}
+
+\item{years}{Optional integer vector of years to include. If \code{NULL}
+(default), all years in the data are plotted.}
 
 \item{asp}{Aspect ratio passed to \code{\link[graphics:plot]{graphics::plot()}}. \code{"auto"} (default)
 uses the latitude-corrected value \code{1 / cos(mean(ylim) * pi / 180)}, which

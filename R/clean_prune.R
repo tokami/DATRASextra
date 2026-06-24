@@ -26,6 +26,12 @@
 ##'   corrected using [correct_species()].
 ##' @param do_fishglob Logical. If `TRUE`, apply [clean_fishglob()] instead of
 ##'   the standard DATRAS cleaning steps.
+##' @param verbose Logical. If `TRUE` (default), print a summary of `HaulVal`
+##'   and `StdSpecRecCode` category counts and the number of hauls with missing
+##'   `Depth` before cleaning. Ignored when `do_fishglob = TRUE`.
+##' @param explain_codes Logical. If `TRUE`, include a description of each
+##'   `HaulVal`, `StdSpecRecCode`, and `BySpecRecCode` code in the printed
+##'   summary. Default: `FALSE`. Only used when `verbose = TRUE`.
 ##'
 ##' @details
 ##' For standard DATRAS data (`do_fishglob = FALSE`), the following filters are
@@ -66,32 +72,107 @@ clean_datras <- function(x,
                          gears = NULL,
                          impute_missing_depth = FALSE,
                          correct_species = TRUE,
-                         do_fishglob = FALSE) {
+                         do_fishglob = FALSE,
+                         verbose = TRUE,
+                         explain_codes = FALSE) {
 
   .check_class_datras(x)
 
+  ## Verbose summary before cleaning ----------
+  if (verbose && !do_fishglob) {
+    hh <- x[["HH"]]
+
+    hv_codes <- c(
+      A = "Additional valid stations not used for index calculations",
+      C = "Calibrated (BITS only)",
+      I = "Invalid haul",
+      M = "Pelagic Midwater Trawl (BITS only)",
+      N = "No oxygen (BITS only)",
+      P = "Partly valid haul (sensors show problems or malfunction)",
+      S = "Standard haul",
+      V = "Valid haul"
+    )
+    ssrc_codes <- c(
+      `0` = "No standard species recorded",
+      `1` = "All standard species recorded",
+      `2` = "Pelagic standard species recorded",
+      `3` = "Roundfish standard species recorded",
+      `4` = "Individual standard species recorded"
+    )
+    bsrc_codes <- c(
+      `0` = "No bycatch species recorded",
+      `1` = "All bycatch species recorded",
+      `2` = "Pelagic bycatch species recorded",
+      `3` = "Roundfish bycatch species recorded",
+      `4` = "Flatfish bycatch species recorded",
+      `5` = "Pelagic and demersal bycatch species recorded",
+      `6` = "Selected bycatch species recorded (SP-NORTH)",
+      `7` = "Selected bycatch species recorded (SP-PORC)"
+    )
+
+    hv_tab <- table(hh$HaulVal)
+    ssrc_tab <- table(hh$StdSpecRecCode)
+    bsrc_tab <- table(hh$BySpecRecCode)
+
+    hv_df <- data.frame(Code = names(hv_tab), n = as.integer(hv_tab),
+                        stringsAsFactors = FALSE)
+    ssrc_df <- data.frame(Code = names(ssrc_tab), n = as.integer(ssrc_tab),
+                          stringsAsFactors = FALSE)
+    bsrc_df <- data.frame(Code = names(bsrc_tab), n = as.integer(bsrc_tab),
+                          stringsAsFactors = FALSE)
+
+    if (explain_codes) {
+      hv_df$Description <- ifelse(hv_df$Code %in% names(hv_codes),
+                                  hv_codes[hv_df$Code], "")
+      ssrc_df$Description <- ifelse(ssrc_df$Code %in% names(ssrc_codes),
+                                    ssrc_codes[ssrc_df$Code], "")
+      bsrc_df$Description <- ifelse(bsrc_df$Code %in% names(bsrc_codes),
+                                    bsrc_codes[bsrc_df$Code], "")
+    }
+
+    message("HaulVal (", nrow(hh), " hauls before cleaning):\n",
+            .format_code_table(hv_df))
+    message("\nStdSpecRecCode:\n",
+            .format_code_table(ssrc_df))
+    message("\nBySpecRecCode:\n",
+            .format_code_table(bsrc_df))
+    message("\nHauls with missing lon: ", sum(is.na(hh$lon)),
+            "\nHauls with missing lat: ", sum(is.na(hh$lat)),
+            "\nHauls with missing Year: ", sum(is.na(hh$Year)),
+            "\nHauls with missing Depth: ", sum(is.na(hh$Depth)),
+            "\nHauls with missing HaulDur: ", sum(is.na(hh$HaulDur)),
+            "\nHauls with missing Distance: ", sum(is.na(hh$Distance)),
+            "\nHauls with missing GroundSpeed: ", sum(is.na(hh$GroundSpeed)),
+            "\nHauls with missing WingSpread: ", sum(is.na(hh$WingSpread)),
+            "\nHauls with missing DoorSpread: ", sum(is.na(hh$DoorSpread)))
+  }
+
   ## Minimum cleaning ------------------------
-  if (!do_fishglob) {
+  if (do_fishglob) {
+
+    x <- clean_fishglob(x)
+
+  } else {
 
     ## HaulVal (https://vocab.ices.dk/?ref=1)
+    n_before_hv <- nrow(x[["HH"]])
     x <- subset(x, HaulVal %in% c("V","N"))
-    ## A	Additional valid stations not used for index calculations
-    ## C	Calibrated (BITS only)
-    ## I	Invalid haul
-    ## M	Pelagic Midwater Trawl (BITS only)
-    ## N	No oxygen (BITS only)
-    ## P  Partly valid haul - there is catch, but trawl sensors show problems,
-    ##    faulty door distance, or other indications of malfunction
-    ## S	Standard haul
-    ## V	Valid haul
 
     ## StdSpecRecCode (https://vocab.ices.dk/?ref=88)
+    n_before_ssrc <- nrow(x[["HH"]])
     x <- subset(x, StdSpecRecCode == 1)
-    ## 0	No standard species recorded
-    ## 1	All standard species recorded
-    ## 2	Pelagic standard species recorded
-    ## 3	Roundfish standard species recorded
-    ## 4	Individual standard species recorded
+
+    if (verbose) {
+      n_after <- nrow(x[["HH"]])
+      message("\nHauls removed by HaulVal filter: ", n_before_hv - n_before_ssrc,
+              "\nHauls removed by StdSpecRecCode filter: ", n_before_ssrc - n_after,
+              "\nHauls remaining: ", n_after)
+      n_no_oxy <- sum(x[["HH"]]$HaulVal == "N", na.rm = TRUE)
+      if (n_no_oxy > 0) {
+        message("\nNote: ", n_no_oxy, " retained haul(s) have HaulVal = \"N\" (no oxygen, BITS only)",
+                " and may have unusually short HaulDur.")
+      }
+    }
 
     ## Impute depths ------------------------------
     if (impute_missing_depth && any(is.na(x[[2]]$Depth))) {
@@ -112,11 +193,6 @@ clean_datras <- function(x,
     if (correct_species) {
       x <- correct_species(x)
     }
-
-  } else {
-
-    x <- clean_fishglob(x)
-
   }
 
 

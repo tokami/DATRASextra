@@ -360,6 +360,18 @@ make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL) {
 
 ## Internal functions ------------------------------------------------------------
 
+.format_code_table <- function(df) {
+  cols <- lapply(seq_along(df), function(i) {
+    nm <- names(df)[i]
+    vals <- as.character(df[[i]])
+    w <- max(nchar(nm), nchar(vals))
+    flag <- if (i > 2) "-" else " "
+    formatC(c(nm, vals), width = w, flag = flag)
+  })
+  rows <- do.call(paste, c(cols, list(sep = "  ")))
+  paste(rows, collapse = "\n")
+}
+
 .colours_datrasextra_continuous <- function(n, rev = FALSE) {
   if (length(n) != 1L || is.na(n) || !is.numeric(n) || n < 1) {
     stop("`n` must be a single positive integer.", call. = FALSE)
