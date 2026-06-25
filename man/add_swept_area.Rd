@@ -11,7 +11,9 @@ add_swept_area(
   min_dist = 0,
   max_dist_dev = 0.2,
   impute_missing = FALSE,
-  width = "WingSpread"
+  width = "WingSpread",
+  verbose = TRUE,
+  full_report = FALSE
 )
 }
 \arguments{
@@ -39,6 +41,14 @@ to \code{FALSE}.}
 \item{width}{Character string specifying which spread column to use as trawl
 width. Must be either \code{"WingSpread"} (default) or \code{"DoorSpread"}. Only
 used when \code{method = "simple"}; ignored for \code{method = "fishglob"}.}
+
+\item{verbose}{Logical. If \code{TRUE} (default) and \code{method = "simple"}, print a
+summary of swept-area missingness and imputation by survey and gear.}
+
+\item{full_report}{Logical. If \code{TRUE}, the printed and attached summary also
+includes per-column missingness counts (\code{na_DoorSpread}, \code{na_WingSpread},
+\code{na_Distance}, \code{na_HaulDur}, \code{na_GroundSpeed}) for the original input
+columns. Only used when \code{method = "simple"}. Defaults to \code{FALSE}.}
 }
 \value{
 A \code{datras_raw} object with swept-area estimates added.
@@ -54,7 +64,10 @@ rule-based approach and the FishGlob workflow.
 
 If \code{method = "simple"}, swept area is calculated using a simple rule-based
 approach that applies basic plausibility filters, gear-specific median
-imputations, and a direct distance-times-width calculation.
+imputations, and a direct distance-times-width calculation. A per-haul
+logical column \code{SweptArea_imputed} is added to \code{HH}, and a survey-by-gear
+summary of missingness and imputation is attached as
+\code{attr(x, "swept_area_summary")} (and printed when \code{verbose = TRUE}).
 
 If \code{method = "fishglob"}, swept area is calculated using
 \code{\link[=add_swept_area_fishglob]{add_swept_area_fishglob()}}, which follows the FishGlob workflow based on

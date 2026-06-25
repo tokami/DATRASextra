@@ -33,8 +33,8 @@
 ##'   summary of swept-area missingness and imputation by survey and gear.
 ##' @param full_report Logical. If `TRUE`, the printed and attached summary also
 ##'   includes per-column missingness counts (`na_DoorSpread`, `na_WingSpread`,
-##'   `na_Distance`, `na_HaulDur`) for the original input columns. Only used when
-##'   `method = "simple"`. Defaults to `FALSE`.
+##'   `na_Distance`, `na_HaulDur`, `na_GroundSpeed`) for the original input
+##'   columns. Only used when `method = "simple"`. Defaults to `FALSE`.
 ##'
 ##' @details
 ##' If `method = "simple"`, swept area is calculated using a simple rule-based
@@ -132,7 +132,8 @@ add_swept_area <- function(x,
 ##'   missingness and imputation by survey and gear.
 ##' @param full_report Logical. If `TRUE`, the summary also includes per-column
 ##'   missingness counts (`na_DoorSpread`, `na_WingSpread`, `na_Distance`,
-##'   `na_HaulDur`) for the original input columns. Defaults to `FALSE`.
+##'   `na_HaulDur`, `na_GroundSpeed`) for the original input columns. Defaults
+##'   to `FALSE`.
 ##'
 ##' @details
 ##' Swept area is calculated in \eqn{m^2} as:
@@ -174,7 +175,7 @@ add_swept_area <- function(x,
 ##' `n_NA` / `prop_NA` (hauls whose `SweptArea` is still `NA` after imputation,
 ##' e.g. gears that cannot be imputed). When `full_report = TRUE`, per-column
 ##' missingness counts (`na_DoorSpread`, `na_WingSpread`, `na_Distance`,
-##' `na_HaulDur`) of the original input columns are appended.
+##' `na_HaulDur`, `na_GroundSpeed`) of the original input columns are appended.
 ##'
 ##' @seealso [add_swept_area()], [add_swept_area_fishglob()]
 ##'
@@ -199,7 +200,7 @@ add_swept_area_simple <- function(x,
   ## Capture original missingness of the key input columns (before any
   ## filtering / imputation) for the optional full report.
   raw_na <- list()
-  for (col in c("DoorSpread", "WingSpread", "Distance", "HaulDur")) {
+  for (col in c("DoorSpread", "WingSpread", "Distance", "HaulDur", "GroundSpeed")) {
     if (col %in% names(x[["HH"]]))
       raw_na[[paste0("na_", col)]] <- is.na(x[["HH"]][[col]])
   }

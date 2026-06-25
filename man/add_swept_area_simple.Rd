@@ -10,7 +10,9 @@ add_swept_area_simple(
   min_dist = 0,
   max_dist_dev = 0.2,
   impute_missing = FALSE,
-  width = "WingSpread"
+  width = "WingSpread",
+  verbose = TRUE,
+  full_report = FALSE
 )
 }
 \arguments{
@@ -34,13 +36,29 @@ width. Must be either \code{"WingSpread"} (default) or \code{"DoorSpread"}. Use
 \code{"DoorSpread"} for surveys that record door spread but not wing spread.
 Note that the fixed beam-trawl widths and the gear-specific plausibility
 bounds are only applied when \code{width = "WingSpread"}.}
+
+\item{verbose}{Logical. If \code{TRUE} (default), print a summary of swept-area
+missingness and imputation by survey and gear.}
+
+\item{full_report}{Logical. If \code{TRUE}, the summary also includes per-column
+missingness counts (\code{na_DoorSpread}, \code{na_WingSpread}, \code{na_Distance},
+\code{na_HaulDur}, \code{na_GroundSpeed}) for the original input columns. Defaults
+to \code{FALSE}.}
 }
 \value{
-A \code{datras_raw} object with two additional swept-area fields:
+A \code{datras_raw} object with the following fields added to \code{HH}:
 \itemize{
 \item \code{SweptArea}: swept area based on haul-specific spread,
-\item \code{SweptArea.median}: swept area based on gear-specific median spread.
+\item \code{SweptArea_median}: swept area based on gear-specific median spread,
+\item \code{SweptArea_imputed}: logical flag, \code{TRUE} when the spread and/or
+towing distance used for that haul was imputed.
 }
+A survey-by-gear summary is attached as \code{attr(x, "swept_area_summary")},
+with columns \code{survey}, \code{gear}, \code{n_records}, \code{n_imputed}, \code{prop_imputed}, and
+\code{n_NA} / \code{prop_NA} (hauls whose \code{SweptArea} is still \code{NA} after imputation,
+e.g. gears that cannot be imputed). When \code{full_report = TRUE}, per-column
+missingness counts (\code{na_DoorSpread}, \code{na_WingSpread}, \code{na_Distance},
+\code{na_HaulDur}, \code{na_GroundSpeed}) of the original input columns are appended.
 }
 \description{
 Compute haul-level swept-area estimates from towing distance and trawl width
@@ -58,11 +76,11 @@ Swept area is calculated in \eqn{m^2} as:
 }
 where \eqn{Spread} is taken from the column selected by \code{width}.
 
-A second estimate, \code{SweptArea.median}, is also returned. This uses a
+A second estimate, \code{SweptArea_median}, is also returned. This uses a
 gear-specific median spread rather than the haul-specific recorded or
 imputed spread:
 \deqn{
-  SweptArea.median = Spread.median \times Distance
+  SweptArea_median = Spread_median \times Distance
 }
 
 The function applies the following steps:
