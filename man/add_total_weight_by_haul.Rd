@@ -6,20 +6,17 @@
 \usage{
 add_total_weight_by_haul(
   x,
-  per_minute = FALSE,
   max_length = NULL,
   max_weight = NULL,
+  plus_group = FALSE,
   lw_source = c("lookup", "ca"),
   lw_pars = NULL,
-  length_cuts = NULL
+  length_cuts = NULL,
+  per_minute = FALSE
 )
 }
 \arguments{
 \item{x}{A \code{datras_raw} object.}
-
-\item{per_minute}{Logical. If \code{TRUE}, add \code{HaulWgtPerMin}, calculated as
-\code{HaulWgt} divided by haul duration in minutes. If \code{FALSE}, only \code{HaulWgt}
-is added.}
 
 \item{max_length}{Optional numeric value giving the maximum length in
 centimetres to retain when fitting the length-weight relationship.
@@ -28,6 +25,10 @@ Observations above this value are excluded.}
 \item{max_weight}{Optional numeric value giving the maximum individual
 weight in grams to retain when fitting the length-weight relationship.
 Observations above this value are excluded.}
+
+\item{plus_group}{Logical. If \code{TRUE}, all fish at or above the largest
+length class are accumulated into that class. Passed to
+\code{\link[=add_weight_at_length]{add_weight_at_length()}}.}
 
 \item{lw_source}{Character string specifying the source of length-weight
 parameters. One of \code{"ca"} or \code{"lookup"}.}
@@ -38,6 +39,10 @@ parameters. One of \code{"ca"} or \code{"lookup"}.}
 \item{length_cuts}{Optional numeric vector of break points for aggregating
 the original length classes into coarser bins. Must be strictly
 increasing.}
+
+\item{per_minute}{Logical. If \code{TRUE}, add \code{HaulWgtPerMin}, calculated as
+\code{HaulWgt} divided by haul duration in minutes. If \code{FALSE}, only \code{HaulWgt}
+is added.}
 }
 \value{
 A \code{datras_raw} object with \code{HaulWgt} added to \code{HH}. If

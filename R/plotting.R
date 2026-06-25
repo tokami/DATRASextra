@@ -650,7 +650,7 @@ plot_datras_overview <- function(x = NULL,
 ##'   `length(length_cuts) + 1`. If `length_cuts` is not supplied, the first
 ##'   colour is used for all bars.
 ##' @param main Optional plot title.
-##' @param do_legend Logical; if `TRUE`, draw a legend for the length intervals
+##' @param legend Logical; if `TRUE`, draw a legend for the length intervals
 ##'   when `length_cuts` is supplied.
 ##' @param legend_ncol Integer; number of columns to use in the legend.
 ##'
@@ -673,7 +673,7 @@ plot_datras_overview <- function(x = NULL,
 ##' plot_length_distribution(x, length_cuts = c(15, 25))
 ##'
 ##' ## Plot without legend
-##' plot_length_distribution(x, length_cuts = c(15, 25), do_legend = FALSE)
+##' plot_length_distribution(x, length_cuts = c(15, 25), legend = FALSE)
 ##'
 ##' ## Draw only the length-group legend
 ##' plot_length_distribution(x, what = "legend",
@@ -689,8 +689,8 @@ plot_length_distribution <- function(x,
                                      length_cuts = NULL,
                                      col = NULL,
                                      main = NULL,
-                                     do_legend = TRUE,
-                                     legend_ncol = 1L) {
+                                     legend = TRUE,
+                                     legend_ncol = 1) {
 
   what <- match.arg(what)
   agg  <- match.arg(agg)
@@ -752,7 +752,7 @@ plot_length_distribution <- function(x,
   show   <- seq(1L, n_bars, by = step)
 
   .one_panel <- function(mat, ylab, xlab = "Length (cm)", main = NULL,
-                         do_legend = TRUE, legend_only = FALSE) {
+                         legend = TRUE, legend_only = FALSE) {
     y <- agg_fun(mat, na.rm = TRUE)
     if (isTRUE(log_scale)) {
       y <- log(y)
@@ -788,7 +788,7 @@ plot_length_distribution <- function(x,
 
       abline(v = .map2bar(cuts, mids, bar_x), col = "grey20", lty = 2L, lwd = 1.5)
 
-      if (isTRUE(do_legend)) {
+      if (isTRUE(legend)) {
         legend(legend_pos, legend = cut_labels,
                fill = grp_col,
                border = NA,
@@ -808,16 +808,16 @@ plot_length_distribution <- function(x,
     .one_panel(N, legend_only = TRUE)
   } else if (identical(what, "both")) {
     par(mfrow = c(2L, 1L), mar = mar, oma = oma)
-    y_N   <- .one_panel(N,   ylab_N, xlab = "", main = main, do_legend = do_legend)
-    y_Wgt <- .one_panel(Wgt, ylab_Wgt, main = NULL, do_legend = FALSE)
+    y_N   <- .one_panel(N,   ylab_N, xlab = "", main = main, legend = legend)
+    y_Wgt <- .one_panel(Wgt, ylab_Wgt, main = NULL, legend = FALSE)
     invisible(data.frame(midL = mids, N = unname(y_N), Wgt = unname(y_Wgt)))
   } else if (identical(what, "N")) {
     par(mar = mar, oma = oma)
-    y <- .one_panel(N, ylab_N, main = main, do_legend = do_legend)
+    y <- .one_panel(N, ylab_N, main = main, legend = legend)
     invisible(data.frame(midL = mids, N = unname(y)))
   } else {
     par(mar = mar, oma = oma)
-    y <- .one_panel(Wgt, ylab_Wgt, main = main, do_legend = do_legend)
+    y <- .one_panel(Wgt, ylab_Wgt, main = main, legend = legend)
     invisible(data.frame(midL = mids, Wgt = unname(y)))
   }
 }
@@ -852,7 +852,7 @@ plot_length_distribution <- function(x,
 ##' @param main Optional plot title.
 ##' @param max_species Integer; maximum number of species to show individually.
 ##'   Additional species, ranked by total count, are collapsed into `"Other"`.
-##' @param do_legend Logical; if `TRUE`, draw the species legend.
+##' @param legend Logical; if `TRUE`, draw the species legend.
 ##' @param legend_ncol Integer; number of columns to use in the legend.
 ##'
 ##' @return Invisibly returns a named list with elements `N` and `Wgt`. Each
@@ -877,7 +877,7 @@ plot_length_distribution <- function(x,
 ##' plot_species_composition(dat, beside = FALSE)
 ##'
 ##' ## Suppress legend
-##' plot_species_composition(dat, do_legend = FALSE)
+##' plot_species_composition(dat, legend = FALSE)
 ##'
 ##' ## Draw legend only
 ##' plot_species_composition(dat, what = "legend", legend_ncol = 2)
@@ -890,8 +890,8 @@ plot_species_composition <- function(x,
                                      col = NULL,
                                      main = NULL,
                                      max_species = 8L,
-                                     do_legend = TRUE,
-                                     legend_ncol = 1L) {
+                                     legend = TRUE,
+                                     legend_ncol = 1) {
 
   what <- match.arg(what)
   .check_class_datras(x)
@@ -991,7 +991,7 @@ plot_species_composition <- function(x,
   bot_mar <- if (isTRUE(beside) && n_grp > 1L) 5 else 3
 
   .one_panel <- function(mat, ylab, xlab = "Length group", main = NULL,
-                         do_legend = TRUE, legend_only = FALSE) {
+                         legend = TRUE, legend_only = FALSE) {
     if (isFALSE(legend_only)) {
       barplot(mat,
               beside = beside,
@@ -1012,7 +1012,7 @@ plot_species_composition <- function(x,
     }
     ## stacked: reverse legend so top-of-stack species appears first
     leg_order <- if (isTRUE(beside)) seq_along(row_labels) else rev(seq_along(row_labels))
-    if (isTRUE(do_legend)) {
+    if (isTRUE(legend)) {
       legend(legend_pos,
              legend = row_labels[leg_order],
              fill   = bar_col[leg_order],
@@ -1029,14 +1029,14 @@ plot_species_composition <- function(x,
     .one_panel(sp_N_plot, legend_only = TRUE)
   } else if (identical(what, "both")) {
     par(mfrow = c(2L, 1L), mar = mar, oma = oma)
-    .one_panel(sp_N_plot, "Total numbers", xlab = "", main = main, do_legend = do_legend)
-    .one_panel(sp_W_plot, "Total weight (g)", do_legend = FALSE, main = NULL)
+    .one_panel(sp_N_plot, "Total numbers", xlab = "", main = main, legend = legend)
+    .one_panel(sp_W_plot, "Total weight (g)", legend = FALSE, main = NULL)
   } else if (identical(what, "N")) {
     par(mar = mar, oma = oma)
-    .one_panel(sp_N_plot, "Total numbers", main = main, do_legend = do_legend)
+    .one_panel(sp_N_plot, "Total numbers", main = main, legend = legend)
   } else {
     par(mar = mar, oma = oma)
-    .one_panel(sp_W_plot, "Total weight (g)", main = main, do_legend = do_legend)
+    .one_panel(sp_W_plot, "Total weight (g)", main = main, legend = legend)
   }
 
   invisible(list(

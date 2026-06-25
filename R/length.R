@@ -204,8 +204,8 @@ check_lengths <- function(x,
 ##'   in cm. If `NULL`, break points are created automatically from the observed
 ##'   range of `HL$LngtCm` using `by`.
 ##' @param by Numeric scalar giving the width of the default length classes in
-##'   cm. Default is 1cm (for herring, sprat and other smaller species 0.5 might
-##'   be more appropriate). Only used when `cm_breaks = NULL`.
+##'   cm. Defaults to the survey's native recording resolution via
+##'   [get_accuracy_cm()]. Only used when `cm_breaks = NULL`.
 ##'
 ##' @details
 ##' The function first adds numbers-at-length at the finest available length
@@ -226,7 +226,7 @@ check_lengths <- function(x,
 ##' @export
 add_numbers_at_length <- function(x,
                                   cm_breaks = NULL,
-                                  by = 1) {
+                                  by = get_accuracy_cm(x)) {
 
   .check_class_datras(x)
 

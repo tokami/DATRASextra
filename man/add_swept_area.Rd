@@ -33,8 +33,8 @@ distance and distance reconstructed from \code{HaulDur} and \code{GroundSpeed}.
 Distances with larger deviations are treated as missing. Only used when
 \code{method = "simple"}. Defaults to \code{0.2}.}
 
-\item{impute_missing}{Logical. Passed to \code{\link[=add_swept_area_simple]{add_swept_area_simple()}}. Only used
-when \code{method = "simple"}. Defaults to \code{FALSE}.}
+\item{impute_missing}{Logical. Only used when \code{method = "simple"}. Defaults
+to \code{FALSE}.}
 
 \item{width}{Character string specifying which spread column to use as trawl
 width. Must be either \code{"WingSpread"} (default) or \code{"DoorSpread"}. Only
@@ -48,14 +48,13 @@ Compute haul-level swept-area estimates for a \code{datras_raw} / \code{DATRASra
 object using one of the supported methods.
 }
 \details{
-This function is a wrapper around \code{\link[=add_swept_area_simple]{add_swept_area_simple()}} and
+This function is a wrapper around an internal simple swept-area function and
 \code{\link[=add_swept_area_fishglob]{add_swept_area_fishglob()}}. It allows users to choose between a simple
 rule-based approach and the FishGlob workflow.
 
-If \code{method = "simple"}, swept area is calculated using
-\code{\link[=add_swept_area_simple]{add_swept_area_simple()}}, which applies basic plausibility filters,
-gear-specific median imputations, and a direct distance-times-width
-calculation.
+If \code{method = "simple"}, swept area is calculated using a simple rule-based
+approach that applies basic plausibility filters, gear-specific median
+imputations, and a direct distance-times-width calculation.
 
 If \code{method = "fishglob"}, swept area is calculated using
 \code{\link[=add_swept_area_fishglob]{add_swept_area_fishglob()}}, which follows the FishGlob workflow based on
@@ -76,5 +75,5 @@ x <- add_swept_area(x, method = "simple", min_speed = 2,
 
 }
 \seealso{
-\code{\link[=add_swept_area_simple]{add_swept_area_simple()}}, \code{\link[=add_swept_area_fishglob]{add_swept_area_fishglob()}}
+\code{\link[=add_swept_area_fishglob]{add_swept_area_fishglob()}}
 }

@@ -4,10 +4,10 @@
 \alias{get_aphia}
 \title{Get WoRMS AphiaIDs from species names}
 \usage{
-get_aphia(x, use_worrms = FALSE)
+get_aphia(species, use_worrms = FALSE)
 }
 \arguments{
-\item{x}{A character vector of scientific species names.}
+\item{species}{A character vector of scientific species names.}
 
 \item{use_worrms}{Logical; if \code{TRUE}, AphiaIDs are retrieved using
 \code{\link[worrms:wm_name2id]{worrms::wm_name2id()}}. If \code{FALSE} (default), names are matched against

@@ -7,7 +7,7 @@
 ##' Compute haul-level swept-area estimates for a `datras_raw` / `DATRASraw`
 ##' object using one of the supported methods.
 ##'
-##' This function is a wrapper around [add_swept_area_simple()] and
+##' This function is a wrapper around an internal simple swept-area function and
 ##' [add_swept_area_fishglob()]. It allows users to choose between a simple
 ##' rule-based approach and the FishGlob workflow.
 ##'
@@ -24,17 +24,16 @@
 ##'   distance and distance reconstructed from `HaulDur` and `GroundSpeed`.
 ##'   Distances with larger deviations are treated as missing. Only used when
 ##'   `method = "simple"`. Defaults to `0.2`.
-##' @param impute_missing Logical. Passed to [add_swept_area_simple()]. Only used
-##'   when `method = "simple"`. Defaults to `FALSE`.
+##' @param impute_missing Logical. Only used when `method = "simple"`. Defaults
+##'   to `FALSE`.
 ##' @param width Character string specifying which spread column to use as trawl
 ##'   width. Must be either `"WingSpread"` (default) or `"DoorSpread"`. Only
 ##'   used when `method = "simple"`; ignored for `method = "fishglob"`.
 ##'
 ##' @details
-##' If `method = "simple"`, swept area is calculated using
-##' [add_swept_area_simple()], which applies basic plausibility filters,
-##' gear-specific median imputations, and a direct distance-times-width
-##' calculation.
+##' If `method = "simple"`, swept area is calculated using a simple rule-based
+##' approach that applies basic plausibility filters, gear-specific median
+##' imputations, and a direct distance-times-width calculation.
 ##'
 ##' If `method = "fishglob"`, swept area is calculated using
 ##' [add_swept_area_fishglob()], which follows the FishGlob workflow based on
@@ -42,7 +41,7 @@
 ##'
 ##' @return A `datras_raw` object with swept-area estimates added.
 ##'
-##' @seealso [add_swept_area_simple()], [add_swept_area_fishglob()]
+##' @seealso [add_swept_area_fishglob()]
 ##'
 ##' @examples
 ##' \dontrun{
@@ -151,17 +150,9 @@ add_swept_area <- function(x,
 ##'   \item `SweptArea.median`: swept area based on gear-specific median spread.
 ##' }
 ##'
-##' @seealso [add_swept_area_fishglob()]
+##' @seealso [add_swept_area()], [add_swept_area_fishglob()]
 ##'
-##' @examples
-##' \dontrun{
-##' x <- add_swept_area_simple(x)
-##'
-##' ## Use stricter plausibility filtering
-##' x <- add_swept_area_simple(x, min_speed = 2, max_dist_dev = 0.1)
-##' }
-##'
-##' @export
+##' @keywords internal
 add_swept_area_simple <- function(x,
                                   min_speed = 1,
                                   min_dist = 0,

@@ -79,15 +79,7 @@ trawl gear codes and accounts for double-beam trawls via \code{GearEx == "DB"},
 speed.
 }
 }
-\examples{
-\dontrun{
-x <- add_swept_area_simple(x)
-
-## Use stricter plausibility filtering
-x <- add_swept_area_simple(x, min_speed = 2, max_dist_dev = 0.1)
-}
-
-}
 \seealso{
-\code{\link[=add_swept_area_fishglob]{add_swept_area_fishglob()}}
+\code{\link[=add_swept_area]{add_swept_area()}}, \code{\link[=add_swept_area_fishglob]{add_swept_area_fishglob()}}
 }
+\keyword{internal}

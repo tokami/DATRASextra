@@ -419,15 +419,15 @@ add_weight_at_length <- function(x,
 ##' bins via `length_cuts`.
 ##'
 ##' @param x A `datras_raw` object.
-##' @param per_minute Logical. If `TRUE`, add `HaulWgtPerMin`, calculated as
-##'   `HaulWgt` divided by haul duration in minutes. If `FALSE`, only `HaulWgt`
-##'   is added.
 ##' @param max_length Optional numeric value giving the maximum length in
 ##'   centimetres to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
 ##' @param max_weight Optional numeric value giving the maximum individual
 ##'   weight in grams to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
+##' @param plus_group Logical. If `TRUE`, all fish at or above the largest
+##'   length class are accumulated into that class. Passed to
+##'   [add_weight_at_length()].
 ##' @param lw_source Character string specifying the source of length-weight
 ##'   parameters. One of `"ca"` or `"lookup"`.
 ##' @param lw_pars Optional custom length-weight parameters passed to
@@ -435,6 +435,9 @@ add_weight_at_length <- function(x,
 ##' @param length_cuts Optional numeric vector of break points for aggregating
 ##'   the original length classes into coarser bins. Must be strictly
 ##'   increasing.
+##' @param per_minute Logical. If `TRUE`, add `HaulWgtPerMin`, calculated as
+##'   `HaulWgt` divided by haul duration in minutes. If `FALSE`, only `HaulWgt`
+##'   is added.
 ##'
 ##' @details
 ##' If weight-at-length information is not already present, the function first
@@ -478,12 +481,13 @@ add_weight_at_length <- function(x,
 ##'
 ##' @export
 add_total_weight_by_haul <- function(x,
-                                     per_minute = FALSE,
                                      max_length = NULL,
                                      max_weight = NULL,
+                                     plus_group = FALSE,
                                      lw_source = c("lookup", "ca"),
                                      lw_pars = NULL,
-                                     length_cuts = NULL) {
+                                     length_cuts = NULL,
+                                     per_minute = FALSE) {
 
   lw_source <- match.arg(lw_source)
 
@@ -493,6 +497,7 @@ add_total_weight_by_haul <- function(x,
     x <- add_weight_at_length(x,
                               max_length = max_length,
                               max_weight = max_weight,
+                              plus_group = plus_group,
                               lw_source = lw_source,
                               lw_pars = lw_pars)
   }

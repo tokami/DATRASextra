@@ -282,13 +282,13 @@ list_prune_datras_available <- function(x) {
 ##'   List names should be `HH`, `HL`, and/or `CA`.
 ##' @param drop Optional named list of columns to remove from the selected
 ##'   columns. List names should be `HH`, `HL`, and/or `CA`.
-##' @param remove_hl Logical. If `TRUE`, set the `HL` table to `NULL`. See also
+##' @param drop_hl Logical. If `TRUE`, set the `HL` table to `NULL`. See also
 ##'   [drop_hl()].
-##' @param remove_ca Logical. If `TRUE`, set the `CA` table to `NULL`. See also
+##' @param drop_ca Logical. If `TRUE`, set the `CA` table to `NULL`. See also
 ##'   [drop_ca()].
 ##' @param do_fishglob Logical. If `TRUE`, apply [prune_fishglob()] instead of
 ##'   the standard DATRAS pruning rules.
-##' @param warn_missing Logical. If `TRUE`, warn when requested columns are not
+##' @param verbose Logical. If `TRUE`, warn when requested columns are not
 ##'   present in the corresponding table.
 ##'
 ##' @details
@@ -310,7 +310,7 @@ list_prune_datras_available <- function(x) {
 ##'
 ##' Columns listed in `keep`, `add`, or `drop` for tables not present in `x` are
 ##' ignored. Requested columns that are not present in a table are ignored, with
-##' an optional warning controlled by `warn_missing`.
+##' an optional warning controlled by `verbose`.
 ##'
 ##' @return A pruned `datras_raw` object.
 ##'
@@ -348,17 +348,17 @@ list_prune_datras_available <- function(x) {
 ##' )
 ##'
 ##' ## Prune columns and drop the CA table entirely
-##' x_small <- prune_datras(x, remove_ca = TRUE)
+##' x_small <- prune_datras(x, drop_ca = TRUE)
 ##' }
 ##' @export
 prune_datras <- function(x,
                          keep = NULL,
                          add = NULL,
                          drop = NULL,
-                         remove_hl = FALSE,
-                         remove_ca = FALSE,
+                         drop_hl = FALSE,
+                         drop_ca = FALSE,
                          do_fishglob = FALSE,
-                         warn_missing = TRUE) {
+                         verbose = TRUE) {
 
   .check_class_datras(x)
 
@@ -394,7 +394,7 @@ prune_datras <- function(x,
 
     missing_cols <- setdiff(cols[[nm]], names(x[[nm]]))
 
-    if (warn_missing && length(missing_cols) > 0) {
+    if (verbose && length(missing_cols) > 0) {
       warning(
         "In ", nm, ", requested columns not found and ignored: ",
         paste(missing_cols, collapse = ", "),
@@ -406,8 +406,8 @@ prune_datras <- function(x,
     x[[nm]] <- x[[nm]][cols_present]
   }
 
-  if (isTRUE(remove_hl)) x <- drop_hl(x)
-  if (isTRUE(remove_ca)) x <- drop_ca(x)
+  if (isTRUE(drop_hl)) x <- drop_hl(x)
+  if (isTRUE(drop_ca)) x <- drop_ca(x)
 
   x
 }

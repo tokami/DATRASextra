@@ -4,10 +4,10 @@
 \alias{get_latin}
 \title{Get scientific names from WoRMS AphiaIDs}
 \usage{
-get_latin(x, use_worrms = FALSE)
+get_latin(aphia, use_worrms = FALSE)
 }
 \arguments{
-\item{x}{A vector of WoRMS AphiaIDs.}
+\item{aphia}{A vector of WoRMS AphiaIDs.}
 
 \item{use_worrms}{Logical; if \code{TRUE}, scientific names are retrieved using
 \code{\link[worrms:wm_id2name]{worrms::wm_id2name()}}. If \code{FALSE} (default), AphiaIDs are matched against

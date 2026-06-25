@@ -212,7 +212,7 @@ prune_fishglob <- function(x) {
 ##' FishGlob workflow code:
 ##' \url{https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/source_DATRAS_wing_doorspread.R}
 ##'
-##' @seealso [add_swept_area_simple()], [clean_fishglob()]
+##' @seealso [add_swept_area()], [clean_fishglob()]
 ##'
 ##' @examples
 ##' \dontrun{

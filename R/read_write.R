@@ -248,11 +248,11 @@ read_datras <- function(path,
 ##' @examples
 ##' \dontrun{
 ##' ## Write a DATRAS object to a zip archive
-##' write_exchange(x, "NS-IBTS_2020.zip")
+##' write_datras(x, "NS-IBTS_2020.zip")
 ##' }
 ##'
 ##' @export
-write_exchange <- function(x,
+write_datras <- function(x,
                            zip_file = "DATRAS.zip") {
 
   .check_class_datras(x)

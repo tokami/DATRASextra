@@ -77,7 +77,7 @@ If \code{surveys} is \code{NULL}, all available surveys returned by
 years for each selected survey are downloaded.
 
 By default, data are downloaded using \code{DATRAS::getDatrasExchange()}, cleaned
-to remove extra variables, and written to disk with \code{\link[=write_exchange]{write_exchange()}}.
+to remove extra variables, and written to disk with \code{\link[=write_datras]{write_datras()}}.
 Alternatively, the legacy PHP-based download route from
 \code{DATRAS::downloadExchange()} can be used by setting \code{use_php = TRUE}.
 

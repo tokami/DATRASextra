@@ -13,7 +13,7 @@
 ##' years for each selected survey are downloaded.
 ##'
 ##' By default, data are downloaded using `DATRAS::getDatrasExchange()`, cleaned
-##' to remove extra variables, and written to disk with [write_exchange()].
+##' to remove extra variables, and written to disk with [write_datras()].
 ##' Alternatively, the legacy PHP-based download route from
 ##' `DATRAS::downloadExchange()` can be used by setting `use_php = TRUE`.
 ##'
@@ -161,7 +161,7 @@ download_datras <- function(path = NULL,
                                                 download.ca = download_ca)
         datras_raw <- .add_class_datras(datras_raw)
         datras_clean <- .remove_extra_variables(datras_raw)
-        write_exchange(datras_clean, zip_path)
+        write_datras(datras_clean, zip_path)
       }
 
     } else {

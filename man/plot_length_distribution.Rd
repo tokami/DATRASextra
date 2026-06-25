@@ -12,8 +12,8 @@ plot_length_distribution(
   length_cuts = NULL,
   col = NULL,
   main = NULL,
-  do_legend = TRUE,
-  legend_ncol = 1L
+  legend = TRUE,
+  legend_ncol = 1
 )
 }
 \arguments{
@@ -39,7 +39,7 @@ colour is used for all bars.}
 
 \item{main}{Optional plot title.}
 
-\item{do_legend}{Logical; if \code{TRUE}, draw a legend for the length intervals
+\item{legend}{Logical; if \code{TRUE}, draw a legend for the length intervals
 when \code{length_cuts} is supplied.}
 
 \item{legend_ncol}{Integer; number of columns to use in the legend.}
@@ -79,7 +79,7 @@ plot_length_distribution(x, what = "both", log_scale = TRUE)
 plot_length_distribution(x, length_cuts = c(15, 25))
 
 ## Plot without legend
-plot_length_distribution(x, length_cuts = c(15, 25), do_legend = FALSE)
+plot_length_distribution(x, length_cuts = c(15, 25), legend = FALSE)
 
 ## Draw only the length-group legend
 plot_length_distribution(x, what = "legend",

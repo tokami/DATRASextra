@@ -11,8 +11,8 @@ plot_species_composition(
   col = NULL,
   main = NULL,
   max_species = 8L,
-  do_legend = TRUE,
-  legend_ncol = 1L
+  legend = TRUE,
+  legend_ncol = 1
 )
 }
 \arguments{
@@ -35,7 +35,7 @@ species after collapsing rare species to \code{"Other"}.}
 \item{max_species}{Integer; maximum number of species to show individually.
 Additional species, ranked by total count, are collapsed into \code{"Other"}.}
 
-\item{do_legend}{Logical; if \code{TRUE}, draw the species legend.}
+\item{legend}{Logical; if \code{TRUE}, draw the species legend.}
 
 \item{legend_ncol}{Integer; number of columns to use in the legend.}
 }
@@ -78,7 +78,7 @@ plot_species_composition(dat, what = "both")
 plot_species_composition(dat, beside = FALSE)
 
 ## Suppress legend
-plot_species_composition(dat, do_legend = FALSE)
+plot_species_composition(dat, legend = FALSE)
 
 ## Draw legend only
 plot_species_composition(dat, what = "legend", legend_ncol = 2)

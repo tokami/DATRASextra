@@ -1,4 +1,35 @@
-# DATRASextra 0.2.3
+# DATRASextra 0.3.0
+
+This release focuses on API consistency. Several arguments and function names
+have been renamed so that naming conventions are uniform across the package
+(e.g. `verbose` instead of `warn_missing`, `legend` instead of `do_legend`,
+`write_datras` instead of `write_exchange`). Two new arguments have been added:
+`plus_group` in `add_total_weight_by_haul()` and `lw_pars` in the weight
+functions for supplying custom length-weight parameters. The default bin width
+in `add_numbers_at_length()` now matches the survey's native recording
+resolution instead of always using 1 cm. All renaming changes are breaking; see
+the detailed entries below.
+
+## Breaking changes (API consistency)
+
+* `prune_datras()`: arguments `remove_hl` and `remove_ca` renamed to `drop_hl`
+  and `drop_ca` to match the verb used by `drop_hl()` and `drop_ca()`. Argument
+  `warn_missing` renamed to `verbose` for consistency with all other functions.
+
+* `plot_length_distribution()` and `plot_species_composition()`: argument
+  `do_legend` renamed to `legend` for consistency with `plot_datras_overview()`,
+  `plot_stratified_index()`, and `plot_spatial_indicators()`. `legend_ncol`
+  default changed from `1L` to `1`.
+
+* `get_aphia()`: first argument renamed from `x` to `species`.
+
+* `get_latin()`: first argument renamed from `x` to `aphia`.
+
+* `write_exchange()` renamed to `write_datras()` for consistency with
+  `read_datras()`.
+
+* `add_swept_area_simple()` is no longer exported. Use `add_swept_area()` (with
+  default `method = "simple"`) instead.
 
 ## Breaking changes
 
@@ -15,6 +46,16 @@
   needed (requires the `mgcv` package).
 
 ## Minor changes
+
+* `add_total_weight_by_haul()` gains a `plus_group` argument (default `FALSE`),
+  passed through to `add_weight_at_length()`. Argument order changed: `per_minute`
+  moved to the last position so shared filtering arguments (`max_length`,
+  `max_weight`) align with `add_weight_at_length()`.
+
+* `add_numbers_at_length()`: default for `by` changed from `1` to
+  `get_accuracy_cm(x)`, consistent with `check_lengths()` and
+  `add_total_numbers_by_haul()`. Surveys recorded at 0.5 cm resolution now use
+  0.5 cm bins by default.
 
 * `add_weight_at_length()` and `add_total_weight_by_haul()` gain a `lw_pars`
   argument for supplying custom length-weight parameters `a` and `b` directly,

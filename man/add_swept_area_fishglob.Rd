@@ -72,5 +72,5 @@ FishGlob workflow code:
 \url{https://github.com/fishglob/FishGlob_data/blob/main/cleaning_codes/source_DATRAS_wing_doorspread.R}
 }
 \seealso{
-\code{\link[=add_swept_area_simple]{add_swept_area_simple()}}, \code{\link[=clean_fishglob]{clean_fishglob()}}
+\code{\link[=add_swept_area]{add_swept_area()}}, \code{\link[=clean_fishglob]{clean_fishglob()}}
 }

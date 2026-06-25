@@ -190,7 +190,7 @@ add_species_info <- function(x, vars = NULL, verbose = TRUE) {
 ##' `species_info` table. Optionally, it can query the \pkg{worrms}
 ##' package to look up AphiaIDs directly from WoRMS.
 ##'
-##' @param x A character vector of scientific species names.
+##' @param species A character vector of scientific species names.
 ##' @param use_worrms Logical; if `TRUE`, AphiaIDs are retrieved using
 ##'   [worrms::wm_name2id()]. If `FALSE` (default), names are matched against
 ##'   the internal `species_info` table.
@@ -220,7 +220,7 @@ add_species_info <- function(x, vars = NULL, verbose = TRUE) {
 ##'
 ##' @seealso [worrms::wm_name2id()]
 ##' @export
-get_aphia <- function(x, use_worrms = FALSE) {
+get_aphia <- function(species, use_worrms = FALSE) {
 
   if (isTRUE(use_worrms)) {
 
@@ -228,11 +228,11 @@ get_aphia <- function(x, use_worrms = FALSE) {
       stop("Package 'worrms' is required to get the aphia ID from a species name. Please install it or use the species_info table to get the aphia ID (use_worrms = FALSE).")
     }
 
-    return(worrms::wm_name2id(x))
+    return(worrms::wm_name2id(species))
 
   } else {
 
-    ind <- match(x, species_info$ScientificName_WoRMS)
+    ind <- match(species, species_info$ScientificName_WoRMS)
 
     if (any(is.na(ind))) stop("At last one latin name not found in species_info table. Please check your input or try using use_worrms = TRUE.")
 
@@ -250,7 +250,7 @@ get_aphia <- function(x, use_worrms = FALSE) {
 ##' the function matches AphiaIDs against the internal `species_info` table.
 ##' Optionally, it can query WoRMS directly via the \pkg{worrms} package.
 ##'
-##' @param x A vector of WoRMS AphiaIDs.
+##' @param aphia A vector of WoRMS AphiaIDs.
 ##' @param use_worrms Logical; if `TRUE`, scientific names are retrieved using
 ##'   [worrms::wm_id2name()]. If `FALSE` (default), AphiaIDs are matched against
 ##'   the internal `species_info` table.
@@ -281,7 +281,7 @@ get_aphia <- function(x, use_worrms = FALSE) {
 ##'
 ##' @seealso [worrms::wm_id2name()]
 ##' @export
-get_latin <- function(x, use_worrms = FALSE) {
+get_latin <- function(aphia, use_worrms = FALSE) {
 
   if (isTRUE(use_worrms)) {
 
@@ -289,11 +289,11 @@ get_latin <- function(x, use_worrms = FALSE) {
       stop("Package 'worrms' is required to get the latin name from an aphia ID. Please install it or use the species_info table to get the latin name (use_worrms = FALSE).")
     }
 
-    return(worrms::wm_id2name(x))
+    return(worrms::wm_id2name(aphia))
 
   } else {
 
-    ind <- match(x, species_info$WoRMS_AphiaID)
+    ind <- match(aphia, species_info$WoRMS_AphiaID)
 
     if (any(is.na(ind))) stop("At last one aphia ID not found in species_info table. Please check your input or try using use_worrms = TRUE.")
 

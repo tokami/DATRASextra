@@ -116,13 +116,13 @@ be added to each haul:
 
 ```{r}
 
-surv <- add_swept_area_simple(surv)
+surv <- add_swept_area(surv)
 
 ```
 
 This adds swept-area estimates to the `HH` table based on haul distance and gear
 width information. When gear information is missing, values are imputed automatically
-(see `?add_swept_area_simple`).
+(see `?add_swept_area`).
 Abundance per unit effort and biomass per unit effort can then be calculated by dividing haul-level totals by swept area:
 
 ```{r}

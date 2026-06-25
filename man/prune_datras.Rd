@@ -9,10 +9,10 @@ prune_datras(
   keep = NULL,
   add = NULL,
   drop = NULL,
-  remove_hl = FALSE,
-  remove_ca = FALSE,
+  drop_hl = FALSE,
+  drop_ca = FALSE,
   do_fishglob = FALSE,
-  warn_missing = TRUE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -28,16 +28,16 @@ List names should be \code{HH}, \code{HL}, and/or \code{CA}.}
 \item{drop}{Optional named list of columns to remove from the selected
 columns. List names should be \code{HH}, \code{HL}, and/or \code{CA}.}
 
-\item{remove_hl}{Logical. If \code{TRUE}, set the \code{HL} table to \code{NULL}. See also
+\item{drop_hl}{Logical. If \code{TRUE}, set the \code{HL} table to \code{NULL}. See also
 \code{\link[=drop_hl]{drop_hl()}}.}
 
-\item{remove_ca}{Logical. If \code{TRUE}, set the \code{CA} table to \code{NULL}. See also
+\item{drop_ca}{Logical. If \code{TRUE}, set the \code{CA} table to \code{NULL}. See also
 \code{\link[=drop_ca]{drop_ca()}}.}
 
 \item{do_fishglob}{Logical. If \code{TRUE}, apply \code{\link[=prune_fishglob]{prune_fishglob()}} instead of
 the standard DATRAS pruning rules.}
 
-\item{warn_missing}{Logical. If \code{TRUE}, warn when requested columns are not
+\item{verbose}{Logical. If \code{TRUE}, warn when requested columns are not
 present in the corresponding table.}
 }
 \value{
@@ -71,7 +71,7 @@ Column selection can be modified in three ways:
 
 Columns listed in \code{keep}, \code{add}, or \code{drop} for tables not present in \code{x} are
 ignored. Requested columns that are not present in a table are ignored, with
-an optional warning controlled by \code{warn_missing}.
+an optional warning controlled by \code{verbose}.
 }
 \examples{
 \dontrun{
@@ -104,7 +104,7 @@ x_small <- prune_datras(
 )
 
 ## Prune columns and drop the CA table entirely
-x_small <- prune_datras(x, remove_ca = TRUE)
+x_small <- prune_datras(x, drop_ca = TRUE)
 }
 }
 \seealso{
