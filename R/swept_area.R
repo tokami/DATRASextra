@@ -31,6 +31,10 @@
 ##'   used when `method = "simple"`; ignored for `method = "fishglob"`.
 ##' @param verbose Logical. If `TRUE` (default) and `method = "simple"`, print a
 ##'   summary of swept-area missingness and imputation by survey and gear.
+##' @param full_report Logical. If `TRUE`, the printed and attached summary also
+##'   includes per-column missingness counts (`na_DoorSpread`, `na_WingSpread`,
+##'   `na_Distance`, `na_HaulDur`) for the original input columns. Only used when
+##'   `method = "simple"`. Defaults to `FALSE`.
 ##'
 ##' @details
 ##' If `method = "simple"`, swept area is calculated using a simple rule-based
@@ -69,7 +73,8 @@ add_swept_area <- function(x,
                            max_dist_dev = 0.2,
                            impute_missing = FALSE,
                            width = "WingSpread",
-                           verbose = TRUE) {
+                           verbose = TRUE,
+                           full_report = FALSE) {
 
   .check_class_datras(x)
 
@@ -81,7 +86,8 @@ add_swept_area <- function(x,
                                max_dist_dev = max_dist_dev,
                                impute_missing = impute_missing,
                                width = width,
-                               verbose = verbose)
+                               verbose = verbose,
+                               full_report = full_report)
 
   } else if (method == "fishglob") {
 
@@ -124,6 +130,9 @@ add_swept_area <- function(x,
 ##'   bounds are only applied when `width = "WingSpread"`.
 ##' @param verbose Logical. If `TRUE` (default), print a summary of swept-area
 ##'   missingness and imputation by survey and gear.
+##' @param full_report Logical. If `TRUE`, the summary also includes per-column
+##'   missingness counts (`na_DoorSpread`, `na_WingSpread`, `na_Distance`,
+##'   `na_HaulDur`) for the original input columns. Defaults to `FALSE`.
 ##'
 ##' @details
 ##' Swept area is calculated in \eqn{m^2} as:
@@ -161,9 +170,11 @@ add_swept_area <- function(x,
 ##'   towing distance used for that haul was imputed.
 ##' }
 ##' A survey-by-gear summary is attached as `attr(x, "swept_area_summary")`,
-##' with columns `survey`, `gear`, `n_records`, `n_NA` (hauls whose `SweptArea`
-##' is still `NA` after imputation, e.g. gears that cannot be imputed),
-##' `prop_NA`, `n_imputed`, and `prop_imputed`.
+##' with columns `survey`, `gear`, `n_records`, `n_imputed`, `prop_imputed`, and
+##' `n_NA` / `prop_NA` (hauls whose `SweptArea` is still `NA` after imputation,
+##' e.g. gears that cannot be imputed). When `full_report = TRUE`, per-column
+##' missingness counts (`na_DoorSpread`, `na_WingSpread`, `na_Distance`,
+##' `na_HaulDur`) of the original input columns are appended.
 ##'
 ##' @seealso [add_swept_area()], [add_swept_area_fishglob()]
 ##'
@@ -174,7 +185,8 @@ add_swept_area_simple <- function(x,
                                   max_dist_dev = 0.2,
                                   impute_missing = FALSE,
                                   width = "WingSpread",
-                                  verbose = TRUE) {
+                                  verbose = TRUE,
+                                  full_report = FALSE) {
 
   .check_class_datras(x)
 
@@ -183,6 +195,14 @@ add_swept_area_simple <- function(x,
   if (!width %in% names(x[["HH"]]))
     stop("Column '", width, "' not found in x[['HH']]. ",
          "Check names(x[['HH']]) to see available columns.")
+
+  ## Capture original missingness of the key input columns (before any
+  ## filtering / imputation) for the optional full report.
+  raw_na <- list()
+  for (col in c("DoorSpread", "WingSpread", "Distance", "HaulDur")) {
+    if (col %in% names(x[["HH"]]))
+      raw_na[[paste0("na_", col)]] <- is.na(x[["HH"]][[col]])
+  }
 
   x$GroundSpeed[ x$GroundSpeed < min_speed ] <- NA
   x$Distance[ x$Distance < min_dist ] <- NA
@@ -281,7 +301,8 @@ add_swept_area_simple <- function(x,
   x[["HH"]]$SweptArea_imputed <- sa_imputed
 
   ## Summary of remaining missingness and imputation by survey and gear
-  sa_summary <- .swept_area_summary(x[["HH"]], sa_na, sa_imputed)
+  sa_summary <- .swept_area_summary(x[["HH"]], sa_na, sa_imputed,
+                                    extra_na = if (isTRUE(full_report)) raw_na else NULL)
   attr(x, "swept_area_summary") <- sa_summary
   if (isTRUE(verbose)) {
     cat("Swept-area missingness and imputation by survey and gear:\n")
@@ -296,8 +317,10 @@ add_swept_area_simple <- function(x,
 
 ## Build a survey x gear summary of swept-area missingness and imputation.
 ## `na` flags hauls whose swept area is still NA after imputation; `imputed`
-## flags hauls whose spread and/or distance was imputed.
-.swept_area_summary <- function(hh, na, imputed) {
+## flags hauls whose spread and/or distance was imputed. `extra_na` is an
+## optional named list of logical vectors (e.g. `na_DoorSpread`) whose per-group
+## counts are appended when a full report is requested.
+.swept_area_summary <- function(hh, na, imputed, extra_na = NULL) {
 
   survey <- if ("Survey" %in% names(hh)) as.character(hh$Survey) else NA_character_
   gear   <- if ("Gear"   %in% names(hh)) as.character(hh$Gear)   else NA_character_
@@ -308,19 +331,25 @@ add_swept_area_simple <- function(x,
     survey    = survey,
     gear      = gear,
     n_records = 1L,
-    n_NA      = as.integer(na),
     n_imputed = as.integer(imputed),
+    n_NA      = as.integer(na),
     stringsAsFactors = FALSE
   )
 
-  agg <- aggregate(cbind(n_records, n_NA, n_imputed) ~ survey + gear,
-                   data = df, FUN = sum)
+  ## Optional per-column missingness counts
+  for (nm in names(extra_na)) df[[nm]] <- as.integer(extra_na[[nm]])
 
-  agg$prop_NA      <- round(agg$n_NA / agg$n_records, 3)
+  count_cols <- setdiff(names(df), c("survey", "gear"))
+  agg <- aggregate(df[count_cols], by = list(survey = df$survey, gear = df$gear),
+                   FUN = sum)
+
   agg$prop_imputed <- round(agg$n_imputed / agg$n_records, 3)
+  agg$prop_NA      <- round(agg$n_NA / agg$n_records, 3)
 
-  agg <- agg[, c("survey", "gear", "n_records",
-                 "n_NA", "prop_NA", "n_imputed", "prop_imputed")]
+  out_cols <- c("survey", "gear", "n_records",
+                "n_imputed", "prop_imputed", "n_NA", "prop_NA",
+                names(extra_na))
+  agg <- agg[, out_cols]
   agg <- agg[order(agg$survey, agg$gear), ]
   rownames(agg) <- NULL
   agg

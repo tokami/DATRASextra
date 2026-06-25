@@ -76,9 +76,12 @@ the detailed entries below.
 * `add_swept_area()` (simple method) now reports swept-area missingness and
   imputation. It adds a per-haul logical column `SweptArea_imputed` to `HH`,
   attaches a survey-by-gear summary as `attr(x, "swept_area_summary")`, and
-  prints it unless `verbose = FALSE`. The summary reports `n_NA` / `prop_NA`,
-  the hauls whose swept area is still `NA` after imputation (e.g. gears that
-  cannot be imputed), alongside `n_imputed` / `prop_imputed`.
+  prints it unless `verbose = FALSE`. The summary reports `n_imputed` /
+  `prop_imputed` and `n_NA` / `prop_NA`, the hauls whose swept area is still
+  `NA` after imputation (e.g. gears that cannot be imputed). A new
+  `full_report` argument (default `FALSE`) additionally reports per-column
+  missingness counts (`na_DoorSpread`, `na_WingSpread`, `na_Distance`,
+  `na_HaulDur`) of the original input columns.
 
 * Added the article *Matching EMODnet seabed habitats to hauls*, showing how to
   download EUSeaMap polygons from the EMODnet Seabed Habitats WFS and attach a
