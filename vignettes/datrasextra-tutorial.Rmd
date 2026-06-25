@@ -15,20 +15,33 @@ vignette: >
 
 
 ```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(
-  echo = TRUE,
-  cache = FALSE,
-  warning = FALSE,
-  eval = TRUE,
-  error = FALSE,
-  message = FALSE,
-  include = TRUE,
-  collapse = TRUE,
-  comment = "#>",
-  fig.show = "hold",
-  fig.width = 8,
-  fig.height = 7
+knitr::opts_chunk$set(echo = TRUE,
+                      cache = FALSE,
+                      warning = FALSE,
+                      eval = TRUE,
+                      error = FALSE,
+                      message = FALSE,
+                      include = TRUE,
+                      collapse = TRUE,
+                      comment = "#>",
+                      fig.show = "hold",
+                      fig.width = 8,
+                      fig.height = 7,
+                      dev = "png",
+                      dev.args = list(bg = "white"))
+
+knitr::knit_hooks$set(
+  plot = function(x, options) {
+    paste0(
+      "<div style='background:white; padding:0.5rem; display:inline-block;'>",
+      knitr::hook_plot_html(x, options),
+      "</div>"
+    )
+  }
 )
+
+oldpar <- par(no.readonly = TRUE)
+par(bg = "white")
 ```
 
 The goal of the **DATRASextra** is to make it easier to work with the [ICES
@@ -261,5 +274,10 @@ data in **DATRASextra**. It showed how to
 These functions provide a practical starting point for exploratory analyses,
 survey summaries, and the preparation of DATRAS data for downstream applications
 such as indicator development, biodiversity analyses, and stock assessment.
+
+```{r, echo=FALSE}
+par(oldpar)
+```
+
 
 # References

@@ -13,6 +13,37 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      cache = FALSE,
+                      warning = FALSE,
+                      eval = TRUE,
+                      error = FALSE,
+                      message = FALSE,
+                      include = TRUE,
+                      collapse = TRUE,
+                      comment = "#>",
+                      fig.show = "hold",
+                      fig.width = 8,
+                      fig.height = 7,
+                      dev = "png",
+                      dev.args = list(bg = "white"))
+
+knitr::knit_hooks$set(
+  plot = function(x, options) {
+    paste0(
+      "<div style='background:white; padding:0.5rem; display:inline-block;'>",
+      knitr::hook_plot_html(x, options),
+      "</div>"
+    )
+  }
+)
+
+oldpar <- par(no.readonly = TRUE)
+par(bg = "white")
+```
+
+
 ## Background
 
 The **FishGlob** database is a global compilation of standardized scientific trawl survey data used to study large-scale patterns in marine fish biodiversity and community structure.
@@ -232,3 +263,8 @@ raw <- read_datras(file.path(tmp, surveys))
 
 Downloading and processing these surveys take some time, as they include
 multiple decades of trawl survey data.
+
+
+```{r, echo=FALSE}
+par(oldpar)
+```

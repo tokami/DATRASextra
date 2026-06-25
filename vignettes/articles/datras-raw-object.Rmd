@@ -15,20 +15,33 @@ vignette: >
 
 
 ```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(
-  echo = TRUE,
-  cache = FALSE,
-  warning = FALSE,
-  eval = TRUE,
-  error = FALSE,
-  message = FALSE,
-  include = TRUE,
-  collapse = TRUE,
-  comment = "#>",
-  fig.show = "hold",
-  fig.width = 8,
-  fig.height = 7
+knitr::opts_chunk$set(echo = TRUE,
+                      cache = FALSE,
+                      warning = FALSE,
+                      eval = TRUE,
+                      error = FALSE,
+                      message = FALSE,
+                      include = TRUE,
+                      collapse = TRUE,
+                      comment = "#>",
+                      fig.show = "hold",
+                      fig.width = 8,
+                      fig.height = 7,
+                      dev = "png",
+                      dev.args = list(bg = "white"))
+
+knitr::knit_hooks$set(
+  plot = function(x, options) {
+    paste0(
+      "<div style='background:white; padding:0.5rem; display:inline-block;'>",
+      knitr::hook_plot_html(x, options),
+      "</div>"
+    )
+  }
 )
+
+oldpar <- par(no.readonly = TRUE)
+par(bg = "white")
 ```
 
 This article describes the `datras_raw` object, the data structure used
@@ -162,3 +175,7 @@ dab[["HH"]][["Wgt"]][big, 13:17]
 Summing these matrices over their columns gives total numbers and weight per
 haul, via `add_total_numbers_by_haul()` and `add_total_weight_by_haul()` (see
 the [step-by-step guide](../articles/datrasextra-tutorial.html)).
+
+```{r, echo=FALSE}
+par(oldpar)
+```

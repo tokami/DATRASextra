@@ -16,8 +16,7 @@ vignette: >
 
 ```{r ReaddataLoadLibraries, message=FALSE, include=FALSE}
 
-knitr::opts_chunk$set(
-  echo = TRUE,
+knitr::opts_chunk$set(echo = TRUE,
   cache = FALSE,
   warning = FALSE,
   eval = FALSE,
@@ -28,9 +27,22 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.show = "hold",
   fig.width = 8,
-  fig.height = 7
+  fig.height = 7,
+  dev = "png",
+  dev.args = list(bg = "white"))
+
+knitr::knit_hooks$set(
+  plot = function(x, options) {
+    paste0(
+      "<div style='background:white; padding:0.5rem; display:inline-block;'>",
+      knitr::hook_plot_html(x, options),
+      "</div>"
+    )
+  }
 )
 
+oldpar <- par(no.readonly = TRUE)
+par(bg = "white")
 ```
 
 ```{r setup-example}
@@ -131,3 +143,7 @@ The resulting variables contain standardized density estimates expressed as:
 - numbers per $km^2$ (`CPUE_N`)
 
 - biomass per $km^2$ (`CPUE_W`)
+
+```{r, echo=FALSE}
+par(oldpar)
+```
