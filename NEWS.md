@@ -1,4 +1,4 @@
-# DATRASextra 0.2.2
+# DATRASextra 0.2.3
 
 ## Breaking changes
 
@@ -15,6 +15,14 @@
   needed (requires the `mgcv` package).
 
 ## Minor changes
+
+* `add_weight_at_length()` and `add_total_weight_by_haul()` gain a `lw_pars`
+  argument for supplying custom length-weight parameters `a` and `b` directly,
+  without modifying the internal `species_info` table. Accepts a named vector
+  (`c(a = 0.01, b = 3.0)`), a named list, or a data frame with columns `a` and
+  `b`. For multi-species objects, a data frame with a `Valid_Aphia` (or `aphia`)
+  column can be used to supply per-species parameters; species not covered fall
+  back to `lw_source`.
 
 * `mgcv` and `icesDatras` are no longer hard dependencies. Both have been
   removed from `Imports`; `mgcv` is now listed under `Suggests`. The DATRAS

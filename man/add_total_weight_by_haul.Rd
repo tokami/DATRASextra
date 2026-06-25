@@ -10,6 +10,7 @@ add_total_weight_by_haul(
   max_length = NULL,
   max_weight = NULL,
   lw_source = c("lookup", "ca"),
+  lw_pars = NULL,
   length_cuts = NULL
 )
 }
@@ -30,6 +31,9 @@ Observations above this value are excluded.}
 
 \item{lw_source}{Character string specifying the source of length-weight
 parameters. One of \code{"ca"} or \code{"lookup"}.}
+
+\item{lw_pars}{Optional custom length-weight parameters passed to
+\code{\link[=add_weight_at_length]{add_weight_at_length()}}. See that function for the accepted forms.}
 
 \item{length_cuts}{Optional numeric vector of break points for aggregating
 the original length classes into coarser bins. Must be strictly

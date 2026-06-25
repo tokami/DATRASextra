@@ -173,9 +173,11 @@ check_weights <- function (x,
 ##' Estimate catch weight from length data and add the resulting weight fields to
 ##' a `datras_raw` / `DATRASraw` object.
 ##'
-##' The function derives weight-at-length either from an lookup length-weight
-##' relationship fitted to the `CA` table or, if `lw_source = "lookup"`, uses
-##' length-weight parameters from the species_info table.
+##' The function derives weight-at-length from custom parameters supplied via
+##' `lw_pars`, from a log-log model fitted to the `CA` table
+##' (`lw_source = "ca"`), or from the built-in `species_info` lookup table
+##' (`lw_source = "lookup"`). Custom parameters in `lw_pars` take precedence
+##' over `lw_source` for the covered species.
 ##'
 ##' @param x A `datras_raw` object.
 ##' @param max_length Optional numeric value giving the maximum length in
@@ -190,25 +192,38 @@ check_weights <- function (x,
 ##'   unrealistically high weight for that length bin. Instead the lower limit
 ##'   plus half of the size of the second last length bin is used to define the
 ##'   mid length of the largest length bin.
-##' @param lw_source Character string specifying the source of length-weight
-##'   parameters. One of `"ca"` or `"lookup"`.
-##' @param lookup_as_backup Logical. If `TRUE`, lookup parameters of the
-##'   length-weight relationship (a, b) in the species_info table are used.
+##' @param lw_source Character string specifying the fallback source of
+##'   length-weight parameters when `lw_pars` is `NULL` or does not cover a
+##'   species. One of `"lookup"` (default, uses `species_info`) or `"ca"`
+##'   (fits a log-log model to `CA`).
+##' @param lw_pars Optional custom length-weight parameters. Overrides
+##'   `lw_source` for the covered species. Accepted forms:
+##'   \itemize{
+##'     \item A named numeric vector: `c(a = 0.01, b = 3.0)`.
+##'     \item A named list: `list(a = 0.01, b = 3.0)`.
+##'     \item A data frame with columns `a` and `b` (one row per species when
+##'       multiple species are present), and optionally a column `Valid_Aphia`
+##'       (or `aphia`) to identify which species each row applies to.
+##'   }
+##'   When no species identifier column is present, the data must contain
+##'   exactly one species; an error is raised otherwise. When a `Valid_Aphia`
+##'   column is present, parameters are matched by species, and `lw_source` is
+##'   used as a fallback for any species not covered.
+##' @param lookup_as_backup Logical. If `TRUE` and `lw_source = "ca"`, the
+##'   `species_info` lookup table is used when `CA` data are insufficient.
 ##'   Default: `FALSE`.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
 ##'
 ##' @details
+##' Weight at length is calculated as \eqn{W = a \times L^b}, where \eqn{L} is
+##' the mid-length of each length bin defined by `attr(x, "cm.breaks")`.
 ##'
-##' \itemize{
-##'   \item If `lw_source = "lookup"`, a linear model of the form
-##'   \eqn{\log(IndWgt) ~ \log(LngtCm)} is fitted to positive individual weights
-##'   in the `CA` table. Predicted weights are then assigned to length classes
-##'   defined by `attr(x, "cm.breaks")`, multiplied by numbers-at-length, and
-##'   optionally divided by haul duration.
+##' When `lw_source = "ca"`, a linear model
+##' \eqn{\log(W) = \alpha + b \log(L)} is fitted to positive individual weights
+##' in `CA`, and the resulting parameters are used.
 ##'
-##'   \item If `lw_source = "lookup"`, weight is added using length-weight
-##' parameters from the species_info table. }
-##'
+##' When `lw_source = "lookup"`, parameters `a` and `b` are taken from the
+##' built-in `species_info` table, matched by `Valid_Aphia`.
 ##'
 ##' @return A `datras_raw` object with estimated weight information added.
 ##'
@@ -219,23 +234,37 @@ check_weights <- function (x,
 ##' ## Add numbers at length
 ##' dab <- add_numbers_at_length(dab)
 ##'
-##' ## Add fitted weight-at-length estimates
-##' x <- add_weight_at_length(dab)
+##' ## Fitted weight-at-length from CA data
+##' x <- add_weight_at_length(dab, lw_source = "ca")
 ##'
-##' ## Exclude large values when fitting the length-weight model
-##' x <- add_weight_at_length(dab, max_length = 100, max_weight = 10000)
-##'
-##' ## Use lookup weight-at-length instead from the species_info table
+##' ## Lookup weight-at-length from species_info
 ##' x <- add_weight_at_length(dab, lw_source = "lookup")
 ##'
+##' ## Custom parameters (single species) - named vector
+##' x <- add_weight_at_length(dab, lw_pars = c(a = 0.00832, b = 3.09))
+##'
+##' ## Custom parameters (single species) - data frame
+##' x <- add_weight_at_length(dab, lw_pars = data.frame(a = 0.00832, b = 3.09))
+##'
+##' \dontrun{
+##' ## Custom parameters for multiple species
+##' pars <- data.frame(
+##'   Valid_Aphia = c(127139L, 126436L),
+##'   a = c(0.00832, 0.0045),
+##'   b = c(3.09, 3.12)
+##' )
+##' x <- add_weight_at_length(x_multi, lw_pars = pars)
+##' }
+##'
 ##' @export
-add_weight_at_length <- function (x,
-                                  max_length = NULL,
-                                  max_weight = NULL,
-                                  plus_group = FALSE,
-                                  lw_source = c("lookup", "ca"),
-                                  lookup_as_backup = FALSE,
-                                  verbose = TRUE) {
+add_weight_at_length <- function(x,
+                                 max_length = NULL,
+                                 max_weight = NULL,
+                                 plus_group = FALSE,
+                                 lw_source = c("lookup", "ca"),
+                                 lw_pars = NULL,
+                                 lookup_as_backup = FALSE,
+                                 verbose = TRUE) {
 
   lw_source <- match.arg(lw_source)
 
@@ -246,21 +275,77 @@ add_weight_at_length <- function (x,
   aphia <- unique(x[["HL"]]$Valid_Aphia)
   n_aphia <- length(aphia)
 
-  ## if(length(aphia) > 1) stop("More than one Aphia ID in the data set. Not sure which a and b parameters in species_info to use. Please run this function for each species separately.")
-  if(n_aphia == 0) stop("No Aphia ID found in d[['HL']].")
+  if (n_aphia == 0) stop("No Aphia ID found in d[['HL']].")
 
-  if (verbose && n_aphia > 1) message("Multiple aphia IDs in data set (n = ", n_aphia, "). Caclulating weight at length for each and summing them all up.")
+  ## Parse and validate lw_pars
+  parsed_pars <- NULL
+  has_aphia_col <- FALSE
+
+  if (!is.null(lw_pars)) {
+    parsed_pars <- .normalize_lw_pars(lw_pars)
+    has_aphia_col <- "Valid_Aphia" %in% names(parsed_pars)
+
+    if (!has_aphia_col && n_aphia > 1) {
+      stop(
+        "lw_pars without a species identifier column cannot be used when the ",
+        "data contains multiple species (", n_aphia, " found). Either subset ",
+        "the data to a single species first, or supply lw_pars as a data ",
+        "frame with a 'Valid_Aphia' (or 'aphia') column."
+      )
+    }
+
+    if (has_aphia_col) {
+      uncovered <- setdiff(aphia, parsed_pars$Valid_Aphia)
+      if (length(uncovered) > 0) {
+        message(
+          "lw_pars does not cover all species in the data. ",
+          "Falling back to lw_source = '", lw_source, "' for: ",
+          paste(uncovered, collapse = ", ")
+        )
+      }
+    }
+  }
+
+  if (verbose && n_aphia > 1) message("Multiple aphia IDs in data set (n = ", n_aphia, "). Calculating weight at length for each and summing them all up.")
 
   x[["HH"]][["Wgt"]] <- x[["HH"]][["N"]]
   x[["HH"]][["Wgt"]][] <- 0
 
   warn_msgs <- character()
 
-  if (lw_source == "lookup") {
+  for (i in seq_len(n_aphia)) {
 
-    for (i in seq_len(n_aphia)) {
+    if (verbose && n_aphia > 1) message("Running aphia: ", aphia[i])
 
-      if (verbose && n_aphia > 1) message("Running aphia: ", aphia[i])
+    ## Determine whether to use custom lw_pars for this species
+    custom_a <- NULL
+    custom_b <- NULL
+
+    if (!is.null(parsed_pars)) {
+      if (!has_aphia_col) {
+        custom_a <- parsed_pars$a
+        custom_b <- parsed_pars$b
+      } else {
+        idx <- match(aphia[i], parsed_pars$Valid_Aphia)
+        if (!is.na(idx)) {
+          custom_a <- parsed_pars$a[idx]
+          custom_b <- parsed_pars$b[idx]
+        }
+      }
+    }
+
+    if (!is.null(custom_a)) {
+
+      Wgt <- withCallingHandlers(
+        .get_wgt_one_custom(x, aphia[i], n_aphia, custom_a, custom_b,
+                            plus_group, verbose),
+        warning = function(w) {
+          warn_msgs <<- c(warn_msgs, conditionMessage(w))
+          invokeRestart("muffleWarning")
+        }
+      )
+
+    } else if (lw_source == "lookup") {
 
       Wgt <- withCallingHandlers(
         .get_wgt_one_lookup(x, aphia[i], n_aphia, verbose),
@@ -270,31 +355,11 @@ add_weight_at_length <- function (x,
         }
       )
 
-      if(is.null(Wgt)) {
-        if (n_aphia == 1) {
-          stop("Couldn't convert length into weight. Please check the lookup information in the species_info table or consider using the CA data set if available (lw_source = 'lookup').")
-        } else {
-          next()
-        }
-      }
-
-      ind_hh <- match(rownames(Wgt), rownames(x[["HH"]]$Wgt))
-
-      x[["HH"]]$Wgt[ind_hh,] <- x[["HH"]]$Wgt[ind_hh,] + Wgt
-
-    }
-
-  } else if (lw_source == "ca") {
-
-    for (i in seq_len(n_aphia)) {
-
-      if (verbose) message("Running aphia: ", aphia[i])
+    } else {
 
       Wgt <- withCallingHandlers(
         .get_wgt_one_ca(x, aphia[i], n_aphia,
-                        max_length, max_weight,
-                        plus_group,
-                        verbose),
+                        max_length, max_weight, plus_group, verbose),
         warning = function(w) {
           warn_msgs <<- c(warn_msgs, conditionMessage(w))
           invokeRestart("muffleWarning")
@@ -312,21 +377,20 @@ add_weight_at_length <- function (x,
         )
       }
 
-      if(is.null(Wgt)) {
-        if (n_aphia == 1) {
-          stop("Couldn't convert length into weight. Please check the CA data set or consider using lookup information in the species_info table (lw_source = 'lookup').")
-        } else {
-          next()
-        }
-      }
-
-      ind_hh <- match(rownames(Wgt), rownames(x[["HH"]]$Wgt))
-
-      x[["HH"]]$Wgt[ind_hh,] <- x[["HH"]]$Wgt[ind_hh,] + Wgt
-
     }
 
-  } else stop("Don't know the lw_source. Only 'ca' or 'lookup' known.")
+    if (is.null(Wgt)) {
+      if (n_aphia == 1) {
+        stop("Couldn't convert length into weight. Check lw_pars, the CA data set, or the species_info lookup table.")
+      } else {
+        next()
+      }
+    }
+
+    ind_hh <- match(rownames(Wgt), rownames(x[["HH"]]$Wgt))
+    x[["HH"]]$Wgt[ind_hh, ] <- x[["HH"]]$Wgt[ind_hh, ] + Wgt
+
+  }
 
   unique_warns <- unique(warn_msgs)
   if (length(unique_warns) > 0) {
@@ -366,6 +430,8 @@ add_weight_at_length <- function (x,
 ##'   Observations above this value are excluded.
 ##' @param lw_source Character string specifying the source of length-weight
 ##'   parameters. One of `"ca"` or `"lookup"`.
+##' @param lw_pars Optional custom length-weight parameters passed to
+##'   [add_weight_at_length()]. See that function for the accepted forms.
 ##' @param length_cuts Optional numeric vector of break points for aggregating
 ##'   the original length classes into coarser bins. Must be strictly
 ##'   increasing.
@@ -411,12 +477,13 @@ add_weight_at_length <- function (x,
 ##' x <- add_total_weight_by_haul(dab, lw_source = "lookup")
 ##'
 ##' @export
-add_total_weight_by_haul <- function (x,
-                                      per_minute = FALSE,
-                                      max_length = NULL,
-                                      max_weight = NULL,
-                                      lw_source = c("lookup", "ca"),
-                                      length_cuts = NULL) {
+add_total_weight_by_haul <- function(x,
+                                     per_minute = FALSE,
+                                     max_length = NULL,
+                                     max_weight = NULL,
+                                     lw_source = c("lookup", "ca"),
+                                     lw_pars = NULL,
+                                     length_cuts = NULL) {
 
   lw_source <- match.arg(lw_source)
 
@@ -426,7 +493,8 @@ add_total_weight_by_haul <- function (x,
     x <- add_weight_at_length(x,
                               max_length = max_length,
                               max_weight = max_weight,
-                              lw_source = lw_source)
+                              lw_source = lw_source,
+                              lw_pars = lw_pars)
   }
 
   if (!is.null(length_cuts)) {
@@ -468,6 +536,53 @@ add_total_weight_by_haul <- function (x,
 
 
 ## Internal functions ------------------------------------------------------------
+
+.normalize_lw_pars <- function(lw_pars) {
+  if (is.numeric(lw_pars) && !is.data.frame(lw_pars)) {
+    lw_pars <- as.list(lw_pars)
+  }
+  if (is.list(lw_pars) && !is.data.frame(lw_pars)) {
+    lw_pars <- as.data.frame(lw_pars)
+  }
+  if (!is.data.frame(lw_pars)) {
+    stop("lw_pars must be a named numeric vector, named list, or data frame.")
+  }
+  if (!all(c("a", "b") %in% names(lw_pars))) {
+    stop("lw_pars must contain elements or columns named 'a' and 'b'.")
+  }
+  if ("aphia" %in% names(lw_pars) && !"Valid_Aphia" %in% names(lw_pars)) {
+    names(lw_pars)[names(lw_pars) == "aphia"] <- "Valid_Aphia"
+  }
+  lw_pars
+}
+
+
+.get_wgt_one_custom <- function(x, aphia, n_aphia, a, b,
+                                plus_group = FALSE, verbose = TRUE) {
+  xsub <- subset(x, Valid_Aphia == aphia)
+
+  cm_breaks <- attr(x, "cm.breaks")
+  nl <- length(cm_breaks)
+  dls <- diff(cm_breaks)
+  mid_lengths <- cm_breaks[-1] + dls / 2
+  nml <- length(mid_lengths)
+
+  if (is.infinite(cm_breaks[nl]) || isTRUE(plus_group)) {
+    mid_lengths[nml] <- cm_breaks[nl - 1] + dls[nml - 1] / 2
+  }
+
+  LW <- a * mid_lengths ^ b
+
+  if (n_aphia > 1) {
+    xsub <- add_numbers_at_length(xsub,
+                                  cm_breaks = cm_breaks,
+                                  by = cm_breaks[2] - cm_breaks[1])
+  }
+
+  Wgt <- sweep(xsub[["HH"]]$N, 2, LW, "*")
+  round(Wgt, 3)
+}
+
 
 .has_weight_at_length <- function(x) {
   !is.null(x[["HH"]][["Wgt"]]) && is.matrix(x[["HH"]][["Wgt"]])

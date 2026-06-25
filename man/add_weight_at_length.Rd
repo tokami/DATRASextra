@@ -10,6 +10,7 @@ add_weight_at_length(
   max_weight = NULL,
   plus_group = FALSE,
   lw_source = c("lookup", "ca"),
+  lw_pars = NULL,
   lookup_as_backup = FALSE,
   verbose = TRUE
 )
@@ -32,11 +33,27 @@ unrealistically high weight for that length bin. Instead the lower limit
 plus half of the size of the second last length bin is used to define the
 mid length of the largest length bin.}
 
-\item{lw_source}{Character string specifying the source of length-weight
-parameters. One of \code{"ca"} or \code{"lookup"}.}
+\item{lw_source}{Character string specifying the fallback source of
+length-weight parameters when \code{lw_pars} is \code{NULL} or does not cover a
+species. One of \code{"lookup"} (default, uses \code{species_info}) or \code{"ca"}
+(fits a log-log model to \code{CA}).}
 
-\item{lookup_as_backup}{Logical. If \code{TRUE}, lookup parameters of the
-length-weight relationship (a, b) in the species_info table are used.
+\item{lw_pars}{Optional custom length-weight parameters. Overrides
+\code{lw_source} for the covered species. Accepted forms:
+\itemize{
+\item A named numeric vector: \code{c(a = 0.01, b = 3.0)}.
+\item A named list: \code{list(a = 0.01, b = 3.0)}.
+\item A data frame with columns \code{a} and \code{b} (one row per species when
+multiple species are present), and optionally a column \code{Valid_Aphia}
+(or \code{aphia}) to identify which species each row applies to.
+}
+When no species identifier column is present, the data must contain
+exactly one species; an error is raised otherwise. When a \code{Valid_Aphia}
+column is present, parameters are matched by species, and \code{lw_source} is
+used as a fallback for any species not covered.}
+
+\item{lookup_as_backup}{Logical. If \code{TRUE} and \code{lw_source = "ca"}, the
+\code{species_info} lookup table is used when \code{CA} data are insufficient.
 Default: \code{FALSE}.}
 
 \item{verbose}{Logical. If \code{TRUE} (default), progress messages are printed.}
@@ -49,33 +66,48 @@ Estimate catch weight from length data and add the resulting weight fields to
 a \code{datras_raw} / \code{DATRASraw} object.
 }
 \details{
-The function derives weight-at-length either from an lookup length-weight
-relationship fitted to the \code{CA} table or, if \code{lw_source = "lookup"}, uses
-length-weight parameters from the species_info table.
+The function derives weight-at-length from custom parameters supplied via
+\code{lw_pars}, from a log-log model fitted to the \code{CA} table
+(\code{lw_source = "ca"}), or from the built-in \code{species_info} lookup table
+(\code{lw_source = "lookup"}). Custom parameters in \code{lw_pars} take precedence
+over \code{lw_source} for the covered species.
 
-\itemize{
-\item If \code{lw_source = "lookup"}, a linear model of the form
-\eqn{\log(IndWgt) ~ \log(LngtCm)} is fitted to positive individual weights
-in the \code{CA} table. Predicted weights are then assigned to length classes
-defined by \code{attr(x, "cm.breaks")}, multiplied by numbers-at-length, and
-optionally divided by haul duration.
+Weight at length is calculated as \eqn{W = a \times L^b}, where \eqn{L} is
+the mid-length of each length bin defined by \code{attr(x, "cm.breaks")}.
 
-\item If \code{lw_source = "lookup"}, weight is added using length-weight
-parameters from the species_info table. }
+When \code{lw_source = "ca"}, a linear model
+\eqn{\log(W) = \alpha + b \log(L)} is fitted to positive individual weights
+in \code{CA}, and the resulting parameters are used.
+
+When \code{lw_source = "lookup"}, parameters \code{a} and \code{b} are taken from the
+built-in \code{species_info} table, matched by \code{Valid_Aphia}.
 }
 \examples{
 
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
 
-## Add fitted weight-at-length estimates
-x <- add_weight_at_length(dab)
+## Fitted weight-at-length from CA data
+x <- add_weight_at_length(dab, lw_source = "ca")
 
-## Exclude large values when fitting the length-weight model
-x <- add_weight_at_length(dab, max_length = 100, max_weight = 10000)
-
-## Use lookup weight-at-length instead from the species_info table
+## Lookup weight-at-length from species_info
 x <- add_weight_at_length(dab, lw_source = "lookup")
+
+## Custom parameters (single species) - named vector
+x <- add_weight_at_length(dab, lw_pars = c(a = 0.00832, b = 3.09))
+
+## Custom parameters (single species) - data frame
+x <- add_weight_at_length(dab, lw_pars = data.frame(a = 0.00832, b = 3.09))
+
+\dontrun{
+## Custom parameters for multiple species
+pars <- data.frame(
+  Valid_Aphia = c(127139L, 126436L),
+  a = c(0.00832, 0.0045),
+  b = c(3.09, 3.12)
+)
+x <- add_weight_at_length(x_multi, lw_pars = pars)
+}
 
 }
 \seealso{
