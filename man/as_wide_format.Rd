@@ -4,110 +4,54 @@
 \alias{as_wide_format}
 \title{Convert a \code{datras_raw} object to a wide-format table}
 \usage{
-as_wide_format(
-  x,
-  vars = c("Survey", "Gear", "Country", "Ship", "Year", "Quarter", "Month", "Day", "lon",
-    "lat", "timeOfYear", "abstime", "DayNight", "TimeShotHour", "HaulDur"),
-  add_vars = NULL,
-  remove_vars = NULL,
-  vars_hl = "Count",
-  species_var = "Species",
-  id_var = "haul.id",
-  sep = "__",
-  fill = 0,
-  sanitize_names = TRUE,
-  verbose = TRUE
-)
+as_wide_format(x, vars = .default_hh_vars, add_vars = NULL, remove_vars = NULL)
 }
 \arguments{
 \item{x}{A \code{datras_raw} object.}
 
-\item{vars}{Character vector of haul-level variables to keep from \code{HH}.
-Defaults to the same 15 columns as \code{\link[=as_long_format]{as_long_format()}}: \code{Survey}, \code{Gear},
-\code{Country}, \code{Ship}, \code{Year}, \code{Quarter}, \code{Month}, \code{Day}, \code{lon}, \code{lat},
-\code{timeOfYear}, \code{abstime}, \code{DayNight}, \code{TimeShotHour}, \code{HaulDur}.}
+\item{vars}{Character vector of \code{HH} variable names to include. Defaults to
+15 common haul-level columns: \code{Survey}, \code{Gear}, \code{Country}, \code{Ship},
+\code{Year}, \code{Quarter}, \code{Month}, \code{Day}, \code{lon}, \code{lat}, \code{timeOfYear},
+\code{abstime}, \code{DayNight}, \code{TimeShotHour}, \code{HaulDur}.}
 
-\item{add_vars}{Character vector of additional haul-level variable names to
-append to \code{vars}. Applied after \code{remove_vars}. Use this to extend the
-default set without specifying it in full (e.g. \code{add_vars = "Depth"}).}
+\item{add_vars}{Character vector of additional \code{HH} variable names to
+append to \code{vars}. Applied after \code{remove_vars}.}
 
-\item{remove_vars}{Character vector of haul-level variable names to drop
-from \code{vars}. Applied before \code{add_vars}. Use this to trim the default
-set without specifying it in full.}
-
-\item{vars_hl}{Character vector of variables from \code{HL} to spread wide across
-species. Defaults to \code{"Count"}.}
-
-\item{species_var}{Character scalar giving the \code{HL} variable that defines the
-species-specific column names. Defaults to \code{"Species"}. Can also be set to
-\code{"Valid_Aphia"} or another grouping variable present in \code{HL}.}
-
-\item{id_var}{Character scalar giving the haul identifier variable used to
-match \code{HH} and \code{HL}. Defaults to \code{"haul.id"}.}
-
-\item{sep}{Character scalar used to separate the \code{HL} variable name from the
-species name in wide column names. Defaults to \code{"__"}.}
-
-\item{fill}{Value used to replace missing values in the wide \code{HL} columns.
-Defaults to \code{0}.}
-
-\item{sanitize_names}{Logical. If \code{TRUE} (default), species names used in
-wide column names are converted to lower case and non-alphanumeric
-characters are replaced with underscores.}
-
-\item{verbose}{Logical. If \code{TRUE} (default), warnings are issued for
-requested variables that are not found.}
+\item{remove_vars}{Character vector of variable names to drop from \code{vars}.
+Applied before \code{add_vars}.}
 }
 \value{
-A data frame in wide format with one row per haul.
+A data frame with one row per haul.
 }
 \description{
-Create a wide-format data frame from a \code{datras_raw} / \code{DATRASraw} object,
-using \code{HH} as the main haul-level table and spreading selected \code{HL}
-variables into species-specific columns.
+Create a wide-format data frame from the \code{HH} table of a
+\code{datras_raw} / \code{DATRASraw} object. Matrix columns (e.g. \code{HaulN} or
+\code{HaulWgt} produced with \code{length_cuts}) are expanded to one column per
+length bin.
 }
 \details{
-The output contains one row per haul. Requested haul-level variables from
-\code{HH} are kept as ordinary columns, while requested variables from \code{HL} are
-expanded into columns of the form \code{"<variable><sep><species>"}.
+Only \code{HH} columns are used. In addition to the explicitly requested \code{vars},
+\code{HaulN}, \code{HaulWgt}, and \code{SweptArea} are always appended when present in
+\code{HH}. Variables not found in \code{HH} are omitted with a warning.
 
-The function starts from the \code{HH} table and adds requested variables from
-\code{HL} after aggregating them to unique \code{haul.id} x \code{species_var}
-combinations.
-
-Numeric \code{HL} variables are summed within haul-species combinations before
-reshaping wide. Non-numeric variables are reduced by taking the first
-non-missing value.
-
-Variables requested in \code{vars} or \code{vars_hl} that are not found in the
-relevant table are omitted and reported with a warning.
+If any selected \code{HH} columns are matrices (produced by passing \code{length_cuts}
+to \code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}} or \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}), each
+matrix is expanded to one column per length bin. Columns are named
+\verb{<variable>_<bin>}, e.g. \verb{HaulN_(0-20]} and \verb{HaulN_(20-Inf]}. Unlike
+\code{\link[=as_long_format]{as_long_format()}}, matrix columns with different bin structures are
+permitted.
 }
 \examples{
-\dontrun{
-## One row per haul, species-specific count columns
-tab <- as_wide_format(x)
+dab <- add_numbers_at_length(dab)
+dab <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
 
-## Add a haul-level column to the defaults
-tab <- as_wide_format(x, add_vars = "Depth")
+## Default columns plus auto-added HaulN, one column per length group
+tab <- as_wide_format(dab)
 
-## Remove columns from the defaults
-tab <- as_wide_format(x, remove_vars = c("Ship", "Country"))
-
-## Add more HL variables
-tab <- as_wide_format(
-  x,
-  vars_hl = c("Count", "CatCatchWgt")
-)
-
-## Use Aphia IDs instead of species names in column names
-tab <- as_wide_format(
-  x,
-  vars_hl = c("Count"),
-  species_var = "Valid_Aphia"
-)
-}
+## Adjust columns
+tab <- as_wide_format(dab, add_vars = "Depth", remove_vars = "Ship")
 
 }
 \seealso{
-\code{\link[=as_long_format]{as_long_format()}}
+\code{\link[=as_long_format]{as_long_format()}}, \code{\link[=as_table]{as_table()}}
 }

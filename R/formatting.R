@@ -1,110 +1,110 @@
 
 ## Main functions ----------------------------------------------------------------
 
+.default_hh_vars <- c(
+  "Survey", "Gear", "Country", "Ship", "Year",
+  "Quarter", "Month", "Day", "lon", "lat",
+  "timeOfYear", "abstime", "DayNight",
+  "TimeShotHour", "HaulDur"
+)
+
+.prep_hh_vars <- function(x, vars, add_vars, remove_vars) {
+  hh <- x[["HH"]]
+
+  if (!is.null(remove_vars)) vars <- setdiff(vars, remove_vars)
+  if (!is.null(add_vars))    vars <- unique(c(vars, add_vars))
+
+  auto_candidates <- c("HaulN", "HaulWgt", "SweptArea")
+  auto_add <- setdiff(intersect(auto_candidates, names(hh)), vars)
+  if (!is.null(remove_vars)) auto_add <- setdiff(auto_add, remove_vars)
+  vars <- unique(c(vars, auto_add))
+
+  missing_vars <- setdiff(vars, names(hh))
+  if (length(missing_vars) > 0) {
+    warning(
+      "These variables were not found in HH and were omitted: ",
+      paste(missing_vars, collapse = ", ")
+    )
+  }
+  vars <- intersect(vars, names(hh))
+
+  res <- hh[, unique(c("haul.id", vars)), drop = FALSE]
+  rownames(res) <- NULL
+  res
+}
+
+
 ##' Format a `datras_raw` object as a table
 ##'
 ##' Convert a `datras_raw` / `DATRASraw` object to either long or wide tabular
-##' format.
+##' format using haul-level (`HH`) variables only.
 ##'
 ##' This is a convenience wrapper around [as_long_format()] and
 ##' [as_wide_format()].
 ##'
 ##' @param x A `datras_raw` object.
-##' @param vars Character vector of variable names to include in the output.
-##'   Variables found in `HH` are taken directly from `HH`. Variables not found
-##'   in `HH` but present in `HL` are joined by `haul.id`. Defaults to a set of
-##'   common haul-level variables: `Survey`, `Gear`, `Country`, `Ship`, `Year`,
-##'   `Quarter`, `Month`, `Day`, `lon`, `lat`, `timeOfYear`, `abstime`,
-##'   `DayNight`, `TimeShotHour`, `HaulDur`.
-##' @param add_vars Character vector of additional variable names to append to
-##'   `vars`. Applied after `remove_vars`. Use this to extend the default set
-##'   without having to specify it in full (e.g. `add_vars = "Depth"`).
+##' @param vars Character vector of `HH` variable names to include. Defaults to
+##'   15 common haul-level columns: `Survey`, `Gear`, `Country`, `Ship`,
+##'   `Year`, `Quarter`, `Month`, `Day`, `lon`, `lat`, `timeOfYear`,
+##'   `abstime`, `DayNight`, `TimeShotHour`, `HaulDur`.
+##' @param add_vars Character vector of additional `HH` variable names to
+##'   append to `vars`. Applied after `remove_vars`.
 ##' @param remove_vars Character vector of variable names to drop from `vars`.
-##'   Applied before `add_vars`. Use this to trim the default set without having
-##'   to specify it in full (e.g. `remove_vars = c("Ship", "Country")`).
-##' @param type Character string specifying the output format. Must be either
-##'   `"long"` (default) or `"wide"`.
-##' @param ... Additional arguments passed to [as_long_format()] or
-##'   [as_wide_format()].
+##'   Applied before `add_vars`.
+##' @param type Character string specifying the output format: `"long"`
+##'   (default) or `"wide"`.
 ##'
 ##' @details
-##' If `type = "long"`, the object is converted using [as_long_format()].
-##' If `type = "wide"`, the object is converted using [as_wide_format()].
+##' Both functions only use columns from the `HH` table. In addition to
+##' explicitly requested `vars`, `HaulN`, `HaulWgt`, and `SweptArea` are
+##' always appended when present in `HH` (e.g. after calling
+##' [add_total_numbers_by_haul()], [add_total_weight_by_haul()], or
+##' [add_swept_area()]).
 ##'
-##' When `type = "long"`, columns `HaulN`, `HaulWgt`, and `SweptArea` are
-##' included automatically whenever they are present in `HH`. If `HaulN` or
-##' `HaulWgt` is a matrix (produced by passing `length_cuts` to
-##' [add_total_numbers_by_haul()] or [add_total_weight_by_haul()]), the output
-##' is expanded to one row per haul x length group and a `LengthGroup` column is
-##' added.
+##' Matrix columns such as `HaulN` or `HaulWgt` produced by passing
+##' `length_cuts` to [add_total_numbers_by_haul()] or
+##' [add_total_weight_by_haul()] are handled differently by each format:
 ##'
-##' @section Default columns:
-##' Both `type = "long"` and `type = "wide"` start from the same set of
-##' 15 haul-level columns taken from `HH`:
-##' `Survey`, `Gear`, `Country`, `Ship`, `Year`, `Quarter`, `Month`, `Day`,
-##' `lon`, `lat`, `timeOfYear`, `abstime`, `DayNight`, `TimeShotHour`,
-##' `HaulDur`.
-##'
-##' In addition, when `type = "long"`, the columns `HaulN`, `HaulWgt`, and
-##' `SweptArea` are always appended whenever they are present in `HH` (e.g.
-##' after calling [add_total_numbers_by_haul()], [add_total_weight_by_haul()],
-##' or [add_swept_area()]).
-##'
-##' To adjust the default set without replacing it entirely, pass `add_vars`
-##' and/or `remove_vars` via `...`:
-##'
-##' ```r
-##' ## Add a column to the defaults
-##' as_table(x, add_vars = "Depth")
-##'
-##' ## Drop columns from the defaults
-##' as_table(x, remove_vars = c("Ship", "Country"))
-##'
-##' ## Works the same for wide format
-##' as_table(x, type = "wide", add_vars = "Depth", remove_vars = "Day")
-##' ```
+##' \itemize{
+##'   \item `type = "long"`: matrix columns are expanded to one row per haul x
+##'     length group. A `LengthGroup` column is added identifying the bin.
+##'     All matrix columns must share the same bin structure.
+##'   \item `type = "wide"`: matrix columns are expanded to one column per
+##'     length bin, named `<variable>_<bin>` (e.g. `HaulN_(0-20]`).
+##' }
 ##'
 ##' @return A data frame in the requested format.
 ##'
 ##' @seealso [as_long_format()], [as_wide_format()]
 ##'
 ##' @examples
-##' \dontrun{
-##' ## Long-format table with default columns
-##' tab_long <- as_table(x, type = "long")
+##' dab <- add_numbers_at_length(dab)
+##' dab <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
 ##'
-##' ## Wide-format table
-##' tab_wide <- as_table(x, type = "wide")
+##' ## Long format - one row per haul x length group
+##' tab_long <- as_table(dab, type = "long")
 ##'
-##' ## Add a column to the defaults
-##' tab <- as_table(x, add_vars = "Depth")
+##' ## Wide format - one column per length group
+##' tab_wide <- as_table(dab, type = "wide")
 ##'
-##' ## Remove columns from the defaults
-##' tab <- as_table(x, remove_vars = c("Ship", "Country"))
-##' }
+##' ## Adjust the default column set
+##' tab <- as_table(dab, add_vars = "Depth", remove_vars = "Ship")
 ##'
 ##' @export
 as_table <- function(x,
-                     vars = c("Survey", "Gear", "Country", "Ship", "Year",
-                              "Quarter", "Month", "Day", "lon", "lat",
-                              "timeOfYear", "abstime", "DayNight",
-                              "TimeShotHour", "HaulDur"),
+                     vars = .default_hh_vars,
                      add_vars = NULL,
                      remove_vars = NULL,
-                     type = "long", ...) {
+                     type = "long") {
 
   .check_class_datras(x)
 
   if (type == "long") {
-
     x <- as_long_format(x, vars = vars, add_vars = add_vars,
-                        remove_vars = remove_vars, ...)
-
+                        remove_vars = remove_vars)
   } else if (type == "wide") {
-
     x <- as_wide_format(x, vars = vars, add_vars = add_vars,
-                        remove_vars = remove_vars, ...)
-
+                        remove_vars = remove_vars)
   } else {
     stop("Unknown type. Use 'long' or 'wide'.")
   }
@@ -116,88 +116,55 @@ as_table <- function(x,
 
 ##' Convert a `datras_raw` object to a long-format table
 ##'
-##' Create a long-format data frame from a `datras_raw` / `DATRASraw` object,
-##' using `HH` as the main haul-level table and, when needed, adding variables
-##' from `HL` matched by `haul.id`.
-##'
-##' If species-level variables such as `Species` or `Valid_Aphia` are requested,
-##' the output contains one row per haul-species combination. Variables that are
-##' not found in either `HH` or `HL` are omitted with a warning.
+##' Create a long-format data frame from the `HH` table of a
+##' `datras_raw` / `DATRASraw` object. Matrix columns (e.g. `HaulN` or
+##' `HaulWgt` produced with `length_cuts`) are expanded to one row per haul x
+##' length group.
 ##'
 ##' @param x A `datras_raw` object.
-##' @param vars Character vector of variable names to include in the output.
-##'   Variables found in `HH` are taken directly from `HH`. Variables not found
-##'   in `HH` but present in `HL` are joined by `haul.id`. Defaults to a set of
-##'   common haul-level variables: `Survey`, `Gear`, `Country`, `Ship`, `Year`,
-##'   `Quarter`, `Month`, `Day`, `lon`, `lat`, `timeOfYear`, `abstime`,
-##'   `DayNight`, `TimeShotHour`, `HaulDur`.
-##' @param add_vars Character vector of additional variable names to append to
-##'   `vars`. Applied after `remove_vars`. Use this to extend the default set
-##'   without having to specify it in full (e.g. `add_vars = "Depth"`).
+##' @param vars Character vector of `HH` variable names to include. Defaults to
+##'   15 common haul-level columns: `Survey`, `Gear`, `Country`, `Ship`,
+##'   `Year`, `Quarter`, `Month`, `Day`, `lon`, `lat`, `timeOfYear`,
+##'   `abstime`, `DayNight`, `TimeShotHour`, `HaulDur`.
+##' @param add_vars Character vector of additional `HH` variable names to
+##'   append to `vars`. Applied after `remove_vars`.
 ##' @param remove_vars Character vector of variable names to drop from `vars`.
-##'   Applied before `add_vars`. Use this to trim the default set without having
-##'   to specify it in full (e.g. `remove_vars = c("Ship", "Country")`).
+##'   Applied before `add_vars`.
 ##'
 ##' @details
-##' The function starts from the `HH` table and adds requested variables from
-##' `HL` only when needed. If one or more requested variables come from `HL`,
-##' the output is expanded to one row per unique `haul.id` and combination of
-##' requested `HL` variables.
+##' Only `HH` columns are used. In addition to the explicitly requested `vars`,
+##' `HaulN`, `HaulWgt`, and `SweptArea` are always appended when present in
+##' `HH`. Variables not found in `HH` are omitted with a warning.
 ##'
-##' This is particularly useful for creating haul-species tables, for example
-##' when requesting `Species` or `Valid_Aphia` together with haul-level
-##' covariates such as year, quarter, gear, or position.
+##' If any selected `HH` columns are matrices (produced by passing `length_cuts`
+##' to [add_total_numbers_by_haul()] or [add_total_weight_by_haul()]), the
+##' output is expanded to one row per haul x length group. A `LengthGroup`
+##' column is added identifying the bin, and the matrix columns become scalar
+##' columns. All matrix columns must share the same bin structure; an error is
+##' raised if they differ.
 ##'
-##' Variables requested in `vars` that are not present in either `HH` or `HL`
-##' are ignored and reported with a warning.
+##' @return A data frame with one row per haul, or one row per haul x length
+##'   group when matrix columns are present.
 ##'
-##' In addition to the explicitly requested `vars`, the function automatically
-##' appends `HaulN`, `HaulWgt`, and `SweptArea` to the
-##' output whenever those columns are present in `HH` (e.g., after calling
-##' [add_total_numbers_by_haul()], [add_total_weight_by_haul()], or
-##' [add_swept_area()]).
-##'
-##' If `HaulN` or `HaulWgt` is a matrix (created by passing `length_cuts` to
-##' [add_total_numbers_by_haul()] or [add_total_weight_by_haul()]), the output
-##' is automatically expanded to one row per haul × length group. A
-##' `LengthGroup` column is added that identifies the length bin, and `HaulN`
-##' / `HaulWgt` become scalar columns containing the per-bin values.
-##'
-##' @return A data frame in long format.
-##'
-##' @seealso [read_datras()], [clean_datras()]
+##' @seealso [as_wide_format()], [as_table()]
 ##'
 ##' @examples
-##' \dontrun{
-##' ## Haul-level long table with default columns
-##' tab <- as_long_format(x)
+##' dab <- add_numbers_at_length(dab)
+##' dab <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
 ##'
-##' ## Add a column to the defaults
-##' tab <- as_long_format(x, add_vars = "Depth")
+##' ## Default columns plus auto-added HaulN, expanded to long
+##' tab <- as_long_format(dab)
 ##'
-##' ## Remove columns from the defaults
-##' tab <- as_long_format(x, remove_vars = c("Ship", "Country"))
+##' ## Adjust columns
+##' tab <- as_long_format(dab, add_vars = "Depth", remove_vars = "Ship")
 ##'
-##' ## Combine both
-##' tab <- as_long_format(x, add_vars = "Species", remove_vars = "Day")
-##'
-##' ## Haul-species table (full override of vars)
-##' tab <- as_long_format(x, vars = c("Survey", "Year", "haul.id",
-##'                                   "Species", "Valid_Aphia"))
-##'
-##' ## HaulN/HaulWgt/SweptArea included automatically when present
-##' x <- add_total_numbers_by_haul(x, length_cuts = c(0, 20, Inf))
-##' x <- add_total_weight_by_haul(x, length_cuts = c(0, 20, Inf))
-##' x <- add_swept_area(x)
-##' tab <- as_long_format(x)  ## one row per haul x length group; LengthGroup column added
-##' }
+##' ## Scalar HaulN only (no length_cuts)
+##' dab2 <- add_total_numbers_by_haul(dab)
+##' tab <- as_long_format(dab2)
 ##'
 ##' @export
 as_long_format <- function(x,
-                           vars = c("Survey", "Gear", "Country", "Ship", "Year",
-                                    "Quarter", "Month", "Day", "lon", "lat",
-                                    "timeOfYear", "abstime", "DayNight",
-                                    "TimeShotHour", "HaulDur"),
+                           vars = .default_hh_vars,
                            add_vars = NULL,
                            remove_vars = NULL) {
 
@@ -207,115 +174,39 @@ as_long_format <- function(x,
     stop("x[['HH']] is missing or empty.")
   }
 
-  if (!is.null(remove_vars)) vars <- setdiff(vars, remove_vars)
-  if (!is.null(add_vars))    vars <- unique(c(vars, add_vars))
+  res <- .prep_hh_vars(x, vars, add_vars, remove_vars)
 
-  hh <- x[["HH"]]
-  hl <- x[["HL"]]
-
-  ## allow a few common aliases
-  var_map <- c(
-    Aphia_ID = "Valid_Aphia",
-    AphiaID = "Valid_Aphia",
-    aphia_id = "Valid_Aphia",
-    Species = "Species",
-    species = "Species",
-    haul_id = "haul.id"
-  )
-
-  vars_in <- vars
-  vars_std <- ifelse(vars %in% names(var_map), unname(var_map[vars]), vars)
-
-  ## variables available in each table
-  hh_vars <- vars_std[vars_std %in% names(hh)]
-  hl_vars <- character(0)
-
-  if (!is.null(hl) && nrow(hl) > 0) {
-    hl_vars <- vars_std[vars_std %in% names(hl) & !vars_std %in% names(hh)]
-  }
-
-  missing_vars <- vars_std[!vars_std %in% c(names(hh), names(hl))]
-
-  if (length(missing_vars) > 0) {
-    warning(
-      "These variables were not found in HH or HL and were omitted: ",
-      paste(unique(missing_vars), collapse = ", ")
-    )
-  }
-
-  ## auto-include HaulN, HaulWgt, SweptArea if present in HH
-  auto_candidates <- c("HaulN", "HaulWgt", "SweptArea")
-  auto_add <- intersect(auto_candidates, names(hh))
-  auto_add <- setdiff(auto_add, hh_vars)
-  hh_vars <- unique(c(hh_vars, auto_add))
-
-  ## start from HH
-  res <- hh[, unique(c("haul.id", hh_vars)), drop = FALSE]
-
-  ## add HL variables if requested
-  if (length(hl_vars) > 0) {
-
-    if (is.null(hl) || nrow(hl) == 0) {
-      warning("HL is missing or empty, so HL variables were omitted: ",
-              paste(hl_vars, collapse = ", "))
-    } else {
-
-      ## keep only required HL columns plus haul.id for matching
-      hl_sub <- hl[, unique(c("haul.id", hl_vars)), drop = FALSE]
-
-      ## remove duplicate haul-species (or more general haul-HL-variable) rows
-      hl_sub <- unique(hl_sub)
-
-      ## merge creates one row per unique haul.id + HL combination
-      res <- merge(res, hl_sub, by = "haul.id", all.x = TRUE)
-    }
-  }
-
-  ## restore original requested names where aliases were used
-  out_names <- names(res)
-  alias_back <- c(
-    Valid_Aphia = if ("Aphia_ID" %in% vars_in) "Aphia_ID" else
-      if ("AphiaID" %in% vars_in) "AphiaID" else
-        if ("aphia_id" %in% vars_in) "aphia_id" else "Valid_Aphia",
-    Species = if ("species" %in% vars_in) "species" else "Species",
-    "haul.id" = if ("haul_id" %in% vars_in) "haul_id" else "haul.id"
-  )
-
-  for (nm in names(alias_back)) {
-    if (nm %in% out_names) {
-      names(res)[names(res) == nm] <- alias_back[[nm]]
-    }
-  }
-
-  ## keep output order close to requested vars; auto-added columns go at end
-  wanted <- c(
-    if ("haul.id" %in% names(res) && !("haul.id" %in% vars_std) && !("haul_id" %in% vars_in)) "haul.id",
-    vars_in[vars_std %in% c(names(hh), names(hl))],
-    auto_add
-  )
-
-  wanted <- wanted[wanted %in% names(res)]
-  res <- res[, unique(wanted), drop = FALSE]
-
-  ## expand matrix columns (HaulN / HaulWgt with length_cuts) to long format
-  mat_cols <- names(res)[vapply(names(res), function(nm) is.matrix(res[[nm]]), logical(1))]
+  mat_cols <- names(res)[vapply(names(res),
+                                function(nm) is.matrix(res[[nm]]), logical(1))]
 
   if (length(mat_cols) > 0) {
-    bin_names <- colnames(res[[mat_cols[1]]])
-    n_bins <- length(bin_names)
-    n_hauls <- nrow(res)
 
-    idx <- rep(seq_len(n_hauls), each = n_bins)
+    bin_names_list <- lapply(mat_cols, function(mc) colnames(res[[mc]]))
+    identical_bins <- length(unique(lapply(bin_names_list,
+                                          paste, collapse = "\r"))) == 1L
+    if (!identical_bins) {
+      stop(
+        "Matrix columns have different length-bin structures and cannot be ",
+        "combined in long format: ",
+        paste(mat_cols, collapse = ", "),
+        ". Either select only one matrix column or ensure all use the same ",
+        "length_cuts."
+      )
+    }
+
+    bin_names <- bin_names_list[[1]]
+    n_bins    <- length(bin_names)
+    n_hauls   <- nrow(res)
+
+    idx         <- rep(seq_len(n_hauls), each = n_bins)
     scalar_cols <- setdiff(names(res), mat_cols)
-    res_exp <- res[idx, scalar_cols, drop = FALSE]
+    res_exp     <- res[idx, scalar_cols, drop = FALSE]
     res_exp$LengthGroup <- rep(bin_names, times = n_hauls)
 
     for (mc in mat_cols) {
-      ## as.vector(t(mat)) gives row-major order: haul1-bin1, haul1-bin2, haul2-bin1, ...
       res_exp[[mc]] <- as.vector(t(res[[mc]]))
     }
 
-    ## put LengthGroup just before the matrix-derived columns
     other_cols <- setdiff(names(res_exp), c("LengthGroup", mat_cols))
     res <- res_exp[, c(other_cols, "LengthGroup", mat_cols), drop = FALSE]
   }
@@ -328,257 +219,79 @@ as_long_format <- function(x,
 
 ##' Convert a `datras_raw` object to a wide-format table
 ##'
-##' Create a wide-format data frame from a `datras_raw` / `DATRASraw` object,
-##' using `HH` as the main haul-level table and spreading selected `HL`
-##' variables into species-specific columns.
-##'
-##' The output contains one row per haul. Requested haul-level variables from
-##' `HH` are kept as ordinary columns, while requested variables from `HL` are
-##' expanded into columns of the form `"<variable><sep><species>"`.
+##' Create a wide-format data frame from the `HH` table of a
+##' `datras_raw` / `DATRASraw` object. Matrix columns (e.g. `HaulN` or
+##' `HaulWgt` produced with `length_cuts`) are expanded to one column per
+##' length bin.
 ##'
 ##' @param x A `datras_raw` object.
-##' @param vars Character vector of haul-level variables to keep from `HH`.
-##'   Defaults to the same 15 columns as [as_long_format()]: `Survey`, `Gear`,
-##'   `Country`, `Ship`, `Year`, `Quarter`, `Month`, `Day`, `lon`, `lat`,
-##'   `timeOfYear`, `abstime`, `DayNight`, `TimeShotHour`, `HaulDur`.
-##' @param add_vars Character vector of additional haul-level variable names to
-##'   append to `vars`. Applied after `remove_vars`. Use this to extend the
-##'   default set without specifying it in full (e.g. `add_vars = "Depth"`).
-##' @param remove_vars Character vector of haul-level variable names to drop
-##'   from `vars`. Applied before `add_vars`. Use this to trim the default
-##'   set without specifying it in full.
-##' @param vars_hl Character vector of variables from `HL` to spread wide across
-##'   species. Defaults to `"Count"`.
-##' @param species_var Character scalar giving the `HL` variable that defines the
-##'   species-specific column names. Defaults to `"Species"`. Can also be set to
-##'   `"Valid_Aphia"` or another grouping variable present in `HL`.
-##' @param id_var Character scalar giving the haul identifier variable used to
-##'   match `HH` and `HL`. Defaults to `"haul.id"`.
-##' @param sep Character scalar used to separate the `HL` variable name from the
-##'   species name in wide column names. Defaults to `"__"`.
-##' @param fill Value used to replace missing values in the wide `HL` columns.
-##'   Defaults to `0`.
-##' @param sanitize_names Logical. If `TRUE` (default), species names used in
-##'   wide column names are converted to lower case and non-alphanumeric
-##'   characters are replaced with underscores.
-##' @param verbose Logical. If `TRUE` (default), warnings are issued for
-##'   requested variables that are not found.
+##' @param vars Character vector of `HH` variable names to include. Defaults to
+##'   15 common haul-level columns: `Survey`, `Gear`, `Country`, `Ship`,
+##'   `Year`, `Quarter`, `Month`, `Day`, `lon`, `lat`, `timeOfYear`,
+##'   `abstime`, `DayNight`, `TimeShotHour`, `HaulDur`.
+##' @param add_vars Character vector of additional `HH` variable names to
+##'   append to `vars`. Applied after `remove_vars`.
+##' @param remove_vars Character vector of variable names to drop from `vars`.
+##'   Applied before `add_vars`.
 ##'
 ##' @details
-##' The function starts from the `HH` table and adds requested variables from
-##' `HL` after aggregating them to unique `haul.id` x `species_var`
-##' combinations.
+##' Only `HH` columns are used. In addition to the explicitly requested `vars`,
+##' `HaulN`, `HaulWgt`, and `SweptArea` are always appended when present in
+##' `HH`. Variables not found in `HH` are omitted with a warning.
 ##'
-##' Numeric `HL` variables are summed within haul-species combinations before
-##' reshaping wide. Non-numeric variables are reduced by taking the first
-##' non-missing value.
+##' If any selected `HH` columns are matrices (produced by passing `length_cuts`
+##' to [add_total_numbers_by_haul()] or [add_total_weight_by_haul()]), each
+##' matrix is expanded to one column per length bin. Columns are named
+##' `<variable>_<bin>`, e.g. `HaulN_(0-20]` and `HaulN_(20-Inf]`. Unlike
+##' [as_long_format()], matrix columns with different bin structures are
+##' permitted.
 ##'
-##' Variables requested in `vars` or `vars_hl` that are not found in the
-##' relevant table are omitted and reported with a warning.
+##' @return A data frame with one row per haul.
 ##'
-##' @return A data frame in wide format with one row per haul.
-##'
-##' @seealso [as_long_format()]
+##' @seealso [as_long_format()], [as_table()]
 ##'
 ##' @examples
-##' \dontrun{
-##' ## One row per haul, species-specific count columns
-##' tab <- as_wide_format(x)
+##' dab <- add_numbers_at_length(dab)
+##' dab <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
 ##'
-##' ## Add a haul-level column to the defaults
-##' tab <- as_wide_format(x, add_vars = "Depth")
+##' ## Default columns plus auto-added HaulN, one column per length group
+##' tab <- as_wide_format(dab)
 ##'
-##' ## Remove columns from the defaults
-##' tab <- as_wide_format(x, remove_vars = c("Ship", "Country"))
-##'
-##' ## Add more HL variables
-##' tab <- as_wide_format(
-##'   x,
-##'   vars_hl = c("Count", "CatCatchWgt")
-##' )
-##'
-##' ## Use Aphia IDs instead of species names in column names
-##' tab <- as_wide_format(
-##'   x,
-##'   vars_hl = c("Count"),
-##'   species_var = "Valid_Aphia"
-##' )
-##' }
+##' ## Adjust columns
+##' tab <- as_wide_format(dab, add_vars = "Depth", remove_vars = "Ship")
 ##'
 ##' @export
 as_wide_format <- function(x,
-                           vars = c("Survey", "Gear", "Country", "Ship", "Year",
-                                    "Quarter", "Month", "Day", "lon", "lat",
-                                    "timeOfYear", "abstime", "DayNight",
-                                    "TimeShotHour", "HaulDur"),
+                           vars = .default_hh_vars,
                            add_vars = NULL,
-                           remove_vars = NULL,
-                           vars_hl = "Count",
-                           species_var = "Species",
-                           id_var = "haul.id",
-                           sep = "__",
-                           fill = 0,
-                           sanitize_names = TRUE,
-                           verbose = TRUE) {
+                           remove_vars = NULL) {
 
   .check_class_datras(x)
 
-  hh <- x[["HH"]]
-  hl <- x[["HL"]]
-
-  if (is.null(hh) || nrow(hh) == 0) {
+  if (is.null(x[["HH"]]) || nrow(x[["HH"]]) == 0) {
     stop("x[['HH']] is missing or empty.")
   }
 
-  if (!is.null(remove_vars)) vars <- setdiff(vars, remove_vars)
-  if (!is.null(add_vars))    vars <- unique(c(vars, add_vars))
+  res <- .prep_hh_vars(x, vars, add_vars, remove_vars)
 
-  ## Keep HH as base, one row per haul
-  hh_keep <- unique(c(id_var, vars))
-  missing_hh <- setdiff(hh_keep, names(hh))
-  hh_keep <- intersect(hh_keep, names(hh))
+  mat_cols <- names(res)[vapply(names(res),
+                                function(nm) is.matrix(res[[nm]]), logical(1))]
 
-  if (length(missing_hh) > 0 && verbose) {
-    warning(
-      "These HH variables were not found and were omitted: ",
-      paste(missing_hh, collapse = ", ")
-    )
-  }
+  if (length(mat_cols) > 0) {
 
-  res <- unique(hh[, hh_keep, drop = FALSE])
-  res$.row_id_tmp__ <- seq_len(nrow(res))
+    scalar_cols <- setdiff(names(res), mat_cols)
+    res_wide    <- res[, scalar_cols, drop = FALSE]
 
-  ## No HL variables requested
-  if (length(vars_hl) == 0) {
-    res <- res[order(res$.row_id_tmp__), , drop = FALSE]
-    res$.row_id_tmp__ <- NULL
-    rownames(res) <- NULL
-    return(res)
-  }
-
-  ## No HL available
-  if (is.null(hl) || nrow(hl) == 0) {
-    if (verbose) {
-      warning("x[['HL']] is missing or empty, so no wide HL columns were added.")
-    }
-    res <- res[order(res$.row_id_tmp__), , drop = FALSE]
-    res$.row_id_tmp__ <- NULL
-    rownames(res) <- NULL
-    return(res)
-  }
-
-  ## Check requested HL variables
-  needed_hl <- unique(c(id_var, species_var, vars_hl))
-  missing_hl <- setdiff(needed_hl, names(hl))
-  vars_hl_ok <- intersect(vars_hl, names(hl))
-
-  if (length(missing_hl) > 0 && verbose) {
-    warning(
-      "These HL variables were not found and were omitted: ",
-      paste(missing_hl, collapse = ", ")
-    )
-  }
-
-  if (!(id_var %in% names(hl))) {
-    stop("'", id_var, "' is not present in HL.")
-  }
-  if (!(species_var %in% names(hl))) {
-    stop("'", species_var, "' is not present in HL.")
-  }
-  if (length(vars_hl_ok) == 0) {
-    res <- res[order(res$.row_id_tmp__), , drop = FALSE]
-    res$.row_id_tmp__ <- NULL
-    rownames(res) <- NULL
-    return(res)
-  }
-
-  hl_sub <- hl[, unique(c(id_var, species_var, vars_hl_ok)), drop = FALSE]
-  hl_sub <- hl_sub[!is.na(hl_sub[[id_var]]) & !is.na(hl_sub[[species_var]]), , drop = FALSE]
-
-  if (nrow(hl_sub) == 0) {
-    res <- res[order(res$.row_id_tmp__), , drop = FALSE]
-    res$.row_id_tmp__ <- NULL
-    rownames(res) <- NULL
-    return(res)
-  }
-
-  ## Prepare names used in wide columns
-  species_names <- as.character(hl_sub[[species_var]])
-  if (sanitize_names) {
-    species_names <- tolower(trimws(species_names))
-    species_names <- gsub("[^[:alnum:]]+", "_", species_names)
-    species_names <- gsub("^_+|_+$", "", species_names)
-  }
-  hl_sub[[species_var]] <- species_names
-
-  first_non_na <- function(z) {
-    z <- z[!is.na(z)]
-    if (length(z) == 0) return(NA)
-    z[1]
-  }
-
-  wide_list <- vector("list", length(vars_hl_ok))
-
-  for (i in seq_along(vars_hl_ok)) {
-    v <- vars_hl_ok[i]
-
-    tmp <- hl_sub[, c(id_var, species_var, v), drop = FALSE]
-
-    ## Aggregate within haul x species
-    if (is.numeric(tmp[[v]])) {
-      tmp <- aggregate(
-        tmp[[v]],
-        by = tmp[c(id_var, species_var)],
-        FUN = function(z) sum(z, na.rm = TRUE)
-      )
-    } else {
-      tmp <- aggregate(
-        tmp[[v]],
-        by = tmp[c(id_var, species_var)],
-        FUN = first_non_na
-      )
-    }
-    names(tmp)[3] <- v
-
-    ## Reshape wide
-    wide_v <- reshape(
-      tmp,
-      idvar = id_var,
-      timevar = species_var,
-      direction = "wide"
-    )
-
-    ## Rename columns: Count.cod -> Count__cod
-    names(wide_v) <- sub(
-      paste0("^", v, "\\."),
-      paste0(v, sep),
-      names(wide_v)
-    )
-
-    ## Fill NAs in wide columns
-    new_cols <- setdiff(names(wide_v), id_var)
-    if (length(new_cols) > 0) {
+    for (mc in mat_cols) {
+      mat      <- res[[mc]]
+      new_cols <- paste0(mc, "_", colnames(mat))
       for (j in seq_along(new_cols)) {
-        sel <- is.na(wide_v[[new_cols[j]]])
-        if (any(sel)) wide_v[[new_cols[j]]][sel] <- fill
+        res_wide[[new_cols[j]]] <- mat[, j]
       }
     }
 
-    wide_list[[i]] <- wide_v
+    res <- res_wide
   }
-
-  ## Merge all HL-wide blocks
-  wide_hl <- wide_list[[1]]
-  if (length(wide_list) > 1) {
-    for (i in 2:length(wide_list)) {
-      wide_hl <- merge(wide_hl, wide_list[[i]], by = id_var, all = TRUE, sort = FALSE)
-    }
-  }
-
-  ## Merge with HH base table
-  res <- merge(res, wide_hl, by = id_var, all.x = TRUE, sort = FALSE)
-  res <- res[order(res$.row_id_tmp__), , drop = FALSE]
-  res$.row_id_tmp__ <- NULL
 
   rownames(res) <- NULL
   return(res)

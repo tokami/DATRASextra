@@ -4,95 +4,59 @@
 \alias{as_long_format}
 \title{Convert a \code{datras_raw} object to a long-format table}
 \usage{
-as_long_format(
-  x,
-  vars = c("Survey", "Gear", "Country", "Ship", "Year", "Quarter", "Month", "Day", "lon",
-    "lat", "timeOfYear", "abstime", "DayNight", "TimeShotHour", "HaulDur"),
-  add_vars = NULL,
-  remove_vars = NULL
-)
+as_long_format(x, vars = .default_hh_vars, add_vars = NULL, remove_vars = NULL)
 }
 \arguments{
 \item{x}{A \code{datras_raw} object.}
 
-\item{vars}{Character vector of variable names to include in the output.
-Variables found in \code{HH} are taken directly from \code{HH}. Variables not found
-in \code{HH} but present in \code{HL} are joined by \code{haul.id}. Defaults to a set of
-common haul-level variables: \code{Survey}, \code{Gear}, \code{Country}, \code{Ship}, \code{Year},
-\code{Quarter}, \code{Month}, \code{Day}, \code{lon}, \code{lat}, \code{timeOfYear}, \code{abstime},
-\code{DayNight}, \code{TimeShotHour}, \code{HaulDur}.}
+\item{vars}{Character vector of \code{HH} variable names to include. Defaults to
+15 common haul-level columns: \code{Survey}, \code{Gear}, \code{Country}, \code{Ship},
+\code{Year}, \code{Quarter}, \code{Month}, \code{Day}, \code{lon}, \code{lat}, \code{timeOfYear},
+\code{abstime}, \code{DayNight}, \code{TimeShotHour}, \code{HaulDur}.}
 
-\item{add_vars}{Character vector of additional variable names to append to
-\code{vars}. Applied after \code{remove_vars}. Use this to extend the default set
-without having to specify it in full (e.g. \code{add_vars = "Depth"}).}
+\item{add_vars}{Character vector of additional \code{HH} variable names to
+append to \code{vars}. Applied after \code{remove_vars}.}
 
 \item{remove_vars}{Character vector of variable names to drop from \code{vars}.
-Applied before \code{add_vars}. Use this to trim the default set without having
-to specify it in full (e.g. \code{remove_vars = c("Ship", "Country")}).}
+Applied before \code{add_vars}.}
 }
 \value{
-A data frame in long format.
+A data frame with one row per haul, or one row per haul x length
+group when matrix columns are present.
 }
 \description{
-Create a long-format data frame from a \code{datras_raw} / \code{DATRASraw} object,
-using \code{HH} as the main haul-level table and, when needed, adding variables
-from \code{HL} matched by \code{haul.id}.
+Create a long-format data frame from the \code{HH} table of a
+\code{datras_raw} / \code{DATRASraw} object. Matrix columns (e.g. \code{HaulN} or
+\code{HaulWgt} produced with \code{length_cuts}) are expanded to one row per haul x
+length group.
 }
 \details{
-If species-level variables such as \code{Species} or \code{Valid_Aphia} are requested,
-the output contains one row per haul-species combination. Variables that are
-not found in either \code{HH} or \code{HL} are omitted with a warning.
+Only \code{HH} columns are used. In addition to the explicitly requested \code{vars},
+\code{HaulN}, \code{HaulWgt}, and \code{SweptArea} are always appended when present in
+\code{HH}. Variables not found in \code{HH} are omitted with a warning.
 
-The function starts from the \code{HH} table and adds requested variables from
-\code{HL} only when needed. If one or more requested variables come from \code{HL},
-the output is expanded to one row per unique \code{haul.id} and combination of
-requested \code{HL} variables.
-
-This is particularly useful for creating haul-species tables, for example
-when requesting \code{Species} or \code{Valid_Aphia} together with haul-level
-covariates such as year, quarter, gear, or position.
-
-Variables requested in \code{vars} that are not present in either \code{HH} or \code{HL}
-are ignored and reported with a warning.
-
-In addition to the explicitly requested \code{vars}, the function automatically
-appends \code{HaulN}, \code{HaulWgt}, and \code{SweptArea} to the
-output whenever those columns are present in \code{HH} (e.g., after calling
-\code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}}, \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}, or
-\code{\link[=add_swept_area]{add_swept_area()}}).
-
-If \code{HaulN} or \code{HaulWgt} is a matrix (created by passing \code{length_cuts} to
-\code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}} or \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}), the output
-is automatically expanded to one row per haul × length group. A
-\code{LengthGroup} column is added that identifies the length bin, and \code{HaulN}
-/ \code{HaulWgt} become scalar columns containing the per-bin values.
+If any selected \code{HH} columns are matrices (produced by passing \code{length_cuts}
+to \code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}} or \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}), the
+output is expanded to one row per haul x length group. A \code{LengthGroup}
+column is added identifying the bin, and the matrix columns become scalar
+columns. All matrix columns must share the same bin structure; an error is
+raised if they differ.
 }
 \examples{
-\dontrun{
-## Haul-level long table with default columns
-tab <- as_long_format(x)
+dab <- add_numbers_at_length(dab)
+dab <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
 
-## Add a column to the defaults
-tab <- as_long_format(x, add_vars = "Depth")
+## Default columns plus auto-added HaulN, expanded to long
+tab <- as_long_format(dab)
 
-## Remove columns from the defaults
-tab <- as_long_format(x, remove_vars = c("Ship", "Country"))
+## Adjust columns
+tab <- as_long_format(dab, add_vars = "Depth", remove_vars = "Ship")
 
-## Combine both
-tab <- as_long_format(x, add_vars = "Species", remove_vars = "Day")
-
-## Haul-species table (full override of vars)
-tab <- as_long_format(x, vars = c("Survey", "Year", "haul.id",
-                                  "Species", "Valid_Aphia"))
-
-## HaulN/HaulWgt/SweptArea included automatically when present
-x <- add_total_numbers_by_haul(x, length_cuts = c(0, 20, Inf))
-x <- add_total_weight_by_haul(x, length_cuts = c(0, 20, Inf))
-x <- add_swept_area(x)
-tab <- as_long_format(x)  ## one row per haul x length group; LengthGroup column added
-}
+## Scalar HaulN only (no length_cuts)
+dab2 <- add_total_numbers_by_haul(dab)
+tab <- as_long_format(dab2)
 
 }
 \seealso{
-\code{\link[=read_datras]{read_datras()}}, \code{\link[=clean_datras]{clean_datras()}}
+\code{\link[=as_wide_format]{as_wide_format()}}, \code{\link[=as_table]{as_table()}}
 }

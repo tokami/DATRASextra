@@ -6,100 +6,70 @@
 \usage{
 as_table(
   x,
-  vars = c("Survey", "Gear", "Country", "Ship", "Year", "Quarter", "Month", "Day", "lon",
-    "lat", "timeOfYear", "abstime", "DayNight", "TimeShotHour", "HaulDur"),
+  vars = .default_hh_vars,
   add_vars = NULL,
   remove_vars = NULL,
-  type = "long",
-  ...
+  type = "long"
 )
 }
 \arguments{
 \item{x}{A \code{datras_raw} object.}
 
-\item{vars}{Character vector of variable names to include in the output.
-Variables found in \code{HH} are taken directly from \code{HH}. Variables not found
-in \code{HH} but present in \code{HL} are joined by \code{haul.id}. Defaults to a set of
-common haul-level variables: \code{Survey}, \code{Gear}, \code{Country}, \code{Ship}, \code{Year},
-\code{Quarter}, \code{Month}, \code{Day}, \code{lon}, \code{lat}, \code{timeOfYear}, \code{abstime},
-\code{DayNight}, \code{TimeShotHour}, \code{HaulDur}.}
+\item{vars}{Character vector of \code{HH} variable names to include. Defaults to
+15 common haul-level columns: \code{Survey}, \code{Gear}, \code{Country}, \code{Ship},
+\code{Year}, \code{Quarter}, \code{Month}, \code{Day}, \code{lon}, \code{lat}, \code{timeOfYear},
+\code{abstime}, \code{DayNight}, \code{TimeShotHour}, \code{HaulDur}.}
 
-\item{add_vars}{Character vector of additional variable names to append to
-\code{vars}. Applied after \code{remove_vars}. Use this to extend the default set
-without having to specify it in full (e.g. \code{add_vars = "Depth"}).}
+\item{add_vars}{Character vector of additional \code{HH} variable names to
+append to \code{vars}. Applied after \code{remove_vars}.}
 
 \item{remove_vars}{Character vector of variable names to drop from \code{vars}.
-Applied before \code{add_vars}. Use this to trim the default set without having
-to specify it in full (e.g. \code{remove_vars = c("Ship", "Country")}).}
+Applied before \code{add_vars}.}
 
-\item{type}{Character string specifying the output format. Must be either
-\code{"long"} (default) or \code{"wide"}.}
-
-\item{...}{Additional arguments passed to \code{\link[=as_long_format]{as_long_format()}} or
-\code{\link[=as_wide_format]{as_wide_format()}}.}
+\item{type}{Character string specifying the output format: \code{"long"}
+(default) or \code{"wide"}.}
 }
 \value{
 A data frame in the requested format.
 }
 \description{
 Convert a \code{datras_raw} / \code{DATRASraw} object to either long or wide tabular
-format.
+format using haul-level (\code{HH}) variables only.
 }
 \details{
 This is a convenience wrapper around \code{\link[=as_long_format]{as_long_format()}} and
 \code{\link[=as_wide_format]{as_wide_format()}}.
 
-If \code{type = "long"}, the object is converted using \code{\link[=as_long_format]{as_long_format()}}.
-If \code{type = "wide"}, the object is converted using \code{\link[=as_wide_format]{as_wide_format()}}.
+Both functions only use columns from the \code{HH} table. In addition to
+explicitly requested \code{vars}, \code{HaulN}, \code{HaulWgt}, and \code{SweptArea} are
+always appended when present in \code{HH} (e.g. after calling
+\code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}}, \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}, or
+\code{\link[=add_swept_area]{add_swept_area()}}).
 
-When \code{type = "long"}, columns \code{HaulN}, \code{HaulWgt}, and \code{SweptArea} are
-included automatically whenever they are present in \code{HH}. If \code{HaulN} or
-\code{HaulWgt} is a matrix (produced by passing \code{length_cuts} to
-\code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}} or \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}), the output
-is expanded to one row per haul x length group and a \code{LengthGroup} column is
-added.
+Matrix columns such as \code{HaulN} or \code{HaulWgt} produced by passing
+\code{length_cuts} to \code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}} or
+\code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}} are handled differently by each format:
+
+\itemize{
+\item \code{type = "long"}: matrix columns are expanded to one row per haul x
+length group. A \code{LengthGroup} column is added identifying the bin.
+All matrix columns must share the same bin structure.
+\item \code{type = "wide"}: matrix columns are expanded to one column per
+length bin, named \verb{<variable>_<bin>} (e.g. \verb{HaulN_(0-20]}).
 }
-\section{Default columns}{
-
-Both \code{type = "long"} and \code{type = "wide"} start from the same set of
-15 haul-level columns taken from \code{HH}:
-\code{Survey}, \code{Gear}, \code{Country}, \code{Ship}, \code{Year}, \code{Quarter}, \code{Month}, \code{Day},
-\code{lon}, \code{lat}, \code{timeOfYear}, \code{abstime}, \code{DayNight}, \code{TimeShotHour},
-\code{HaulDur}.
-
-In addition, when \code{type = "long"}, the columns \code{HaulN}, \code{HaulWgt}, and
-\code{SweptArea} are always appended whenever they are present in \code{HH} (e.g.
-after calling \code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}}, \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}},
-or \code{\link[=add_swept_area]{add_swept_area()}}).
-
-To adjust the default set without replacing it entirely, pass \code{add_vars}
-and/or \code{remove_vars} via \code{...}:
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{## Add a column to the defaults
-as_table(x, add_vars = "Depth")
-
-## Drop columns from the defaults
-as_table(x, remove_vars = c("Ship", "Country"))
-
-## Works the same for wide format
-as_table(x, type = "wide", add_vars = "Depth", remove_vars = "Day")
-}\if{html}{\out{</div>}}
 }
-
 \examples{
-\dontrun{
-## Long-format table with default columns
-tab_long <- as_table(x, type = "long")
+dab <- add_numbers_at_length(dab)
+dab <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
 
-## Wide-format table
-tab_wide <- as_table(x, type = "wide")
+## Long format - one row per haul x length group
+tab_long <- as_table(dab, type = "long")
 
-## Add a column to the defaults
-tab <- as_table(x, add_vars = "Depth")
+## Wide format - one column per length group
+tab_wide <- as_table(dab, type = "wide")
 
-## Remove columns from the defaults
-tab <- as_table(x, remove_vars = c("Ship", "Country"))
-}
+## Adjust the default column set
+tab <- as_table(dab, add_vars = "Depth", remove_vars = "Ship")
 
 }
 \seealso{
