@@ -15,7 +15,7 @@ the HH, HL, and CA tables."><meta property="og:image" content="https://tokami.gi
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,7 +28,7 @@ the HH, HL, and CA tables."><meta property="og:image" content="https://tokami.gi
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -65,10 +65,10 @@ the <code>HH</code>, <code>HL</code>, and <code>CA</code> tables.</p>
 <span>  keep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  add <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  drop <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  remove_hl <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  remove_ca <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  drop_hl <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  drop_ca <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  do_fishglob <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  warn_missing <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,12 +96,12 @@ List names should be <code>HH</code>, <code>HL</code>, and/or <code>CA</code>.</
 columns. List names should be <code>HH</code>, <code>HL</code>, and/or <code>CA</code>.</p></dd>
 
 
-<dt id="arg-remove-hl">remove_hl<a class="anchor" aria-label="anchor" href="#arg-remove-hl"></a></dt>
+<dt id="arg-drop-hl">drop_hl<a class="anchor" aria-label="anchor" href="#arg-drop-hl"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, set the <code>HL</code> table to <code>NULL</code>. See also
 <code><a href="drop_hl.html">drop_hl()</a></code>.</p></dd>
 
 
-<dt id="arg-remove-ca">remove_ca<a class="anchor" aria-label="anchor" href="#arg-remove-ca"></a></dt>
+<dt id="arg-drop-ca">drop_ca<a class="anchor" aria-label="anchor" href="#arg-drop-ca"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, set the <code>CA</code> table to <code>NULL</code>. See also
 <code><a href="drop_ca.html">drop_ca()</a></code>.</p></dd>
 
@@ -111,7 +111,7 @@ columns. List names should be <code>HH</code>, <code>HL</code>, and/or <code>CA<
 the standard DATRAS pruning rules.</p></dd>
 
 
-<dt id="arg-warn-missing">warn_missing<a class="anchor" aria-label="anchor" href="#arg-warn-missing"></a></dt>
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, warn when requested columns are not
 present in the corresponding table.</p></dd>
 
@@ -137,7 +137,7 @@ available columns in a specific object can be inspected with
 <li><p><code>drop</code> removes columns from the default or selected columns.</p></li>
 </ul><p>Columns listed in <code>keep</code>, <code>add</code>, or <code>drop</code> for tables not present in <code>x</code> are
 ignored. Requested columns that are not present in a table are ignored, with
-an optional warning controlled by <code>warn_missing</code>.</p>
+an optional warning controlled by <code>verbose</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -177,7 +177,7 @@ an optional warning controlled by <code>warn_missing</code>.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Prune columns and drop the CA table entirely</span></span></span>
-<span class="r-in"><span><span class="va">x_small</span> <span class="op">&lt;-</span> <span class="fu">prune_datras</span><span class="op">(</span><span class="va">x</span>, remove_ca <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x_small</span> <span class="op">&lt;-</span> <span class="fu">prune_datras</span><span class="op">(</span><span class="va">x</span>, drop_ca <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

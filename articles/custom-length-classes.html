@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
@@ -137,7 +137,7 @@ package and apply a standard cleaning step first:</p>
 component of a <code>DATRAS</code> object. Before aggregating these
 data, it is useful to inspect the available length measurements:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lpars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_lengths.html">check_lengths</a></span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_lengths.html">check_lengths</a></span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Length statistics:"</span></span>
 <span><span class="co">#&gt;          min  mean median maxObs maxEmp perc</span></span>
 <span><span class="co">#&gt; 99.9999%   3 17.36   17.5     43     40 37.5</span></span>
@@ -145,7 +145,11 @@ data, it is useful to inspect the available length measurements:</p>
 <span><span class="co">#&gt;         maxLEmp percL</span></span>
 <span><span class="co">#&gt; Numbers   1e+00 1e+00</span></span>
 <span><span class="co">#&gt; Percent   1e-04 1e-04</span></span></code></pre></div>
-<p><img src="custom-length-classes_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="768"></p>
+<div style="background:white; padding:0.5rem; display:inline-block;">
+<div class="rimage default">
+<img src="custom-length-classes_files/figure-html/unnamed-chunk-3-1.png" alt="" width="768" class="plot">
+</div>
+</div>
 <p>This function provides summary statistics and diagnostic plots of the
 recorded lengths. It can help identify potential data issues such as
 implausible values or unusual length distributions. If the data look
@@ -184,7 +188,7 @@ cm bins:</p>
 <span><span class="va">by</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
 <span></span>
 <span><span class="co">## Define custom length bins</span></span>
-<span><span class="va">cm_breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">lpars</span><span class="op">$</span><span class="va">lPars</span><span class="op">$</span><span class="va">min</span>, <span class="va">lpars</span><span class="op">$</span><span class="va">lPars</span><span class="op">$</span><span class="va">maxEmp</span>, by <span class="op">=</span> <span class="va">by</span><span class="op">)</span></span>
+<span><span class="va">cm_breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dab</span>, <span class="st">"length_check"</span><span class="op">)</span><span class="op">$</span><span class="va">lPars</span><span class="op">$</span><span class="va">min</span>, <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dab</span>, <span class="st">"length_check"</span><span class="op">)</span><span class="op">$</span><span class="va">lPars</span><span class="op">$</span><span class="va">maxEmp</span>, by <span class="op">=</span> <span class="va">by</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Recalculate numbers at length using custom bins</span></span>
 <span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_numbers_at_length.html">add_numbers_at_length</a></span><span class="op">(</span><span class="va">dab</span>, cm_breaks <span class="op">=</span> <span class="va">cm_breaks</span>, by <span class="op">=</span> <span class="va">by</span><span class="op">)</span></span></code></pre></div>
@@ -211,7 +215,7 @@ length and weight records stored in the <code>CA</code> component to
 estimate a length-weight relationship. Before doing so, it is useful to
 inspect the available weight data:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wpars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_weights.html">check_weights</a></span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_weights.html">check_weights</a></span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Length statistics:"</span></span>
 <span><span class="co">#&gt;   min  mean median max</span></span>
 <span><span class="co">#&gt; 1   3 18.94     19  35</span></span>
@@ -222,7 +226,11 @@ inspect the available weight data:</p>
 <span><span class="co">#&gt; [1] "a = 0.014 b = 2.903"</span></span>
 <span><span class="co">#&gt; [1] "Lookup LW parameters in the species_info table:"</span></span>
 <span><span class="co">#&gt; [1] "a = 0.007 b = 3.119"</span></span></code></pre></div>
-<p><img src="custom-length-classes_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="768"></p>
+<div style="background:white; padding:0.5rem; display:inline-block;">
+<div class="rimage default">
+<img src="custom-length-classes_files/figure-html/unnamed-chunk-8-1.png" alt="" width="768" class="plot">
+</div>
+</div>
 <p>This function provides summary statistics and diagnostic plots for
 the weight data and the fitted length-weight relationship. If the
 information looks reasonable, the numbers-at-length matrix in
@@ -369,7 +377,11 @@ with point size scaled by haul-level abundance:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html" class="external-link">mtext</a></span><span class="op">(</span><span class="st">"Longitude"</span>, <span class="fl">1</span>, outer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html" class="external-link">mtext</a></span><span class="op">(</span><span class="st">"Latitude"</span>, <span class="fl">2</span>, outer <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="custom-length-classes_files/figure-html/unnamed-chunk-20-1.png" class="r-plt" alt="" width="768"></p>
+<div style="background:white; padding:0.5rem; display:inline-block;">
+<div class="rimage default">
+<img src="custom-length-classes_files/figure-html/unnamed-chunk-20-1.png" alt="" width="768" class="plot">
+</div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>

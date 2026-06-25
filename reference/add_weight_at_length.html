@@ -15,7 +15,7 @@ a datras_raw / DATRASraw object."><meta property="og:image" content="https://tok
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,7 +28,7 @@ a datras_raw / DATRASraw object."><meta property="og:image" content="https://tok
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -66,6 +66,7 @@ a <code>datras_raw</code> / <code>DATRASraw</code> object.</p>
 <span>  max_weight <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plus_group <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lw_source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lookup"</span>, <span class="st">"ca"</span><span class="op">)</span>,</span>
+<span>  lw_pars <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lookup_as_backup <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -101,13 +102,28 @@ mid length of the largest length bin.</p></dd>
 
 
 <dt id="arg-lw-source">lw_source<a class="anchor" aria-label="anchor" href="#arg-lw-source"></a></dt>
-<dd><p>Character string specifying the source of length-weight
-parameters. One of <code>"ca"</code> or <code>"lookup"</code>.</p></dd>
+<dd><p>Character string specifying the fallback source of
+length-weight parameters when <code>lw_pars</code> is <code>NULL</code> or does not cover a
+species. One of <code>"lookup"</code> (default, uses <code>species_info</code>) or <code>"ca"</code>
+(fits a log-log model to <code>CA</code>).</p></dd>
+
+
+<dt id="arg-lw-pars">lw_pars<a class="anchor" aria-label="anchor" href="#arg-lw-pars"></a></dt>
+<dd><p>Optional custom length-weight parameters. Overrides
+<code>lw_source</code> for the covered species. Accepted forms:</p><ul><li><p>A named numeric vector: <code>c(a = 0.01, b = 3.0)</code>.</p></li>
+<li><p>A named list: <code>list(a = 0.01, b = 3.0)</code>.</p></li>
+<li><p>A data frame with columns <code>a</code> and <code>b</code> (one row per species when
+multiple species are present), and optionally a column <code>Valid_Aphia</code>
+(or <code>aphia</code>) to identify which species each row applies to.</p></li>
+</ul><p>When no species identifier column is present, the data must contain
+exactly one species; an error is raised otherwise. When a <code>Valid_Aphia</code>
+column is present, parameters are matched by species, and <code>lw_source</code> is
+used as a fallback for any species not covered.</p></dd>
 
 
 <dt id="arg-lookup-as-backup">lookup_as_backup<a class="anchor" aria-label="anchor" href="#arg-lookup-as-backup"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, lookup parameters of the
-length-weight relationship (a, b) in the species_info table are used.
+<dd><p>Logical. If <code>TRUE</code> and <code>lw_source = "ca"</code>, the
+<code>species_info</code> lookup table is used when <code>CA</code> data are insufficient.
 Default: <code>FALSE</code>.</p></dd>
 
 
@@ -121,17 +137,19 @@ Default: <code>FALSE</code>.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function derives weight-at-length either from an lookup length-weight
-relationship fitted to the <code>CA</code> table or, if <code>lw_source = "lookup"</code>, uses
-length-weight parameters from the species_info table.</p>
-<ul><li><p>If <code>lw_source = "lookup"</code>, a linear model of the form
-\(\log(IndWgt) ~ \log(LngtCm)\) is fitted to positive individual weights
-in the <code>CA</code> table. Predicted weights are then assigned to length classes
-defined by <code>attr(x, "cm.breaks")</code>, multiplied by numbers-at-length, and
-optionally divided by haul duration.</p></li>
-<li><p>If <code>lw_source = "lookup"</code>, weight is added using length-weight
-parameters from the species_info table.</p></li>
-</ul></div>
+    <p>The function derives weight-at-length from custom parameters supplied via
+<code>lw_pars</code>, from a log-log model fitted to the <code>CA</code> table
+(<code>lw_source = "ca"</code>), or from the built-in <code>species_info</code> lookup table
+(<code>lw_source = "lookup"</code>). Custom parameters in <code>lw_pars</code> take precedence
+over <code>lw_source</code> for the covered species.</p>
+<p>Weight at length is calculated as \(W = a \times L^b\), where \(L\) is
+the mid-length of each length bin defined by <code>attr(x, "cm.breaks")</code>.</p>
+<p>When <code>lw_source = "ca"</code>, a linear model
+\(\log(W) = \alpha + b \log(L)\) is fitted to positive individual weights
+in <code>CA</code>, and the resulting parameters are used.</p>
+<p>When <code>lw_source = "lookup"</code>, parameters <code>a</code> and <code>b</code> are taken from the
+built-in <code>species_info</code> table, matched by <code>Valid_Aphia</code>.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="check_weights.html">check_weights()</a></code>, <code><a href="add_total_weight_by_haul.html">add_total_weight_by_haul()</a></code></p></div>
@@ -142,15 +160,30 @@ parameters from the species_info table.</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Add numbers at length</span></span></span>
 <span class="r-in"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_numbers_at_length.html">add_numbers_at_length</a></span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Mixed accuracies found in var[[3]]$LngtCode - worst chosen: 1 cm</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs found in var[[3]]$LngtCode - assumed to be 1 cm</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Add fitted weight-at-length estimates</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Fitted weight-at-length from CA data</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span>, lw_source <span class="op">=</span> <span class="st">"ca"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Exclude large values when fitting the length-weight model</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span>, max_length <span class="op">=</span> <span class="fl">100</span>, max_weight <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Use lookup weight-at-length instead from the species_info table</span></span></span>
+<span class="r-in"><span><span class="co">## Lookup weight-at-length from species_info</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span>, lw_source <span class="op">=</span> <span class="st">"lookup"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Custom parameters (single species) - named vector</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span>, lw_pars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">0.00832</span>, b <span class="op">=</span> <span class="fl">3.09</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Custom parameters (single species) - data frame</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">dab</span>, lw_pars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">0.00832</span>, b <span class="op">=</span> <span class="fl">3.09</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co">## Custom parameters for multiple species</span></span></span>
+<span class="r-in"><span><span class="va">pars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  Valid_Aphia <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">127139L</span>, <span class="fl">126436L</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.00832</span>, <span class="fl">0.0045</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.09</span>, <span class="fl">3.12</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_weight_at_length</span><span class="op">(</span><span class="va">x_multi</span>, lw_pars <span class="op">=</span> <span class="va">pars</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

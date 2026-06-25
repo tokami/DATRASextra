@@ -51,7 +51,7 @@ the available length measurements:
 
 ``` r
 
-lpars <- check_lengths(dab)
+dab <- check_lengths(dab)
 #> [1] "Length statistics:"
 #>          min  mean median maxObs maxEmp perc
 #> 99.9999%   3 17.36   17.5     43     40 37.5
@@ -114,7 +114,7 @@ bins:
 by <- 0.5
 
 ## Define custom length bins
-cm_breaks <- seq(lpars$lPars$min, lpars$lPars$maxEmp, by = by)
+cm_breaks <- seq(attr(dab, "length_check")$lPars$min, attr(dab, "length_check")$lPars$maxEmp, by = by)
 
 ## Recalculate numbers at length using custom bins
 dab <- add_numbers_at_length(dab, cm_breaks = cm_breaks, by = by)
@@ -148,7 +148,7 @@ weight data:
 
 ``` r
 
-wpars <- check_weights(dab)
+dab <- check_weights(dab)
 #> [1] "Length statistics:"
 #>   min  mean median max
 #> 1   3 18.94     19  35

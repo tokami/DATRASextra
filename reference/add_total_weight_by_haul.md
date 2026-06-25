@@ -8,11 +8,13 @@ Calculate total biomass by haul and add it to the `HH` component of a
 ``` r
 add_total_weight_by_haul(
   x,
-  per_minute = FALSE,
   max_length = NULL,
   max_weight = NULL,
+  plus_group = FALSE,
   lw_source = c("lookup", "ca"),
-  length_cuts = NULL
+  lw_pars = NULL,
+  length_cuts = NULL,
+  per_minute = FALSE
 )
 ```
 
@@ -21,12 +23,6 @@ add_total_weight_by_haul(
 - x:
 
   A `datras_raw` object.
-
-- per_minute:
-
-  Logical. If `TRUE`, add `HaulWgtPerMin`, calculated as `HaulWgt`
-  divided by haul duration in minutes. If `FALSE`, only `HaulWgt` is
-  added.
 
 - max_length:
 
@@ -40,15 +36,33 @@ add_total_weight_by_haul(
   to retain when fitting the length-weight relationship. Observations
   above this value are excluded.
 
+- plus_group:
+
+  Logical. If `TRUE`, all fish at or above the largest length class are
+  accumulated into that class. Passed to
+  [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md).
+
 - lw_source:
 
   Character string specifying the source of length-weight parameters.
   One of `"ca"` or `"lookup"`.
 
+- lw_pars:
+
+  Optional custom length-weight parameters passed to
+  [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md).
+  See that function for the accepted forms.
+
 - length_cuts:
 
   Optional numeric vector of break points for aggregating the original
   length classes into coarser bins. Must be strictly increasing.
+
+- per_minute:
+
+  Logical. If `TRUE`, add `HaulWgtPerMin`, calculated as `HaulWgt`
+  divided by haul duration in minutes. If `FALSE`, only `HaulWgt` is
+  added.
 
 ## Value
 
@@ -90,6 +104,8 @@ corresponding haul duration.
 ``` r
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
+#> Warning: Mixed accuracies found in var[[3]]$LngtCode - worst chosen: 1 cm
+#> Warning: NAs found in var[[3]]$LngtCode - assumed to be 1 cm
 
 ## Add total haul biomass
 x <- add_total_weight_by_haul(dab)

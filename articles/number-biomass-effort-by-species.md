@@ -17,11 +17,7 @@ dir.create(tmp, recursive = TRUE, showWarnings = FALSE)
 
 # download data
 
-download_datras(
-  surveys = survey,
-  years = 2021,
-  dir = tmp
-)
+download_datras(path = tmp, surveys = survey, years = 2021)
 
 # read in
 surv0 <- read_datras(file.path(tmp, survey))
@@ -76,27 +72,24 @@ swept-area estimate can be added to each haul:
 ``` r
 
 
-surv <- add_swept_area_simple(surv)
+surv <- add_swept_area(surv)
 ```
 
 This adds swept-area estimates to the `HH` table based on haul distance
 and gear width information. When gear information is missing, values are
 imputed automatically (see
-[`?add_swept_area_simple`](https://tokami.github.io/DATRASextra/reference/add_swept_area_simple.md)).
+[`?add_swept_area`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md)).
 Abundance per unit effort and biomass per unit effort can then be
-calculated by dividing haul-level totals by swept area:
+calculated by dividing haul-level totals by swept area (in km²):
 
 ``` r
 
 
-# convert swept area from m2 to km2
-surv[['HH']]$SweptArea_km2 <- surv$HH$SweptArea / 1e6
-
 # abundance per km2
-surv[['HH']]$CPUE_N <- surv$HH$HaulN / surv$HH$SweptArea_km2
+surv[['HH']]$CPUE_N <- surv$HH$HaulN / surv$HH$SweptArea
 
 # biomass per km2
-surv[['HH']]$CPUE_W <- surv$HH$HaulWgt / surv$HH$SweptArea_km2
+surv[['HH']]$CPUE_W <- surv$HH$HaulWgt / surv$HH$SweptArea
 ```
 
 The resulting variables contain standardized density estimates expressed

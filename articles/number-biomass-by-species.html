@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
@@ -101,11 +101,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">tmp</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># download data</span></span>
-<span><span class="fu"><a href="../reference/download_datras.html">download_datras</a></span><span class="op">(</span></span>
-<span>  surveys <span class="op">=</span> <span class="va">survey</span>,</span>
-<span>  years <span class="op">=</span> <span class="fl">2021</span>,</span>
-<span>  dir <span class="op">=</span> <span class="va">tmp</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/download_datras.html">download_datras</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tmp</span>, surveys <span class="op">=</span> <span class="va">survey</span>, years <span class="op">=</span> <span class="fl">2021</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># read in</span></span>
 <span><span class="va">surv0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_datras.html">read_datras</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="va">survey</span><span class="op">)</span><span class="op">)</span></span>

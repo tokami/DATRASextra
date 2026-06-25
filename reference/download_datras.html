@@ -17,7 +17,7 @@ subdirectory."><meta property="og:image" content="https://tokami.github.io/DATRA
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,7 +30,7 @@ subdirectory."><meta property="og:image" content="https://tokami.github.io/DATRA
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -64,16 +64,17 @@ subdirectory.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">download_datras</span><span class="op">(</span></span>
+<span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  surveys <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  years <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  download_missing_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  download_hl <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  download_ca <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  use_php <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  force <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  include_flagged <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  return_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  timeout <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -82,7 +83,13 @@ subdirectory.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-surveys">surveys<a class="anchor" aria-label="anchor" href="#arg-surveys"></a></dt>
+<dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
+<dd><p>Character string giving the directory where downloaded files
+should be stored. Survey-specific subdirectories are created within this
+directory. If <code>NULL</code>, the current working directory is used.</p></dd>
+
+
+<dt id="arg-surveys">surveys<a class="anchor" aria-label="anchor" href="#arg-surveys"></a></dt>
 <dd><p>A character vector of DATRAS survey names to download, for
 example <code>"NS-IBTS"</code> or <code>"BITS"</code>. If <code>NULL</code>, all available surveys are
 used.</p></dd>
@@ -93,9 +100,10 @@ used.</p></dd>
 available years for each selected survey are used.</p></dd>
 
 
-<dt id="arg-download-missing-only">download_missing_only<a class="anchor" aria-label="anchor" href="#arg-download-missing-only"></a></dt>
-<dd><p>Logical. If <code>TRUE</code> (default), only survey-year
-files that do not already exist in <code>dir</code> are downloaded.</p></dd>
+<dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
+<dd><p>Logical. If <code>FALSE</code> (default), survey-year files that
+already exist in <code>path</code> are skipped. Set to <code>TRUE</code> to re-download and
+overwrite existing files.</p></dd>
 
 
 <dt id="arg-download-hl">download_hl<a class="anchor" aria-label="anchor" href="#arg-download-hl"></a></dt>
@@ -115,16 +123,10 @@ data are also downloaded where available. This option is only used when
 <code><a href="https://rdrr.io/pkg/DATRAS/man/downloadExchange.html" class="external-link">DATRAS::downloadExchange()</a></code> method is used.</p></dd>
 
 
-<dt id="arg-dir">dir<a class="anchor" aria-label="anchor" href="#arg-dir"></a></dt>
-<dd><p>Character string giving the directory where downloaded files
-should be stored. Survey-specific subdirectories are created within this
-directory. If <code>NULL</code>, the current working directory is used.</p></dd>
-
-
-<dt id="arg-force">force<a class="anchor" aria-label="anchor" href="#arg-force"></a></dt>
-<dd><p>Logical. If <code>FALSE</code> (default), surveys known to be test surveys
-or surveys with incomplete data may be skipped. If <code>TRUE</code>, they are also
-downloaded.</p></dd>
+<dt id="arg-include-flagged">include_flagged<a class="anchor" aria-label="anchor" href="#arg-include-flagged"></a></dt>
+<dd><p>Logical. If <code>FALSE</code> (default), surveys known to be
+test surveys or surveys with incomplete data are skipped. Set to <code>TRUE</code> to
+download them anyway.</p></dd>
 
 
 <dt id="arg-return-data">return_data<a class="anchor" aria-label="anchor" href="#arg-return-data"></a></dt>
@@ -134,6 +136,14 @@ downloaded data by running <code><a href="read_datras.html">read_datras()</a></c
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), progress messages are printed.</p></dd>
+
+
+<dt id="arg-timeout">timeout<a class="anchor" aria-label="anchor" href="#arg-timeout"></a></dt>
+<dd><p>Numeric. Maximum number of seconds to wait for the ICES
+DATRAS server to respond when retrieving the list of available surveys or
+years. If the server does not respond within this time (e.g. because a
+firewall blocks the connection), the function falls back to locally cached
+information. Default is 10 seconds.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -150,7 +160,7 @@ downloaded data by running <code><a href="read_datras.html">read_datras()</a></c
 <code><a href="https://rdrr.io/pkg/icesDatras/man/getSurveyList.html" class="external-link">icesDatras::getSurveyList()</a></code> are used. If <code>years</code> is <code>NULL</code>, all available
 years for each selected survey are downloaded.</p>
 <p>By default, data are downloaded using <code><a href="https://rdrr.io/pkg/DATRAS/man/getDatrasExchange.html" class="external-link">DATRAS::getDatrasExchange()</a></code>, cleaned
-to remove extra variables, and written to disk with <code><a href="write_exchange.html">write_exchange()</a></code>.
+to remove extra variables, and written to disk with <code><a href="write_datras.html">write_datras()</a></code>.
 Alternatively, the legacy PHP-based download route from
 <code><a href="https://rdrr.io/pkg/DATRAS/man/downloadExchange.html" class="external-link">DATRAS::downloadExchange()</a></code> can be used by setting <code>use_php = TRUE</code>.</p>
 <p>Files are saved as zipped exchange files named
@@ -169,14 +179,14 @@ Alternatively, the legacy PHP-based download route from
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">download_datras</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  surveys <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NS-IBTS"</span>, <span class="st">"BITS"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  years <span class="op">=</span> <span class="fl">2010</span><span class="op">:</span><span class="fl">2012</span>,</span></span>
-<span class="r-in"><span>  dir <span class="op">=</span> <span class="st">"data/datras"</span></span></span>
+<span class="r-in"><span>  path <span class="op">=</span> <span class="st">"data/datras"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Re-download existing files</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">download_datras</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  surveys <span class="op">=</span> <span class="st">"NS-IBTS"</span>,</span></span>
 <span class="r-in"><span>  years <span class="op">=</span> <span class="fl">2020</span>,</span></span>
-<span class="r-in"><span>  download_missing_only <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>  overwrite <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

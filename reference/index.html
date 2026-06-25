@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,7 +26,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -61,6 +61,13 @@
 
       <dl><dt>
 
+          <code><a href="add_ices_areas.html">add_ices_areas()</a></code>
+
+        </dt>
+        <dd>Add ICES area information to a <code>datras_raw</code> object</dd>
+
+        <dt>
+
           <code><a href="add_numbers_at_length.html">add_numbers_at_length()</a></code>
 
         </dt>
@@ -86,13 +93,6 @@
 
         </dt>
         <dd>Add swept-area estimates following the FishGlob workflow</dd>
-
-        <dt>
-
-          <code><a href="add_swept_area_simple.html">add_swept_area_simple()</a></code>
-
-        </dt>
-        <dd>Add simple swept-area estimates to a <code>datras_raw</code> object</dd>
 
         <dt>
 
@@ -149,6 +149,20 @@
 
         </dt>
         <dd>Convert a <code>datras_raw</code> object to a wide-format table</dd>
+
+        <dt>
+
+          <code><a href="calc_spatial_indicators.html">calc_spatial_indicators()</a></code>
+
+        </dt>
+        <dd>Centre of gravity from survey data</dd>
+
+        <dt>
+
+          <code><a href="calc_stratified_index.html">calc_stratified_index()</a></code>
+
+        </dt>
+        <dd>Design-based stratified mean abundance or biomass index</dd>
 
         <dt>
 
@@ -271,6 +285,13 @@
 
         <dt>
 
+          <code><a href="make_survey_grid.html">make_survey_grid()</a></code>
+
+        </dt>
+        <dd>Make a regular prediction grid from coordinate vectors</dd>
+
+        <dt>
+
           <code><a href="mini.html">mini</a></code>
 
         </dt>
@@ -299,10 +320,24 @@
 
         <dt>
 
+          <code><a href="plot_spatial_indicators.html">plot_spatial_indicators()</a></code>
+
+        </dt>
+        <dd>Plot spatial indicators</dd>
+
+        <dt>
+
           <code><a href="plot_species_composition.html">plot_species_composition()</a></code>
 
         </dt>
         <dd>Plot species composition by length group</dd>
+
+        <dt>
+
+          <code><a href="plot_stratified_index.html">plot_stratified_index()</a></code>
+
+        </dt>
+        <dd>Plot a stratified abundance or biomass index</dd>
 
         <dt>
 
@@ -324,6 +359,13 @@
 
         </dt>
         <dd>Read ICES DATRAS survey data from zipped exchange files</dd>
+
+        <dt>
+
+          <code><a href="spawning_info.html">spawning_info</a></code>
+
+        </dt>
+        <dd>Spawning information lookup table</dd>
 
         <dt>
 
@@ -355,7 +397,7 @@
 
         <dt>
 
-          <code><a href="write_exchange.html">write_exchange()</a></code>
+          <code><a href="write_datras.html">write_datras()</a></code>
 
         </dt>
         <dd>Write a <code>datras_raw</code> object to a DATRAS exchange zip file</dd>

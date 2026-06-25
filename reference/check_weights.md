@@ -34,7 +34,9 @@ check_weights(x, max_length = NULL, max_weight = NULL, plot = TRUE)
 
 ## Value
 
-A list with four elements:
+The input `datras_raw` object returned invisibly, with a
+`"weight_check"` attribute attached. That attribute is a list with four
+elements:
 
 - `lPars`: a data frame with summary statistics for observed lengths,
 
@@ -75,8 +77,10 @@ If available, lookup length-weight parameters are also retrieved from
 
 ## Add numbers at length
 dab <- add_numbers_at_length(dab)
+#> Warning: Mixed accuracies found in var[[3]]$LngtCode - worst chosen: 1 cm
+#> Warning: NAs found in var[[3]]$LngtCode - assumed to be 1 cm
 
-res <- check_weights(dab)
+dab <- check_weights(dab)
 #> [1] "Length statistics:"
 #>   min  mean median max
 #> 1   3 18.94     19  35
@@ -88,9 +92,12 @@ res <- check_weights(dab)
 #> [1] "a = 0.014 b = 2.903"
 #> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.007 b = 3.119"
+attr(dab, "weight_check")$parEst
+#>            a        b
+#> 1 0.01350792 2.902568
 
 ## Restrict to plausible values
-res <- check_weights(dab, max_length = 100, max_weight = 10000)
+dab <- check_weights(dab, max_length = 100, max_weight = 10000)
 #> [1] "Length statistics:"
 #>   min  mean median max
 #> 1   3 18.94     19  35

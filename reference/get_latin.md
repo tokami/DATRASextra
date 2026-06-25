@@ -7,12 +7,12 @@ Optionally, it can query WoRMS directly via the worrms package.
 ## Usage
 
 ``` r
-get_latin(x, use_worrms = FALSE)
+get_latin(aphia, use_worrms = FALSE)
 ```
 
 ## Arguments
 
-- x:
+- aphia:
 
   A vector of WoRMS AphiaIDs.
 

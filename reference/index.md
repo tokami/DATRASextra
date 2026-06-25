@@ -2,6 +2,11 @@
 
 ## All functions
 
+- [`add_ices_areas()`](https://tokami.github.io/DATRASextra/reference/add_ices_areas.md)
+  :
+
+  Add ICES area information to a `datras_raw` object
+
 - [`add_numbers_at_length()`](https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.md)
   : Add numbers-at-length to a DATRAS object
 
@@ -15,11 +20,6 @@
 
 - [`add_swept_area_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_fishglob.md)
   : Add swept-area estimates following the FishGlob workflow
-
-- [`add_swept_area_simple()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_simple.md)
-  :
-
-  Add simple swept-area estimates to a `datras_raw` object
 
 - [`add_total_numbers_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_numbers_by_haul.md)
   : Add total numbers by haul to a DATRAS object
@@ -58,6 +58,12 @@
   :
 
   Convert a `datras_raw` object to a wide-format table
+
+- [`calc_spatial_indicators()`](https://tokami.github.io/DATRASextra/reference/calc_spatial_indicators.md)
+  : Centre of gravity from survey data
+
+- [`calc_stratified_index()`](https://tokami.github.io/DATRASextra/reference/calc_stratified_index.md)
+  : Design-based stratified mean abundance or biomass index
 
 - [`check_lengths()`](https://tokami.github.io/DATRASextra/reference/check_lengths.md)
   :
@@ -125,6 +131,9 @@
 - [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md)
   : List all surveys in the DATRAS data base
 
+- [`make_survey_grid()`](https://tokami.github.io/DATRASextra/reference/make_survey_grid.md)
+  : Make a regular prediction grid from coordinate vectors
+
 - [`mini`](https://tokami.github.io/DATRASextra/reference/mini.md) :
   Mini DATRAS survey data (example dataset)
 
@@ -137,8 +146,14 @@
 - [`plot_length_distribution()`](https://tokami.github.io/DATRASextra/reference/plot_length_distribution.md)
   : Plot catch distribution by length class
 
+- [`plot_spatial_indicators()`](https://tokami.github.io/DATRASextra/reference/plot_spatial_indicators.md)
+  : Plot spatial indicators
+
 - [`plot_species_composition()`](https://tokami.github.io/DATRASextra/reference/plot_species_composition.md)
   : Plot species composition by length group
+
+- [`plot_stratified_index()`](https://tokami.github.io/DATRASextra/reference/plot_stratified_index.md)
+  : Plot a stratified abundance or biomass index
 
 - [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)
   :
@@ -153,6 +168,9 @@
 - [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
   : Read ICES DATRAS survey data from zipped exchange files
 
+- [`spawning_info`](https://tokami.github.io/DATRASextra/reference/spawning_info.md)
+  : Spawning information lookup table
+
 - [`species_info`](https://tokami.github.io/DATRASextra/reference/species_info.md)
   : Species information lookup table
 
@@ -165,7 +183,7 @@
 - [`wolffish`](https://tokami.github.io/DATRASextra/reference/wolffish.md)
   : Wolffish survey data (example dataset)
 
-- [`write_exchange()`](https://tokami.github.io/DATRASextra/reference/write_exchange.md)
+- [`write_datras()`](https://tokami.github.io/DATRASextra/reference/write_datras.md)
   :
 
   Write a `datras_raw` object to a DATRAS exchange zip file

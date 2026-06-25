@@ -71,7 +71,7 @@ FishGlob workflow code:
 
 ## See also
 
-[`add_swept_area_simple()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_simple.md),
+[`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md),
 [`clean_fishglob()`](https://tokami.github.io/DATRASextra/reference/clean_fishglob.md)
 
 ## Examples

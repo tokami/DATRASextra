@@ -8,35 +8,37 @@ files in one or more directories, into a single `datras_raw` /
 
 ``` r
 read_datras(
-  paths,
+  path,
   surveys = NULL,
   years = NULL,
   recursive = TRUE,
   min_file_size = 10000,
   prune = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  ncores = 1
 )
 ```
 
 ## Arguments
 
-- paths:
+- path:
 
-  A character vector of file paths or directory paths. Paths can point
-  either to individual DATRAS `.zip` exchange files or to directories
+  A character vector of file or directory paths. Each element can point
+  either to an individual DATRAS `.zip` exchange file or to a directory
   containing such files.
 
 - surveys:
 
   Optional character vector of survey acronyms to read (e.g.
-  `c("NS-IBTS", "BITS")`). When supplied and `paths` contains
-  directories, only zip files whose names contain one of the specified
-  survey strings are read. Matching is case-sensitive and literal (not a
-  regular expression).
+  `c("NS-IBTS", "BITS")`). When supplied and `path` contains
+  directories, only zip files whose **immediate parent folder name**
+  exactly matches one of the specified strings are read. This avoids
+  false matches between similarly named folders (e.g. `"NS-IBTS"` will
+  not match `"NS-IBTS_old"`). Matching is case-sensitive.
 
 - years:
 
-  Optional integer vector of years to read. When supplied and `paths`
+  Optional integer vector of years to read. When supplied and `path`
   contains directories, only zip files matching those years are read.
 
 - recursive:
@@ -60,6 +62,13 @@ read_datras(
 - verbose:
 
   Logical. If `TRUE` (default), progress messages are printed.
+
+- ncores:
+
+  Integer. Number of parallel workers to use when reading zip files.
+  Defaults to `1` (sequential). Values greater than 1 use
+  [`parallel::mclapply()`](https://rdrr.io/r/parallel/mclapply.html) and
+  are only effective on non-Windows systems.
 
 ## Value
 
@@ -118,7 +127,7 @@ x <- read_datras("data/DATRAS", surveys = "NS-IBTS", years = 2018:2020)
 ## Read multiple zip files directly
 files <- c("data/NS-IBTS/NS-IBTS_2020.zip",
            "data/NS-IBTS/NS-IBTS_2021.zip")
-x <- read_datras(files)
+x <- read_datras(path = files)
 
 ## Read and prune to reduce memory use
 x <- read_datras("data/NS-IBTS", prune = TRUE)

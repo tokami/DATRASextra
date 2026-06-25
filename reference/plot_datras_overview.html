@@ -15,7 +15,7 @@ point maps, with optional grouping and faceting."><meta property="og:image" cont
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,7 +28,7 @@ point maps, with optional grouping and faceting."><meta property="og:image" cont
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -73,6 +73,7 @@ point maps, with optional grouping and faceting.</p>
 <span>  by_year <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  by_daynight <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  multi_panels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  panel_layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"horizontal"</span>, <span class="st">"vertical"</span><span class="op">)</span>,</span>
 <span>  value_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  offset_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  positive_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -95,7 +96,10 @@ point maps, with optional grouping and faceting.</p>
 <span>  legend_pos <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_cex <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  grid_group_strategy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dominant"</span>, <span class="st">"mixed"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
-<span>  main <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  main <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  years <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  asp <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  add <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -143,6 +147,14 @@ toggles used to define panel groups.</p></dd>
 <dd><p>Logical. If <code>TRUE</code>, plot one group per panel.</p></dd>
 
 
+<dt id="arg-panel-layout">panel_layout<a class="anchor" aria-label="anchor" href="#arg-panel-layout"></a></dt>
+<dd><p>Arrangement of panels when <code>multi_panels = TRUE</code>. <code>"auto"</code>
+(default) uses <code><a href="https://rdrr.io/r/grDevices/n2mfrow.html" class="external-link">grDevices::n2mfrow()</a></code> to choose a roughly square layout;
+<code>"horizontal"</code> places all panels in a single row; <code>"vertical"</code> places them
+in a single column. For matrix-valued <code>value_var</code> (length-class panels
+crossed with groups), <code>"horizontal"</code> transposes the row/column assignment.</p></dd>
+
+
 <dt id="arg-value-var">value_var<a class="anchor" aria-label="anchor" href="#arg-value-var"></a></dt>
 <dd><p>Optional haul-level variable to map to values.</p></dd>
 
@@ -153,9 +165,11 @@ toggles used to define panel groups.</p></dd>
 
 <dt id="arg-positive-only">positive_only<a class="anchor" aria-label="anchor" href="#arg-positive-only"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, only hauls with a strictly positive
-value (after dividing by <code>offset_var</code> if supplied) are plotted. Zero-catch
-hauls are dropped before grid aggregation or point rendering. Default
-<code>FALSE</code>.</p></dd>
+value are plotted. When <code>value_var</code> is supplied, positivity is determined
+from that variable (after dividing by <code>offset_var</code> if supplied). When
+<code>value_var</code> is <code>NULL</code>, the function falls back to total <code>HaulN</code> or
+<code>HaulWgt</code> from <code>HH</code> (whichever is found first); a warning is issued if
+neither is available. Default <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-transform">transform<a class="anchor" aria-label="anchor" href="#arg-transform"></a></dt>
@@ -163,7 +177,12 @@ hauls are dropped before grid aggregation or point rendering. Default
 
 
 <dt id="arg-fixed-scale">fixed_scale<a class="anchor" aria-label="anchor" href="#arg-fixed-scale"></a></dt>
-<dd><p>Logical. Use common color scale across panels in grid mode.</p></dd>
+<dd><p>Logical. If <code>TRUE</code> (default), a common value scale is used
+across groups or panels: in grid mode the colour scale is shared across
+panels; in points mode point sizes are scaled relative to the global value
+range. If <code>FALSE</code>, each group (single-panel grouped mode) or each panel
+(multi-panel mode) is scaled independently, so point sizes reflect relative
+abundance within the group or panel rather than in absolute terms.</p></dd>
 
 
 <dt id="arg-fixed-axes">fixed_axes<a class="anchor" aria-label="anchor" href="#arg-fixed-axes"></a></dt>
@@ -235,6 +254,31 @@ multiple groups occur in the same cell: <code>"dominant"</code>, <code>"mixed"</
 
 <dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p>Optional title for single-panel mode.</p></dd>
+
+
+<dt id="arg-years">years<a class="anchor" aria-label="anchor" href="#arg-years"></a></dt>
+<dd><p>Optional integer vector of years to include. If <code>NULL</code>
+(default), all years in the data are plotted.</p></dd>
+
+
+<dt id="arg-asp">asp<a class="anchor" aria-label="anchor" href="#arg-asp"></a></dt>
+<dd><p>Aspect ratio passed to <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">graphics::plot()</a></code>. <code>"auto"</code> (default)
+uses the latitude-corrected value <code>1 / cos(mean(ylim) * pi / 180)</code>, which
+gives equal physical distances per degree of longitude and latitude at the
+mean latitude. Pass <code>1</code> for a simpler equal-degrees ratio, or <code>NULL</code> to
+leave the aspect ratio determined by the device dimensions (current
+behaviour of base <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>). Fixing <code>asp</code> prevents the map from distorting
+when figure margins or device dimensions change.</p></dd>
+
+
+<dt id="arg-add">add<a class="anchor" aria-label="anchor" href="#arg-add"></a></dt>
+<dd><p>Logical. If <code>FALSE</code> (default), the function configures its own
+graphics device via <code><a href="https://rdrr.io/r/graphics/par.html" class="external-link">graphics::par()</a></code> (<code>mfrow</code>, <code>mar</code>, <code>oma</code>) and restores
+the previous settings on exit. If <code>TRUE</code>, no <code><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par()</a></code> changes are made: the
+plot is drawn into whatever panel or layout is already active, allowing the
+function to be embedded in figures created with <code>par(mfrow = ...)</code> or
+<code><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">graphics::layout()</a></code>. When <code>add = TRUE</code>, the caller is responsible for
+setting appropriate margins.</p></dd>
 
 </dl></div>
     <div class="section level2">

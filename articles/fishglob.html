@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
@@ -143,24 +143,14 @@ fish biodiversity sampled with scientific bottom-trawl surveys. Sci Data
 <h2 id="libraries">Libraries<a class="anchor" aria-label="anchor" href="#libraries"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tokami.github.io/DATRASextra/">DATRASextra</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Loading required package: DATRAS</span></span></code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tokami.github.io/DATRASextra/">DATRASextra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'dplyr'</span></span></code></pre>
-<pre><code><span><span class="co">## The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     filter, lag</span></span></code></pre>
-<pre><code><span><span class="co">## The following objects are masked from 'package:base':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     intersect, setdiff, setequal, union</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="load-the-dataset">Load the dataset<a class="anchor" aria-label="anchor" href="#load-the-dataset"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">mini_fishglob</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -176,7 +166,7 @@ are standardized using WoRMS taxonomy with
 </li>
 <li>standardized taxonomic classification</li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/clean_fishglob.html">clean_fishglob</a></span><span class="op">(</span><span class="va">mini_fishglob</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -186,7 +176,7 @@ are standardized using WoRMS taxonomy with
 FishGlob output.</p>
 <p>The <code><a href="../reference/prune_fishglob.html">prune_fishglob()</a></code> function removes unnecessary
 columns to reduce memory usage and improve processing speed.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prune_fishglob.html">prune_fishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -199,7 +189,7 @@ each haul</strong>.</p>
 <li>calculates swept area when gear information is available</li>
 <li>imputes missing values when necessary</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_swept_area_fishglob.html">add_swept_area_fishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -210,7 +200,7 @@ each haul</strong>.</p>
 <p>The <code><a href="../reference/add_total_weight_by_haul_fishglob.html">add_total_weight_by_haul_fishglob()</a></code> function
 converts length data to weight using species-specific
 <strong>length–weight relationships</strong>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_total_weight_by_haul_fishglob.html">add_total_weight_by_haul_fishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -218,52 +208,52 @@ converts length data to weight using species-specific
 </h2>
 <p>Finally, the dataset is formatted to match the <strong>FishGlob data
 structure</strong>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">datras</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_fishglob.html">as_fishglob</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">datras</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##     survey      source timestamp                          haul_id</span></span>
-<span><span class="co">## 2     BITS DATRAS ICES   2026-06  BITS:2015:1:DE:06SL:TVS:22004:7</span></span>
-<span><span class="co">## 4     BITS DATRAS ICES   2026-06  BITS:2015:1:DE:06SL:TVS:22007:8</span></span>
-<span><span class="co">## 44    BITS DATRAS ICES   2026-06 BITS:2015:1:DE:06SL:TVS:24212:15</span></span>
-<span><span class="co">## 110   BITS DATRAS ICES   2026-06      BITS:2015:1:DK:26HI:TVS:1:1</span></span>
-<span><span class="co">## 111   BITS DATRAS ICES   2026-06    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
-<span><span class="co">## 112   BITS DATRAS ICES   2026-06    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
-<span><span class="co">##             country sub_area continent stat_rec station stratum year month day</span></span>
-<span><span class="co">## 2   multi-countries     &lt;NA&gt;    europe     37G0    &lt;NA&gt;    &lt;NA&gt; 2015     2  25</span></span>
-<span><span class="co">## 4   multi-countries     &lt;NA&gt;    europe     37G1    &lt;NA&gt;    &lt;NA&gt; 2015     2  26</span></span>
-<span><span class="co">## 44  multi-countries     &lt;NA&gt;    europe     38G3    &lt;NA&gt;    &lt;NA&gt; 2015     2  28</span></span>
-<span><span class="co">## 110 multi-countries     &lt;NA&gt;    europe     43G0    &lt;NA&gt;    &lt;NA&gt; 2015     2  24</span></span>
-<span><span class="co">## 111 multi-countries     &lt;NA&gt;    europe     41G2    &lt;NA&gt;    &lt;NA&gt; 2015     2  27</span></span>
-<span><span class="co">## 112 multi-countries     &lt;NA&gt;    europe     41G2    &lt;NA&gt;    &lt;NA&gt; 2015     2  27</span></span>
-<span><span class="co">##     quarter latitude longitude haul_dur area_swept gear depth     num num_cpue</span></span>
-<span><span class="co">## 2         1  54.4427   10.6547      0.5 0.07697517  TVS    19   1.000    2.000</span></span>
-<span><span class="co">## 4         1  54.4513   11.3738      0.5 0.08368994  TVS    20   1.000    2.000</span></span>
-<span><span class="co">## 44        1  54.9908   13.3447      0.5 0.09056468  TVS    47   1.000    2.000</span></span>
-<span><span class="co">## 110       1  57.4721   10.6695      0.5 0.07173646  TVS    26  90.573  181.146</span></span>
-<span><span class="co">## 111       1  56.1206   12.4688      0.5 0.06509888  TVS    26   1.000    2.000</span></span>
-<span><span class="co">## 112       1  56.1206   12.4688      0.5 0.06509888  TVS    26 118.635  237.270</span></span>
-<span><span class="co">##       num_cpua        wgt   wgt_cpue   wgt_cpua verbatim_name verbatim_aphia_id</span></span>
-<span><span class="co">## 2     12.99120 0.01259440  0.0251888  0.1636164          &lt;NA&gt;                NA</span></span>
-<span><span class="co">## 4     11.94887 0.06313433  0.1262687  0.7543837          &lt;NA&gt;                NA</span></span>
-<span><span class="co">## 44    11.04183 0.05369922  0.1073984  0.5929377          &lt;NA&gt;                NA</span></span>
-<span><span class="co">## 110 1262.57974 2.06026668  4.1205334 28.7199381          &lt;NA&gt;                NA</span></span>
-<span><span class="co">## 111   15.36125 2.93347786  5.8669557 45.0618790          &lt;NA&gt;                NA</span></span>
-<span><span class="co">## 112 1822.38158 5.13663026 10.2732605 78.9050479          &lt;NA&gt;                NA</span></span>
-<span><span class="co">##                    accepted_name aphia_id          class             order</span></span>
-<span><span class="co">## 2   Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
-<span><span class="co">## 4   Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
-<span><span class="co">## 44  Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
-<span><span class="co">## 110 Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
-<span><span class="co">## 111            Amblyraja radiata   105865 Elasmobranchii        Rajiformes</span></span>
-<span><span class="co">## 112 Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
-<span><span class="co">##             family           genus    rank survey_unit</span></span>
-<span><span class="co">## 2   Pleuronectidae Hippoglossoides Species      BITS-1</span></span>
-<span><span class="co">## 4   Pleuronectidae Hippoglossoides Species      BITS-1</span></span>
-<span><span class="co">## 44  Pleuronectidae Hippoglossoides Species      BITS-1</span></span>
-<span><span class="co">## 110 Pleuronectidae Hippoglossoides Species      BITS-1</span></span>
-<span><span class="co">## 111        Rajidae       Amblyraja Species      BITS-1</span></span>
-<span><span class="co">## 112 Pleuronectidae Hippoglossoides Species      BITS-1</span></span></code></pre>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">datras</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     survey      source timestamp                          haul_id</span></span>
+<span><span class="co">#&gt; 2     BITS DATRAS ICES   2026-06  BITS:2015:1:DE:06SL:TVS:22004:7</span></span>
+<span><span class="co">#&gt; 4     BITS DATRAS ICES   2026-06  BITS:2015:1:DE:06SL:TVS:22007:8</span></span>
+<span><span class="co">#&gt; 44    BITS DATRAS ICES   2026-06 BITS:2015:1:DE:06SL:TVS:24212:15</span></span>
+<span><span class="co">#&gt; 110   BITS DATRAS ICES   2026-06      BITS:2015:1:DK:26HI:TVS:1:1</span></span>
+<span><span class="co">#&gt; 111   BITS DATRAS ICES   2026-06    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
+<span><span class="co">#&gt; 112   BITS DATRAS ICES   2026-06    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
+<span><span class="co">#&gt;             country sub_area continent stat_rec station stratum year month day</span></span>
+<span><span class="co">#&gt; 2   multi-countries     &lt;NA&gt;    europe     37G0    &lt;NA&gt;    &lt;NA&gt; 2015     2  25</span></span>
+<span><span class="co">#&gt; 4   multi-countries     &lt;NA&gt;    europe     37G1    &lt;NA&gt;    &lt;NA&gt; 2015     2  26</span></span>
+<span><span class="co">#&gt; 44  multi-countries     &lt;NA&gt;    europe     38G3    &lt;NA&gt;    &lt;NA&gt; 2015     2  28</span></span>
+<span><span class="co">#&gt; 110 multi-countries     &lt;NA&gt;    europe     43G0    &lt;NA&gt;    &lt;NA&gt; 2015     2  24</span></span>
+<span><span class="co">#&gt; 111 multi-countries     &lt;NA&gt;    europe     41G2    &lt;NA&gt;    &lt;NA&gt; 2015     2  27</span></span>
+<span><span class="co">#&gt; 112 multi-countries     &lt;NA&gt;    europe     41G2    &lt;NA&gt;    &lt;NA&gt; 2015     2  27</span></span>
+<span><span class="co">#&gt;     quarter latitude longitude haul_dur area_swept gear depth     num num_cpue</span></span>
+<span><span class="co">#&gt; 2         1  54.4427   10.6547      0.5 0.07697517  TVS    19   1.000    2.000</span></span>
+<span><span class="co">#&gt; 4         1  54.4513   11.3738      0.5 0.08368994  TVS    20   1.000    2.000</span></span>
+<span><span class="co">#&gt; 44        1  54.9908   13.3447      0.5 0.09056468  TVS    47   1.000    2.000</span></span>
+<span><span class="co">#&gt; 110       1  57.4721   10.6695      0.5 0.07173646  TVS    26  90.573  181.146</span></span>
+<span><span class="co">#&gt; 111       1  56.1206   12.4688      0.5 0.06509888  TVS    26   1.000    2.000</span></span>
+<span><span class="co">#&gt; 112       1  56.1206   12.4688      0.5 0.06509888  TVS    26 118.635  237.270</span></span>
+<span><span class="co">#&gt;       num_cpua        wgt   wgt_cpue   wgt_cpua verbatim_name verbatim_aphia_id</span></span>
+<span><span class="co">#&gt; 2     12.99120 0.01259440  0.0251888  0.1636164          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 4     11.94887 0.06313433  0.1262687  0.7543837          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 44    11.04183 0.05369922  0.1073984  0.5929377          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 110 1262.57974 2.06026668  4.1205334 28.7199381          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 111   15.36125 2.93347786  5.8669557 45.0618790          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 112 1822.38158 5.13663026 10.2732605 78.9050479          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt;                    accepted_name aphia_id          class             order</span></span>
+<span><span class="co">#&gt; 2   Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
+<span><span class="co">#&gt; 4   Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
+<span><span class="co">#&gt; 44  Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
+<span><span class="co">#&gt; 110 Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
+<span><span class="co">#&gt; 111            Amblyraja radiata   105865 Elasmobranchii        Rajiformes</span></span>
+<span><span class="co">#&gt; 112 Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
+<span><span class="co">#&gt;             family           genus    rank survey_unit</span></span>
+<span><span class="co">#&gt; 2   Pleuronectidae Hippoglossoides Species      BITS-1</span></span>
+<span><span class="co">#&gt; 4   Pleuronectidae Hippoglossoides Species      BITS-1</span></span>
+<span><span class="co">#&gt; 44  Pleuronectidae Hippoglossoides Species      BITS-1</span></span>
+<span><span class="co">#&gt; 110 Pleuronectidae Hippoglossoides Species      BITS-1</span></span>
+<span><span class="co">#&gt; 111        Rajidae       Amblyraja Species      BITS-1</span></span>
+<span><span class="co">#&gt; 112 Pleuronectidae Hippoglossoides Species      BITS-1</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="compare-it-with-fishglob">Compare it with Fishglob<a class="anchor" aria-label="anchor" href="#compare-it-with-fishglob"></a>
@@ -271,7 +261,7 @@ structure</strong>.</p>
 <div class="section level3">
 <h3 id="download-fishglob">Download FishGlob<a class="anchor" aria-label="anchor" href="#download-fishglob"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load survey data</span></span>
 <span><span class="va">fishglob_url</span> <span class="op">&lt;-</span> <span class="st">"https://github.com/AquaAuma/FishGlob_data/raw/d71dfa03c2912b4e9d9cd10412ae2af52ba56ae5/outputs/Compiled_data/FishGlob_public_std_clean.RData"</span> <span class="co"># stick with this version</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>timeout <span class="op">=</span> <span class="fl">300</span><span class="op">)</span> <span class="co"># increase timeout to 5 minutes</span></span>
@@ -281,7 +271,7 @@ structure</strong>.</p>
 <div class="section level3">
 <h3 id="get-the-surveys-in-common">Get the surveys in common<a class="anchor" aria-label="anchor" href="#get-the-surveys-in-common"></a>
 </h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">common_surveys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">fishglob</span><span class="op">$</span><span class="va">survey</span>, <span class="va">datras</span><span class="op">$</span><span class="va">survey</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fishglob_common</span> <span class="op">&lt;-</span> <span class="va">fishglob</span><span class="op">[</span><span class="va">fishglob</span><span class="op">$</span><span class="va">survey</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">common_surveys</span>, <span class="op">]</span></span>
@@ -315,7 +305,7 @@ structure</strong>.</p>
 <div class="section level3">
 <h3 id="plot-it">Plot it<a class="anchor" aria-label="anchor" href="#plot-it"></a>
 </h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">am_dab</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">num_fishglob</span>,</span>
 <span>                   y <span class="op">=</span> <span class="va">num_datras</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span></span>
@@ -329,8 +319,12 @@ structure</strong>.</p>
 <span>    title <span class="op">=</span> <span class="st">"Comparison of num per haul by survey for American dab"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">survey</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="fishglob_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div style="background:white; padding:0.5rem; display:inline-block;">
+<div class="rimage default">
+<img src="fishglob_files/figure-html/unnamed-chunk-11-1.png" alt="" width="768" class="plot">
+</div>
+</div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">am_dab</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">wgt_cpua_fishglob</span>,</span>
 <span>                   y <span class="op">=</span> <span class="va">wgt_cpua_datras</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span></span>
@@ -345,7 +339,11 @@ structure</strong>.</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">survey</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="fishglob_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="700"></p>
+<div style="background:white; padding:0.5rem; display:inline-block;">
+<div class="rimage default">
+<img src="fishglob_files/figure-html/unnamed-chunk-12-1.png" alt="" width="768" class="plot">
+</div>
+</div>
 <p>As you can see there are small differences in densities due to
 sligtly different swept are imputation methods.</p>
 </div>
@@ -357,7 +355,7 @@ sligtly different swept are imputation methods.</p>
 lightweight. To reproduce the <strong>DATRAS part of the FishGlob
 dataset</strong>, the full set of surveys used in FishGlob can be
 downloaded like this:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tokami.github.io/DATRASextra/">DATRASextra</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">surveys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NS-IBTS"</span>, <span class="st">"EVHOE"</span>, <span class="st">"SWC-IBTS"</span>, <span class="st">"BITS"</span>, <span class="st">"IE-IGFS"</span>,</span>
@@ -368,7 +366,7 @@ downloaded like this:</p>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># download survey data</span></span>
-<span><span class="fu"><a href="../reference/download_datras.html">download_datras</a></span><span class="op">(</span>surveys <span class="op">=</span> <span class="va">surveys</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/download_datras.html">download_datras</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tmp</span>, surveys <span class="op">=</span> <span class="va">surveys</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># read raw DATRAS tables</span></span>
 <span><span class="va">raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_datras.html">read_datras</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="va">surveys</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>

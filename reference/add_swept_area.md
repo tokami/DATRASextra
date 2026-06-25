@@ -12,7 +12,10 @@ add_swept_area(
   min_speed = 1,
   min_dist = 0,
   max_dist_dev = 0.2,
-  impute_missing = FALSE
+  impute_missing = FALSE,
+  width = "WingSpread",
+  verbose = TRUE,
+  full_report = FALSE
 )
 ```
 
@@ -48,9 +51,25 @@ add_swept_area(
 
 - impute_missing:
 
-  Logical. Passed to
-  [`add_swept_area_simple()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_simple.md).
-  Only used when `method = "simple"`. Defaults to `FALSE`.
+  Logical. Only used when `method = "simple"`. Defaults to `FALSE`.
+
+- width:
+
+  Character string specifying which spread column to use as trawl width.
+  Must be either `"WingSpread"` (default) or `"DoorSpread"`. Only used
+  when `method = "simple"`; ignored for `method = "fishglob"`.
+
+- verbose:
+
+  Logical. If `TRUE` (default) and `method = "simple"`, print a summary
+  of swept-area missingness and imputation by survey and gear.
+
+- full_report:
+
+  Logical. If `TRUE`, the printed and attached summary also includes
+  per-column missingness counts (`na_DoorSpread`, `na_WingSpread`,
+  `na_Distance`, `na_HaulDur`, `na_GroundSpeed`) for the original input
+  columns. Only used when `method = "simple"`. Defaults to `FALSE`.
 
 ## Value
 
@@ -58,17 +77,19 @@ A `datras_raw` object with swept-area estimates added.
 
 ## Details
 
-This function is a wrapper around
-[`add_swept_area_simple()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_simple.md)
+This function is a wrapper around an internal simple swept-area function
 and
 [`add_swept_area_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_fishglob.md).
 It allows users to choose between a simple rule-based approach and the
 FishGlob workflow.
 
-If `method = "simple"`, swept area is calculated using
-[`add_swept_area_simple()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_simple.md),
-which applies basic plausibility filters, gear-specific median
-imputations, and a direct distance-times-width calculation.
+If `method = "simple"`, swept area is calculated using a simple
+rule-based approach that applies basic plausibility filters,
+gear-specific median imputations, and a direct distance-times-width
+calculation. A per-haul logical column `SweptArea_imputed` is added to
+`HH`, and a survey-by-gear summary of missingness and imputation is
+attached as `attr(x, "swept_area_summary")` (and printed when
+`verbose = TRUE`).
 
 If `method = "fishglob"`, swept area is calculated using
 [`add_swept_area_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_fishglob.md),
@@ -77,7 +98,6 @@ models and hierarchical fallback rules.
 
 ## See also
 
-[`add_swept_area_simple()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_simple.md),
 [`add_swept_area_fishglob()`](https://tokami.github.io/DATRASextra/reference/add_swept_area_fishglob.md)
 
 ## Examples

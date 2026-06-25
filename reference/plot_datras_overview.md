@@ -19,6 +19,7 @@ plot_datras_overview(
   by_year = FALSE,
   by_daynight = FALSE,
   multi_panels = FALSE,
+  panel_layout = c("auto", "horizontal", "vertical"),
   value_var = NULL,
   offset_var = NULL,
   positive_only = FALSE,
@@ -41,7 +42,10 @@ plot_datras_overview(
   legend_pos = NULL,
   legend_cex = NULL,
   grid_group_strategy = c("dominant", "mixed", "error"),
-  main = NULL
+  main = NULL,
+  years = NULL,
+  asp = "auto",
+  add = FALSE
 )
 ```
 
@@ -86,6 +90,16 @@ plot_datras_overview(
 
   Logical. If `TRUE`, plot one group per panel.
 
+- panel_layout:
+
+  Arrangement of panels when `multi_panels = TRUE`. `"auto"` (default)
+  uses
+  [`grDevices::n2mfrow()`](https://rdrr.io/r/grDevices/n2mfrow.html) to
+  choose a roughly square layout; `"horizontal"` places all panels in a
+  single row; `"vertical"` places them in a single column. For
+  matrix-valued `value_var` (length-class panels crossed with groups),
+  `"horizontal"` transposes the row/column assignment.
+
 - value_var:
 
   Optional haul-level variable to map to values.
@@ -96,10 +110,12 @@ plot_datras_overview(
 
 - positive_only:
 
-  Logical. If `TRUE`, only hauls with a strictly positive value (after
-  dividing by `offset_var` if supplied) are plotted. Zero-catch hauls
-  are dropped before grid aggregation or point rendering. Default
-  `FALSE`.
+  Logical. If `TRUE`, only hauls with a strictly positive value are
+  plotted. When `value_var` is supplied, positivity is determined from
+  that variable (after dividing by `offset_var` if supplied). When
+  `value_var` is `NULL`, the function falls back to total `HaulN` or
+  `HaulWgt` from `HH` (whichever is found first); a warning is issued if
+  neither is available. Default `FALSE`.
 
 - transform:
 
@@ -107,7 +123,13 @@ plot_datras_overview(
 
 - fixed_scale:
 
-  Logical. Use common color scale across panels in grid mode.
+  Logical. If `TRUE` (default), a common value scale is used across
+  groups or panels: in grid mode the colour scale is shared across
+  panels; in points mode point sizes are scaled relative to the global
+  value range. If `FALSE`, each group (single-panel grouped mode) or
+  each panel (multi-panel mode) is scaled independently, so point sizes
+  reflect relative abundance within the group or panel rather than in
+  absolute terms.
 
 - fixed_axes:
 
@@ -177,6 +199,38 @@ plot_datras_overview(
 - main:
 
   Optional title for single-panel mode.
+
+- years:
+
+  Optional integer vector of years to include. If `NULL` (default), all
+  years in the data are plotted.
+
+- asp:
+
+  Aspect ratio passed to
+  [`graphics::plot()`](https://rdrr.io/r/graphics/plot.default.html).
+  `"auto"` (default) uses the latitude-corrected value
+  `1 / cos(mean(ylim) * pi / 180)`, which gives equal physical distances
+  per degree of longitude and latitude at the mean latitude. Pass `1`
+  for a simpler equal-degrees ratio, or `NULL` to leave the aspect ratio
+  determined by the device dimensions (current behaviour of base
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html)). Fixing
+  `asp` prevents the map from distorting when figure margins or device
+  dimensions change.
+
+- add:
+
+  Logical. If `FALSE` (default), the function configures its own
+  graphics device via
+  [`graphics::par()`](https://rdrr.io/r/graphics/par.html) (`mfrow`,
+  `mar`, `oma`) and restores the previous settings on exit. If `TRUE`,
+  no [`par()`](https://rdrr.io/r/graphics/par.html) changes are made:
+  the plot is drawn into whatever panel or layout is already active,
+  allowing the function to be embedded in figures created with
+  `par(mfrow = ...)` or
+  [`graphics::layout()`](https://rdrr.io/r/graphics/layout.html). When
+  `add = TRUE`, the caller is responsible for setting appropriate
+  margins.
 
 ## Value
 

@@ -15,7 +15,7 @@ datras_raw / DATRASraw object."><meta property="og:image" content="https://tokam
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,7 +28,7 @@ datras_raw / DATRASraw object."><meta property="og:image" content="https://tokam
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -91,7 +91,9 @@ weight.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with four elements:</p><ul><li><p><code>lPars</code>: a data frame with summary statistics for observed lengths,</p></li>
+    <p>The input <code>datras_raw</code> object returned invisibly, with a
+<code>"weight_check"</code> attribute attached. That attribute is a list with four
+elements:</p><ul><li><p><code>lPars</code>: a data frame with summary statistics for observed lengths,</p></li>
 <li><p><code>wPars</code>: a data frame with summary statistics for observed weights,</p></li>
 <li><p><code>parEst</code>: a data frame with estimated length-weight parameters <code>a</code>
 and <code>b</code>,</p></li>
@@ -132,8 +134,10 @@ $$</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Add numbers at length</span></span></span>
 <span class="r-in"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu"><a href="add_numbers_at_length.html">add_numbers_at_length</a></span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Mixed accuracies found in var[[3]]$LngtCode - worst chosen: 1 cm</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs found in var[[3]]$LngtCode - assumed to be 1 cm</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">check_weights</span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu">check_weights</span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Length statistics:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   min  mean median max</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   3 18.94     19  35</span>
@@ -145,9 +149,12 @@ $$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.014 b = 2.903"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Lookup LW parameters in the species_info table:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.007 b = 3.119"</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dab</span>, <span class="st">"weight_check"</span><span class="op">)</span><span class="op">$</span><span class="va">parEst</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            a        b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.01350792 2.902568</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Restrict to plausible values</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">check_weights</span><span class="op">(</span><span class="va">dab</span>, max_length <span class="op">=</span> <span class="fl">100</span>, max_weight <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu">check_weights</span><span class="op">(</span><span class="va">dab</span>, max_length <span class="op">=</span> <span class="fl">100</span>, max_weight <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Length statistics:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   min  mean median max</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   3 18.94     19  35</span>

@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
@@ -106,11 +106,7 @@
 <span></span>
 <span><span class="co"># download data</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/download_datras.html">download_datras</a></span><span class="op">(</span></span>
-<span>  surveys <span class="op">=</span> <span class="va">survey</span>,</span>
-<span>  years <span class="op">=</span> <span class="fl">2021</span>,</span>
-<span>  dir <span class="op">=</span> <span class="va">tmp</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/download_datras.html">download_datras</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tmp</span>, surveys <span class="op">=</span> <span class="va">survey</span>, years <span class="op">=</span> <span class="fl">2021</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># read in</span></span>
 <span><span class="va">surv0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_datras.html">read_datras</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="va">survey</span><span class="op">)</span><span class="op">)</span></span>
@@ -151,23 +147,20 @@ and biomass by swept area, a swept-area estimate can be added to each
 haul:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_swept_area_simple.html">add_swept_area_simple</a></span><span class="op">(</span><span class="va">surv</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_swept_area.html">add_swept_area</a></span><span class="op">(</span><span class="va">surv</span><span class="op">)</span></span></code></pre></div>
 <p>This adds swept-area estimates to the <code>HH</code> table based on
 haul distance and gear width information. When gear information is
 missing, values are imputed automatically (see
-<code><a href="../reference/add_swept_area_simple.html">?add_swept_area_simple</a></code>). Abundance per unit effort and
-biomass per unit effort can then be calculated by dividing haul-level
-totals by swept area:</p>
+<code><a href="../reference/add_swept_area.html">?add_swept_area</a></code>). Abundance per unit effort and biomass per
+unit effort can then be calculated by dividing haul-level totals by
+swept area (in km<sup>2</sup>):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="co"># convert swept area from m2 to km2</span></span>
-<span><span class="va">surv</span><span class="op">[[</span><span class="st">'HH'</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">SweptArea_km2</span> <span class="op">&lt;-</span> <span class="va">surv</span><span class="op">$</span><span class="va">HH</span><span class="op">$</span><span class="va">SweptArea</span> <span class="op">/</span> <span class="fl">1e6</span></span>
-<span></span>
 <span><span class="co"># abundance per km2</span></span>
-<span><span class="va">surv</span><span class="op">[[</span><span class="st">'HH'</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">CPUE_N</span> <span class="op">&lt;-</span> <span class="va">surv</span><span class="op">$</span><span class="va">HH</span><span class="op">$</span><span class="va">HaulN</span> <span class="op">/</span> <span class="va">surv</span><span class="op">$</span><span class="va">HH</span><span class="op">$</span><span class="va">SweptArea_km2</span></span>
+<span><span class="va">surv</span><span class="op">[[</span><span class="st">'HH'</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">CPUE_N</span> <span class="op">&lt;-</span> <span class="va">surv</span><span class="op">$</span><span class="va">HH</span><span class="op">$</span><span class="va">HaulN</span> <span class="op">/</span> <span class="va">surv</span><span class="op">$</span><span class="va">HH</span><span class="op">$</span><span class="va">SweptArea</span></span>
 <span></span>
 <span><span class="co"># biomass per km2</span></span>
-<span><span class="va">surv</span><span class="op">[[</span><span class="st">'HH'</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">CPUE_W</span> <span class="op">&lt;-</span> <span class="va">surv</span><span class="op">$</span><span class="va">HH</span><span class="op">$</span><span class="va">HaulWgt</span> <span class="op">/</span> <span class="va">surv</span><span class="op">$</span><span class="va">HH</span><span class="op">$</span><span class="va">SweptArea_km2</span></span></code></pre></div>
+<span><span class="va">surv</span><span class="op">[[</span><span class="st">'HH'</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">CPUE_W</span> <span class="op">&lt;-</span> <span class="va">surv</span><span class="op">$</span><span class="va">HH</span><span class="op">$</span><span class="va">HaulWgt</span> <span class="op">/</span> <span class="va">surv</span><span class="op">$</span><span class="va">HH</span><span class="op">$</span><span class="va">SweptArea</span></span></code></pre></div>
 <p>The resulting variables contain standardized density estimates
 expressed as:</p>
 <ul>

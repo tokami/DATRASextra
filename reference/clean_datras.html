@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,7 +26,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -63,9 +63,11 @@
 <span>  years <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  quarters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gears <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  impute_missing_depth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  impute_missing_depth <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  correct_species <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  do_fishglob <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  do_fishglob <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  explain_codes <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,8 +97,9 @@
 
 
 <dt id="arg-impute-missing-depth">impute_missing_depth<a class="anchor" aria-label="anchor" href="#arg-impute-missing-depth"></a></dt>
-<dd><p>Logical. If <code>TRUE</code> (default), missing haul depths
-are imputed using a smooth spatial GAM fitted to observed depths.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, missing haul depths are
+imputed using a smooth spatial GAM fitted to observed depths. Default:
+<code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-correct-species">correct_species<a class="anchor" aria-label="anchor" href="#arg-correct-species"></a></dt>
@@ -107,6 +110,18 @@ corrected using <code><a href="correct_species.html">correct_species()</a></code
 <dt id="arg-do-fishglob">do_fishglob<a class="anchor" aria-label="anchor" href="#arg-do-fishglob"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, apply <code><a href="clean_fishglob.html">clean_fishglob()</a></code> instead of
 the standard DATRAS cleaning steps.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> (default), print a summary of <code>HaulVal</code>
+and <code>StdSpecRecCode</code> category counts and the number of hauls with missing
+<code>Depth</code> before cleaning. Ignored when <code>do_fishglob = TRUE</code>.</p></dd>
+
+
+<dt id="arg-explain-codes">explain_codes<a class="anchor" aria-label="anchor" href="#arg-explain-codes"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, include a description of each
+<code>HaulVal</code>, <code>StdSpecRecCode</code>, and <code>BySpecRecCode</code> code in the printed
+summary. Default: <code>FALSE</code>. Only used when <code>verbose = TRUE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -123,8 +138,9 @@ data by species, year, quarter, or gear.</p>
 <p>For standard DATRAS data (<code>do_fishglob = FALSE</code>), the following filters are
 applied before any optional subsetting:</p><ul><li><p>only hauls with <code>HaulVal %in% c("V", "N")</code> are retained,</p></li>
 <li><p>only records with <code>StdSpecRecCode == 1</code> are retained.</p></li>
-</ul><p>If <code>impute_missing_depth = TRUE</code>, missing <code>Depth</code> values are predicted from a
-GAM of <code>log(Depth)</code> on a two-dimensional smooth of longitude and latitude.</p>
+</ul><p>If <code>impute_missing_depth = TRUE</code>, missing <code>Depth</code> values are predicted from
+a GAM of <code>log(Depth)</code> on a two-dimensional smooth of longitude and latitude.
+Note that this requires the R package mgcv to be installed.</p>
 <p>Optional filtering by <code>aphias</code>, <code>years</code>, <code>quarters</code>, and <code>gears</code> is applied
 after cleaning.</p>
     </div>

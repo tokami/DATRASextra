@@ -11,9 +11,11 @@ clean_datras(
   years = NULL,
   quarters = NULL,
   gears = NULL,
-  impute_missing_depth = TRUE,
+  impute_missing_depth = FALSE,
   correct_species = TRUE,
-  do_fishglob = FALSE
+  do_fishglob = FALSE,
+  verbose = TRUE,
+  explain_codes = FALSE
 )
 ```
 
@@ -42,8 +44,8 @@ clean_datras(
 
 - impute_missing_depth:
 
-  Logical. If `TRUE` (default), missing haul depths are imputed using a
-  smooth spatial GAM fitted to observed depths.
+  Logical. If `TRUE`, missing haul depths are imputed using a smooth
+  spatial GAM fitted to observed depths. Default: `FALSE`.
 
 - correct_species:
 
@@ -55,6 +57,18 @@ clean_datras(
   Logical. If `TRUE`, apply
   [`clean_fishglob()`](https://tokami.github.io/DATRASextra/reference/clean_fishglob.md)
   instead of the standard DATRAS cleaning steps.
+
+- verbose:
+
+  Logical. If `TRUE` (default), print a summary of `HaulVal` and
+  `StdSpecRecCode` category counts and the number of hauls with missing
+  `Depth` before cleaning. Ignored when `do_fishglob = TRUE`.
+
+- explain_codes:
+
+  Logical. If `TRUE`, include a description of each `HaulVal`,
+  `StdSpecRecCode`, and `BySpecRecCode` code in the printed summary.
+  Default: `FALSE`. Only used when `verbose = TRUE`.
 
 ## Value
 
@@ -79,7 +93,7 @@ are applied before any optional subsetting:
 
 If `impute_missing_depth = TRUE`, missing `Depth` values are predicted
 from a GAM of `log(Depth)` on a two-dimensional smooth of longitude and
-latitude.
+latitude. Note that this requires the R package mgcv to be installed.
 
 Optional filtering by `aphias`, `years`, `quarters`, and `gears` is
 applied after cleaning.

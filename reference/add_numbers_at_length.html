@@ -17,7 +17,7 @@ one column per length class."><meta property="og:image" content="https://tokami.
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,7 +30,7 @@ one column per length class."><meta property="og:image" content="https://tokami.
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -63,7 +63,7 @@ one column per length class.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_numbers_at_length</span><span class="op">(</span><span class="va">x</span>, cm_breaks <span class="op">=</span> <span class="cn">NULL</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_numbers_at_length</span><span class="op">(</span><span class="va">x</span>, cm_breaks <span class="op">=</span> <span class="cn">NULL</span>, by <span class="op">=</span> <span class="fu"><a href="get_accuracy_cm.html">get_accuracy_cm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -82,8 +82,8 @@ range of <code>HL$LngtCm</code> using <code>by</code>.</p></dd>
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
 <dd><p>Numeric scalar giving the width of the default length classes in
-cm. Default is 1cm (for herring, sprat and other smaller species 0.5 might
-be more appropriate). Only used when <code>cm_breaks = NULL</code>.</p></dd>
+cm. Defaults to the survey's native recording resolution via
+<code><a href="get_accuracy_cm.html">get_accuracy_cm()</a></code>. Only used when <code>cm_breaks = NULL</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -109,6 +109,8 @@ object.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Add numbers-at-length using the default length resolution</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_numbers_at_length</span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Mixed accuracies found in var[[3]]$LngtCode - worst chosen: 1 cm</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NAs found in var[[3]]$LngtCode - assumed to be 1 cm</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -12,11 +12,7 @@ tmp <- file.path(tempdir(), "DATRASextra")
 dir.create(tmp, recursive = TRUE, showWarnings = FALSE)
 
 # download data
-download_datras(
-  surveys = survey,
-  years = 2021,
-  dir = tmp
-)
+download_datras(path = tmp, surveys = survey, years = 2021)
 
 # read in
 surv0 <- read_datras(file.path(tmp, survey))

@@ -8,21 +8,28 @@ survey-specific subdirectory.
 
 ``` r
 download_datras(
+  path = NULL,
   surveys = NULL,
   years = NULL,
-  download_missing_only = TRUE,
+  overwrite = FALSE,
   download_hl = TRUE,
   download_ca = TRUE,
   use_php = FALSE,
-  dir = NULL,
-  force = FALSE,
+  include_flagged = FALSE,
   return_data = TRUE,
   verbose = TRUE,
+  timeout = 10,
   ...
 )
 ```
 
 ## Arguments
+
+- path:
+
+  Character string giving the directory where downloaded files should be
+  stored. Survey-specific subdirectories are created within this
+  directory. If `NULL`, the current working directory is used.
 
 - surveys:
 
@@ -34,10 +41,11 @@ download_datras(
   An integer vector of years to download. If `NULL`, all available years
   for each selected survey are used.
 
-- download_missing_only:
+- overwrite:
 
-  Logical. If `TRUE` (default), only survey-year files that do not
-  already exist in `dir` are downloaded.
+  Logical. If `FALSE` (default), survey-year files that already exist in
+  `path` are skipped. Set to `TRUE` to re-download and overwrite
+  existing files.
 
 - download_hl:
 
@@ -59,17 +67,11 @@ download_datras(
   [`DATRAS::downloadExchange()`](https://rdrr.io/pkg/DATRAS/man/downloadExchange.html)
   method is used.
 
-- dir:
-
-  Character string giving the directory where downloaded files should be
-  stored. Survey-specific subdirectories are created within this
-  directory. If `NULL`, the current working directory is used.
-
-- force:
+- include_flagged:
 
   Logical. If `FALSE` (default), surveys known to be test surveys or
-  surveys with incomplete data may be skipped. If `TRUE`, they are also
-  downloaded.
+  surveys with incomplete data are skipped. Set to `TRUE` to download
+  them anyway.
 
 - return_data:
 
@@ -81,6 +83,14 @@ download_datras(
 - verbose:
 
   Logical. If `TRUE` (default), progress messages are printed.
+
+- timeout:
+
+  Numeric. Maximum number of seconds to wait for the ICES DATRAS server
+  to respond when retrieving the list of available surveys or years. If
+  the server does not respond within this time (e.g. because a firewall
+  blocks the connection), the function falls back to locally cached
+  information. Default is 10 seconds.
 
 - ...:
 
@@ -101,7 +111,7 @@ survey are downloaded.
 By default, data are downloaded using
 [`DATRAS::getDatrasExchange()`](https://rdrr.io/pkg/DATRAS/man/getDatrasExchange.html),
 cleaned to remove extra variables, and written to disk with
-[`write_exchange()`](https://tokami.github.io/DATRASextra/reference/write_exchange.md).
+[`write_datras()`](https://tokami.github.io/DATRASextra/reference/write_datras.md).
 Alternatively, the legacy PHP-based download route from
 [`DATRAS::downloadExchange()`](https://rdrr.io/pkg/DATRAS/man/downloadExchange.html)
 can be used by setting `use_php = TRUE`.
@@ -124,14 +134,14 @@ dat <- download_datras(surveys = "NS-IBTS")
 dat <- download_datras(
   surveys = c("NS-IBTS", "BITS"),
   years = 2010:2012,
-  dir = "data/datras"
+  path = "data/datras"
 )
 
 ## Re-download existing files
 dat <- download_datras(
   surveys = "NS-IBTS",
   years = 2020,
-  download_missing_only = FALSE
+  overwrite = TRUE
 )
 } # }
 ```

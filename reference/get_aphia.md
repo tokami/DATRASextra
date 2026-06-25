@@ -8,12 +8,12 @@ directly from WoRMS.
 ## Usage
 
 ``` r
-get_aphia(x, use_worrms = FALSE)
+get_aphia(species, use_worrms = FALSE)
 ```
 
 ## Arguments
 
-- x:
+- species:
 
   A character vector of scientific species names.
 

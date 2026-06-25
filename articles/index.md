@@ -2,12 +2,14 @@
 
 ### Getting started
 
+- [The datras_raw
+  object](https://tokami.github.io/DATRASextra/articles/datras-raw-object.md):
 - [A Step-by-step guide to working with the ICES DATRAS database using
   DATRASextra](https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.md):
 - [Plotting DATRAS
   overviews](https://tokami.github.io/DATRASextra/articles/plot-datras-overview.md):
-- [Constructing a prediction grid within a survey
-  domain](https://tokami.github.io/DATRASextra/articles/define-survey-domain.md):
+- [Building a spatiotemporal prediction
+  grid](https://tokami.github.io/DATRASextra/articles/make_spatiotemporal_grid.md):
 
 ### Advanced
 
@@ -25,3 +27,5 @@
   species](https://tokami.github.io/DATRASextra/articles/number-biomass-by-species.md):
 - [Extract abundance or biomass per unit effort for a single
   species](https://tokami.github.io/DATRASextra/articles/number-biomass-effort-by-species.md):
+- [Matching EMODnet seabed habitats to
+  hauls](https://tokami.github.io/DATRASextra/articles/match-emodnet-habitats.md):

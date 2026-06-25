@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news">
 <li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul>
@@ -198,7 +198,11 @@ of the available surveys with:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Plot available DATRAS surveys</span></span>
 <span><span class="fu"><a href="../reference/plot_datras_overview.html">plot_datras_overview</a></span><span class="op">(</span>by_survey <span class="op">=</span> <span class="cn">TRUE</span>, multi_panels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="datrasextra-tutorial_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="Map with available surveys in DATRAS" width="768"></p>
+<div style="background:white; padding:0.5rem; display:inline-block;">
+<div class="rimage default">
+<img src="datrasextra-tutorial_files/figure-html/unnamed-chunk-4-1.png" alt="" width="768" class="plot">
+</div>
+</div>
 <p>The <code><a href="../reference/download_datras.html">download_datras()</a></code> function can be used to download
 data for one or more surveys. If both <code>surveys</code> and
 <code>years</code> are left as <code>NULL</code>, all available surveys
@@ -217,10 +221,10 @@ directory with:</p>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Download SNS data for 2023</span></span>
-<span><span class="fu"><a href="../reference/download_datras.html">download_datras</a></span><span class="op">(</span>surveys <span class="op">=</span> <span class="va">survey</span>, years <span class="op">=</span> <span class="fl">2023</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/download_datras.html">download_datras</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">tmp</span>, surveys <span class="op">=</span> <span class="va">survey</span>, years <span class="op">=</span> <span class="fl">2023</span><span class="op">)</span></span></code></pre></div>
 <p>Note that <code><a href="../reference/download_datras.html">download_datras()</a></code> does not load the data
 directly into R. Instead, it downloads, compresses, and stores the files
-on disk. If no directory is specified via <code>dir</code>, the files
+on disk. If no directory is specified via <code>path</code>, the files
 are saved to the current working directory, which you can inspect with
 <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code>.</p>
 <p>Downloaded files are stored as zipped DATRAS exchange files. If a
@@ -325,7 +329,11 @@ detected, so we proceed without further filtering.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">surv</span><span class="op">)</span></span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
-<p><img src="datrasextra-tutorial_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="768"></p>
+<div style="background:white; padding:0.5rem; display:inline-block;">
+<div class="rimage default">
+<img src="datrasextra-tutorial_files/figure-html/unnamed-chunk-12-1.png" alt="" width="768" class="plot">
+</div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="calculate-total-numbers-and-weight-by-haul">Calculate total numbers and weight by haul<a class="anchor" aria-label="anchor" href="#calculate-total-numbers-and-weight-by-haul"></a>

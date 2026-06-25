@@ -2,10 +2,12 @@
 <url><loc>https://tokami.github.io/DATRASextra/404.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/LICENSE.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/custom-length-classes.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/articles/datras-raw-object.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/articles/define-survey-domain.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/index.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/articles/make_spatiotemporal_grid.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/articles/match-emodnet-habitats.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/number-biomass-by-species.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/number-biomass-effort-by-species.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/plot-datras-overview.html</loc></url>
@@ -14,6 +16,7 @@
 <url><loc>https://tokami.github.io/DATRASextra/index.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/news/index.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/DATRASextra-package.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/add_ices_areas.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/add_species_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/add_swept_area.html</loc></url>
@@ -27,6 +30,8 @@
 <url><loc>https://tokami.github.io/DATRASextra/reference/as_long_format.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/as_table.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/as_wide_format.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/calc_spatial_indicators.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/calc_stratified_index.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/check_lengths.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/check_outliers.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/check_weights.html</loc></url>
@@ -45,18 +50,22 @@
 <url><loc>https://tokami.github.io/DATRASextra/reference/list_prune_datras_available.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/list_prune_datras_defaults.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/list_surveys.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/make_survey_grid.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/mini.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/mini_fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/plot_datras_overview.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/plot_length_distribution.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/plot_spatial_indicators.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/plot_species_composition.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/plot_stratified_index.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/prune_datras.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/prune_fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/read_datras.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/spawning_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/species_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/survey_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/survey_info_full_raw.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/wolffish.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/reference/write_exchange.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/write_datras.html</loc></url>
 </urlset>
 

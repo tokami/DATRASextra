@@ -7,7 +7,7 @@ and one column per length class.
 ## Usage
 
 ``` r
-add_numbers_at_length(x, cm_breaks = NULL, by = 1)
+add_numbers_at_length(x, cm_breaks = NULL, by = get_accuracy_cm(x))
 ```
 
 ## Arguments
@@ -25,8 +25,9 @@ add_numbers_at_length(x, cm_breaks = NULL, by = 1)
 - by:
 
   Numeric scalar giving the width of the default length classes in cm.
-  Default is 1cm (for herring, sprat and other smaller species 0.5 might
-  be more appropriate). Only used when `cm_breaks = NULL`.
+  Defaults to the survey's native recording resolution via
+  [`get_accuracy_cm()`](https://tokami.github.io/DATRASextra/reference/get_accuracy_cm.md).
+  Only used when `cm_breaks = NULL`.
 
 ## Value
 
@@ -54,4 +55,6 @@ returned object.
 ``` r
 ## Add numbers-at-length using the default length resolution
 x <- add_numbers_at_length(dab)
+#> Warning: Mixed accuracies found in var[[3]]$LngtCode - worst chosen: 1 cm
+#> Warning: NAs found in var[[3]]$LngtCode - assumed to be 1 cm
 ```

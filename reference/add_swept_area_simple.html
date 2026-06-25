@@ -15,7 +15,7 @@ using a simple rule-based approach."><meta property="og:image" content="https://
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,7 +28,7 @@ using a simple rule-based approach."><meta property="og:image" content="https://
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.0.0.9000</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -65,7 +65,10 @@ using a simple rule-based approach.</p>
 <span>  min_speed <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  min_dist <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max_dist_dev <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  impute_missing <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  impute_missing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  width <span class="op">=</span> <span class="st">"WingSpread"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  full_report <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -97,56 +100,74 @@ Distances with larger deviations are treated as missing. Defaults to <code>0.2</
 <dd><p>Logical. Currently included for compatibility, but not
 used explicitly in the present implementation.</p></dd>
 
+
+<dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
+<dd><p>Character string specifying which spread column to use as trawl
+width. Must be either <code>"WingSpread"</code> (default) or <code>"DoorSpread"</code>. Use
+<code>"DoorSpread"</code> for surveys that record door spread but not wing spread.
+Note that the fixed beam-trawl widths and the gear-specific plausibility
+bounds are only applied when <code>width = "WingSpread"</code>.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> (default), print a summary of swept-area
+missingness and imputation by survey and gear.</p></dd>
+
+
+<dt id="arg-full-report">full_report<a class="anchor" aria-label="anchor" href="#arg-full-report"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, the summary also includes per-column
+missingness counts (<code>na_DoorSpread</code>, <code>na_WingSpread</code>, <code>na_Distance</code>,
+<code>na_HaulDur</code>, <code>na_GroundSpeed</code>) for the original input columns. Defaults
+to <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>datras_raw</code> object with two additional swept-area fields:</p><ul><li><p><code>SweptArea</code>: swept area based on haul-specific <code>WingSpread</code>,</p></li>
-<li><p><code>SweptArea.median</code>: swept area based on gear-specific median wing
-spread.</p></li>
-</ul></div>
+    <p>A <code>datras_raw</code> object with the following fields added to <code>HH</code>:</p><ul><li><p><code>SweptArea</code>: swept area in \(km^2\) based on haul-specific spread,</p></li>
+<li><p><code>SweptArea_median</code>: swept area in \(km^2\) based on gear-specific median spread,</p></li>
+<li><p><code>SweptArea_imputed</code>: logical flag, <code>TRUE</code> when the spread and/or
+towing distance used for that haul was imputed.</p></li>
+</ul><p>A survey-by-gear summary is attached as <code>attr(x, "swept_area_summary")</code>,
+with columns <code>survey</code>, <code>gear</code>, <code>n_records</code>, <code>n_imputed</code>, <code>prop_imputed</code>, and
+<code>n_NA</code> / <code>prop_NA</code> (hauls whose <code>SweptArea</code> is still <code>NA</code> after imputation,
+e.g. gears that cannot be imputed). When <code>full_report = TRUE</code>, per-column
+missingness counts (<code>na_DoorSpread</code>, <code>na_WingSpread</code>, <code>na_Distance</code>,
+<code>na_HaulDur</code>, <code>na_GroundSpeed</code>) of the original input columns are appended.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function uses recorded <code>WingSpread</code> where available, applies a series of
 basic plausibility filters and gear-specific corrections, imputes missing
 values from gear-level medians, reconstructs towing distance when needed
 from <code>HaulDur</code> and <code>GroundSpeed</code>, and returns two swept-area estimates.</p>
-<p>Swept area is calculated in \(m^2\) as:
+<p>Swept area is calculated in \(km^2\) as:
 $$
-  SweptArea = WingSpread \times Distance
-$$</p>
-<p>A second estimate, <code>SweptArea.median</code>, is also returned. This uses a
-gear-specific median wing spread rather than the haul-specific recorded or
-imputed wing spread:
+  SweptArea = Spread \times Distance \times 10^{-6}
 $$
-  SweptArea.median = WingSpread.median \times Distance
+where \(Spread\) is taken from the column selected by <code>width</code> (in metres)
+and \(Distance\) is in metres.</p>
+<p>A second estimate, <code>SweptArea_median</code>, is also returned. This uses a
+gear-specific median spread rather than the haul-specific recorded or
+imputed spread:
+$$
+  SweptArea\_median = Spread\_median \times Distance \times 10^{-6}
 $$</p>
-<p>The function applies the following steps:</p><ul><li><p>removes implausible values of <code>GroundSpeed</code>, <code>Distance</code>, and
-<code>WingSpread</code>,</p></li>
+<p>The function applies the following steps:</p><ul><li><p>removes implausible values of <code>GroundSpeed</code>, <code>Distance</code>, and the
+selected spread column,</p></li>
 <li><p>removes distance values that differ too much from reconstructed
 distance based on speed and haul duration,</p></li>
-<li><p>imputes missing wing spread using gear-specific medians,</p></li>
-<li><p>applies fixed widths for selected beam trawl gear codes,</p></li>
-<li><p>accounts for double-beam trawls via <code>GearEx == "DB"</code>,</p></li>
+<li><p>when <code>width = "WingSpread"</code>: applies fixed widths for selected beam
+trawl gear codes and accounts for double-beam trawls via <code>GearEx == "DB"</code>,</p></li>
+<li><p>imputes missing spread values using gear-specific medians,</p></li>
 <li><p>imputes missing ground speed using gear-specific medians,</p></li>
 <li><p>reconstructs missing towing distance from haul duration and ground
 speed.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="add_swept_area_fishglob.html">add_swept_area_fishglob()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="add_swept_area.html">add_swept_area()</a></code>, <code><a href="add_swept_area_fishglob.html">add_swept_area_fishglob()</a></code></p></div>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_swept_area_simple</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Use stricter plausibility filtering</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">add_swept_area_simple</span><span class="op">(</span><span class="va">x</span>, min_speed <span class="op">=</span> <span class="fl">2</span>, max_dist_dev <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

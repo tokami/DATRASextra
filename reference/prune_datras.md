@@ -11,10 +11,10 @@ prune_datras(
   keep = NULL,
   add = NULL,
   drop = NULL,
-  remove_hl = FALSE,
-  remove_ca = FALSE,
+  drop_hl = FALSE,
+  drop_ca = FALSE,
   do_fishglob = FALSE,
-  warn_missing = TRUE
+  verbose = TRUE
 )
 ```
 
@@ -40,12 +40,12 @@ prune_datras(
   Optional named list of columns to remove from the selected columns.
   List names should be `HH`, `HL`, and/or `CA`.
 
-- remove_hl:
+- drop_hl:
 
   Logical. If `TRUE`, set the `HL` table to `NULL`. See also
   [`drop_hl()`](https://tokami.github.io/DATRASextra/reference/drop_hl.md).
 
-- remove_ca:
+- drop_ca:
 
   Logical. If `TRUE`, set the `CA` table to `NULL`. See also
   [`drop_ca()`](https://tokami.github.io/DATRASextra/reference/drop_ca.md).
@@ -56,7 +56,7 @@ prune_datras(
   [`prune_fishglob()`](https://tokami.github.io/DATRASextra/reference/prune_fishglob.md)
   instead of the standard DATRAS pruning rules.
 
-- warn_missing:
+- verbose:
 
   Logical. If `TRUE`, warn when requested columns are not present in the
   corresponding table.
@@ -94,7 +94,7 @@ Column selection can be modified in three ways:
 
 Columns listed in `keep`, `add`, or `drop` for tables not present in `x`
 are ignored. Requested columns that are not present in a table are
-ignored, with an optional warning controlled by `warn_missing`.
+ignored, with an optional warning controlled by `verbose`.
 
 ## See also
 
@@ -138,6 +138,6 @@ x_small <- prune_datras(
 )
 
 ## Prune columns and drop the CA table entirely
-x_small <- prune_datras(x, remove_ca = TRUE)
+x_small <- prune_datras(x, drop_ca = TRUE)
 } # }
 ```

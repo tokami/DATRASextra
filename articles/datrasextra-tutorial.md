@@ -118,8 +118,7 @@ Or visually with:
 plot_datras_overview(by_survey = TRUE, multi_panels = TRUE)
 ```
 
-![Map with available surveys in
-DATRAS](datrasextra-tutorial_files/figure-html/unnamed-chunk-4-1.png)
+![](datrasextra-tutorial_files/figure-html/unnamed-chunk-4-1.png)
 
 The
 [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
@@ -142,14 +141,14 @@ survey <- "SNS"
 tmp <- tempdir()
 
 ## Download SNS data for 2023
-download_datras(surveys = survey, years = 2023, dir = tmp)
+download_datras(path = tmp, surveys = survey, years = 2023)
 ```
 
 Note that
 [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
 does not load the data directly into R. Instead, it downloads,
 compresses, and stores the files on disk. If no directory is specified
-via `dir`, the files are saved to the current working directory, which
+via `path`, the files are saved to the current working directory, which
 you can inspect with [`getwd()`](https://rdrr.io/r/base/getwd.html).
 
 Downloaded files are stored as zipped DATRAS exchange files. If a year
