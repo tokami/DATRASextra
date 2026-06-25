@@ -123,18 +123,15 @@ surv <- add_swept_area(surv)
 This adds swept-area estimates to the `HH` table based on haul distance and gear
 width information. When gear information is missing, values are imputed automatically
 (see `?add_swept_area`).
-Abundance per unit effort and biomass per unit effort can then be calculated by dividing haul-level totals by swept area:
+Abundance per unit effort and biomass per unit effort can then be calculated by dividing haul-level totals by swept area (in km^2^):
 
 ```{r}
 
-# convert swept area from m2 to km2
-surv[['HH']]$SweptArea_km2 <- surv$HH$SweptArea / 1e6
-
 # abundance per km2
-surv[['HH']]$CPUE_N <- surv$HH$HaulN / surv$HH$SweptArea_km2
+surv[['HH']]$CPUE_N <- surv$HH$HaulN / surv$HH$SweptArea
 
 # biomass per km2
-surv[['HH']]$CPUE_W <- surv$HH$HaulWgt / surv$HH$SweptArea_km2
+surv[['HH']]$CPUE_W <- surv$HH$HaulWgt / surv$HH$SweptArea
 
 ```
 

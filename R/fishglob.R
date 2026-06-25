@@ -418,6 +418,7 @@ add_swept_area_fishglob <- function(x) {
     x[["HH"]]$Distance * 0.001 *
     x[["HH"]]$DoorSpread * 0.001
 
+  attr(x, "swept_area_unit") <- "km^2"
   return(x)
 }
 

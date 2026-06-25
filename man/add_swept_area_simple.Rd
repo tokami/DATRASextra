@@ -48,8 +48,8 @@ to \code{FALSE}.}
 \value{
 A \code{datras_raw} object with the following fields added to \code{HH}:
 \itemize{
-\item \code{SweptArea}: swept area based on haul-specific spread,
-\item \code{SweptArea_median}: swept area based on gear-specific median spread,
+\item \code{SweptArea}: swept area in \eqn{km^2} based on haul-specific spread,
+\item \code{SweptArea_median}: swept area in \eqn{km^2} based on gear-specific median spread,
 \item \code{SweptArea_imputed}: logical flag, \code{TRUE} when the spread and/or
 towing distance used for that haul was imputed.
 }
@@ -70,17 +70,18 @@ basic plausibility filters and gear-specific corrections, imputes missing
 values from gear-level medians, reconstructs towing distance when needed
 from \code{HaulDur} and \code{GroundSpeed}, and returns two swept-area estimates.
 
-Swept area is calculated in \eqn{m^2} as:
+Swept area is calculated in \eqn{km^2} as:
 \deqn{
-  SweptArea = Spread \times Distance
+  SweptArea = Spread \times Distance \times 10^{-6}
 }
-where \eqn{Spread} is taken from the column selected by \code{width}.
+where \eqn{Spread} is taken from the column selected by \code{width} (in metres)
+and \eqn{Distance} is in metres.
 
 A second estimate, \code{SweptArea_median}, is also returned. This uses a
 gear-specific median spread rather than the haul-specific recorded or
 imputed spread:
 \deqn{
-  SweptArea_median = Spread_median \times Distance
+  SweptArea\_median = Spread\_median \times Distance \times 10^{-6}
 }
 
 The function applies the following steps:

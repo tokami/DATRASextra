@@ -136,17 +136,18 @@ add_swept_area <- function(x,
 ##'   to `FALSE`.
 ##'
 ##' @details
-##' Swept area is calculated in \eqn{m^2} as:
+##' Swept area is calculated in \eqn{km^2} as:
 ##' \deqn{
-##'   SweptArea = Spread \times Distance
+##'   SweptArea = Spread \times Distance \times 10^{-6}
 ##' }
-##' where \eqn{Spread} is taken from the column selected by `width`.
+##' where \eqn{Spread} is taken from the column selected by `width` (in metres)
+##' and \eqn{Distance} is in metres.
 ##'
 ##' A second estimate, `SweptArea_median`, is also returned. This uses a
 ##' gear-specific median spread rather than the haul-specific recorded or
 ##' imputed spread:
 ##' \deqn{
-##'   SweptArea_median = Spread_median \times Distance
+##'   SweptArea\_median = Spread\_median \times Distance \times 10^{-6}
 ##' }
 ##'
 ##' The function applies the following steps:
@@ -165,8 +166,8 @@ add_swept_area <- function(x,
 ##'
 ##' @return A `datras_raw` object with the following fields added to `HH`:
 ##' \itemize{
-##'   \item `SweptArea`: swept area based on haul-specific spread,
-##'   \item `SweptArea_median`: swept area based on gear-specific median spread,
+##'   \item `SweptArea`: swept area in \eqn{km^2} based on haul-specific spread,
+##'   \item `SweptArea_median`: swept area in \eqn{km^2} based on gear-specific median spread,
 ##'   \item `SweptArea_imputed`: logical flag, `TRUE` when the spread and/or
 ##'   towing distance used for that haul was imputed.
 ##' }
@@ -293,8 +294,8 @@ add_swept_area_simple <- function(x,
   ## Distances that were missing and have now been imputed
   imp_d <- miss_d & !is.na(x[["HH"]]$Distance)
 
-  x$SweptArea <- x[["HH"]][[width]] * x$Distance
-  x$SweptArea_median <- x[["HH"]][[spread_med]] * x$Distance
+  x$SweptArea <- x[["HH"]][[width]] * x$Distance * 1e-6
+  x$SweptArea_median <- x[["HH"]][[spread_med]] * x$Distance * 1e-6
 
   ## Per-haul flags: swept-area imputed, and still missing after imputation
   sa_imputed <- imp_w | imp_d
@@ -305,6 +306,7 @@ add_swept_area_simple <- function(x,
   sa_summary <- .swept_area_summary(x[["HH"]], sa_na, sa_imputed,
                                     extra_na = if (isTRUE(full_report)) raw_na else NULL)
   attr(x, "swept_area_summary") <- sa_summary
+  attr(x, "swept_area_unit") <- "km^2"
   if (isTRUE(verbose)) {
     cat("Swept-area missingness and imputation by survey and gear:\n")
     print(sa_summary, row.names = FALSE)

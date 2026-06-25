@@ -479,15 +479,15 @@ print.datras_raw <- function(x, ...) {
       unique(hl$haul.id)
     }
     n_nonzero <- sum(hh$haul.id %in% pos_ids)
-    cat("Hauls with catch:", n_nonzero,
-        "(zero catch:", nrow(hh) - n_nonzero, ")\n")
+    cat(sprintf("Hauls with catch: %d (zero catch: %d)\n",
+                n_nonzero, nrow(hh) - n_nonzero))
   }
 
   if ("lon" %in% names(hh) && "lat" %in% names(hh)) {
     lon_r <- round(range(hh$lon, na.rm = TRUE), 2)
     lat_r <- round(range(hh$lat, na.rm = TRUE), 2)
-    cat("Longitude range:", lon_r[1], "-", lon_r[2], "\n")
-    cat("Latitude range:", lat_r[1], "-", lat_r[2], "\n")
+    cat("Longitude range:", lon_r[1], "-", lon_r[2], "deg\n")
+    cat("Latitude range:", lat_r[1], "-", lat_r[2], "deg\n")
   }
 
   if ("Depth" %in% names(hh)) {
@@ -499,7 +499,9 @@ print.datras_raw <- function(x, ...) {
   if (length(sa_cols) > 0) {
     v <- hh[[sa_cols[1]]]
     r <- signif(range(v, na.rm = TRUE), 3)
-    cat("Swept area: ", r[1], " - ", r[2], "\n", sep = "")
+    sa_unit <- attr(x, "swept_area_unit")
+    if (is.null(sa_unit)) sa_unit <- "km^2"
+    cat("Swept area: ", r[1], " - ", r[2], " ", sa_unit, "\n", sep = "")
   }
 
   hn_cols <- grep("^HaulN$|^HaulN\\.", names(hh), value = TRUE, perl = TRUE)
