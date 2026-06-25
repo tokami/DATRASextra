@@ -29,11 +29,16 @@
 ##' @param width Character string specifying which spread column to use as trawl
 ##'   width. Must be either `"WingSpread"` (default) or `"DoorSpread"`. Only
 ##'   used when `method = "simple"`; ignored for `method = "fishglob"`.
+##' @param verbose Logical. If `TRUE` (default) and `method = "simple"`, print a
+##'   summary of swept-area missingness and imputation by survey and gear.
 ##'
 ##' @details
 ##' If `method = "simple"`, swept area is calculated using a simple rule-based
 ##' approach that applies basic plausibility filters, gear-specific median
-##' imputations, and a direct distance-times-width calculation.
+##' imputations, and a direct distance-times-width calculation. A per-haul
+##' logical column `SweptArea_imputed` is added to `HH`, and a survey-by-gear
+##' summary of missingness and imputation is attached as
+##' `attr(x, "swept_area_summary")` (and printed when `verbose = TRUE`).
 ##'
 ##' If `method = "fishglob"`, swept area is calculated using
 ##' [add_swept_area_fishglob()], which follows the FishGlob workflow based on
@@ -63,7 +68,8 @@ add_swept_area <- function(x,
                            min_dist = 0,
                            max_dist_dev = 0.2,
                            impute_missing = FALSE,
-                           width = "WingSpread") {
+                           width = "WingSpread",
+                           verbose = TRUE) {
 
   .check_class_datras(x)
 
@@ -74,7 +80,8 @@ add_swept_area <- function(x,
                                min_dist = min_dist,
                                max_dist_dev = max_dist_dev,
                                impute_missing = impute_missing,
-                               width = width)
+                               width = width,
+                               verbose = verbose)
 
   } else if (method == "fishglob") {
 
@@ -115,6 +122,8 @@ add_swept_area <- function(x,
 ##'   `"DoorSpread"` for surveys that record door spread but not wing spread.
 ##'   Note that the fixed beam-trawl widths and the gear-specific plausibility
 ##'   bounds are only applied when `width = "WingSpread"`.
+##' @param verbose Logical. If `TRUE` (default), print a summary of swept-area
+##'   missingness and imputation by survey and gear.
 ##'
 ##' @details
 ##' Swept area is calculated in \eqn{m^2} as:
@@ -123,11 +132,11 @@ add_swept_area <- function(x,
 ##' }
 ##' where \eqn{Spread} is taken from the column selected by `width`.
 ##'
-##' A second estimate, `SweptArea.median`, is also returned. This uses a
+##' A second estimate, `SweptArea_median`, is also returned. This uses a
 ##' gear-specific median spread rather than the haul-specific recorded or
 ##' imputed spread:
 ##' \deqn{
-##'   SweptArea.median = Spread.median \times Distance
+##'   SweptArea_median = Spread_median \times Distance
 ##' }
 ##'
 ##' The function applies the following steps:
@@ -144,11 +153,17 @@ add_swept_area <- function(x,
 ##'   speed.
 ##' }
 ##'
-##' @return A `datras_raw` object with two additional swept-area fields:
+##' @return A `datras_raw` object with the following fields added to `HH`:
 ##' \itemize{
 ##'   \item `SweptArea`: swept area based on haul-specific spread,
-##'   \item `SweptArea.median`: swept area based on gear-specific median spread.
+##'   \item `SweptArea_median`: swept area based on gear-specific median spread,
+##'   \item `SweptArea_imputed`: logical flag, `TRUE` when the spread and/or
+##'   towing distance used for that haul was imputed.
 ##' }
+##' A survey-by-gear summary is attached as `attr(x, "swept_area_summary")`,
+##' with columns `survey`, `gear`, `n_records`, `n_NA` (hauls whose `SweptArea`
+##' is still `NA` after imputation, e.g. gears that cannot be imputed),
+##' `prop_NA`, `n_imputed`, and `prop_imputed`.
 ##'
 ##' @seealso [add_swept_area()], [add_swept_area_fishglob()]
 ##'
@@ -158,7 +173,8 @@ add_swept_area_simple <- function(x,
                                   min_dist = 0,
                                   max_dist_dev = 0.2,
                                   impute_missing = FALSE,
-                                  width = "WingSpread") {
+                                  width = "WingSpread",
+                                  verbose = TRUE) {
 
   .check_class_datras(x)
 
@@ -197,6 +213,9 @@ add_swept_area_simple <- function(x,
     x$BeamWidth[ !is.na(x$GearEx) & x$GearEx=="DB" ] <- x$BeamWidth[ !is.na(x$GearEx) & x$GearEx=="DB" ]*2
   }
 
+  ## Track which spread values are missing before imputation
+  miss_w <- is.na(x[["HH"]][[width]])
+
   ## Impute missing spread values (median within gear)
   x2 <- x[["HH"]]
   if (sum(!is.na(x2[[width]])) > 0) {
@@ -212,6 +231,9 @@ add_swept_area_simple <- function(x,
          "please check x[['HH']]$", width, ".")
   }
 
+  ## Spread values that were missing and have now been imputed
+  imp_w <- miss_w & !is.na(x[["HH"]][[width]])
+
   ## Gear-level median spread (more robust against recording errors)
   spread_med <- paste0(width, ".median")
   x[["HH"]][[spread_med]] <- x[["HH"]][[width]]
@@ -219,6 +241,9 @@ add_swept_area_simple <- function(x,
     sel <- which(x$Gear == wtab$Gear[i])
     x[["HH"]][[spread_med]][ sel ] <- wtab[[width]][i]
   }
+
+  ## Track which distances are missing before imputation
+  miss_d <- is.na(x[["HH"]]$Distance)
 
   ## Impute missing distances
   if (any(is.na(x$Distance))) {
@@ -244,8 +269,59 @@ add_swept_area_simple <- function(x,
     x$Distance[ noDist ] <- (x$HaulDur[noDist] / 60 * 1852 * x$GroundSpeed[noDist])
   }
 
+  ## Distances that were missing and have now been imputed
+  imp_d <- miss_d & !is.na(x[["HH"]]$Distance)
+
   x$SweptArea <- x[["HH"]][[width]] * x$Distance
-  x$SweptArea.median <- x[["HH"]][[spread_med]] * x$Distance
+  x$SweptArea_median <- x[["HH"]][[spread_med]] * x$Distance
+
+  ## Per-haul flags: swept-area imputed, and still missing after imputation
+  sa_imputed <- imp_w | imp_d
+  sa_na      <- is.na(x[["HH"]]$SweptArea)
+  x[["HH"]]$SweptArea_imputed <- sa_imputed
+
+  ## Summary of remaining missingness and imputation by survey and gear
+  sa_summary <- .swept_area_summary(x[["HH"]], sa_na, sa_imputed)
+  attr(x, "swept_area_summary") <- sa_summary
+  if (isTRUE(verbose)) {
+    cat("Swept-area missingness and imputation by survey and gear:\n")
+    print(sa_summary, row.names = FALSE)
+  }
 
   return(x)
+}
+
+
+## Internal functions ------------------------------------------------------------
+
+## Build a survey x gear summary of swept-area missingness and imputation.
+## `na` flags hauls whose swept area is still NA after imputation; `imputed`
+## flags hauls whose spread and/or distance was imputed.
+.swept_area_summary <- function(hh, na, imputed) {
+
+  survey <- if ("Survey" %in% names(hh)) as.character(hh$Survey) else NA_character_
+  gear   <- if ("Gear"   %in% names(hh)) as.character(hh$Gear)   else NA_character_
+  survey[is.na(survey)] <- "<NA>"
+  gear[is.na(gear)]     <- "<NA>"
+
+  df <- data.frame(
+    survey    = survey,
+    gear      = gear,
+    n_records = 1L,
+    n_NA      = as.integer(na),
+    n_imputed = as.integer(imputed),
+    stringsAsFactors = FALSE
+  )
+
+  agg <- aggregate(cbind(n_records, n_NA, n_imputed) ~ survey + gear,
+                   data = df, FUN = sum)
+
+  agg$prop_NA      <- round(agg$n_NA / agg$n_records, 3)
+  agg$prop_imputed <- round(agg$n_imputed / agg$n_records, 3)
+
+  agg <- agg[, c("survey", "gear", "n_records",
+                 "n_NA", "prop_NA", "n_imputed", "prop_imputed")]
+  agg <- agg[order(agg$survey, agg$gear), ]
+  rownames(agg) <- NULL
+  agg
 }

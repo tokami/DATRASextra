@@ -31,6 +31,10 @@ the detailed entries below.
 * `add_swept_area_simple()` is no longer exported. Use `add_swept_area()` (with
   default `method = "simple"`) instead.
 
+* `add_swept_area()` output column `SweptArea.median` renamed to
+  `SweptArea_median`, for consistency with the underscore naming convention used
+  elsewhere (e.g. `SweptArea_imputed`).
+
 ## Breaking changes
 
 * `check_lengths()` and `check_weights()` now return the input `datras_raw`
@@ -68,6 +72,13 @@ the detailed entries below.
 * `mgcv` and `icesDatras` are no longer hard dependencies. Both have been
   removed from `Imports`; `mgcv` is now listed under `Suggests`. The DATRAS
   API calls previously handled by `icesDatras` are now made directly in base R.
+
+* `add_swept_area()` (simple method) now reports swept-area missingness and
+  imputation. It adds a per-haul logical column `SweptArea_imputed` to `HH`,
+  attaches a survey-by-gear summary as `attr(x, "swept_area_summary")`, and
+  prints it unless `verbose = FALSE`. The summary reports `n_NA` / `prop_NA`,
+  the hauls whose swept area is still `NA` after imputation (e.g. gears that
+  cannot be imputed), alongside `n_imputed` / `prop_imputed`.
 
 * Added the article *Matching EMODnet seabed habitats to hauls*, showing how to
   download EUSeaMap polygons from the EMODnet Seabed Habitats WFS and attach a
