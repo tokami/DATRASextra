@@ -56,6 +56,20 @@ testthat::test_that("Species matches testthat::expected Aphia_ID", {
 
 
 
+testthat::test_that("as_long_format add_vars appends to defaults", {
+  out <- as_long_format(dab, add_vars = "Depth")
+  testthat::expect_true("Depth" %in% names(out))
+  testthat::expect_true("Survey" %in% names(out))
+})
+
+testthat::test_that("as_long_format remove_vars drops from defaults", {
+  out <- as_long_format(dab, remove_vars = c("Ship", "Country"))
+  testthat::expect_false("Ship" %in% names(out))
+  testthat::expect_false("Country" %in% names(out))
+  testthat::expect_true("Survey" %in% names(out))
+})
+
+
 ## as_wide_format -------------------------------------------
 
 testthat::test_that("as_wide_format returns a data frame", {
@@ -86,6 +100,20 @@ testthat::test_that("as_wide_format warns for missing variables", {
 })
 
 
+
+
+testthat::test_that("as_wide_format add_vars appends to vars_hh defaults", {
+  out <- as_wide_format(dab, add_vars = "Depth")
+  testthat::expect_true("Depth" %in% names(out))
+  testthat::expect_true("Survey" %in% names(out))
+})
+
+testthat::test_that("as_wide_format remove_vars drops from vars_hh defaults", {
+  out <- as_wide_format(dab, remove_vars = c("Ship", "Country"))
+  testthat::expect_false("Ship" %in% names(out))
+  testthat::expect_false("Country" %in% names(out))
+  testthat::expect_true("Survey" %in% names(out))
+})
 
 
 ## as_table -------------------------------------------------

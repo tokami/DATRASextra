@@ -4,10 +4,33 @@
 \alias{as_table}
 \title{Format a \code{datras_raw} object as a table}
 \usage{
-as_table(x, type = "long", ...)
+as_table(
+  x,
+  vars = c("Survey", "Gear", "Country", "Ship", "Year", "Quarter", "Month", "Day", "lon",
+    "lat", "timeOfYear", "abstime", "DayNight", "TimeShotHour", "HaulDur"),
+  add_vars = NULL,
+  remove_vars = NULL,
+  type = "long",
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{datras_raw} object.}
+
+\item{vars}{Character vector of variable names to include in the output.
+Variables found in \code{HH} are taken directly from \code{HH}. Variables not found
+in \code{HH} but present in \code{HL} are joined by \code{haul.id}. Defaults to a set of
+common haul-level variables: \code{Survey}, \code{Gear}, \code{Country}, \code{Ship}, \code{Year},
+\code{Quarter}, \code{Month}, \code{Day}, \code{lon}, \code{lat}, \code{timeOfYear}, \code{abstime},
+\code{DayNight}, \code{TimeShotHour}, \code{HaulDur}.}
+
+\item{add_vars}{Character vector of additional variable names to append to
+\code{vars}. Applied after \code{remove_vars}. Use this to extend the default set
+without having to specify it in full (e.g. \code{add_vars = "Depth"}).}
+
+\item{remove_vars}{Character vector of variable names to drop from \code{vars}.
+Applied before \code{add_vars}. Use this to trim the default set without having
+to specify it in full (e.g. \code{remove_vars = c("Ship", "Country")}).}
 
 \item{type}{Character string specifying the output format. Must be either
 \code{"long"} (default) or \code{"wide"}.}
@@ -36,13 +59,46 @@ included automatically whenever they are present in \code{HH}. If \code{HaulN} o
 is expanded to one row per haul x length group and a \code{LengthGroup} column is
 added.
 }
+\section{Default columns}{
+
+Both \code{type = "long"} and \code{type = "wide"} start from the same set of
+15 haul-level columns taken from \code{HH}:
+\code{Survey}, \code{Gear}, \code{Country}, \code{Ship}, \code{Year}, \code{Quarter}, \code{Month}, \code{Day},
+\code{lon}, \code{lat}, \code{timeOfYear}, \code{abstime}, \code{DayNight}, \code{TimeShotHour},
+\code{HaulDur}.
+
+In addition, when \code{type = "long"}, the columns \code{HaulN}, \code{HaulWgt}, and
+\code{SweptArea} are always appended whenever they are present in \code{HH} (e.g.
+after calling \code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}}, \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}},
+or \code{\link[=add_swept_area]{add_swept_area()}}).
+
+To adjust the default set without replacing it entirely, pass \code{add_vars}
+and/or \code{remove_vars} via \code{...}:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{## Add a column to the defaults
+as_table(x, add_vars = "Depth")
+
+## Drop columns from the defaults
+as_table(x, remove_vars = c("Ship", "Country"))
+
+## Works the same for wide format
+as_table(x, type = "wide", add_vars = "Depth", remove_vars = "Day")
+}\if{html}{\out{</div>}}
+}
+
 \examples{
 \dontrun{
-## Long-format table
+## Long-format table with default columns
 tab_long <- as_table(x, type = "long")
 
 ## Wide-format table
 tab_wide <- as_table(x, type = "wide")
+
+## Add a column to the defaults
+tab <- as_table(x, add_vars = "Depth")
+
+## Remove columns from the defaults
+tab <- as_table(x, remove_vars = c("Ship", "Country"))
 }
 
 }

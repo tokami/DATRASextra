@@ -6,8 +6,10 @@
 \usage{
 as_wide_format(
   x,
-  vars_hh = c("Survey", "Gear", "Country", "Ship", "Year", "Quarter", "Month", "Day",
-    "lon", "lat", "timeOfYear", "abstime", "DayNight", "TimeShotHour", "HaulDur"),
+  vars = c("Survey", "Gear", "Country", "Ship", "Year", "Quarter", "Month", "Day", "lon",
+    "lat", "timeOfYear", "abstime", "DayNight", "TimeShotHour", "HaulDur"),
+  add_vars = NULL,
+  remove_vars = NULL,
   vars_hl = "Count",
   species_var = "Species",
   id_var = "haul.id",
@@ -20,7 +22,18 @@ as_wide_format(
 \arguments{
 \item{x}{A \code{datras_raw} object.}
 
-\item{vars_hh}{Character vector of haul-level variables to keep from \code{HH}.}
+\item{vars}{Character vector of haul-level variables to keep from \code{HH}.
+Defaults to the same 15 columns as \code{\link[=as_long_format]{as_long_format()}}: \code{Survey}, \code{Gear},
+\code{Country}, \code{Ship}, \code{Year}, \code{Quarter}, \code{Month}, \code{Day}, \code{lon}, \code{lat},
+\code{timeOfYear}, \code{abstime}, \code{DayNight}, \code{TimeShotHour}, \code{HaulDur}.}
+
+\item{add_vars}{Character vector of additional haul-level variable names to
+append to \code{vars}. Applied after \code{remove_vars}. Use this to extend the
+default set without specifying it in full (e.g. \code{add_vars = "Depth"}).}
+
+\item{remove_vars}{Character vector of haul-level variable names to drop
+from \code{vars}. Applied before \code{add_vars}. Use this to trim the default
+set without specifying it in full.}
 
 \item{vars_hl}{Character vector of variables from \code{HL} to spread wide across
 species. Defaults to \code{"Count"}.}
@@ -66,13 +79,19 @@ Numeric \code{HL} variables are summed within haul-species combinations before
 reshaping wide. Non-numeric variables are reduced by taking the first
 non-missing value.
 
-Variables requested in \code{vars_hh} or \code{vars_hl} that are not found in the
+Variables requested in \code{vars} or \code{vars_hl} that are not found in the
 relevant table are omitted and reported with a warning.
 }
 \examples{
 \dontrun{
 ## One row per haul, species-specific count columns
 tab <- as_wide_format(x)
+
+## Add a haul-level column to the defaults
+tab <- as_wide_format(x, add_vars = "Depth")
+
+## Remove columns from the defaults
+tab <- as_wide_format(x, remove_vars = c("Ship", "Country"))
 
 ## Add more HL variables
 tab <- as_wide_format(

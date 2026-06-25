@@ -10,6 +10,18 @@
 ##' [as_wide_format()].
 ##'
 ##' @param x A `datras_raw` object.
+##' @param vars Character vector of variable names to include in the output.
+##'   Variables found in `HH` are taken directly from `HH`. Variables not found
+##'   in `HH` but present in `HL` are joined by `haul.id`. Defaults to a set of
+##'   common haul-level variables: `Survey`, `Gear`, `Country`, `Ship`, `Year`,
+##'   `Quarter`, `Month`, `Day`, `lon`, `lat`, `timeOfYear`, `abstime`,
+##'   `DayNight`, `TimeShotHour`, `HaulDur`.
+##' @param add_vars Character vector of additional variable names to append to
+##'   `vars`. Applied after `remove_vars`. Use this to extend the default set
+##'   without having to specify it in full (e.g. `add_vars = "Depth"`).
+##' @param remove_vars Character vector of variable names to drop from `vars`.
+##'   Applied before `add_vars`. Use this to trim the default set without having
+##'   to specify it in full (e.g. `remove_vars = c("Ship", "Country")`).
 ##' @param type Character string specifying the output format. Must be either
 ##'   `"long"` (default) or `"wide"`.
 ##' @param ... Additional arguments passed to [as_long_format()] or
@@ -26,31 +38,72 @@
 ##' is expanded to one row per haul x length group and a `LengthGroup` column is
 ##' added.
 ##'
+##' @section Default columns:
+##' Both `type = "long"` and `type = "wide"` start from the same set of
+##' 15 haul-level columns taken from `HH`:
+##' `Survey`, `Gear`, `Country`, `Ship`, `Year`, `Quarter`, `Month`, `Day`,
+##' `lon`, `lat`, `timeOfYear`, `abstime`, `DayNight`, `TimeShotHour`,
+##' `HaulDur`.
+##'
+##' In addition, when `type = "long"`, the columns `HaulN`, `HaulWgt`, and
+##' `SweptArea` are always appended whenever they are present in `HH` (e.g.
+##' after calling [add_total_numbers_by_haul()], [add_total_weight_by_haul()],
+##' or [add_swept_area()]).
+##'
+##' To adjust the default set without replacing it entirely, pass `add_vars`
+##' and/or `remove_vars` via `...`:
+##'
+##' ```r
+##' ## Add a column to the defaults
+##' as_table(x, add_vars = "Depth")
+##'
+##' ## Drop columns from the defaults
+##' as_table(x, remove_vars = c("Ship", "Country"))
+##'
+##' ## Works the same for wide format
+##' as_table(x, type = "wide", add_vars = "Depth", remove_vars = "Day")
+##' ```
+##'
 ##' @return A data frame in the requested format.
 ##'
 ##' @seealso [as_long_format()], [as_wide_format()]
 ##'
 ##' @examples
 ##' \dontrun{
-##' ## Long-format table
+##' ## Long-format table with default columns
 ##' tab_long <- as_table(x, type = "long")
 ##'
 ##' ## Wide-format table
 ##' tab_wide <- as_table(x, type = "wide")
+##'
+##' ## Add a column to the defaults
+##' tab <- as_table(x, add_vars = "Depth")
+##'
+##' ## Remove columns from the defaults
+##' tab <- as_table(x, remove_vars = c("Ship", "Country"))
 ##' }
 ##'
 ##' @export
-as_table <- function(x, type = "long", ...) {
+as_table <- function(x,
+                     vars = c("Survey", "Gear", "Country", "Ship", "Year",
+                              "Quarter", "Month", "Day", "lon", "lat",
+                              "timeOfYear", "abstime", "DayNight",
+                              "TimeShotHour", "HaulDur"),
+                     add_vars = NULL,
+                     remove_vars = NULL,
+                     type = "long", ...) {
 
   .check_class_datras(x)
 
   if (type == "long") {
 
-    x <- as_long_format(x, ...)
+    x <- as_long_format(x, vars = vars, add_vars = add_vars,
+                        remove_vars = remove_vars, ...)
 
   } else if (type == "wide") {
 
-    x <- as_wide_format(x, ...)
+    x <- as_wide_format(x, vars = vars, add_vars = add_vars,
+                        remove_vars = remove_vars, ...)
 
   } else {
     stop("Unknown type. Use 'long' or 'wide'.")
@@ -75,7 +128,15 @@ as_table <- function(x, type = "long", ...) {
 ##' @param vars Character vector of variable names to include in the output.
 ##'   Variables found in `HH` are taken directly from `HH`. Variables not found
 ##'   in `HH` but present in `HL` are joined by `haul.id`. Defaults to a set of
-##'   common haul-level variables.
+##'   common haul-level variables: `Survey`, `Gear`, `Country`, `Ship`, `Year`,
+##'   `Quarter`, `Month`, `Day`, `lon`, `lat`, `timeOfYear`, `abstime`,
+##'   `DayNight`, `TimeShotHour`, `HaulDur`.
+##' @param add_vars Character vector of additional variable names to append to
+##'   `vars`. Applied after `remove_vars`. Use this to extend the default set
+##'   without having to specify it in full (e.g. `add_vars = "Depth"`).
+##' @param remove_vars Character vector of variable names to drop from `vars`.
+##'   Applied before `add_vars`. Use this to trim the default set without having
+##'   to specify it in full (e.g. `remove_vars = c("Ship", "Country")`).
 ##'
 ##' @details
 ##' The function starts from the `HH` table and adds requested variables from
@@ -108,15 +169,20 @@ as_table <- function(x, type = "long", ...) {
 ##'
 ##' @examples
 ##' \dontrun{
-##' ## Haul-level long table
+##' ## Haul-level long table with default columns
 ##' tab <- as_long_format(x)
 ##'
-##' ## Haul-species table
-##' tab <- as_long_format(x, vars = c("Survey", "Year", "haul.id",
-##'                                   "Species", "Valid_Aphia"))
+##' ## Add a column to the defaults
+##' tab <- as_long_format(x, add_vars = "Depth")
 ##'
-##' ## Request variables from both HH and HL
-##' tab <- as_long_format(x, vars = c("Survey", "Gear", "Year",
+##' ## Remove columns from the defaults
+##' tab <- as_long_format(x, remove_vars = c("Ship", "Country"))
+##'
+##' ## Combine both
+##' tab <- as_long_format(x, add_vars = "Species", remove_vars = "Day")
+##'
+##' ## Haul-species table (full override of vars)
+##' tab <- as_long_format(x, vars = c("Survey", "Year", "haul.id",
 ##'                                   "Species", "Valid_Aphia"))
 ##'
 ##' ## HaulN/HaulWgt/SweptArea included automatically when present
@@ -127,19 +193,22 @@ as_table <- function(x, type = "long", ...) {
 ##' }
 ##'
 ##' @export
-as_long_format <- function(
-    x,
-    vars = c("Survey", "Gear", "Country", "Ship", "Year",
-             "Quarter", "Month", "Day", "lon", "lat",
-             "timeOfYear", "abstime", "DayNight",
-             "TimeShotHour", "HaulDur")
-) {
+as_long_format <- function(x,
+                           vars = c("Survey", "Gear", "Country", "Ship", "Year",
+                                    "Quarter", "Month", "Day", "lon", "lat",
+                                    "timeOfYear", "abstime", "DayNight",
+                                    "TimeShotHour", "HaulDur"),
+                           add_vars = NULL,
+                           remove_vars = NULL) {
 
   .check_class_datras(x)
 
   if (is.null(x[["HH"]]) || nrow(x[["HH"]]) == 0) {
     stop("x[['HH']] is missing or empty.")
   }
+
+  if (!is.null(remove_vars)) vars <- setdiff(vars, remove_vars)
+  if (!is.null(add_vars))    vars <- unique(c(vars, add_vars))
 
   hh <- x[["HH"]]
   hl <- x[["HL"]]
@@ -268,7 +337,16 @@ as_long_format <- function(
 ##' expanded into columns of the form `"<variable><sep><species>"`.
 ##'
 ##' @param x A `datras_raw` object.
-##' @param vars_hh Character vector of haul-level variables to keep from `HH`.
+##' @param vars Character vector of haul-level variables to keep from `HH`.
+##'   Defaults to the same 15 columns as [as_long_format()]: `Survey`, `Gear`,
+##'   `Country`, `Ship`, `Year`, `Quarter`, `Month`, `Day`, `lon`, `lat`,
+##'   `timeOfYear`, `abstime`, `DayNight`, `TimeShotHour`, `HaulDur`.
+##' @param add_vars Character vector of additional haul-level variable names to
+##'   append to `vars`. Applied after `remove_vars`. Use this to extend the
+##'   default set without specifying it in full (e.g. `add_vars = "Depth"`).
+##' @param remove_vars Character vector of haul-level variable names to drop
+##'   from `vars`. Applied before `add_vars`. Use this to trim the default
+##'   set without specifying it in full.
 ##' @param vars_hl Character vector of variables from `HL` to spread wide across
 ##'   species. Defaults to `"Count"`.
 ##' @param species_var Character scalar giving the `HL` variable that defines the
@@ -295,7 +373,7 @@ as_long_format <- function(
 ##' reshaping wide. Non-numeric variables are reduced by taking the first
 ##' non-missing value.
 ##'
-##' Variables requested in `vars_hh` or `vars_hl` that are not found in the
+##' Variables requested in `vars` or `vars_hl` that are not found in the
 ##' relevant table are omitted and reported with a warning.
 ##'
 ##' @return A data frame in wide format with one row per haul.
@@ -306,6 +384,12 @@ as_long_format <- function(
 ##' \dontrun{
 ##' ## One row per haul, species-specific count columns
 ##' tab <- as_wide_format(x)
+##'
+##' ## Add a haul-level column to the defaults
+##' tab <- as_wide_format(x, add_vars = "Depth")
+##'
+##' ## Remove columns from the defaults
+##' tab <- as_wide_format(x, remove_vars = c("Ship", "Country"))
 ##'
 ##' ## Add more HL variables
 ##' tab <- as_wide_format(
@@ -322,20 +406,20 @@ as_long_format <- function(
 ##' }
 ##'
 ##' @export
-as_wide_format <- function(
-    x,
-    vars_hh = c("Survey", "Gear", "Country", "Ship", "Year",
-                "Quarter", "Month", "Day", "lon", "lat",
-                "timeOfYear", "abstime", "DayNight",
-                "TimeShotHour", "HaulDur"),
-    vars_hl = "Count",
-    species_var = "Species",
-    id_var = "haul.id",
-    sep = "__",
-    fill = 0,
-    sanitize_names = TRUE,
-    verbose = TRUE
-) {
+as_wide_format <- function(x,
+                           vars = c("Survey", "Gear", "Country", "Ship", "Year",
+                                    "Quarter", "Month", "Day", "lon", "lat",
+                                    "timeOfYear", "abstime", "DayNight",
+                                    "TimeShotHour", "HaulDur"),
+                           add_vars = NULL,
+                           remove_vars = NULL,
+                           vars_hl = "Count",
+                           species_var = "Species",
+                           id_var = "haul.id",
+                           sep = "__",
+                           fill = 0,
+                           sanitize_names = TRUE,
+                           verbose = TRUE) {
 
   .check_class_datras(x)
 
@@ -346,8 +430,11 @@ as_wide_format <- function(
     stop("x[['HH']] is missing or empty.")
   }
 
+  if (!is.null(remove_vars)) vars <- setdiff(vars, remove_vars)
+  if (!is.null(add_vars))    vars <- unique(c(vars, add_vars))
+
   ## Keep HH as base, one row per haul
-  hh_keep <- unique(c(id_var, vars_hh))
+  hh_keep <- unique(c(id_var, vars))
   missing_hh <- setdiff(hh_keep, names(hh))
   hh_keep <- intersect(hh_keep, names(hh))
 

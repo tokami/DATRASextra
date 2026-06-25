@@ -7,7 +7,9 @@
 as_long_format(
   x,
   vars = c("Survey", "Gear", "Country", "Ship", "Year", "Quarter", "Month", "Day", "lon",
-    "lat", "timeOfYear", "abstime", "DayNight", "TimeShotHour", "HaulDur")
+    "lat", "timeOfYear", "abstime", "DayNight", "TimeShotHour", "HaulDur"),
+  add_vars = NULL,
+  remove_vars = NULL
 )
 }
 \arguments{
@@ -16,7 +18,17 @@ as_long_format(
 \item{vars}{Character vector of variable names to include in the output.
 Variables found in \code{HH} are taken directly from \code{HH}. Variables not found
 in \code{HH} but present in \code{HL} are joined by \code{haul.id}. Defaults to a set of
-common haul-level variables.}
+common haul-level variables: \code{Survey}, \code{Gear}, \code{Country}, \code{Ship}, \code{Year},
+\code{Quarter}, \code{Month}, \code{Day}, \code{lon}, \code{lat}, \code{timeOfYear}, \code{abstime},
+\code{DayNight}, \code{TimeShotHour}, \code{HaulDur}.}
+
+\item{add_vars}{Character vector of additional variable names to append to
+\code{vars}. Applied after \code{remove_vars}. Use this to extend the default set
+without having to specify it in full (e.g. \code{add_vars = "Depth"}).}
+
+\item{remove_vars}{Character vector of variable names to drop from \code{vars}.
+Applied before \code{add_vars}. Use this to trim the default set without having
+to specify it in full (e.g. \code{remove_vars = c("Ship", "Country")}).}
 }
 \value{
 A data frame in long format.
@@ -57,15 +69,20 @@ is automatically expanded to one row per haul × length group. A
 }
 \examples{
 \dontrun{
-## Haul-level long table
+## Haul-level long table with default columns
 tab <- as_long_format(x)
 
-## Haul-species table
-tab <- as_long_format(x, vars = c("Survey", "Year", "haul.id",
-                                  "Species", "Valid_Aphia"))
+## Add a column to the defaults
+tab <- as_long_format(x, add_vars = "Depth")
 
-## Request variables from both HH and HL
-tab <- as_long_format(x, vars = c("Survey", "Gear", "Year",
+## Remove columns from the defaults
+tab <- as_long_format(x, remove_vars = c("Ship", "Country"))
+
+## Combine both
+tab <- as_long_format(x, add_vars = "Species", remove_vars = "Day")
+
+## Haul-species table (full override of vars)
+tab <- as_long_format(x, vars = c("Survey", "Year", "haul.id",
                                   "Species", "Valid_Aphia"))
 
 ## HaulN/HaulWgt/SweptArea included automatically when present
