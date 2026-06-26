@@ -442,13 +442,51 @@ print.datras_raw <- function(x, ...) {
   cat("===========================\n")
   cat("Number of hauls:", nrow(hh), "\n")
 
-  n_sp <- if ("Valid_Aphia" %in% names(hl))
-    length(unique(hl$Valid_Aphia[!is.na(hl$Valid_Aphia)]))
-  else if ("Species" %in% names(hl)) nlevels(hl$Species) else 0L
-  cat("Number of species:", n_sp, "\n")
+  ## species
+  sp_tbl <- if (!is.null(hl) && nrow(hl) > 0) hl
+             else if (!is.null(ca) && nrow(ca) > 0) ca
+             else NULL
+  if (!is.null(sp_tbl) && "Valid_Aphia" %in% names(sp_tbl)) {
+    aphias <- unique(sp_tbl$Valid_Aphia[!is.na(sp_tbl$Valid_Aphia)])
+    n_sp <- length(aphias)
+  } else if (!is.null(sp_tbl) && "Species" %in% names(sp_tbl)) {
+    n_sp <- nlevels(sp_tbl$Species)
+    aphias <- character(0)
+  } else {
+    n_sp <- 0L
+    aphias <- character(0)
+  }
+  if (n_sp == 1 && length(aphias) == 1 && !is.null(sp_tbl) && "Species" %in% names(sp_tbl)) {
+    sp_name <- as.character(sp_tbl$Species[!is.na(sp_tbl$Species)][1])
+    cat(sprintf("Number of species: %d [%s (%s)]\n",
+                n_sp, sp_name, aphias[1]))
+  } else {
+    cat("Number of species:", n_sp, "\n")
+  }
 
-  if ("Country" %in% names(hh))
-    cat("Number of countries:", length(unique(as.character(hh$Country))), "\n")
+  ## gears
+  if ("Gear" %in% names(hh)) {
+    gears <- levels(factor(as.character(hh$Gear)))
+    n_gears <- length(gears)
+    if (n_gears < 5) {
+      cat(sprintf("Number of gears: %d [%s]\n",
+                  n_gears, paste(gears, collapse = ", ")))
+    } else {
+      cat("Number of gears:", n_gears, "\n")
+    }
+  }
+
+  ## country
+  if ("Country" %in% names(hh)) {
+    cntrs <- levels(factor(as.character(hh$Country)))
+    n_cntrs <- length(cntrs)
+    if (n_cntrs < 5) {
+      cat(sprintf("Number of countries: %d [%s]\n",
+                  n_cntrs, paste(cntrs, collapse = ", ")))
+    } else {
+      cat("Number of countries:", n_cntrs, "\n")
+    }
+  }
 
   yrs <- sort(unique(as.integer(as.character(hh$Year))))
   cat("Years:", yrs[1], "-", yrs[length(yrs)], "\n")
@@ -456,7 +494,18 @@ print.datras_raw <- function(x, ...) {
   if (length(missing_yrs) > 0)
     cat("Missing years:", paste(missing_yrs, collapse = ", "), "\n")
   cat("Quarters:", paste(sort(unique(as.integer(as.character(hh$Quarter)))), collapse = " "), "\n")
-  cat("Gears:", paste(levels(factor(as.character(hh$Gear))), collapse = " "), "\n")
+
+  if ("lon" %in% names(hh) && "lat" %in% names(hh)) {
+    lon_r <- round(range(hh$lon, na.rm = TRUE), 2)
+    lat_r <- round(range(hh$lat, na.rm = TRUE), 2)
+    cat("Longitude range:", lon_r[1], "-", lon_r[2], "deg\n")
+    cat("Latitude range:", lat_r[1], "-", lat_r[2], "deg\n")
+  }
+
+  if ("Depth" %in% names(hh)) {
+    d_r <- range(hh$Depth, na.rm = TRUE)
+    cat("Depth range:", d_r[1], "-", d_r[2], "m\n")
+  }
 
   numNa <- sum(is.na(hh$HaulDur))
   cat(paste("Haul duration:", paste(unique(range(hh$HaulDur, na.rm = TRUE)), collapse = " - "), "minutes"))
@@ -471,6 +520,15 @@ print.datras_raw <- function(x, ...) {
     cat("\n")
   }
 
+  sa_cols <- grep("SweptArea", names(hh), value = TRUE, ignore.case = TRUE)
+  if (length(sa_cols) > 0) {
+    v <- hh[[sa_cols[1]]]
+    r <- signif(range(v, na.rm = TRUE), 3)
+    sa_unit <- attr(x, "swept_area_unit")
+    if (is.null(sa_unit)) sa_unit <- "km^2"
+    cat("Swept area: ", r[1], " - ", r[2], " ", sa_unit, "\n", sep = "")
+  }
+
   if (!is.null(hl) && nrow(hl) > 0 && "haul.id" %in% names(hl) && "haul.id" %in% names(hh)) {
     count_col <- if ("Count" %in% names(hl)) "Count" else if ("HLNoAtLngt" %in% names(hl)) "HLNoAtLngt" else NULL
     pos_ids <- if (!is.null(count_col)) {
@@ -481,27 +539,6 @@ print.datras_raw <- function(x, ...) {
     n_nonzero <- sum(hh$haul.id %in% pos_ids)
     cat(sprintf("Hauls with catch: %d (zero catch: %d)\n",
                 n_nonzero, nrow(hh) - n_nonzero))
-  }
-
-  if ("lon" %in% names(hh) && "lat" %in% names(hh)) {
-    lon_r <- round(range(hh$lon, na.rm = TRUE), 2)
-    lat_r <- round(range(hh$lat, na.rm = TRUE), 2)
-    cat("Longitude range:", lon_r[1], "-", lon_r[2], "deg\n")
-    cat("Latitude range:", lat_r[1], "-", lat_r[2], "deg\n")
-  }
-
-  if ("Depth" %in% names(hh)) {
-    d_r <- range(hh$Depth, na.rm = TRUE)
-    cat("Depth range:", d_r[1], "-", d_r[2], "m\n")
-  }
-
-  sa_cols <- grep("SweptArea", names(hh), value = TRUE, ignore.case = TRUE)
-  if (length(sa_cols) > 0) {
-    v <- hh[[sa_cols[1]]]
-    r <- signif(range(v, na.rm = TRUE), 3)
-    sa_unit <- attr(x, "swept_area_unit")
-    if (is.null(sa_unit)) sa_unit <- "km^2"
-    cat("Swept area: ", r[1], " - ", r[2], " ", sa_unit, "\n", sep = "")
   }
 
   hn_cols <- grep("^HaulN$|^HaulN\\.", names(hh), value = TRUE, perl = TRUE)

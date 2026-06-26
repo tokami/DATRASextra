@@ -11,6 +11,8 @@ read_datras(
   recursive = TRUE,
   min_file_size = 10000,
   prune = FALSE,
+  drop_hl = FALSE,
+  drop_ca = FALSE,
   verbose = TRUE,
   ncores = 1
 )
@@ -41,6 +43,14 @@ may cause errors when being read. Defaults to \code{1e4}.}
 \item{prune}{Logical. If \code{TRUE}, only core columns are retained using
 \code{\link[=prune_datras]{prune_datras()}} before combining files. This can substantially reduce
 memory use when reading many files.}
+
+\item{drop_hl}{Logical. If \code{TRUE}, the \code{HL} (length-frequency) table is set
+to \code{NULL} after reading each file. Use this when only haul metadata is
+needed, as \code{HL} is often the largest table. Can be combined with \code{prune}.}
+
+\item{drop_ca}{Logical. If \code{TRUE}, the \code{CA} (biological sampling) table is
+set to \code{NULL} after reading each file. Can be combined with \code{prune} and
+\code{drop_hl}.}
 
 \item{verbose}{Logical. If \code{TRUE} (default), progress messages are printed.}
 
@@ -73,9 +83,30 @@ small files are often suspicious and may represent failed downloads or
 damaged archives.
 
 Reading a large number of DATRAS files into R can require substantial memory,
-especially when combining multiple surveys or many years. Setting
-\code{prune = TRUE} can reduce memory use by removing non-essential
-columns before merging files.
+especially when combining multiple surveys or many years. The following
+options can substantially reduce peak memory use:
+
+\itemize{
+\item \code{drop_hl = TRUE} drops the length-frequency table (\code{HL}) immediately
+after each file is read. \code{HL} is typically the largest table and can be
+omitted when only haul-level metadata is needed.
+\item \code{drop_ca = TRUE} drops the biological sampling table (\code{CA}) in the
+same way.
+\item \code{prune = TRUE} trims all three tables to a compact set of core
+columns. Can be combined with \code{drop_hl} / \code{drop_ca}.
+}
+
+When loading a very large database (many surveys, many years) in a single
+call still exceeds available memory even after using the options above,
+consider loading in parts and combining with \code{\link[=c]{c()}}:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{x1 <- read_datras("~/data/DATRAS", surveys = c("NS-IBTS", "BITS"),
+                  drop_ca = TRUE)
+x2 <- read_datras("~/data/DATRAS", surveys = c("EVHOE", "IBTS-MED"),
+                  drop_ca = TRUE)
+x_all <- c(x1, x2)
+rm(x1, x2)
+}\if{html}{\out{</div>}}
 
 If you need a different set of retained columns than provided by
 \code{\link[=prune_datras]{prune_datras()}}, you may wish to apply your own pruning function after
@@ -102,6 +133,12 @@ x <- read_datras(path = files)
 
 ## Read and prune to reduce memory use
 x <- read_datras("data/NS-IBTS", prune = TRUE)
+
+## Load only haul metadata (HH) -- drop HL and CA to minimise memory use
+x <- read_datras("data/DATRAS", drop_hl = TRUE, drop_ca = TRUE)
+
+## Prune columns and also drop the CA table
+x <- read_datras("data/NS-IBTS", prune = TRUE, drop_ca = TRUE)
 }
 
 }

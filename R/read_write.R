@@ -37,6 +37,12 @@
 ##' @param prune Logical. If `TRUE`, only core columns are retained using
 ##'   [prune_datras()] before combining files. This can substantially reduce
 ##'   memory use when reading many files.
+##' @param drop_hl Logical. If `TRUE`, the `HL` (length-frequency) table is set
+##'   to `NULL` after reading each file. Use this when only haul metadata is
+##'   needed, as `HL` is often the largest table. Can be combined with `prune`.
+##' @param drop_ca Logical. If `TRUE`, the `CA` (biological sampling) table is
+##'   set to `NULL` after reading each file. Can be combined with `prune` and
+##'   `drop_hl`.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
 ##' @param ncores Integer. Number of parallel workers to use when reading zip
 ##'   files. Defaults to `1` (sequential). Values greater than 1 use
@@ -48,9 +54,31 @@
 ##' damaged archives.
 ##'
 ##' Reading a large number of DATRAS files into R can require substantial memory,
-##' especially when combining multiple surveys or many years. Setting
-##' `prune = TRUE` can reduce memory use by removing non-essential
-##' columns before merging files.
+##' especially when combining multiple surveys or many years. The following
+##' options can substantially reduce peak memory use:
+##'
+##' \itemize{
+##'   \item `drop_hl = TRUE` drops the length-frequency table (`HL`) immediately
+##'     after each file is read. `HL` is typically the largest table and can be
+##'     omitted when only haul-level metadata is needed.
+##'   \item `drop_ca = TRUE` drops the biological sampling table (`CA`) in the
+##'     same way.
+##'   \item `prune = TRUE` trims all three tables to a compact set of core
+##'     columns. Can be combined with `drop_hl` / `drop_ca`.
+##' }
+##'
+##' When loading a very large database (many surveys, many years) in a single
+##' call still exceeds available memory even after using the options above,
+##' consider loading in parts and combining with [c()]:
+##'
+##' ```r
+##' x1 <- read_datras("~/data/DATRAS", surveys = c("NS-IBTS", "BITS"),
+##'                   drop_ca = TRUE)
+##' x2 <- read_datras("~/data/DATRAS", surveys = c("EVHOE", "IBTS-MED"),
+##'                   drop_ca = TRUE)
+##' x_all <- c(x1, x2)
+##' rm(x1, x2)
+##' ```
 ##'
 ##' If you need a different set of retained columns than provided by
 ##' [prune_datras()], you may wish to apply your own pruning function after
@@ -82,6 +110,12 @@
 ##'
 ##' ## Read and prune to reduce memory use
 ##' x <- read_datras("data/NS-IBTS", prune = TRUE)
+##'
+##' ## Load only haul metadata (HH) -- drop HL and CA to minimise memory use
+##' x <- read_datras("data/DATRAS", drop_hl = TRUE, drop_ca = TRUE)
+##'
+##' ## Prune columns and also drop the CA table
+##' x <- read_datras("data/NS-IBTS", prune = TRUE, drop_ca = TRUE)
 ##' }
 ##'
 ##' @importFrom DATRAS downloadExchange
@@ -94,6 +128,8 @@ read_datras <- function(path,
                         recursive = TRUE,
                         min_file_size = 1e4,
                         prune = FALSE,
+                        drop_hl = FALSE,
+                        drop_ca = FALSE,
                         verbose = TRUE,
                         ncores = 1) {
 
@@ -130,6 +166,22 @@ read_datras <- function(path,
 
       np <- length(path)
       use_parallel <- ncores > 1
+      if (verbose && np > 100) {
+        message(
+          "You are about to load ", np, " zip files. This may take several ",
+          "minutes and could crash the R session if memory is insufficient.\n",
+          "Consider reducing memory use with one or more of:\n",
+          "  prune = TRUE     -- drop non-essential columns in all tables\n",
+          "  drop_ca = TRUE   -- omit the CA (biological sampling) table\n",
+          "  drop_hl = TRUE   -- omit the HL (length-frequency) table\n",
+          "  surveys = ...    -- load only the surveys you need\n",
+          "  years   = ...    -- load only the years you need\n",
+          "  ncores  = 1     -- if using ncores > 1, try ncores = 1: the\n",
+          "                     sequential path combines files incrementally\n",
+          "                     and uses less peak memory than parallel loading\n",
+          "You can also load the data in parts and combine them with c()."
+        )
+      }
       if (verbose) {
         if (use_parallel) {
           message("Reading in ", np, " zip files using ", ncores, " cores...")
@@ -140,6 +192,9 @@ read_datras <- function(path,
 
       ## Each call gets its own temp subdirectory so parallel workers do not
       ## overwrite each other's extracted CSV (all zips contain "DATRAS.csv").
+      ## Pruning and table dropping happen inside the reader so that every
+      ## worker (sequential or parallel) returns an already-reduced object,
+      ## minimising the data held in memory or serialised back from workers.
       .reader <- function(p) {
         tryCatch({
           td <- tempfile(pattern = "datras_")
@@ -149,6 +204,9 @@ read_datras <- function(path,
           invisible(capture.output(
             res <- DATRAS::readICES(csvfile, strict = FALSE)
           ))
+          if (isTRUE(prune))   res <- prune_datras(res)
+          if (isTRUE(drop_hl)) res["HL"] <- list(NULL)
+          if (isTRUE(drop_ca)) res["CA"] <- list(NULL)
           res
         }, error = function(err) NULL)
       }
@@ -157,41 +215,59 @@ read_datras <- function(path,
         if (.Platform$OS.type == "windows") {
           cl <- parallel::makeCluster(ncores, type = "PSOCK")
           on.exit(parallel::stopCluster(cl), add = TRUE)
+          ## Load DATRASextra on each worker so prune_datras() is available.
+          parallel::clusterEvalQ(cl, library(DATRASextra))
           parallel::clusterExport(cl, ".reader", envir = environment())
           tmp <- parallel::parLapply(cl, path, .reader)
         } else {
           tmp <- parallel::mclapply(path, .reader, mc.cores = ncores)
         }
+
+        idx <- which(sapply(tmp, is.null))
+        if (length(idx) > 0) {
+          if (verbose) message("One or more loaded files are NULL. Removing these. Check your files!")
+          tmp <- tmp[-idx]
+        }
+
+        tmp <- .remove_duplicated_haul_id(tmp, verbose = verbose)
+
+        if (verbose) message("Combining files")
+        surv0 <- do.call(c.datras_raw, tmp)
+
       } else {
+
+        ## Incremental combine: reduce and merge one file at a time so that no
+        ## more than ~2 objects are live in memory simultaneously.
         if (verbose) pb <- txtProgressBar(min = 0, max = np, style = 3)
-        tmp <- vector("list", np)
+        seen_ids <- character(0)
+        surv0 <- NULL
         for (i in seq_len(np)) {
-          tmp[[i]] <- .reader(path[i])
-          if (is.null(tmp[[i]]) && verbose)
-            message(paste0("Error with: ", path[i]))
+          xi <- .reader(path[i])
+          if (is.null(xi)) {
+            if (verbose) message("\nError with: ", path[i])
+          } else {
+            new_ids <- as.character(xi[["HH"]][["haul.id"]])
+            dup <- new_ids[new_ids %in% seen_ids]
+            if (length(dup) > 0) {
+              if (verbose) {
+                survey_nm <- unique(xi[["HH"]][["Survey"]])[1]
+                message("\nDuplicated haul IDs (", survey_nm, ") removed: ",
+                        paste(dup, collapse = ", "),
+                        "\nPlease check your files!")
+              }
+              xi <- subset(xi, !haul.id %in% dup)
+            }
+            seen_ids <- c(seen_ids, setdiff(new_ids, dup))
+            xi <- .add_class_datras(xi)
+            surv0 <- if (is.null(surv0)) xi else c(surv0, xi)
+            rm(xi)
+          }
           if (verbose) setTxtProgressBar(pb, i)
         }
         if (verbose) close(pb)
+        if (is.null(surv0)) stop("No valid files could be read.")
+
       }
-
-      idx <- which(sapply(tmp,is.null))
-      if (length(idx) > 0) {
-        if (verbose) {
-          message("One or more loaded files are NULL. Removing these. Check your files!")
-        }
-        tmp <- tmp[-idx]
-      }
-
-      tmp <- .remove_duplicated_haul_id(tmp, verbose = verbose)
-
-      if (isTRUE(prune)) {
-        if(verbose) message("Pruning files")
-        tmp <- lapply(tmp, prune_datras)
-      }
-
-      if (isTRUE(verbose)) message("Combining files")
-
-      surv0 <- do.call(c.datras_raw, tmp)
 
     } else {
 
