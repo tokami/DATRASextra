@@ -1,4 +1,4 @@
-# DATRASextra 0.3.0
+# DATRASextra 0.4.0
 
 This release focuses on API consistency. Several arguments and function names
 have been renamed so that naming conventions are uniform across the package

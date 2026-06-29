@@ -1,19 +1,27 @@
-
-year <- sub("-.*", "", meta$Date)
-note <- sprintf("R package version %s", meta$Version)
+year <- 2026
+vers <- meta$Version
+if (is.null(vers)) vers <- "0.4.0"
 
 bibentry(
-  bibtype = "Manual",
-  title = "DATRASextra: Extra functions for DTU Aqua's DATRAS R package",
-  author = c(
-      person(c("Tobias", "K."), "Mildenberger"),
-      person("Federico", "Maioli"),
-      person(c("Casper", "W."), "Berg")
+  bibtype  = "Article",
+  key      = "DATRASextra",
+  title    = "DATRASextra: An R package for streamlined workflows with ICES DATRAS bottom-trawl survey data",
+  author   = c(
+    person(c("Tobias", "K."), "Mildenberger"),
+    person("Federico", "Maioli"),
+    person(c("Casper", "W."), "Berg")
   ),
-  year = "2025",
-  note = "In preparation",
-  url = "https://github.com/tokami/DATRASextra",
-  package = "DATRASextra"
+  journal  = "SoftwareX",
+  year     = year,
+  note     = "Manuscript submitted for publication",
+  url      = "https://github.com/tokami/DATRASextra",
+  header   = "To cite DATRASextra in publications, please use:",
+  textVersion = paste0(
+    "Mildenberger, T. K., Maioli, F., & Berg, C. W. (", year, "). ",
+    "DATRASextra: An R package for streamlined workflows with ICES DATRAS ",
+    "bottom-trawl survey data. SoftwareX. Manuscript submitted for publication. ",
+    "https://github.com/tokami/DATRASextra"
+  )
 )
 
 citFooter("As DATRASextra is continually evolving, you may want to view the development version at https://github.com/tokami/DATRASextra")
