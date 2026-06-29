@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,7 +26,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-news"><li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
-    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.3.0</a></li>
+    <li><a class="external-link dropdown-item" href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md">Version 0.4.0</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
   </ul></li>
@@ -51,10 +51,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.0" id="datrasextra-030">DATRASextra 0.3.0<a class="anchor" aria-label="anchor" href="#datrasextra-030"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.0" id="datrasextra-040">DATRASextra 0.4.0<a class="anchor" aria-label="anchor" href="#datrasextra-040"></a></h2>
 <p>This release focuses on API consistency. Several arguments and function names have been renamed so that naming conventions are uniform across the package (e.g. <code>verbose</code> instead of <code>warn_missing</code>, <code>legend</code> instead of <code>do_legend</code>, <code>write_datras</code> instead of <code>write_exchange</code>). Two new arguments have been added: <code>plus_group</code> in <code><a href="../reference/add_total_weight_by_haul.html">add_total_weight_by_haul()</a></code> and <code>lw_pars</code> in the weight functions for supplying custom length-weight parameters. The default bin width in <code><a href="../reference/add_numbers_at_length.html">add_numbers_at_length()</a></code> now matches the survey’s native recording resolution instead of always using 1 cm. All renaming changes are breaking; see the detailed entries below.</p>
 <div class="section level3">
-<h3 id="breaking-changes-api-consistency-0-3-0">Breaking changes (API consistency)<a class="anchor" aria-label="anchor" href="#breaking-changes-api-consistency-0-3-0"></a></h3>
+<h3 id="breaking-changes-api-consistency-0-4-0">Breaking changes (API consistency)<a class="anchor" aria-label="anchor" href="#breaking-changes-api-consistency-0-4-0"></a></h3>
 <ul><li><p><code><a href="../reference/prune_datras.html">prune_datras()</a></code>: arguments <code>remove_hl</code> and <code>remove_ca</code> renamed to <code>drop_hl</code> and <code>drop_ca</code> to match the verb used by <code><a href="../reference/drop_hl.html">drop_hl()</a></code> and <code><a href="../reference/drop_ca.html">drop_ca()</a></code>. Argument <code>warn_missing</code> renamed to <code>verbose</code> for consistency with all other functions.</p></li>
 <li><p><code><a href="../reference/plot_length_distribution.html">plot_length_distribution()</a></code> and <code><a href="../reference/plot_species_composition.html">plot_species_composition()</a></code>: argument <code>do_legend</code> renamed to <code>legend</code> for consistency with <code><a href="../reference/plot_datras_overview.html">plot_datras_overview()</a></code>, <code><a href="../reference/plot_stratified_index.html">plot_stratified_index()</a></code>, and <code><a href="../reference/plot_spatial_indicators.html">plot_spatial_indicators()</a></code>. <code>legend_ncol</code> default changed from <code>1L</code> to <code>1</code>.</p></li>
 <li><p><code><a href="../reference/get_aphia.html">get_aphia()</a></code>: first argument renamed from <code>x</code> to <code>species</code>.</p></li>
@@ -64,12 +64,12 @@
 <li><p><code><a href="../reference/add_swept_area.html">add_swept_area()</a></code> output column <code>SweptArea.median</code> renamed to <code>SweptArea_median</code>, for consistency with the underscore naming convention used elsewhere (e.g. <code>SweptArea_imputed</code>).</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-0-3-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-0"></a></h3>
+<h3 id="breaking-changes-0-4-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-4-0"></a></h3>
 <ul><li><p><code><a href="../reference/check_lengths.html">check_lengths()</a></code> and <code><a href="../reference/check_weights.html">check_weights()</a></code> now return the input <code>datras_raw</code> object invisibly (consistent with <code><a href="../reference/check_outliers.html">check_outliers()</a></code>), instead of a plain list. Results are attached as attributes: <code>attr(x, "length_check")</code> and <code>attr(x, "weight_check")</code>, respectively. Code that assigned the return value to a separate variable (e.g. <code>res &lt;- check_lengths(x)</code>) and then accessed <code>res$lPars</code> should be updated to <code>x &lt;- check_lengths(x)</code> and <code>attr(x, "length_check")$lPars</code>.</p></li>
 <li><p>The default for <code>impute_missing_depth</code> in <code><a href="../reference/clean_datras.html">clean_datras()</a></code> has changed from <code>TRUE</code> to <code>FALSE</code>. Enable explicitly with <code>impute_missing_depth = TRUE</code> if needed (requires the <code>mgcv</code> package).</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="minor-changes-0-3-0">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-3-0"></a></h3>
+<h3 id="minor-changes-0-4-0">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-0-4-0"></a></h3>
 <ul><li><p><code><a href="../reference/add_total_weight_by_haul.html">add_total_weight_by_haul()</a></code> gains a <code>plus_group</code> argument (default <code>FALSE</code>), passed through to <code><a href="../reference/add_weight_at_length.html">add_weight_at_length()</a></code>. Argument order changed: <code>per_minute</code> moved to the last position so shared filtering arguments (<code>max_length</code>, <code>max_weight</code>) align with <code><a href="../reference/add_weight_at_length.html">add_weight_at_length()</a></code>.</p></li>
 <li><p><code><a href="../reference/add_numbers_at_length.html">add_numbers_at_length()</a></code>: default for <code>by</code> changed from <code>1</code> to <code>get_accuracy_cm(x)</code>, consistent with <code><a href="../reference/check_lengths.html">check_lengths()</a></code> and <code><a href="../reference/add_total_numbers_by_haul.html">add_total_numbers_by_haul()</a></code>. Surveys recorded at 0.5 cm resolution now use 0.5 cm bins by default.</p></li>
 <li><p><code><a href="../reference/add_weight_at_length.html">add_weight_at_length()</a></code> and <code><a href="../reference/add_total_weight_by_haul.html">add_total_weight_by_haul()</a></code> gain a <code>lw_pars</code> argument for supplying custom length-weight parameters <code>a</code> and <code>b</code> directly, without modifying the internal <code>species_info</code> table. Accepts a named vector (<code>c(a = 0.01, b = 3.0)</code>), a named list, or a data frame with columns <code>a</code> and <code>b</code>. For multi-species objects, a data frame with a <code>Valid_Aphia</code> (or <code>aphia</code>) column can be used to supply per-species parameters; species not covered fall back to <code>lw_source</code>.</p></li>

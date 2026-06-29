@@ -16,15 +16,16 @@
 Source:
 [`inst/CITATION`](https://github.com/tokami/DATRASextra/blob/main/inst/CITATION)
 
-Mildenberger TK, Maioli F, Berg CW (2025). *DATRASextra: Extra functions
-for DTU Aqua's DATRAS R package*. In preparation,
-<https://github.com/tokami/DATRASextra>.
+Mildenberger, T. K., Maioli, F., & Berg, C. W. (2026). DATRASextra: An R
+package for streamlined workflows with ICES DATRAS bottom-trawl survey
+data. SoftwareX. Manuscript submitted for publication.
+https://github.com/tokami/DATRASextra
 
-    @Manual{,
-      title = {DATRASextra: Extra functions for DTU Aqua's DATRAS R package},
+    @Article{DATRASextra,
+      title = {DATRASextra: An R package for streamlined workflows with ICES DATRAS bottom-trawl survey data},
       author = {Tobias K. Mildenberger and Federico Maioli and Casper W. Berg},
-      year = {2025},
-      note = {In preparation},
+      journal = {SoftwareX},
+      year = {2026},
+      note = {Manuscript submitted for publication},
       url = {https://github.com/tokami/DATRASextra},
-      package = {DATRASextra},
     }

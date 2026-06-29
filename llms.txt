@@ -47,39 +47,40 @@ extra argument:
 remotes::install_github("tokami/DATRASextra", build_vignettes = TRUE)
 ```
 
-# Overview
-
-*DATRASextra* provides a set of powerful functions that guide you
-through a typical workflow with the ICES DATRAS database: from
-discovering available surveys, to downloading, cleaning and checking the
-data, and finally making quick plots of survey coverage and hauls. The
-table below summarises the main user-facing functions.
-
-| Function | Description |
-|----|----|
-| [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md) | List available surveys in the ICES DATRAS database. |
-| [`plot_datras_overview()`](https://tokami.github.io/DATRASextra/reference/plot_datras_overview.md) | Plot haul locations |
-| [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md) | Download the full or filtered subset of the DATRAS database. |
-| [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md) | Read DATRAS data into R. |
-| [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md) | Clean and harmonise DATRAS data. |
-| [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md) | Flag (and remove) hauls with invalid or extreme values. |
-| [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md) | Prune DATRAS data by removing or filtering problematic records. |
-| [`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md) | Calculate swept area per haul using gear-specific median values by gear type. |
-| [`check_lengths()`](https://tokami.github.io/DATRASextra/reference/check_lengths.md) | Check length information and identify suspicious length distributions. |
-| [`add_numbers_at_length()`](https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.md) | Calculate the numbers by specified length classes and add it to the HH data set. |
-| [`add_total_numbers_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_numbers_by_haul.md) | Calculate total numbers by haul and add it to the HH data set. |
-| [`check_weights()`](https://tokami.github.io/DATRASextra/reference/check_weights.md) | Check weight information and length–weight consistency. |
-| [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md) | Convert the numbers at length classes to weight at length classes and add it to the HH data set. |
-| [`add_total_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul.md) | Calculate total weight by haul and add it to the HH data set. |
-
 # Getting started
 
-The best introduction to *DATRASextra* is the tutorial vignette, which
-walks through a complete workflow: downloading data from the DATRAS
-database, performing recommended quality checks and data processing
-steps, and transforming survey observations into standardised numbers
-and biomass by species, haul, and length class for use in abundance and
-biomass index calculations.
+A minimal end-to-end example using the bundled `dab` dataset (common
+dab, *Limanda limanda*, from the North Sea IBTS survey, 2020-2023). No
+download is required:
+
+``` r
+
+library(DATRASextra)
+
+## Bundled example survey data
+data("dab")
+
+## Clean and harmonise the data, then derive total numbers per haul
+dab <- clean_datras(dab)
+dab <- add_total_numbers_by_haul(dab)
+
+## Map haul-level catch rates in space
+plot_datras_overview(dab, metric = "mean", value_var = "HaulN", transform = "sqrt")
+```
+
+![Map of common dab catch rates across North Sea IBTS haul
+locations](reference/figures/quickstart-map-1.png)
+
+The same workflow scales from this small example to the full database:
+replace `data("dab")` with a call to
+[`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+to pull data directly from ICES DATRAS.
+
+See the tutorial vignette for a complete walk-through: downloading data
+from the DATRAS database, performing recommended quality checks and data
+processing steps, and transforming survey observations into standardised
+numbers and biomass by species, haul, and length class for use in
+abundance and biomass index calculations.
 
 The tutorial is available on the package website under **Articles →
 Getting started**:
@@ -92,6 +93,62 @@ open the tutorial directly from R:
 
 vignette("datrasextra-tutorial")
 ```
+
+# Overview
+
+*DATRASextra* provides a set of functions that guide you through a
+typical workflow with the ICES DATRAS database: from discovering
+available surveys, to downloading, cleaning, checking, and enriching the
+data, to deriving standardised survey products and making quick plots.
+The main user-facing functions are grouped below by workflow stage.
+
+**Discover & access**
+
+| Function | Description |
+|----|----|
+| [`list_surveys()`](https://tokami.github.io/DATRASextra/reference/list_surveys.md) | List available surveys in the ICES DATRAS database. |
+| [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md) | Download the full or a filtered subset of the DATRAS database. |
+| [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md) / [`write_datras()`](https://tokami.github.io/DATRASextra/reference/write_datras.md) | Read and write DATRAS exchange files. |
+
+**Clean & prune**
+
+| Function | Description |
+|----|----|
+| [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md) | Clean and harmonise DATRAS data. |
+| [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md) | Reduce the data by removing or filtering records. |
+
+**Derive haul-level variables**
+
+| Function | Description |
+|----|----|
+| [`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md) | Calculate swept area per haul by gear type. |
+| [`add_numbers_at_length()`](https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.md) | Numbers at custom length classes. |
+| [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md) | Weight at custom length classes. |
+| [`add_total_numbers_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_numbers_by_haul.md) | Total numbers per haul. |
+| [`add_total_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul.md) | Total weight (biomass) per haul. |
+| [`add_species_info()`](https://tokami.github.io/DATRASextra/reference/add_species_info.md) | Add taxonomic and species reference information. |
+
+**Quality control**
+
+| Function | Description |
+|----|----|
+| [`check_lengths()`](https://tokami.github.io/DATRASextra/reference/check_lengths.md) | Check length information and flag suspicious distributions. |
+| [`check_weights()`](https://tokami.github.io/DATRASextra/reference/check_weights.md) | Check weight information and length-weight consistency. |
+| [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md) | Flag (and optionally remove) hauls with extreme values. |
+
+**Analyse, visualise & export**
+
+| Function | Description |
+|----|----|
+| [`calc_stratified_index()`](https://tokami.github.io/DATRASextra/reference/calc_stratified_index.md) | Design-based stratified mean abundance/biomass indices. |
+| [`calc_spatial_indicators()`](https://tokami.github.io/DATRASextra/reference/calc_spatial_indicators.md) | Spatial distribution indicators. |
+| [`plot_datras_overview()`](https://tokami.github.io/DATRASextra/reference/plot_datras_overview.md) | Map haul locations and quantities (catch rates, species richness, etc.). |
+| [`plot_stratified_index()`](https://tokami.github.io/DATRASextra/reference/plot_stratified_index.md) | Plot stratified survey indices. |
+| [`as_table()`](https://tokami.github.io/DATRASextra/reference/as_table.md) | Standardised long-format haul x species x length records. |
+| [`as_fishglob()`](https://tokami.github.io/DATRASextra/reference/as_fishglob.md) | FishGlob-compatible output format. |
+
+For the complete list of exported functions, see the package reference
+index: <https://tokami.github.io/DATRASextra/reference/>
 
 # Getting help
 
@@ -136,6 +193,12 @@ package.
 An alternative R package for accessing DATRAS data is *icesDatras*,
 which is maintained by ICES and provides a direct interface to the
 DATRAS database.
+
+For other regions, the
+[*surveyjoin*](https://github.com/DFO-NOAA-Pacific/surveyjoin) package
+provides standardised access to multiple scientific bottom-trawl surveys
+in the Northeast Pacific, with similar goals of harmonising survey data
+across sources.
 
 # Funding
 

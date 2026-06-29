@@ -14,6 +14,8 @@ read_datras(
   recursive = TRUE,
   min_file_size = 10000,
   prune = FALSE,
+  drop_hl = FALSE,
+  drop_ca = FALSE,
   verbose = TRUE,
   ncores = 1
 )
@@ -59,6 +61,18 @@ read_datras(
   before combining files. This can substantially reduce memory use when
   reading many files.
 
+- drop_hl:
+
+  Logical. If `TRUE`, the `HL` (length-frequency) table is set to `NULL`
+  after reading each file. Use this when only haul metadata is needed,
+  as `HL` is often the largest table. Can be combined with `prune`.
+
+- drop_ca:
+
+  Logical. If `TRUE`, the `CA` (biological sampling) table is set to
+  `NULL` after reading each file. Can be combined with `prune` and
+  `drop_hl`.
+
 - verbose:
 
   Logical. If `TRUE` (default), progress messages are printed.
@@ -94,9 +108,30 @@ very small files are often suspicious and may represent failed downloads
 or damaged archives.
 
 Reading a large number of DATRAS files into R can require substantial
-memory, especially when combining multiple surveys or many years.
-Setting `prune = TRUE` can reduce memory use by removing non-essential
-columns before merging files.
+memory, especially when combining multiple surveys or many years. The
+following options can substantially reduce peak memory use:
+
+- `drop_hl = TRUE` drops the length-frequency table (`HL`) immediately
+  after each file is read. `HL` is typically the largest table and can
+  be omitted when only haul-level metadata is needed.
+
+- `drop_ca = TRUE` drops the biological sampling table (`CA`) in the
+  same way.
+
+- `prune = TRUE` trims all three tables to a compact set of core
+  columns. Can be combined with `drop_hl` / `drop_ca`.
+
+When loading a very large database (many surveys, many years) in a
+single call still exceeds available memory even after using the options
+above, consider loading in parts and combining with
+[`c()`](https://rdrr.io/r/base/c.html):
+
+    x1 <- read_datras("~/data/DATRAS", surveys = c("NS-IBTS", "BITS"),
+                      drop_ca = TRUE)
+    x2 <- read_datras("~/data/DATRAS", surveys = c("EVHOE", "IBTS-MED"),
+                      drop_ca = TRUE)
+    x_all <- c(x1, x2)
+    rm(x1, x2)
 
 If you need a different set of retained columns than provided by
 [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md),
@@ -131,5 +166,11 @@ x <- read_datras(path = files)
 
 ## Read and prune to reduce memory use
 x <- read_datras("data/NS-IBTS", prune = TRUE)
+
+## Load only haul metadata (HH) -- drop HL and CA to minimise memory use
+x <- read_datras("data/DATRAS", drop_hl = TRUE, drop_ca = TRUE)
+
+## Prune columns and also drop the CA table
+x <- read_datras("data/NS-IBTS", prune = TRUE, drop_ca = TRUE)
 } # }
 ```

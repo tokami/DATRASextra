@@ -49,17 +49,17 @@ dab
 #> Object of class 'datras_raw'
 #> ===========================
 #> Number of hauls: 2651 
-#> Number of species: 1 
+#> Number of species: 1 [Limanda limanda (127139)]
+#> Number of gears: 1 [GOV]
 #> Number of countries: 8 
 #> Years: 2020 - 2023 
 #> Quarters: 1 3 
-#> Gears: GOV 
-#> Haul duration: 5 - 34 minutes
-#> Valid hauls: 2651
-#> Hauls with catch: 2255 (zero catch: 396)
 #> Longitude range: -3.96 - 12.61 deg
 #> Latitude range: 49.57 - 61.75 deg
 #> Depth range: 14 - 257 m
+#> Haul duration: 5 - 34 minutes
+#> Valid hauls: 2651
+#> Hauls with catch: 2255 (zero catch: 396)
 ```
 
 ## Indexing
@@ -108,17 +108,17 @@ q1
 #> Object of class 'datras_raw'
 #> ===========================
 #> Number of hauls: 1268 
-#> Number of species: 1 
+#> Number of species: 1 [Limanda limanda (127139)]
+#> Number of gears: 1 [GOV]
 #> Number of countries: 7 
 #> Years: 2020 - 2023 
 #> Quarters: 1 
-#> Gears: GOV 
-#> Haul duration: 15 - 34 minutes
-#> Valid hauls: 1268
-#> Hauls with catch: 1133 (zero catch: 135)
 #> Longitude range: -3.96 - 12.61 deg
 #> Latitude range: 49.57 - 61.74 deg
 #> Depth range: 14 - 257 m
+#> Haul duration: 15 - 34 minutes
+#> Valid hauls: 1268
+#> Hauls with catch: 1133 (zero catch: 135)
 ```
 
 ## Coded variables (ICES vocabulary)
