@@ -30,8 +30,17 @@
 #'   `"horizontal"` places all panels in a single row; `"vertical"` places them
 #'   in a single column. For matrix-valued `value_var` (length-class panels
 #'   crossed with groups), `"horizontal"` transposes the row/column assignment.
-#' @param value_var Optional haul-level variable to map to values.
+#' @param value_var Optional haul-level variable to map to values. When
+#'   supplied and `metric` is left at its default (`"presence"`), `metric` is
+#'   automatically switched to `"sum"` so points/cells are coloured by the
+#'   value; pass an explicit `metric` to override.
 #' @param offset_var Optional haul-level denominator variable.
+#' @param group_var Optional name of a categorical `HH` column used to colour
+#'   hauls (points mode) or cells (grid mode) by category, with a discrete
+#'   palette and a category legend. Acts as an additional grouping dimension
+#'   alongside the `by_*` toggles, and can be combined with `multi_panels` to
+#'   facet by category. Use this (rather than `value_var`) for non-numeric
+#'   variables such as habitat or substrate class.
 #' @param positive_only Logical. If `TRUE`, only hauls with a strictly positive
 #'   value are plotted. When `value_var` is supplied, positivity is determined
 #'   from that variable (after dividing by `offset_var` if supplied). When
@@ -98,6 +107,7 @@ plot_datras_overview <- function(x = NULL,
                                  panel_layout = c("auto", "horizontal", "vertical"),
                                  value_var = NULL,
                                  offset_var = NULL,
+                                 group_var = NULL,
                                  positive_only = FALSE,
                                  transform = c("none", "log1p", "sqrt", "log10"),
                                  fixed_scale = TRUE,
@@ -122,8 +132,13 @@ plot_datras_overview <- function(x = NULL,
                                  years = NULL,
                                  asp = "auto",
                                  add = FALSE) {
+  metric_missing <- missing(metric)
   mode <- match.arg(mode)
   metric <- match.arg(metric)
+  ## When a value variable is supplied but `metric` is left at its default
+  ## ("presence"), auto-switch to value-based colouring - passing `value_var`
+  ## almost always means "colour by that value". An explicit `metric` is honoured.
+  if (metric_missing && !is.null(value_var)) metric <- "sum"
   spatial_basis <- match.arg(spatial_basis)
   transform <- match.arg(transform)
   legend_mode <- match.arg(legend_mode)
@@ -208,9 +223,11 @@ plot_datras_overview <- function(x = NULL,
       }
     }
   }
-  hh$.group <- .build_group(hh, by_survey, by_gear, by_quarter, by_year, by_daynight)
-  has_grouping <- any(c(by_survey, by_gear, by_quarter, by_year, by_daynight))
-  active_dims <- .group_dims_active(by_survey, by_gear, by_quarter, by_year, by_daynight)
+  if (!is.null(group_var) && (length(group_var) != 1 || !is.character(group_var)))
+    stop("`group_var` must be a single column name.", call. = FALSE)
+  hh$.group <- .build_group(hh, by_survey, by_gear, by_quarter, by_year, by_daynight, group_var = group_var)
+  has_grouping <- any(c(by_survey, by_gear, by_quarter, by_year, by_daynight)) || !is.null(group_var)
+  active_dims <- .group_dims_active(by_survey, by_gear, by_quarter, by_year, by_daynight, group_var = group_var)
 
   group_cols <- NULL
   if (has_grouping) {
@@ -548,9 +565,8 @@ plot_datras_overview <- function(x = NULL,
     } else {
       show_points_legend <- switch(
         legend_mode,
-        auto = (!isTRUE(multi_panels) && any(c(by_survey, by_gear, by_quarter, by_year, by_daynight)) &&
-                  is.null(value_var)),
-        global = (any(c(by_survey, by_gear, by_quarter, by_year, by_daynight)) && is.null(value_var)),
+        auto = (!isTRUE(multi_panels) && has_grouping && is.null(value_var)),
+        global = (has_grouping && is.null(value_var)),
         per_panel = FALSE,
         FALSE
       )
@@ -1296,13 +1312,14 @@ plot_species_composition <- function(x,
 }
 
 
-.build_group <- function(hh, by_survey, by_gear, by_quarter, by_year, by_daynight) {
+.build_group <- function(hh, by_survey, by_gear, by_quarter, by_year, by_daynight, group_var = NULL) {
   dims <- character(0)
   if (isTRUE(by_survey)) dims <- c(dims, "Survey")
   if (isTRUE(by_gear)) dims <- c(dims, "Gear")
   if (isTRUE(by_quarter)) dims <- c(dims, "Quarter")
   if (isTRUE(by_year)) dims <- c(dims, "Year")
   if (isTRUE(by_daynight)) dims <- c(dims, "DayNight")
+  if (!is.null(group_var)) dims <- c(dims, group_var)
 
   if (length(dims) == 0) return(factor(rep("All", nrow(hh))))
   miss <- setdiff(dims, names(hh))
@@ -1318,13 +1335,14 @@ plot_species_composition <- function(x,
 }
 
 
-.group_dims_active <- function(by_survey, by_gear, by_quarter, by_year, by_daynight) {
+.group_dims_active <- function(by_survey, by_gear, by_quarter, by_year, by_daynight, group_var = NULL) {
   dims <- character(0)
   if (isTRUE(by_survey)) dims <- c(dims, "Survey")
   if (isTRUE(by_gear)) dims <- c(dims, "Gear")
   if (isTRUE(by_quarter)) dims <- c(dims, "Quarter")
   if (isTRUE(by_year)) dims <- c(dims, "Year")
   if (isTRUE(by_daynight)) dims <- c(dims, "DayNight")
+  if (!is.null(group_var)) dims <- c(dims, group_var)
   dims
 }
 
@@ -1342,11 +1360,13 @@ plot_species_composition <- function(x,
       DayNight = "Day/Night"
     )
     ttl <- unname(title_map[dim])
-    if (is.na(ttl) || !nzchar(ttl)) ttl <- "Groups"
+    if (is.na(ttl) || !nzchar(ttl)) ttl <- dim
     return(list(title = ttl, labels = labels))
   }
 
-  labels <- gsub("(Survey|Gear|Quarter|Year|DayNight)=", "", group_levels)
+  strip_dims <- if (length(active_dims)) active_dims else c("Survey", "Gear", "Quarter", "Year", "DayNight")
+  pat <- paste0("(", paste(strip_dims, collapse = "|"), ")=")
+  labels <- gsub(pat, "", group_levels)
   list(title = "Groups", labels = labels)
 }
 

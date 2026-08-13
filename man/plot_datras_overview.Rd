@@ -20,6 +20,7 @@ plot_datras_overview(
   panel_layout = c("auto", "horizontal", "vertical"),
   value_var = NULL,
   offset_var = NULL,
+  group_var = NULL,
   positive_only = FALSE,
   transform = c("none", "log1p", "sqrt", "log10"),
   fixed_scale = TRUE,
@@ -79,9 +80,19 @@ toggles used to define panel groups.}
 in a single column. For matrix-valued \code{value_var} (length-class panels
 crossed with groups), \code{"horizontal"} transposes the row/column assignment.}
 
-\item{value_var}{Optional haul-level variable to map to values.}
+\item{value_var}{Optional haul-level variable to map to values. When
+supplied and \code{metric} is left at its default (\code{"presence"}), \code{metric} is
+automatically switched to \code{"sum"} so points/cells are coloured by the
+value; pass an explicit \code{metric} to override.}
 
 \item{offset_var}{Optional haul-level denominator variable.}
+
+\item{group_var}{Optional name of a categorical \code{HH} column used to colour
+hauls (points mode) or cells (grid mode) by category, with a discrete
+palette and a category legend. Acts as an additional grouping dimension
+alongside the \verb{by_*} toggles, and can be combined with \code{multi_panels} to
+facet by category. Use this (rather than \code{value_var}) for non-numeric
+variables such as habitat or substrate class.}
 
 \item{positive_only}{Logical. If \code{TRUE}, only hauls with a strictly positive
 value are plotted. When \code{value_var} is supplied, positivity is determined
