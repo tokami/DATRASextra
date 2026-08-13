@@ -464,6 +464,18 @@ print.datras_raw <- function(x, ...) {
     cat("Number of species:", n_sp, "\n")
   }
 
+  ## surveys
+  if ("Survey" %in% names(hh)) {
+    survs <- levels(factor(as.character(hh$Survey)))
+    n_survs <- length(survs)
+    if (n_survs < 5) {
+      cat(sprintf("Number of surveys: %d [%s]\n",
+                  n_survs, paste(survs, collapse = ", ")))
+    } else {
+      cat("Number of surveys:", n_survs, "\n")
+    }
+  }
+
   ## gears
   if ("Gear" %in% names(hh)) {
     gears <- levels(factor(as.character(hh$Gear)))
