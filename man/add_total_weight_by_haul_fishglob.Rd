@@ -53,6 +53,8 @@ missing length-weight parameters.
 }
 \examples{
 \dontrun{
+## as add_total_weight_by_haul(), but with the FishGlob length-weight
+## parameters (aFG, bFG) from the internal species table
 x <- add_total_weight_by_haul_fishglob(x)
 }
 

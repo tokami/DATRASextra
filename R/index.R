@@ -243,6 +243,7 @@ calc_stratified_index <- function(x,
 
   out <- do.call(rbind, lapply(all_rows, as.data.frame, stringsAsFactors = FALSE))
   rownames(out) <- NULL
+  out <- .restore_numeric_cols(out, by)
   out
 }
 
@@ -282,6 +283,12 @@ calc_stratified_index <- function(x,
 #' @param xlim,ylim Optional axis limits.
 #' @param main Optional plot title.
 #' @param xlab,ylab Axis labels. Auto-generated from `cpue_method` if `NULL`.
+#' @param y_scale Rescaling of the y axis to keep the tick labels short.
+#'   `"auto"` (default) divides the index by a power of 1000 chosen from the
+#'   data and appends the factor to `ylab`; `"none"` plots the raw values; a
+#'   number gives the exponent directly (e.g. `6` to plot in millions).
+#'   Ignored when `log_scale = TRUE`. `ylim`, if supplied, is given in the
+#'   original units.
 #'
 #' @return Invisibly returns `x`.
 #' @seealso [calc_stratified_index()]
@@ -311,7 +318,8 @@ plot_stratified_index <- function(x,
                                   ylim = NULL,
                                   main = NULL,
                                   xlab = NULL,
-                                  ylab = NULL) {
+                                  ylab = NULL,
+                                  y_scale = "auto") {
   if (!is.data.frame(x))
     stop("`x` must be a data frame returned by `calc_stratified_index()`.", call. = FALSE)
   req <- c("group", "cpue_method", "index", "ci_lower", "ci_upper")
@@ -349,7 +357,7 @@ plot_stratified_index <- function(x,
 
   ## --- colours ---------------------------------------------------------------
   if (is.null(col)) {
-    col <- .colours_datrasextra_discrete(max(n_groups, 2L))
+    col <- .colours_datrasextra_discrete(n_groups)
   }
   col <- rep_len(col, n_groups)
   names(col) <- group_levels
@@ -365,6 +373,28 @@ plot_stratified_index <- function(x,
   }
   n_panels <- length(panel_levels)
 
+  ## --- y-axis scaling --------------------------------------------------------
+  ## Stratified indices routinely run into the billions, and the resulting tick
+  ## labels are wide enough to run into the axis label. Dividing by a power of
+  ## 1000 and stating the factor in the axis label keeps both readable.
+  y_pow <- if (isTRUE(log_scale) || identical(y_scale, "none")) {
+    0L
+  } else if (identical(y_scale, "auto")) {
+    .auto_scale_exponent(c(x$index, x$ci_lower, x$ci_upper))
+  } else if (is.numeric(y_scale) && length(y_scale) == 1L && is.finite(y_scale)) {
+    as.integer(y_scale)
+  } else {
+    stop("`y_scale` must be \"auto\", \"none\", or a single number.", call. = FALSE)
+  }
+
+  if (y_pow != 0L) {
+    fac <- 10^y_pow
+    x$index <- x$index / fac
+    x$ci_lower <- x$ci_lower / fac
+    x$ci_upper <- x$ci_upper / fac
+    if (!is.null(ylim)) ylim <- ylim / fac
+  }
+
   ## --- axis labels -----------------------------------------------------------
   if (is.null(xlab)) xlab <- x_var
   if (is.null(ylab)) {
@@ -375,6 +405,7 @@ plot_stratified_index <- function(x,
     )
     ylab <- paste0("Index (", cpue_str, ")")
   }
+  if (y_pow != 0L) ylab <- bquote(.(ylab) ~ "[" * 10^.(y_pow) * "]")
 
   ## --- shared y range (across all panels and groups) -------------------------
   shared_ylim <- ylim

@@ -55,6 +55,8 @@
 ##'
 ##' @examples
 ##' \dontrun{
+##' ## as clean_datras(), but with the FishGlob haul and species filters,
+##' ## survey renaming, and removal of incomplete bycatch recording
 ##' x_clean <- clean_fishglob(x)
 ##' }
 ##'
@@ -127,6 +129,8 @@ clean_fishglob <- function(x) {
 ##'
 ##' @examples
 ##' \dontrun{
+##' ## as prune_datras(), but with the fixed column set of the FishGlob
+##' ## workflow; the CA table is dropped entirely
 ##' x_small <- prune_fishglob(x)
 ##' }
 ##'
@@ -216,6 +220,8 @@ prune_fishglob <- function(x) {
 ##'
 ##' @examples
 ##' \dontrun{
+##' ## as add_swept_area(), but using the FishGlob spread models, which
+##' ## impute missing WingSpread, DoorSpread and Distance
 ##' x <- add_swept_area_fishglob(x)
 ##' }
 ##'
@@ -472,6 +478,8 @@ add_swept_area_fishglob <- function(x) {
 ##'
 ##' @examples
 ##' \dontrun{
+##' ## as add_total_weight_by_haul(), but with the FishGlob length-weight
+##' ## parameters (aFG, bFG) from the internal species table
 ##' x <- add_total_weight_by_haul_fishglob(x)
 ##' }
 ##'
@@ -575,6 +583,7 @@ add_total_weight_by_haul_fishglob <- function(x) {
 ##'
 ##' @examples
 ##' \dontrun{
+##' ## one row per haul and taxon, with FishGlob field names and CPUE
 ##' fg <- as_fishglob(x)
 ##' }
 ##'
@@ -612,7 +621,7 @@ as_fishglob <- function(x) {
   # remove rows without catch
   hh2 <- hh2[!is.na(hh2$wgt) & !is.na(hh2$num), ]
 
-  # convert haul duration minutes → hours
+  # convert haul duration minutes to hours
   hh2$haul_dur_h <- hh2$HaulDur / 60
 
   # cpue and cpua
@@ -662,7 +671,7 @@ as_fishglob <- function(x) {
   hh2$country[hh2$survey %in% c("SP-NORTH","SP-ARSA")] <- "spain"
   hh2$country[hh2$survey == "SP-PORC"] <- "multi-countries"
 
-  # convert haul duration minutes → hours (final field)
+  # convert haul duration minutes to hours (final field)
   hh2$haul_dur <- hh2$haul_dur_h
 
   # metadata

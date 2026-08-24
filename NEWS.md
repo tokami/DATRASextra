@@ -1,3 +1,43 @@
+# DATRASextra 0.4.1
+
+## Minor changes
+
+* The default discrete colour palette used by the plotting functions is now
+  sampled at equally spaced CIE L* lightness along the package colour ramp
+  instead of taking the first `n` anchor colours. Previously two or three
+  groups were assigned neighbouring colours from the light end of the ramp
+  (sand, algae green, sea green), which separated poorly on screen and in
+  print, and were close to indistinguishable under red-green colour vision
+  deficiency. The new selection spans the full ramp, keeps the light-to-dark
+  ordering, and increases the smallest pairwise colour distance for two groups
+  by roughly a factor of four. Plots that rely on the default palette will
+  change appearance; passing `col` explicitly reproduces any previous colours.
+
+* Plots with a single group now use the teal anchor as the default colour
+  rather than the palest anchor of the ramp, which had very little contrast
+  against a white background. This affects `plot_stratified_index()`,
+  `plot_spatial_indicators()` and `plot_length_distribution()`.
+
+* `calc_stratified_index()` and `calc_spatial_indicators()` now return
+  grouping columns with their natural type. `HH$Year` is stored as a factor,
+  which was carried into the result tables, so `Year` came back as a factor or
+  a character string. Columns whose values are all numeric are converted back
+  to numeric; genuinely categorical groups such as `Survey` are unchanged.
+
+* `plot_spatial_indicators()` draws connected lines and a continuous axis
+  whenever the x variable is numeric-valued, including years stored as a factor
+  or character. Previously such an x variable took the categorical branch,
+  which drew unconnected points and one tick mark per level. Non-numeric
+  x variables are still drawn as categories.
+
+* `plot_stratified_index()` gains `y_scale`. By default (`"auto"`) the index is
+  divided by a power of 1000 chosen from the data and the factor is stated in
+  the y-axis label, for example `Index (per km^2) [10^9]`, so that wide tick
+  labels no longer overlap the axis label. Use `y_scale = "none"` for the
+  previous behaviour or pass an exponent directly. `ylim` is still given in the
+  original units.
+
+
 # DATRASextra 0.4.0
 
 This release focuses on API consistency. Several arguments and function names

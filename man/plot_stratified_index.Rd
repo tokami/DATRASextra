@@ -22,7 +22,8 @@ plot_stratified_index(
   ylim = NULL,
   main = NULL,
   xlab = NULL,
-  ylab = NULL
+  ylab = NULL,
+  y_scale = "auto"
 )
 }
 \arguments{
@@ -67,6 +68,13 @@ layout -- useful when combining with other plots via \code{par(mfrow = ...)}.}
 \item{main}{Optional plot title.}
 
 \item{xlab, ylab}{Axis labels. Auto-generated from \code{cpue_method} if \code{NULL}.}
+
+\item{y_scale}{Rescaling of the y axis to keep the tick labels short.
+\code{"auto"} (default) divides the index by a power of 1000 chosen from the
+data and appends the factor to \code{ylab}; \code{"none"} plots the raw values; a
+number gives the exponent directly (e.g. \code{6} to plot in millions).
+Ignored when \code{log_scale = TRUE}. \code{ylim}, if supplied, is given in the
+original units.}
 }
 \value{
 Invisibly returns \code{x}.

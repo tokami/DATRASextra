@@ -63,6 +63,8 @@ P. Daniël van Denderen and is available from the FishGlob code repository.
 }
 \examples{
 \dontrun{
+## as add_swept_area(), but using the FishGlob spread models, which
+## impute missing WingSpread, DoorSpread and Distance
 x <- add_swept_area_fishglob(x)
 }
 

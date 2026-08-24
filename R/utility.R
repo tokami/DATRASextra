@@ -309,7 +309,7 @@ get_latin <- function(aphia, use_worrms = FALSE) {
 ##'
 ##' Creates an equally spaced grid covering the range of the supplied
 ##' coordinates.  Works with any coordinate system (UTM metres, UTM
-##' kilometres, lon/lat degrees, etc.) — \code{resolution} and the
+##' kilometres, lon/lat degrees, etc.) - \code{resolution} and the
 ##' coordinates must simply be in the same units.  The grid origin is
 ##' snapped down to the nearest \code{resolution} multiple below each
 ##' coordinate minimum.  Optionally repeats the spatial grid for every
@@ -372,6 +372,36 @@ make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL) {
   paste(rows, collapse = "\n")
 }
 
+## Restore the numeric type of grouping columns. `HH` stores several of them as
+## factors (`Year` in particular), and grouping carries that through to the
+## result tables, where it makes plotting functions treat a continuous variable
+## such as year as a category. Columns are only converted when every non-missing
+## value parses as a number, so genuinely categorical groups (Survey, Gear) are
+## left alone.
+.restore_numeric_cols <- function(df, cols) {
+  for (nm in intersect(cols, names(df))) {
+    v <- df[[nm]]
+    if (is.numeric(v)) next
+    num <- suppressWarnings(as.numeric(as.character(v)))
+    if (!any(is.na(num) & !is.na(v))) df[[nm]] <- num
+  }
+  df
+}
+
+
+## Exponent of the power of 1000 by which axis values should be divided so that
+## tick labels stay short. Returns 0 when the values are small enough to print
+## as they are.
+.auto_scale_exponent <- function(values, threshold = 1e4) {
+  v <- abs(values[is.finite(values)])
+  v <- v[v > 0]
+  if (length(v) == 0L) return(0L)
+  mx <- max(v)
+  if (mx < threshold) return(0L)
+  as.integer(min(3 * floor(log10(mx) / 3), 12))
+}
+
+
 .colours_datrasextra_continuous <- function(n, rev = FALSE) {
   if (length(n) != 1L || is.na(n) || !is.numeric(n) || n < 1) {
     stop("`n` must be a single positive integer.", call. = FALSE)
@@ -409,10 +439,39 @@ make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL) {
     ## "#6D597A"  # high
   )
 
-  if (isTRUE(rev)) base_cols <- rev(base_cols)
+  n_base <- length(base_cols)
 
-  if (n <= length(base_cols)) return(base_cols[seq_len(n)])
-  grDevices::colorRampPalette(base_cols)(n)
+  ## Categorical groups need colours that are separated in both hue and
+  ## lightness, also under red-green colour vision deficiency. Taking the first
+  ## `n` anchors returns neighbours on the ramp, so two or three groups end up
+  ## nearly indistinguishable. Sampling the ramp at equally spaced CIE L*
+  ## instead keeps the groups apart while preserving the light-to-dark order
+  ## used by the sequential palette. The palest anchor marks the low end of that
+  ## ramp and has too little contrast against a white background to work as a
+  ## group colour, so it is only used when all anchors are needed.
+  pal <- if (n == 1L) {
+    base_cols[5L]
+  } else if (n < n_base) {
+    .sample_by_lightness(base_cols[-1L], n)
+  } else {
+    .sample_by_lightness(base_cols, n)
+  }
+
+  if (isTRUE(rev)) pal <- rev(pal)
+  pal
+}
+
+
+## Pick `n` colours from the ramp through `cols`, equally spaced in CIE L*
+## lightness rather than in ramp position. Returns colours from light to dark
+## and always includes both endpoints.
+.sample_by_lightness <- function(cols, n) {
+  fine <- grDevices::colorRampPalette(cols)(256)
+  lab <- grDevices::convertColor(t(grDevices::col2rgb(fine)) / 255,
+                                 from = "sRGB", to = "Lab")
+  lightness <- lab[, 1L]
+  targets <- seq(max(lightness), min(lightness), length.out = n)
+  fine[vapply(targets, function(z) which.min(abs(lightness - z)), integer(1))]
 }
 
 

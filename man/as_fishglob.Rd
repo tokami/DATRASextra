@@ -52,6 +52,7 @@ approximate the FishGlob workflow.
 }
 \examples{
 \dontrun{
+## one row per haul and taxon, with FishGlob field names and CPUE
 fg <- as_fishglob(x)
 }
 

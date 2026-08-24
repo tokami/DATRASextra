@@ -30,7 +30,7 @@ A data.frame with columns \code{X}, \code{Y}, and (if
 \description{
 Creates an equally spaced grid covering the range of the supplied
 coordinates.  Works with any coordinate system (UTM metres, UTM
-kilometres, lon/lat degrees, etc.) — \code{resolution} and the
+kilometres, lon/lat degrees, etc.) - \code{resolution} and the
 coordinates must simply be in the same units.  The grid origin is
 snapped down to the nearest \code{resolution} multiple below each
 coordinate minimum.  Optionally repeats the spatial grid for every

@@ -155,6 +155,7 @@ calc_spatial_indicators <- function(x,
   if (length(all_rows) == 0L) return(data.frame(stringsAsFactors = FALSE))
   out <- do.call(rbind, lapply(all_rows, as.data.frame, stringsAsFactors = FALSE))
   rownames(out) <- NULL
+  out <- .restore_numeric_cols(out, by)
   out
 }
 
@@ -250,7 +251,7 @@ plot_spatial_indicators <- function(x,
   n_groups <- length(group_levels)
 
   if (is.null(col))
-    col <- .colours_datrasextra_discrete(max(n_groups, 2L))
+    col <- .colours_datrasextra_discrete(n_groups)
   col <- rep_len(col, n_groups)
   names(col) <- group_levels
 
@@ -264,9 +265,9 @@ plot_spatial_indicators <- function(x,
   if (n_panels > 1 && isTRUE(layout)) {
     old_par <- par(no.readonly = TRUE)
     on.exit(par(old_par), add = TRUE)
-    par(mfrow = grDevices::n2mfrow(n_panels), mar = c(4.2, 6, 2, 1))
+    par(mfrow = grDevices::n2mfrow(n_panels), mar = c(4.2, 4.8, 2, 1))
   } else {
-    par(mar = c(4.2, 6, 2, 1))
+    par(mar = c(4.2, 4.8, 2, 1))
   }
 
   ## --- y-axis label lookup ---------------------------------------------------
@@ -275,10 +276,10 @@ plot_spatial_indicators <- function(x,
     cog_lon = "CoG longitude (\u00b0E)"
   )
 
-  ## --- x-axis type: numeric gets lines; factor/character gets points only ----
-  x_is_numeric <- is.numeric(x[[x_var]]) || is.integer(x[[x_var]])
+  ## --- x-axis type: numeric values get lines; categorical x gets points ------
+  xall <- suppressWarnings(as.numeric(as.character(x[[x_var]])))
+  x_is_numeric <- !any(is.na(xall) & !is.na(x[[x_var]]))
   if (x_is_numeric) {
-    xall <- suppressWarnings(as.numeric(x[[x_var]]))
     xlim_use <- if (!is.null(xlim)) xlim else range(xall, na.rm = TRUE) + c(-0.5, 0.5)
     x_levels <- NULL
   } else {
@@ -322,8 +323,10 @@ plot_spatial_indicators <- function(x,
       grp <- group_levels[gi]
       sub <- x[as.character(x$group) == grp, , drop = FALSE]
       if (x_is_numeric) {
-        sub <- sub[order(suppressWarnings(as.numeric(sub[[x_var]]))), ]
-        xvals <- suppressWarnings(as.numeric(sub[[x_var]]))
+        xvals <- suppressWarnings(as.numeric(as.character(sub[[x_var]])))
+        ord <- order(xvals)
+        sub <- sub[ord, , drop = FALSE]
+        xvals <- xvals[ord]
       } else {
         sub <- sub[order(match(as.character(sub[[x_var]]), x_levels)), ]
         xvals <- match(as.character(sub[[x_var]]), x_levels)

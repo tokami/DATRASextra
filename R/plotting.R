@@ -750,7 +750,7 @@ plot_length_distribution <- function(x,
   } else if (!is.null(cuts)) {
     .colours_datrasextra_discrete(n_grp)
   } else {
-    .colours_datrasextra_discrete(6L)[5L]  # single default: teal
+    .colours_datrasextra_discrete(1L)  # single default: teal
   }
 
   if (!is.null(cuts)) {

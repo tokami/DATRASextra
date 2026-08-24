@@ -31,6 +31,8 @@ sets.
 }
 \examples{
 \dontrun{
+## as prune_datras(), but with the fixed column set of the FishGlob
+## workflow; the CA table is dropped entirely
 x_small <- prune_fishglob(x)
 }
 

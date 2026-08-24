@@ -49,6 +49,8 @@ the \code{NS-IBTS} and \code{BITS} surveys.
 }
 \examples{
 \dontrun{
+## as clean_datras(), but with the FishGlob haul and species filters,
+## survey renaming, and removal of incomplete bycatch recording
 x_clean <- clean_fishglob(x)
 }
 
