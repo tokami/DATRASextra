@@ -39,6 +39,7 @@ articles:
   contents:
   - articles/datras-raw-object
   - datrasextra-tutorial
+  - data-processing-and-qc
   - articles/plot-datras-overview
   - articles/make_spatiotemporal_grid
 - title: Advanced

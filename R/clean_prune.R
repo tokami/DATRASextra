@@ -180,7 +180,16 @@ clean_datras <- function(x,
         warning("Package 'mgcv' is needed for depth imputation but is not installed. ",
                 "Skipping imputation. Install with: install.packages(\"mgcv\")")
       } else {
-        dmodel <- mgcv::gam(log(Depth) ~ mgcv::s(lon, lat, k = 200), data = x[[2]])
+        ## mgcv::gam() interprets smooth terms by matching the bare symbol 's',
+        ## so a namespace-qualified mgcv::s() in the formula is not recognised
+        ## and fails in model.frame(). Build the formula in an environment that
+        ## provides 's' instead, which keeps mgcv in Suggests.
+        genv <- list2env(list(s = mgcv::s), parent = parent.frame())
+        obs <- x[[2]][!is.na(x[[2]]$Depth), c("lon", "lat")]
+        k <- min(200, max(10, nrow(unique(obs)) - 1))
+        fml <- stats::as.formula(
+          paste0("log(Depth) ~ s(lon, lat, k = ", k, ")"), env = genv)
+        dmodel <- mgcv::gam(fml, data = x[[2]])
         sel <- subset(x, is.na(Depth))
         sel$Depth <- 0 ## Guard against NA-error
         x$Depth[is.na(x$Depth)] <- exp(mgcv::predict.gam(dmodel, newdata = sel[[2]]))

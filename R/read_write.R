@@ -43,6 +43,13 @@
 ##' @param drop_ca Logical. If `TRUE`, the `CA` (biological sampling) table is
 ##'   set to `NULL` after reading each file. Can be combined with `prune` and
 ##'   `drop_hl`.
+##' @param strict Logical. Controls how records in `CA` without a haul
+##'   identifier are matched back to a haul by [DATRAS::readICES()]. If
+##'   `FALSE`, a record that matches several candidate hauls is
+##'   assigned one of them at random. If `TRUE` (default), such ambiguous records are
+##'   left as `NA` and are dropped by any subsequent subsetting. Use
+##'   `strict = TRUE` when individual biological records must not be attributed
+##'   to an arbitrary haul.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
 ##' @param ncores Integer. Number of parallel workers to use when reading zip
 ##'   files. Defaults to `1` (sequential). Values greater than 1 use
@@ -84,6 +91,16 @@
 ##' [prune_datras()], you may wish to apply your own pruning function after
 ##' reading or adapt the pruning code.
 ##'
+##' Records in the `CA` table frequently lack the station and haul numbers that
+##' make up `haul.id`, and are matched back to a haul by survey, year, quarter,
+##' country, ship, and statistical rectangle. When that match is not unique, the
+##' `strict` argument decides what happens: `strict = FALSE` picks
+##' one of the candidate hauls at random, whereas the default `strict = TRUE` leaves the
+##' record unmatched. The number of records affected can be checked afterwards
+##' with `sum(is.na(x[["CA"]]$haul.id))`. Note that
+##' [download_datras()] uses the equivalent of `strict = TRUE` when downloading
+##' data directly from the ICES web service.
+##'
 ##' @return A combined DATRAS survey object with classes `datras_raw` and
 ##'   `DATRASraw`.
 ##'
@@ -116,6 +133,9 @@
 ##'
 ##' ## Prune columns and also drop the CA table
 ##' x <- read_datras("data/NS-IBTS", prune = TRUE, drop_ca = TRUE)
+##'
+##' ## Attribute ambiguous CA records to an arbitrary haul
+##' x <- read_datras("data/NS-IBTS", strict = FALSE)
 ##' }
 ##'
 ##' @importFrom DATRAS downloadExchange
@@ -130,6 +150,7 @@ read_datras <- function(path,
                         prune = FALSE,
                         drop_hl = FALSE,
                         drop_ca = FALSE,
+                        strict = TRUE,
                         verbose = TRUE,
                         ncores = 1) {
 
@@ -202,7 +223,7 @@ read_datras <- function(path,
           on.exit(unlink(td, recursive = TRUE), add = TRUE)
           csvfile <- unzip(p, exdir = td)[1]
           invisible(capture.output(
-            res <- DATRAS::readICES(csvfile, strict = FALSE)
+            res <- DATRAS::readICES(csvfile, strict = strict)
           ))
           if (isTRUE(prune))   res <- prune_datras(res)
           if (isTRUE(drop_hl)) res["HL"] <- list(NULL)
@@ -276,7 +297,7 @@ read_datras <- function(path,
       invisible(capture.output({
         surv0 <- DATRAS::readExchangeDir(path,
                                          pattern = ".zip",
-                                         strict = FALSE)
+                                         strict = strict)
       }))
     }
 
@@ -284,7 +305,7 @@ read_datras <- function(path,
 
     path <- path[grep("\\.zip$", path)]
     invisible(capture.output({
-      surv0 <- DATRAS::readExchange(path, strict = FALSE)
+      surv0 <- DATRAS::readExchange(path, strict = strict)
     }))
 
   } else {

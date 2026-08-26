@@ -13,6 +13,7 @@ read_datras(
   prune = FALSE,
   drop_hl = FALSE,
   drop_ca = FALSE,
+  strict = TRUE,
   verbose = TRUE,
   ncores = 1
 )
@@ -51,6 +52,14 @@ needed, as \code{HL} is often the largest table. Can be combined with \code{prun
 \item{drop_ca}{Logical. If \code{TRUE}, the \code{CA} (biological sampling) table is
 set to \code{NULL} after reading each file. Can be combined with \code{prune} and
 \code{drop_hl}.}
+
+\item{strict}{Logical. Controls how records in \code{CA} without a haul
+identifier are matched back to a haul by \code{\link[DATRAS:readICES]{DATRAS::readICES()}}. If
+\code{FALSE}, a record that matches several candidate hauls is
+assigned one of them at random. If \code{TRUE} (default), such ambiguous records are
+left as \code{NA} and are dropped by any subsequent subsetting. Use
+\code{strict = TRUE} when individual biological records must not be attributed
+to an arbitrary haul.}
 
 \item{verbose}{Logical. If \code{TRUE} (default), progress messages are printed.}
 
@@ -111,6 +120,16 @@ rm(x1, x2)
 If you need a different set of retained columns than provided by
 \code{\link[=prune_datras]{prune_datras()}}, you may wish to apply your own pruning function after
 reading or adapt the pruning code.
+
+Records in the \code{CA} table frequently lack the station and haul numbers that
+make up \code{haul.id}, and are matched back to a haul by survey, year, quarter,
+country, ship, and statistical rectangle. When that match is not unique, the
+\code{strict} argument decides what happens: \code{strict = FALSE} picks
+one of the candidate hauls at random, whereas the default \code{strict = TRUE} leaves the
+record unmatched. The number of records affected can be checked afterwards
+with \code{sum(is.na(x[["CA"]]$haul.id))}. Note that
+\code{\link[=download_datras]{download_datras()}} uses the equivalent of \code{strict = TRUE} when downloading
+data directly from the ICES web service.
 }
 \examples{
 \dontrun{
@@ -139,6 +158,9 @@ x <- read_datras("data/DATRAS", drop_hl = TRUE, drop_ca = TRUE)
 
 ## Prune columns and also drop the CA table
 x <- read_datras("data/NS-IBTS", prune = TRUE, drop_ca = TRUE)
+
+## Attribute ambiguous CA records to an arbitrary haul
+x <- read_datras("data/NS-IBTS", strict = FALSE)
 }
 
 }

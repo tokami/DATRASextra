@@ -1,5 +1,34 @@
 # DATRASextra 0.4.1
 
+## New features
+
+* New vignette `vignette("data-processing-and-qc")` documenting every
+  processing and quality-control step from download to analysis-readyn object.
+  It covers what `DATRAS::getDatrasExchange()` and `DATRAS::readICES()` do
+  before any DATRASextra function is called (column renaming, the `-9` missing
+  value sentinel, matching of orphan `CA` records, and the derived `haul.id`,
+  `LngtCm`, `Species` and `Count` columns), enumerates the filters applied by
+  `clean_datras()` and how to change or replace them, documents the rule-based
+  and percentile checks of `check_outliers()` together with the diagnostic
+  attributes it attaches, and lists further checks left to the user.
+
+* `read_datras()` gains a `strict` argument, passed through to the underlying
+  DATRAS reader. It controls how `CA` records without a haul identifier are
+  matched back to a haul: the default `strict = TRUE` leaves records with
+  several candidate hauls unmatched, while `strict = FALSE` assigns records with
+  several candidate hauls to one of them at random. This changes the default
+  behaviour of `read_datras()`.
+
+## Bug fixes
+
+* `clean_datras(impute_missing_depth = TRUE)` failed for every input with
+  `invalid type (list) for variable 'mgcv::s(lon, lat, k = 200)'`. `mgcv`
+  identifies smooth terms by matching the bare symbol `s`, so the
+  namespace-qualified call in the model formula was never recognised as a
+  smooth. The formula is now built in an environment that provides `s`, and
+  the basis dimension is capped at the number of unique haul positions so that
+  imputation also works for small objects.
+
 ## Minor changes
 
 * The default discrete colour palette used by the plotting functions is now

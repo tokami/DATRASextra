@@ -1,0 +1,931 @@
+---
+title: "Data processing and quality control"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+    number_sections: true
+    df_print: paged
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Data processing and quality control}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r ReaddataLoadLibraries, message=FALSE, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      cache = FALSE,
+                      warning = TRUE,
+                      eval = TRUE,
+                      error = FALSE,
+                      message = TRUE,
+                      include = TRUE,
+                      collapse = TRUE,
+                      comment = "#>",
+                      fig.show = "hold",
+                      fig.width = 8,
+                      fig.height = 7,
+                      dev = "png",
+                      dev.args = list(bg = "white"))
+
+knitr::knit_hooks$set(
+  plot = function(x, options) {
+    paste0(
+      "<div style='background:white; padding:0.5rem; display:inline-block;'>",
+      knitr::hook_plot_html(x, options),
+      "</div>"
+    )
+  }
+)
+
+oldpar <- par(no.readonly = TRUE)
+par(bg = "white")
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(DATRASextra)
+```
+
+Every DATRAS analysis rests on a chain of processing decisions: which hauls
+count as valid, how sub-sampled catches are raised, what a missing value looks
+like, and which records are dropped along the way. Most of those decisions are
+made before a user writes a single line of analysis code.
+
+This vignette documents that chain end to end. For each step it states what is
+done, whether it happens automatically or on request, how to inspect its effect,
+and how to change or switch it off. It also lists checks that **DATRASextra**
+deliberately leaves to the user, because the right answer depends on the
+analysis.
+
+Two principles guide the design:
+
+- **Nothing is silently discarded.** The mandatory filters in `clean_datras()`
+  are the DATRAS-recommended minimum, and the function prints what will be
+  removed *before* removing it.
+- **Checks report, they do not delete.** `check_outliers()`, `check_lengths()`
+  and `check_weights()` are opt-in, and `check_outliers()` returns the object
+  unchanged unless explicitly asked to remove hauls.
+
+
+# Overview of the pipeline
+
+| Stage                | Function                                                                                                     | What happens                                                                                                                          | Automatic?                         |
+|----------------------|--------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
+| 1. Download          | `download_datras()` (via `DATRAS::getDatrasExchange()`)                                                      | Query ICES web service, harmonise column names, convert the `-9` sentinel to `NA`, match orphan `CA` records, archive as exchange zip | automatic                          |
+| 2. Read              | `read_datras()` (via `DATRAS::readICES()`)                                                                   | Parse exchange CSV, drop truncated files, match orphan `CA` records, drop duplicated hauls, combine survey-years                      | automatic                          |
+| 3. Derived variables | `DATRAS::addExtraVariables()`                                                                                | Create `haul.id`, `LngtCm`, `Species`, `Count`, `lon`/`lat`, `abstime`, `Roundfish`; treat hauls without `HL` records as zero-catch   | automatic                          |
+| 4. Cleaning          | `clean_datras()`                                                                                             | Filter on `HaulVal` and `StdSpecRecCode`, optionally impute depth and harmonise species, optionally subset                            | automatic filters, optional extras |
+| 5. Checks            | `check_outliers()`, `check_lengths()`, `check_weights()`, `add_swept_area()`                                 | Flag implausible values, summarise length and weight distributions, report swept-area missingness                                     | opt-in                             |
+| 6. Inspection        | `print()`, `summary()`, `plot_datras_overview()`, `plot_length_distribution()`, `plot_species_composition()` | Tabular and visual review                                                                                                             | opt-in                             |
+
+
+Throughout we use the bundled example data set `mini`: four surveys, seven
+gears, five species, 2022-2023. Unlike the `dab` example, `mini` has not been
+pre-cleaned, so every filter described below actually does something.
+
+```{r}
+mini
+```
+
+
+# Stage 1: Download
+
+`download_datras()` wraps `DATRAS::getDatrasExchange()`, which in turn queries
+the ICES DATRAS web service. Several things happen before anything reaches
+disk.
+
+```{r, eval = FALSE}
+## One survey, selected years, archived under <path>/NS-IBTS/
+x <- download_datras(path = "data/datras", surveys = "NS-IBTS", years = 2020:2023)
+```
+
+## Which surveys and years are requested
+
+Available surveys, years and quarters are read from the ICES web service. If the
+server does not answer within `timeout` seconds (default 10), the function falls
+back to a cached survey list and, for years, to whatever zip files are already
+present locally. This keeps a partially completed download resumable when the
+connection is unreliable, but it also means that an offline session may silently
+work from a stale survey list.
+
+Two surveys are skipped by default because they are test entries or do not
+contain the full set of required tables: `Test-DATRAS` and `NS-IBTS_UNIFtest`.
+Set `include_flagged = TRUE` to download them anyway.
+
+The `download_hl` and `download_ca` arguments control whether the
+length-frequency and biological tables are fetched at all. Omitting whichever
+table an analysis does not need reduces both download time and memory use; `CA`
+is the usual candidate, since many analyses need only catch-at-length.
+
+## Harmonisation applied on download
+
+`DATRAS::getDatrasExchange()` applies the following, in order:
+
+1. **Column renaming** (`DATRAS::renameDATRAS()`). Names are capitalised, and
+   the web-service names are mapped onto the exchange-format names:
+   `ValidAphiaID` becomes `Valid_Aphia`, `LngtClass` becomes `LngtClas`,
+   `AgeRings` becomes `Age`, and `CANoAtLngt` / `NoAtLngt` become `NoAtALK`.
+   This is why the same variable has different names in the ICES documentation
+   and in an R object.
+2. **Missing-value conversion** (`DATRAS::minus9toNA()`). DATRAS encodes missing
+   numeric values as `-9`. Every numeric column is scanned and `-9` is replaced
+   by `NA`. Note that this applies to numeric columns only: a `-9` stored as
+   text is left untouched.
+3. **`StatRec` back-fill.** If the `CA` table has no `StatRec` column, it is
+   filled from `AreaCode`.
+4. **Derived variables** are added (see Stage 3 below).
+5. **Orphan `CA` records** are matched back to hauls with
+   `DATRAS::fixMissingHaulIds()` using `strict = TRUE`, so ambiguous records are
+   left unmatched rather than attributed to an arbitrary haul.
+6. **Character columns are converted to factors.**
+
+## What gets archived
+
+Before writing, `download_datras()` strips the derived columns again and maps
+the names back to the exchange-format spelling, so the archived zip is a
+faithful DATRAS exchange file rather than an R-specific artefact. Anyone can
+re-read it, with **DATRASextra** or with any other tool that understands the
+exchange format. Files are named `<survey>_<year>.zip` inside a per-survey
+subdirectory.
+
+This separation matters for reproducibility: the archive is the raw record, and
+every processing step described in the rest of this vignette is reapplied from
+it each time the data are read.
+
+```{r, eval = FALSE}
+## Re-download and replace existing files
+download_datras(path = "data/datras", surveys = "NS-IBTS", years = 2020,
+                overwrite = TRUE)
+```
+
+Worth checking after a download: that a file exists for every year you expect,
+and that none of them is suspiciously small. `read_datras()` performs the size
+check for you (next section), but an unexpectedly missing year usually means the
+survey was not conducted rather than that the download failed.
+
+
+# Stage 2: Reading data into R
+
+```{r, eval = FALSE}
+x <- read_datras("data/datras", surveys = "NS-IBTS", years = 2020:2023)
+```
+
+## Parsing and file-level checks
+
+A DATRAS exchange CSV contains three stacked blocks, each with its own header
+line. `DATRAS::readICES()` locates the header lines, reads each block
+separately, and applies `na.strings = c("-9", "-9.0", "-9.00", "-9.0000")` so
+that the missing-value sentinel is converted on the way in. It then verifies
+that the number of data rows plus header lines equals the number of lines in the
+file, and aborts with `"csv file appears to be corrupt"` if it does not.
+
+`read_datras()` adds a guard of its own: files smaller than `min_file_size`
+(default `1e4` bytes) are reported and excluded, because a truncated or empty
+download would otherwise raise a confusing parse error. A year in which a survey
+was not conducted typically produces such an empty file.
+
+## Matching biological records to hauls: the `strict` argument
+
+Records in `CA` frequently lack the station and haul numbers that make up
+`haul.id`. `DATRAS::fixMissingHaulIds()` matches them back to a haul using
+survey, year, quarter, country, ship and statistical rectangle. When that
+combination identifies more than one candidate haul, the two settings diverge:
+
+- `strict = FALSE` assigns the record to **one of the candidate hauls at
+  random**.
+- `strict = TRUE` leaves the record as `NA`, and it is dropped by any subsequent
+  subsetting.
+
+Which behaviour is right depends on the analysis: random assignment preserves
+sample size for aggregate age-length keys, while leaving records unmatched is
+the honest choice when individual records must be attributable to a specific
+haul.
+
+```{r, eval = FALSE}
+## Attribute ambiguous CA records to an arbitrary haul
+x <- read_datras("data/datras", strict = FALSE)
+```
+
+
+## Combining survey-year files
+
+Files are read one at a time and combined. Two safeguards apply:
+
+- **Duplicated haul identifiers.** The same haul appearing in more than one file
+  is reported by `haul.id` and removed. Note that the two code paths behave
+  slightly differently: the sequential reader (`ncores = 1`) keeps the first
+  copy encountered and drops later ones, while the parallel reader removes all
+  copies. If duplicates are reported, the underlying archive is worth
+  investigating rather than accepting either behaviour.
+- **Type-consistent binding.** `c.datras_raw()` guards against a column that is
+  a factor in one year and an integer in another. Plain `rbind()` would use the
+  factor's level vector as the type and reinterpret the other year's integers as
+  factor codes, silently turning valid values into `NA`.
+
+For large reads, `prune = TRUE`, `drop_hl = TRUE` and `drop_ca = TRUE` reduce
+peak memory by trimming columns or dropping whole tables inside the reader, and
+`surveys` / `years` restrict which files are opened at all.
+
+
+# Stage 3: Variables created while reading
+
+The columns most analyses actually use are not in the exchange file at all: they
+are constructed by `DATRAS::addExtraVariables()` during both download and read.
+
+## Haul identifier
+
+```
+haul.id = Survey:Year:Quarter:Country:Ship:Gear:StNo:HaulNo
+```
+
+This is the key that links `HH`, `HL` and `CA`.
+
+```{r}
+head(levels(mini[["HH"]]$haul.id), 3)
+```
+
+## Length in centimetres
+
+`LngtClas` is reported in units that depend on `LngtCode`. The conversion to
+`LngtCm` uses:
+
+| `LngtCode` | Multiplier for `LngtClas` | Meaning                        |
+|------------|---------------------------|--------------------------------|
+| `.`        | 0.1                       | reported in mm                 |
+| `0`        | 0.1                       | reported in mm, 0.5 cm classes |
+| `1`        | 1                         | reported in cm, 1 cm classes   |
+| `2`        | 1                         | reported in cm, 2 cm classes   |
+| `5`        | 1                         | reported in cm, 5 cm classes   |
+
+There is a trap here worth stating explicitly. A **second**, different table with
+the same codes is used by `get_accuracy_cm()` (and `DATRAS::getAccuracyCM()`) to
+describe the *bin width*: `.` = 0.1, `0` = 0.5, `1` = 1, `2` = 2, `5` = 5. The
+first table converts a recorded value to centimetres; the second says how wide
+the length class is. They are not interchangeable.
+
+```{r}
+## Which length codes occur, and what resolution do they imply
+table(mini[["HL"]]$LngtCode, useNA = "ifany")
+```
+
+```{r}
+## The coarsest resolution present is used for automatic length binning
+get_accuracy_cm(mini)
+```
+
+Mixed codes are common when several surveys or countries are combined, and
+`get_accuracy_cm()` warns and falls back to the coarsest resolution. Empty
+`LngtCode` values are assumed to be 1 cm. If that assumption is wrong for your
+data, pass `cm_breaks` or `by` explicitly to the length functions rather than
+relying on the automatic choice.
+
+## Species names
+
+`Species` is resolved from `SpecCode` using either an ITIS/TSN lookup table or a
+WoRMS lookup table, depending on whether `SpecCodeType` is `"W"`. Older survey
+years often use TSN codes while recent years use WoRMS codes, so both paths can
+occur in a single combined object.
+
+```{r}
+table(mini[["HL"]]$SpecCodeType, useNA = "ifany")
+```
+
+## Raised catch numbers
+
+This is the most consequential derived variable:
+
+```
+Count = HLNoAtLngt * (HaulDur / 60 if DataType == "C", else 1) * SubFactor
+```
+
+Two corrections are folded into one column:
+
+- **Sub-sampling.** `SubFactor` raises the measured sub-sample to the whole
+  catch.
+- **Standardisation of reporting units.** `DataType == "C"` means numbers were
+  reported per hour, so they are converted back to per-haul using the haul
+  duration. `DataType == "R"` (raw) and `"P"` are used as reported.
+
+A combined object frequently mixes reporting conventions:
+
+```{r}
+table(mini[["HH"]]$DataType, useNA = "ifany")
+```
+
+Anything computed from `Count` therefore already accounts for sub-sampling and
+per-hour reporting. Recomputing from `HLNoAtLngt` without applying both
+corrections is a common source of error. Note also that `check_lengths()` warns
+if `DataType == "S"` is present, since those hauls are treated as `"R"`.
+
+## Time and position
+
+- `lon` and `lat` are copies of `ShootLong` and `ShootLat`, that is the position
+  where the gear was shot, **not** the midpoint of the tow. `HaulLat` and
+  `HaulLong` hold the end position if a tow midpoint is needed.
+- `abstime` is a decimal year, `timeOfYear` its fractional part, and
+  `TimeShotHour` the time of day in decimal hours. These are convenient for
+  smoothers over time or time of day.
+- `Roundfish` is the North Sea roundfish area, derived from `StatRec`.
+
+## Hauls without catch records
+
+Any haul present in `HH` that has no rows in `HL` is interpreted as a
+**zero-catch haul**. During reading, the upstream code prints a warning listing
+the affected hauls. This is the correct treatment for a species-restricted
+extract such as `mini`, where most hauls simply did not catch the five target
+species, but it means a haul missing from `HL` for a data-handling reason is
+indistinguishable from a genuine zero.
+
+The split is reported by `print()`:
+
+```{r}
+mini
+```
+
+## Type coercions to be aware of
+
+- `Year` and `Quarter` are converted to **factors**. `mini[["HH"]]$Year + 1`
+  does not do what it looks like; use `as.integer(as.character(Year))`.
+- All character columns become factors.
+- `haul.id` in `HL` and `CA` is re-levelled to the levels present in `HH`, so
+  records that do not correspond to a haul in `HH` become `NA` and are dropped
+  by later subsetting.
+- Duplicated rows in `HH` abort the read entirely with
+  `"Duplicated rows found in HH data - data file is corrupt"`.
+
+
+# Stage 4: Cleaning with `clean_datras()`
+
+`clean_datras()` applies the standard DATRAS cleaning filters. With
+`verbose = TRUE` (the default) it prints a full account of the data *before*
+filtering, and `explain_codes = TRUE` adds the meaning of each code.
+
+```{r}
+surv <- clean_datras(mini, explain_codes = TRUE)
+```
+
+The report has three parts: the distribution of the three recording codes, the
+missing-value counts for the variables that later steps depend on, and the
+number of hauls removed by each filter.
+
+## Filter 1: haul validity
+
+Only hauls with `HaulVal` in `c("V", "N")` are retained.
+
+| Code | Meaning                                                   | Kept |
+|------|-----------------------------------------------------------|------|
+| `V`  | Valid haul                                                | yes  |
+| `N`  | No oxygen (BITS only)                                     | yes  |
+| `S`  | Standard haul                                             | no   |
+| `A`  | Additional valid station, not used for index calculations | no   |
+| `C`  | Calibrated (BITS only)                                    | no   |
+| `I`  | Invalid haul                                              | no   |
+| `M`  | Pelagic midwater trawl (BITS only)                        | no   |
+| `P`  | Partly valid haul (sensor problems)                       | no   |
+
+`"N"` hauls are Baltic stations aborted because of oxygen depletion. They are
+retained because the catch is valid for the duration fished, but they often have
+an unusually short `HaulDur`, and `clean_datras()` says so when any are kept.
+Whether to keep them is an analysis decision: they are legitimate observations,
+but a swept-area index that does not account for the shorter tow will be biased.
+
+## Filter 2: standard species recording
+
+Only records with `StdSpecRecCode == 1` ("all standard species recorded") are
+retained. Codes `2`, `3` and `4` mean that only pelagic, roundfish or individual
+standard species were recorded, and `0` means none were. Keeping them would mix
+hauls with different species coverage, which biases community-level and
+multi-species analyses.
+
+Note what is **not** filtered. `BySpecRecCode` is reported but never used as a
+filter: bycatch recording protocols differ by survey, and which species are
+usable under each code is an analysis-specific judgement. The relevant
+per-code species lists exist in the source of `correct_species()` as reference
+material but are deliberately inactive.
+
+## Optional: imputing missing depths
+
+Disabled by default. When enabled, missing `Depth` values are predicted from a
+GAM of `log(Depth)` on a two-dimensional smooth of longitude and latitude, using
+the hauls that do have a recorded depth. This requires the R package **mgcv**.
+
+```{r}
+surv_dep <- clean_datras(mini, impute_missing_depth = TRUE, verbose = FALSE)
+
+## Missing depths before and after
+c(before = sum(is.na(mini[["HH"]]$Depth)),
+  after = sum(is.na(surv_dep[["HH"]]$Depth)))
+```
+
+The imputed values replace `NA` in place, and there is no flag distinguishing
+them afterwards. If that distinction matters, record the affected haul
+identifiers before cleaning:
+
+```{r}
+imputed_ids <- as.character(mini[["HH"]]$haul.id[is.na(mini[["HH"]]$Depth)])
+imputed_ids
+```
+
+Spatial interpolation of depth is reasonable on a continental shelf and poor
+across a shelf break. Inspect the result before relying on it.
+
+## Optional: harmonising species
+
+`correct_species = TRUE` (the default) calls `correct_species()`, which does two
+things.
+
+First, it collapses taxa that are not reliably identified to species in the
+field down to genus level, updating `Species`, `Valid_Aphia` and `Rank`:
+*Dipturus*, *Liparis*, *Chelon*, *Mustelus*, *Alosa*, *Argentina*,
+*Callionymus*, *Ciliata*, *Gaidropsarus*, *Sebastes*, *Syngnatus*,
+*Pomatoschistus* and *Gobius*. Records identified as *Nerophis ophidion*,
+*Leusueurigobius*, *Neogobius* and *Argentinidae* are folded into the
+corresponding genus.
+
+Second, it corrects outdated or misspelled names: *Synaphobranchus kaupi*
+becomes *Synaphobranchus kaupii*, and *Dipturus linteus* becomes
+*Rajella lintea* with the current AphiaID.
+
+The `Rank` column it adds makes the outcome visible:
+
+```{r}
+table(surv[["HL"]]$Rank, useNA = "ifany")
+```
+
+Set `correct_species = FALSE` to keep the original species assignments, for
+example when reproducing an earlier analysis or when comparing against the raw
+ICES extract.
+
+## Optional: subsetting
+
+`aphias`, `years`, `quarters` and `gears` are applied **after** the filters, as
+a convenience:
+
+```{r}
+surv_sub <- clean_datras(mini, years = 2023, quarters = 1,
+                         aphias = 127137, verbose = FALSE)
+surv_sub
+```
+
+## Modifying or omitting steps
+
+| Step                    | Argument                               | Default        | Effect of changing                     |
+|-------------------------|----------------------------------------|----------------|----------------------------------------|
+| Pre-cleaning report     | `verbose`                              | `TRUE`         | `FALSE` silences it, for scripts       |
+| Code descriptions       | `explain_codes`                        | `FALSE`        | `TRUE` annotates each code             |
+| Haul validity filter    | none                                   | always applied | reproduce manually with `subset()`     |
+| Standard species filter | none                                   | always applied | reproduce manually with `subset()`     |
+| Depth imputation        | `impute_missing_depth`                 | `FALSE`        | `TRUE` fills missing depths by GAM     |
+| Species harmonisation   | `correct_species`                      | `TRUE`         | `FALSE` leaves names untouched         |
+| Subsetting              | `aphias`, `years`, `quarters`, `gears` | `NULL`         | applied after filtering                |
+| Alternative pipeline    | `do_fishglob`                          | `FALSE`        | `TRUE` delegates to `clean_fishglob()` |
+
+The two mandatory filters have no on/off switch, but they are ordinary
+`subset()` calls and are trivially replaced when a different rule is wanted:
+
+```{r}
+## Keep additional valid stations as well as valid and no-oxygen hauls
+custom <- subset(mini, HaulVal %in% c("V", "N", "A"))
+
+## Accept hauls where only individual standard species were recorded
+custom <- subset(custom, StdSpecRecCode %in% c(1, 4))
+
+## Then apply the optional steps only
+custom <- correct_species(custom)
+custom
+```
+
+Compare the haul count with `surv` above to see what the relaxed rule buys, and
+decide whether the extra stations are usable for your purpose.
+
+For the FishGlob workflow, `do_fishglob = TRUE` replaces the whole cleaning
+stage with `clean_fishglob()`; see `vignette("articles/fishglob")`.
+
+
+# Stage 5: Quality-control checks
+
+These functions are deliberately not called by `clean_datras()`. They flag
+values that are implausible rather than formally invalid, and whether a flagged
+record should be excluded is a decision the analyst has to make.
+
+## `check_outliers()`
+
+Two independent mechanisms, both optional to act on.
+
+### Rule-based checks
+
+Fixed, physically motivated bounds. `strict = TRUE` is the default; `FALSE`
+relaxes the upper bounds.
+
+| Table | Variable                   | Rule (`strict = TRUE`)          | Rule (`strict = FALSE`) |
+|-------|----------------------------|---------------------------------|-------------------------|
+| `HH`  | `Quarter`                  | outside 1-4                     | same                    |
+| `HH`  | `Year`                     | before 1965 or in the future    | same                    |
+| `HH`  | `TimeShot`                 | not a valid HHMM time           | same                    |
+| `HH`  | `HaulDur`                  | outside 0-240 min               | outside 0-360 min       |
+| `HH`  | `ShootLat`                 | outside -90 to 90               | same                    |
+| `HH`  | `ShootLong`                | outside -180 to 180             | same                    |
+| `HH`  | `Depth`                    | outside 0-2000 m                | outside 0-3000 m        |
+| `HH`  | `GroundSpeed`              | outside 0-6 knots               | outside 0-8 knots       |
+| `HH`  | `DoorSpread`               | outside 0-250 m                 | outside 0-300 m         |
+| `HH`  | `WingSpread`               | outside 0-80 m                  | outside 0-120 m         |
+| `HH`  | `WingSpread`, `DoorSpread` | wing spread exceeds door spread | same                    |
+| `HL`  | `LngtCm`                   | outside 0-200 cm                | outside 0-300 cm        |
+| `CA`  | `Sex`                      | not in `""`, `F`, `M`, `U`      | same                    |
+| `CA`  | `Age`                      | outside 0-50, or non-integer    | outside 0-80            |
+| `CA`  | `NoAtALK`                  | negative or non-integer         | same                    |
+| `CA`  | `IndWgt`                   | outside 0-1e5 g                 | outside 0-3e5 g         |
+| `CA`  | `LngtCode`                 | not in `""`, `.`, `0`, `1`      | same                    |
+| `CA`  | `LngtClas`                 | outside 0-2000, or non-integer  | outside 0-3000          |
+
+Rule violations get severity `"invalid"`.
+
+### Percentile checks
+
+Enabled with `pct = TRUE`. Within groups, values outside the requested
+percentiles are flagged with severity `"extreme"`. Defaults:
+
+- `pct_probs = c(0.01, 0.99)`
+- `pct_by`: `HH` grouped by survey, quarter, gear and ship; `HL` and `CA` by
+  survey, quarter, gear and species
+- `pct_vars`: `HaulDur`, `Depth`, `DoorSpread`, `WingSpread` in `HH`; `LngtCm`
+  in `HL`; `Age`, `IndWgt`, `LngtClas` in `CA`
+- `pct_min_n = 50`: groups with fewer observations are skipped rather than
+  producing unstable thresholds
+- `pct_log_vars`: `IndWgt` percentiles are computed on the log scale
+
+Grouping matters. Comparing a beam trawl against a GOV trawl on the same
+threshold produces nonsense; the defaults compare like with like.
+
+### Running the checks
+
+```{r}
+surv <- check_outliers(surv, pct = TRUE)
+```
+
+By default nothing is removed: the object comes back unchanged, with four
+attributes attached.
+
+```{r}
+## Every flagged record, one row each
+report <- attr(surv, "outlier_report")
+dim(report)
+head(report[report$severity == "invalid", c("table", "var", "value", "reason")])
+```
+
+The report columns are: `table`, `var`, `row`, `haul.id`, `value`, `reason`,
+`method` (`"rule"` or `"percentile"`), `severity` (`"invalid"` or `"extreme"`),
+`p_lo` / `p_hi` (the percentiles used), `thr_lo` / `thr_hi` (the resulting
+thresholds) and `group` (the grouping key).
+
+Three further attributes hold the affected haul identifiers:
+
+```{r}
+c(all = length(attr(surv, "outlier_hauls")),
+  invalid = length(attr(surv, "outlier_hauls_invalid")),
+  extreme = length(attr(surv, "outlier_hauls_extreme")))
+```
+
+Which variables drive the flags:
+
+```{r}
+with(report, table(var, severity))
+```
+
+### Acting on the results
+
+```{r}
+## Remove only the rule-based failures; percentile flags are kept
+cleaned <- check_outliers(surv, action = "remove", verbose = FALSE)
+nrow(cleaned[["HH"]])
+```
+
+`remove_extremes = TRUE` additionally removes the percentile-flagged hauls, but
+that is rarely appropriate: with `pct_probs = c(0.01, 0.99)`, roughly two per
+cent of the data is flagged by construction, whether or not anything is wrong.
+The flags are a place to start looking, not a verdict.
+
+Narrower or stricter runs:
+
+```{r}
+## Only check the variables that feed the swept-area calculation
+sa_check <- check_outliers(surv, vars = c("HaulDur", "Distance", "GroundSpeed",
+                                          "DoorSpread", "WingSpread"),
+                           pct = TRUE, pct_probs = c(0.005, 0.995),
+                           verbose = FALSE)
+nrow(attr(sa_check, "outlier_report"))
+```
+
+A threshold of your own is usually easier to apply to the report than to
+express as a new rule. The report gives you the haul identifiers, so any
+selection can be turned into a subset:
+
+```{r}
+## Hauls flagged for haul duration, by method
+subset(report, var == "HaulDur")[c("value", "method", "thr_lo", "thr_hi")][1:5, ]
+
+## Your own threshold: hauls shorter than 15 minutes
+short_ids <- unique(report$haul.id[report$var == "HaulDur" &
+                                   as.numeric(report$value) < 15])
+length(short_ids)
+
+## Drop them if you decide they are unusable
+nrow(subset(surv, !haul.id %in% short_ids)[["HH"]])
+```
+
+## `check_lengths()`
+
+Summarises the pooled length distribution of a single species and compares the
+observed range with the empirical maximum length from the bundled
+`species_info` table.
+
+```{r, fig.height = 7, warning = FALSE}
+plaice <- subset(surv, Valid_Aphia == 127137)
+plaice <- check_lengths(plaice)
+```
+
+```{r}
+attr(plaice, "length_check")$lPars
+attr(plaice, "length_check")$nAbove
+```
+
+`maxEmp` is the published maximum length for the species (from FishBase); `perc`
+is the requested upper percentile of the observed distribution
+(`length_percentile`, default `99.9999`). `nAbove` gives the number and
+percentage of observations above each. A non-trivial count above `maxEmp` points
+at length-unit errors or misidentification. Use `cm_breaks` or `by` to control
+the binning, and `plot = FALSE` to skip the figure.
+
+## `check_weights()`
+
+Fits a log-log length-weight relationship to the individual weights in `CA` and
+compares it with the lookup parameters in `species_info`.
+
+```{r, fig.height = 7, warning = FALSE}
+plaice <- add_numbers_at_length(plaice)
+plaice <- check_weights(plaice)
+```
+
+```{r}
+rbind(fitted = attr(plaice, "weight_check")$parEst,
+      lookup = attr(plaice, "weight_check")$parEmp)
+```
+
+A fitted exponent *b* far from 3, or a large discrepancy against the lookup
+values, usually indicates unit errors or contaminated records. `max_length` and
+`max_weight` exclude implausible observations before fitting:
+
+```{r, fig.show = "hide", warning = FALSE}
+plaice2 <- check_weights(plaice, max_length = 60, max_weight = 5000)
+attr(plaice2, "weight_check")$parEst
+```
+
+## `add_swept_area()`
+
+Swept area is where survey data are at their most incomplete, so the function
+reports what it had to invent.
+
+```{r}
+surv_sa <- add_swept_area(surv, full_report = TRUE)
+```
+
+The summary is attached as an attribute and also gives a per-haul flag:
+
+```{r}
+head(attr(surv_sa, "swept_area_summary"))
+
+## Share of hauls whose spread or distance was imputed
+mean(surv_sa[["HH"]]$SweptArea_imputed)
+```
+
+Read the table by survey and gear rather than in aggregate. A gear with
+`prop_NA` of 1 records neither of the required fields and cannot be given a
+swept area at all; a gear with a high `prop_imputed` has swept areas built from
+gear-level medians rather than haul-specific measurements. Both are legitimate,
+but an abundance index computed over them carries very different uncertainty
+than the haul count suggests.
+
+The plausibility filters are adjustable: `min_speed` (default 1 knot),
+`min_dist` (default 0) and `max_dist_dev` (default 0.2, the tolerated relative
+difference between recorded distance and distance reconstructed from duration
+and speed). `width = "DoorSpread"` switches the width source for surveys that
+record door spread but not wing spread. `method = "fishglob"` uses the
+survey-specific spread models of the FishGlob workflow instead.
+
+
+# Stage 6: Inspecting the result
+
+## Tabular summaries
+
+`print()` and `summary()` double as QC reports. `summary()` picks up the
+outlier attributes automatically:
+
+```{r}
+summary(surv)
+```
+
+Things worth reading off this output: whether any year is missing from the
+series, whether the coordinate and depth ranges are plausible for the surveys
+included, the ratio of zero-catch to positive hauls, and the outlier breakdown.
+
+## Mapping the flagged hauls
+
+The most efficient way to decide whether flagged records are a data problem or a
+real feature is to look at where they are.
+
+```{r, fig.height = 6, warning = FALSE}
+bad <- subset(surv, haul.id %in% attr(surv, "outlier_hauls_invalid"))
+plot_datras_overview(bad, col = "#A6081A", cex = 1.2)
+```
+
+Flags concentrated in one survey, one ship or one year point at a recording
+convention rather than at individual bad hauls.
+
+## Spatial and temporal coverage
+
+```{r, fig.height = 6, warning = FALSE}
+plot_datras_overview(surv, mode = "grid", metric = "count_hauls",
+                     spatial_basis = "statrec")
+```
+
+```{r, fig.height = 7, warning = FALSE}
+plot_datras_overview(surv, value_var = "Depth", by_survey = TRUE,
+                     multi_panels = TRUE)
+```
+
+Mapping a covariate such as depth by survey exposes both spatial gaps and
+values that are locally implausible even though they pass a global range check.
+
+## Length and composition sanity
+
+```{r, fig.height = 5, warning = FALSE}
+plot_length_distribution(plaice, log_scale = TRUE)
+```
+
+A spectrum with isolated spikes at round numbers, or a long thin tail beyond the
+empirical maximum length, indicates unit or transcription problems.
+
+```{r, fig.height = 6, warning = FALSE}
+comp <- add_numbers_at_length(surv)
+comp <- add_total_numbers_by_haul(comp, length_cuts = c(0, 15, 30, 50, Inf))
+plot_species_composition(comp, beside = FALSE, legend_ncol = 2)
+```
+
+Composition by length group exposes problems a total does not: a species that
+appears only in one length group, or a length group dominated by a single
+species across every survey, is usually a binning or identification artefact
+rather than ecology.
+
+## Spatial attribution
+
+```{r}
+surv_area <- add_ices_areas(surv)
+
+## Adds Area_Full, Area_27 and Ecoregion to HH
+head(sort(table(surv_area[["HH"]]$Area_27), decreasing = TRUE))
+
+## Hauls that could not be attributed
+sum(is.na(surv_area[["HH"]]$Area_27))
+```
+
+The function reports how many hauls it matched. Hauls that cannot be matched to
+an ICES area usually have a coordinate problem that range checks alone will not
+catch.
+
+
+# Further checks worth considering
+
+The following are not built into **DATRASextra**, because the right treatment
+depends on the analysis. They are common sources of trouble.
+
+**Survey design changes over time.** Gear, ship and sweep length changes create
+step changes in catchability that look like population signal.
+
+```{r}
+with(surv[["HH"]], table(Year, Gear))
+```
+
+**Species validity codes.** `SpecVal` in `HL` marks how a species record should
+be used, and `clean_datras()` does not filter on it. Code `1` is fully valid;
+others indicate partial or unusable records.
+
+```{r}
+table(mini[["HL"]]$SpecVal, useNA = "ifany")
+```
+
+**Mixed reporting conventions.** Check `DataType` per survey and year, not just
+overall (see Stage 3).
+
+**Day and night composition.** Catchability of many species differs strongly
+between day and night, and the day/night ratio can drift across years.
+
+```{r}
+with(surv[["HH"]], table(Year, DayNight))
+```
+
+**Seasonal drift.** A survey nominally in quarter 1 may drift by several weeks
+over a time series; `timeOfYear` makes that visible.
+
+```{r}
+tapply(surv[["HH"]]$timeOfYear, surv[["HH"]]$Year, function(z)
+  round(range(z, na.rm = TRUE), 3))
+```
+
+**Depth against bathymetry.** Recorded depth can be cross-checked against an
+external bathymetry raster. Systematic offsets usually indicate a unit or datum
+problem.
+
+**Internal catch consistency.** `TotalNo` and `CatCatchWgt` in `HL` should be
+consistent with the summed `HLNoAtLngt` for the same haul, species and category.
+Large discrepancies indicate sub-sampling information that has not been applied
+consistently.
+
+**Age data plausibility.** Length-at-age should be monotone on average and its
+spread should not collapse or explode at the oldest ages. Also check ALK
+coverage: ages sampled in too few hauls give unstable keys.
+
+**Duplicate biological records.** Exact duplicate rows within a haul and species
+in `HL` or `CA` are worth counting, since they inflate abundance without
+tripping any range check.
+
+**Reference data coverage.** `add_species_info()` joins the bundled species
+table; check which species come back without length-weight parameters or maximum
+length, because those silently degrade any weight-based calculation.
+
+```{r}
+info <- add_species_info(surv, vars = c("maxL", "a", "b"), verbose = FALSE)
+
+## TRUE means the species has no length-weight parameters in species_info
+with(info[["HL"]], tapply(is.na(a), Species, all))
+```
+
+All five species in `mini` are covered. In a full survey extract, with several
+hundred taxa, a handful typically are not.
+
+
+# A reproducible recipe
+
+Putting the stages together:
+
+```{r, eval = FALSE}
+## 1-2. Download once, then read from the archive
+download_datras(path = "data/datras", surveys = "NS-IBTS", years = 2015:2023)
+x <- read_datras("data/datras", surveys = "NS-IBTS", years = 2015:2023)
+
+## Audit the read before anything is filtered
+sum(is.na(x[["CA"]]$haul.id))
+table(x[["HH"]]$DataType)
+get_accuracy_cm(x)
+
+## 3. Clean, with a full account of what is removed
+x <- clean_datras(x, explain_codes = TRUE)
+
+## 4. Check, without removing anything yet
+x <- check_outliers(x, pct = TRUE)
+report <- attr(x, "outlier_report")
+
+## 5. Look at the flags before deciding
+plot_datras_overview(subset(x, haul.id %in% attr(x, "outlier_hauls_invalid")))
+
+## 6. Remove only what you have decided is wrong
+x <- check_outliers(x, action = "remove", verbose = FALSE)
+
+## 7. Derived variables, with their own diagnostics
+x <- add_swept_area(x, full_report = TRUE)
+x <- add_numbers_at_length(x)
+x <- add_total_numbers_by_haul(x)
+
+summary(x)
+```
+
+
+# Summary
+
+| Stage             | Automatic steps                                                                                    | Under your control                                                                                                                           |
+|-------------------|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| Download          | code renaming, `-9` to `NA`, strict haul matching, exchange archiving                              | `surveys`, `years`, `download_hl`, `download_ca`, `include_flagged`, `overwrite`, `timeout`                                                  |
+| Read              | corrupt-file check, small-file exclusion, duplicate haul removal, type-safe combining              | `strict`, `min_file_size`, `prune`, `drop_hl`, `drop_ca`, `surveys`, `years`, `ncores`                                                       |
+| Derived variables | `haul.id`, `LngtCm`, `Species`, `Count`, `lon`/`lat`, `abstime`, `Roundfish`, zero-catch treatment | length binning via `cm_breaks` / `by`                                                                                                        |
+| Cleaning          | `HaulVal` and `StdSpecRecCode` filters                                                             | `verbose`, `explain_codes`, `impute_missing_depth`, `correct_species`, `aphias`, `years`, `quarters`, `gears`, `do_fishglob`                 |
+| Checks            | none by default                                                                                    | `check_outliers()` (`strict`, `pct`, `pct_*`, `vars`, `action`, `remove_extremes`), `check_lengths()`, `check_weights()`, `add_swept_area()` |
+
+Nothing in the automatic column is hidden: the download and read stages print
+what they do, `clean_datras()` reports the data before filtering, and every
+check writes its findings to an attribute you can inspect. Where a step cannot
+be switched off by argument, it is a plain `subset()` call that can be replaced
+with a rule of your own.
+
+```{r, echo=FALSE}
+par(oldpar)
+```
+
+
+# References
+
+- ICES DATRAS database: <https://datras.ices.dk>
+- ICES vocabularies for `HaulVal`, `StdSpecRecCode` and `BySpecRecCode`:
+  <https://vocab.ices.dk>
+- `vignette("datrasextra-tutorial")` for the basic workflow
+- `vignette("articles/fishglob")` for the FishGlob pipeline
