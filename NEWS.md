@@ -2,8 +2,57 @@
 
 ## New features
 
+* Data extracted from ICES DATRAS now carries a record of where it came from,
+  retrievable with the new `extraction()` function. The record has one row per
+  survey, year and quarter and reports the ICES calculation date, the
+  extraction date, the source and endpoint, the archive file and its checksum,
+  and the versions of DATRASextra, DATRAS, icesDatras and R that produced the
+  object. It follows the data through the processing pipeline and is reconciled
+  with the records still present, so subsetting narrows it instead of leaving
+  stale entries behind.
+
+  The central field is `DateofCalculation`, supplied by ICES, which records
+  when a block of records was last recalculated. Because ICES revises
+  historical data as well as appending to it, this is the only reliable way to
+  tell that an analysis will no longer reproduce against the current database.
+  It is reconstructed from the data themselves when no explicit record is
+  available, so `extraction()` also works on archives and objects created
+  before this release.
+
+* New `write_manifest()`, `read_manifest()` and `verify_extraction()` describe
+  and check a local archive. `write_manifest()` records a checksum and the ICES
+  calculation date for every survey-year-quarter in a directory of exchange
+  files, and `verify_extraction()` re-reads the archive and reports each entry
+  as `ok`, `changed` (contents differ locally), `revised` (ICES recalculated
+  the data upstream), `missing` or `new`. Two users can compare manifests to
+  confirm they hold identical data without hosting anything.
+
+  `download_datras()` maintains the manifest automatically, and it can be
+  built for any directory of exchange files regardless of how it was produced.
+
+* `write_datras()` now returns the path with `payload_hash`, `zip_hash` and
+  `algo` attributes. The payload hash is taken over the exchange file inside
+  the archive, so it is identical whenever the data are identical; the archive
+  hash is not, because `utils::zip()` stores the modification time of the file
+  it compresses.
+
+* New `reference_tables()` reports the lookup tables bundled with the package
+  - `species_info`, `survey_info`, `survey_info_full_raw`, `spawning_info` and
+  the internal ICES area and gear-spread tables - together with when each was
+  generated, which script generated it, what it was generated from, and a hash
+  that shows whether it still matches the version recorded in the package
+  registry (`inst/reference_tables.dcf`). These tables are snapshots of
+  external sources such as WoRMS and the ICES web services, so an analysis can
+  depend on how old they are; this makes that visible. Maintainers regenerate
+  the registry with `DATRASextra:::.write_reference_registry()` after
+  rebuilding any table in `data-raw/`, and a test fails if the two drift apart.
+
+* The vignette `vignette("data-processing-and-qc")` gains a section on
+  recording and verifying an extraction, and on the age of the bundled
+  reference tables.
+
 * New vignette `vignette("data-processing-and-qc")` documenting every
-  processing and quality-control step from download to analysis-readyn object.
+  processing and quality-control step from download to analysis-ready object.
   It covers what `DATRAS::getDatrasExchange()` and `DATRAS::readICES()` do
   before any DATRASextra function is called (column renaming, the `-9` missing
   value sentinel, matching of orphan `CA` records, and the derived `haul.id`,
@@ -21,6 +70,28 @@
 
 ## Bug fixes
 
+* `download_datras()` failed for every survey and year with `Error in Year +
+  (Month - 1) * 1/12 : non-numeric argument to binary operator`. The ICES DATRAS
+  field list declares `Year` and `TimeShot` as character fields, and icesDatras
+  1.5.2 (released 2026-06-25) started applying that schema to downloaded data by
+  default, so the arithmetic in `DATRAS:::addExtraVariables()` was handed
+  character vectors. Reading archived exchange files was never affected, because
+  those are parsed from CSV. The fix is in DATRAS, which now coerces the fields
+  that must be numeric, so DATRASextra requires DATRAS >= 1.01.2. Users on an
+  older DATRAS can work around it with
+  `options(icesDatras.fix_types = FALSE)`.
+
+* `check_outliers(action = "remove")` discarded every attribute of the object
+  it returned, because the removal step rebuilt the object with `lapply()` and
+  restored only the class. Objects lost `cm.breaks`, `swept_area_summary` and
+  `swept_area_unit`, so a subsequent call to a function depending on them
+  failed with a message about a missing spectrum. Attributes are now preserved.
+
+* `c()` on two `datras_raw` objects discarded the attributes of both. This was
+  invisible before extraction records existed, but it is the point at which
+  survey-year files read separately are combined, so it now merges their
+  records instead.
+
 * `clean_datras(impute_missing_depth = TRUE)` failed for every input with
   `invalid type (list) for variable 'mgcv::s(lon, lat, k = 200)'`. `mgcv`
   identifies smooth terms by matching the bare symbol `s`, so the
@@ -30,6 +101,10 @@
   imputation also works for small objects.
 
 ## Minor changes
+
+* `prune_datras()` now retains `DateofCalculation` in `HH`. It was previously
+  dropped, which removed the only indication of when ICES last recalculated the
+  records. This adds one integer column per haul.
 
 * The default discrete colour palette used by the plotting functions is now
   sampled at equally spaced CIE L* lightness along the package colour ramp

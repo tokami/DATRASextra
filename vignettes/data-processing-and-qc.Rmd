@@ -79,6 +79,7 @@ Two principles guide the design:
 | 4. Cleaning          | `clean_datras()`                                                                                             | Filter on `HaulVal` and `StdSpecRecCode`, optionally impute depth and harmonise species, optionally subset                            | automatic filters, optional extras |
 | 5. Checks            | `check_outliers()`, `check_lengths()`, `check_weights()`, `add_swept_area()`                                 | Flag implausible values, summarise length and weight distributions, report swept-area missingness                                     | opt-in                             |
 | 6. Inspection        | `print()`, `summary()`, `plot_datras_overview()`, `plot_length_distribution()`, `plot_species_composition()` | Tabular and visual review                                                                                                             | opt-in                             |
+| 7. Extraction record | `extraction()`, `write_manifest()`, `verify_extraction()` | Record where the data came from and detect upstream revisions | automatic record, opt-in verification |
 
 
 Throughout we use the bundled example data set `mini`: four surveys, seven
@@ -152,7 +153,10 @@ subdirectory.
 
 This separation matters for reproducibility: the archive is the raw record, and
 every processing step described in the rest of this vignette is reapplied from
-it each time the data are read.
+it each time the data are read. Alongside the zip files, `download_datras()`
+maintains `DATRAS_manifest.csv`, recording the extraction date, a checksum and
+the ICES calculation date of every survey-year-quarter it retrieved; see
+*Recording and verifying the extraction* below.
 
 ```{r, eval = FALSE}
 ## Re-download and replace existing files
@@ -342,6 +346,18 @@ The split is reported by `print()`:
 
 ```{r}
 mini
+```
+
+## The ICES calculation date
+
+One column is neither derived nor really part of the survey data:
+`DateofCalculation`, the date on which ICES last recalculated the records. It is
+constant per survey, year and quarter, and it is the only field that reveals
+that the database has been revised since a download. It is discussed in
+*Recording and verifying the extraction* below.
+
+```{r}
+with(mini[["HH"]], table(Survey, DateofCalculation))
 ```
 
 ## Type coercions to be aware of
@@ -795,6 +811,159 @@ an ICES area usually have a coordinate problem that range checks alone will not
 catch.
 
 
+# Recording and verifying the extraction
+
+DATRAS is revised continuously. ICES does not only append new observations, it
+also corrects haul metadata, re-ages samples and reclassifies species, so a
+script that is unchanged can produce different numbers a year later. Nothing in
+the exchange file carries a version number, which makes this hard to notice.
+
+## The ICES calculation date
+
+There is, however, one field that acts as an upstream version stamp:
+`DateofCalculation`, recording when ICES last recalculated a block of records.
+It is constant per survey, year and quarter and identical across `HH`, `HL` and
+`CA`. Because it is set by ICES rather than by us, it can be compared between
+two extractions made at any time.
+
+Coverage is good but not complete. In a full local copy of DATRAS, 918 of 970
+survey-year-quarters carry a date. Most of the gaps are historical, but a
+handful are not: `SP-NORTH` quarter 3 and `SP-PORC` quarter 4 are missing the
+field for several years in the 2000s. Where the date is absent, an upstream
+revision cannot be detected this way, and only the file checksum will show that
+something changed.
+
+`extraction()` reads it out, together with everything else known about where the
+data came from:
+
+```{r}
+extraction(mini)[c("survey", "year", "quarter", "date_of_calculation")]
+```
+
+The bundled `mini` data set was created long before this information was
+recorded, yet the table is still populated: the survey, year, quarter and
+calculation date are reconstructed from the data themselves whenever no explicit
+record is available. The same is true of any archive downloaded with an earlier
+version of the package.
+
+Reading this table is already informative. Above, NS-IBTS 2022 quarter 3 was
+last recalculated well after the other blocks, so results using it may differ
+from an analysis run before that date.
+
+## What else is recorded
+
+When data are downloaded with `download_datras()`, the remaining columns are
+filled in as well:
+
+- `extracted`, `source` and `endpoint`: when the data were retrieved and from
+  where,
+- `file`, `payload_hash`, `zip_hash` and `algo`: which archive file the records
+  came from and its checksum,
+- `read`: when the archive was read into R,
+- `datrasextra`, `datras`, `icesdatras` and `r_version`: the software that
+  produced the object.
+
+The record follows the object through the pipeline, so a derived product can
+always be traced back to the extraction it came from:
+
+```{r}
+nrow(extraction(check_outliers(clean_datras(mini, verbose = FALSE),
+                               action = "remove", verbose = FALSE)))
+```
+
+It is also reconciled with the data actually present, so subsetting narrows it
+rather than leaving stale entries behind:
+
+```{r}
+extraction(subset(mini, Year == 2023 & Quarter == 1))[1:4]
+```
+
+`survey` and `extracted` are exactly the two fields the ICES citation format
+requires, so the record can be formatted straight into a data citation:
+
+```{r, eval = FALSE}
+e <- extraction(x)
+sprintf("ICES Database of Trawl Surveys (DATRAS), Extraction %s of %s. ICES, Copenhagen",
+        format(max(e$extracted), "%d %B %Y"),
+        paste(unique(e$survey), collapse = ", "))
+```
+
+## Verifying a snapshot
+
+`write_manifest()` describes a whole archive in one file, `DATRAS_manifest.csv`,
+holding a checksum and calculation date for every survey-year-quarter it
+contains. `download_datras()` maintains it automatically, and it can be built
+for any directory of exchange files, including one a colleague sent you:
+
+```{r, eval = FALSE}
+write_manifest("data/datras")
+```
+
+`verify_extraction()` then re-reads the archive and compares:
+
+```{r, eval = FALSE}
+verify_extraction("data/datras")
+```
+
+Each entry comes back as `ok`, `changed`, `revised`, `missing` or `new`. The
+distinction between the middle two is the point of the exercise:
+
+- **`changed`** means the file contents differ but the ICES calculation date is
+  the same. That is a local problem, typically a partial download or a corrupted
+  copy.
+- **`revised`** means ICES has recalculated the data since the manifest was
+  written. Results derived from the old copy will not reproduce against the new
+  one, and this is otherwise invisible.
+
+Two people can also compare manifests directly to confirm they hold identical
+data without either of them hosting anything.
+
+Note that the checksum is taken over the exchange file *inside* the zip
+archive, not over the archive itself. `utils::zip()` stores the modification
+time of the file it compresses, so writing identical data twice produces
+different archives but the same payload checksum. Only the payload checksum
+answers "is this the same data".
+
+## How old are the bundled lookup tables?
+
+The same question applies to the reference data the package ships with.
+`species_info`, `survey_info` and the internal ICES-area lookup are snapshots of
+external sources -- WoRMS, FishBase, the ICES web services -- taken at a
+particular time, so an analysis can depend on how old they are.
+`reference_tables()` says:
+
+```{r}
+reference_tables()[c("table", "kind", "rows", "generated", "status")]
+```
+
+`generated` is when each table entered the package, and `status` compares the
+table against the hash recorded in the package registry, so `changed` means a
+table was regenerated without its metadata being updated. The `source` column
+records what each was built from:
+
+```{r}
+r <- reference_tables(check = FALSE)
+r$source[r$table == "species_info"]
+```
+
+Taxonomy is the case where this matters most. `get_aphia()` and `get_latin()`
+resolve names against `species_info` by default, so they reflect WoRMS as of the
+date above rather than WoRMS today. Pass `use_worrms = TRUE` to query WoRMS
+live instead.
+
+## What this does and does not give you
+
+This records and verifies; it does not preserve. A reader who has the extraction
+date and checksum still cannot obtain that exact snapshot from ICES, because the
+web service always serves the current state of the database. The archive written
+by `download_datras()` remains the only fixed point in the workflow, so keep it,
+and keep its manifest alongside it.
+
+Between them, `extraction()` and `reference_tables()` cover both halves of the
+question: how old the survey data are, and how old the lookup tables applied to
+them are.
+
+
 # Further checks worth considering
 
 The following are not built into **DATRASextra**, because the right treatment
@@ -872,9 +1041,11 @@ Putting the stages together:
 ```{r, eval = FALSE}
 ## 1-2. Download once, then read from the archive
 download_datras(path = "data/datras", surveys = "NS-IBTS", years = 2015:2023)
+verify_extraction("data/datras")                    # confirm the snapshot
 x <- read_datras("data/datras", surveys = "NS-IBTS", years = 2015:2023)
 
 ## Audit the read before anything is filtered
+extraction(x)
 sum(is.na(x[["CA"]]$haul.id))
 table(x[["HH"]]$DataType)
 get_accuracy_cm(x)
@@ -900,6 +1071,10 @@ x <- add_total_numbers_by_haul(x)
 summary(x)
 ```
 
+Keep `extraction(x)` with the results. It is what lets you, or someone else,
+establish later whether a difference in the numbers comes from the code or from
+the data.
+
 
 # Summary
 
@@ -910,6 +1085,7 @@ summary(x)
 | Derived variables | `haul.id`, `LngtCm`, `Species`, `Count`, `lon`/`lat`, `abstime`, `Roundfish`, zero-catch treatment | length binning via `cm_breaks` / `by`                                                                                                        |
 | Cleaning          | `HaulVal` and `StdSpecRecCode` filters                                                             | `verbose`, `explain_codes`, `impute_missing_depth`, `correct_species`, `aphias`, `years`, `quarters`, `gears`, `do_fishglob`                 |
 | Checks            | none by default                                                                                    | `check_outliers()` (`strict`, `pct`, `pct_*`, `vars`, `action`, `remove_extremes`), `check_lengths()`, `check_weights()`, `add_swept_area()` |
+| Extraction record | attached on read, propagated through the pipeline, reconciled with the data present | `extraction()`, `write_manifest()`, `read_manifest()`, `verify_extraction()` |
 
 Nothing in the automatic column is hidden: the download and read stages print
 what they do, `clean_datras()` reports the data before filtering, and every
