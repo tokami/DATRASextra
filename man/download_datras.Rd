@@ -86,6 +86,19 @@ Files are saved as zipped exchange files named
 
 The following surveys are currently treated as problematic or test surveys:
 \code{"NS-IDPS"}, \code{"IS-IDPS"}, \code{"Test-DATRAS"}, and \code{"NS-IBTS_UNIFtest"}.
+
+Each downloaded survey-year is recorded in an archive manifest,
+\code{DATRAS_manifest.csv}, written in the root of \code{path}. The manifest holds the
+extraction date, the checksum of each exchange file, the ICES calculation
+date of the records it contains, and the package versions used, so that a
+snapshot can later be verified with \code{\link[=verify_extraction]{verify_extraction()}} and so that data
+read from the archive can report where they came from. Existing manifest
+entries for the same survey, year and quarter are replaced.
+
+No manifest entries are written when \code{use_php = TRUE}, because
+\code{DATRAS::downloadExchange()} writes the files through an external script and
+reports nothing about what it retrieved. Run \code{\link[=write_manifest]{write_manifest()}} on the
+directory afterwards to describe such an archive.
 }
 \examples{
 \dontrun{
@@ -107,4 +120,8 @@ dat <- download_datras(
 )
 }
 
+}
+\seealso{
+\code{\link[=read_datras]{read_datras()}}, \code{\link[=write_manifest]{write_manifest()}}, \code{\link[=verify_extraction]{verify_extraction()}},
+\code{\link[=extraction]{extraction()}}
 }

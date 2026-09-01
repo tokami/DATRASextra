@@ -13,7 +13,12 @@ write_datras(x, zip_file = "DATRAS.zip")
 file. Defaults to \code{"DATRAS.zip"}.}
 }
 \value{
-Invisibly returns the path to the created zip file.
+Invisibly returns the path to the created zip file, carrying the
+attributes \code{payload_hash}, \code{zip_hash} and \code{algo}. The payload hash is
+taken over the exchange file inside the archive and is therefore identical
+whenever the data are identical; the archive hash is not, because
+\code{\link[utils:zip]{utils::zip()}} stores the modification time of the file it compresses.
+This is why \code{\link[=write_manifest]{write_manifest()}} records the payload hash.
 }
 \description{
 Write the contents of a \code{datras_raw} / \code{DATRASraw} object to a temporary CSV

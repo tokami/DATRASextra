@@ -172,6 +172,7 @@ check_outliers <- function(x,
   res <- x
 
   if (action == "remove" && length(bad_hauls_remove) > 0) {
+    keep_attr <- attributes(x)
     res <- lapply(res, function(d) {
       if (!is.data.frame(d) || nrow(d) == 0) {
         return(d)
@@ -181,7 +182,12 @@ check_outliers <- function(x,
       }
       d[!(as.character(d$haul.id) %in% bad_hauls_remove), , drop = FALSE]
     })
-    class(res) <- class(x)
+    ## lapply() returns a bare list, dropping every attribute of the object.
+    ## Restore them, so that class, cm.breaks, the swept-area summary and the
+    ## extraction record survive removal. 'names' comes from lapply() itself.
+    for (nm in setdiff(names(keep_attr), "names")) {
+      attr(res, nm) <- keep_attr[[nm]]
+    }
   }
 
   attr(res, "outlier_report") <- report

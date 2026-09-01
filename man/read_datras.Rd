@@ -69,7 +69,8 @@ files. Defaults to \code{1} (sequential). Values greater than 1 use
 }
 \value{
 A combined DATRAS survey object with classes \code{datras_raw} and
-\code{DATRASraw}.
+\code{DATRASraw}, carrying an extraction record retrievable with
+\code{\link[=extraction]{extraction()}}.
 }
 \description{
 Read one or more ICES DATRAS exchange files, or all zipped exchange files in
@@ -165,5 +166,6 @@ x <- read_datras("data/NS-IBTS", strict = FALSE)
 
 }
 \seealso{
-\code{\link[=download_datras]{download_datras()}}, \code{\link[=prune_datras]{prune_datras()}}
+\code{\link[=download_datras]{download_datras()}}, \code{\link[=prune_datras]{prune_datras()}}, \code{\link[=extraction]{extraction()}},
+\code{\link[=verify_extraction]{verify_extraction()}}
 }

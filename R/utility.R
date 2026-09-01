@@ -640,6 +640,25 @@ print.datras_raw <- function(x, ...) {
     }
   }
 
+  ext <- tryCatch(extraction(x), error = function(e) NULL)
+  if (!is.null(ext) && nrow(ext) > 0) {
+    cat("Extraction:", nrow(ext), "source(s)")
+    if (any(!is.na(ext$extracted))) {
+      r <- range(ext$extracted, na.rm = TRUE)
+      cat(", extracted ", format(r[1], "%Y-%m-%d"), sep = "")
+      if (format(r[1], "%Y-%m-%d") != format(r[2], "%Y-%m-%d"))
+        cat(" to ", format(r[2], "%Y-%m-%d"), sep = "")
+    }
+    if (any(!is.na(ext$date_of_calculation))) {
+      r <- range(ext$date_of_calculation, na.rm = TRUE)
+      cat(", ICES calculation ", format(r[1], "%Y-%m-%d"), sep = "")
+      if (r[1] != r[2]) cat(" to ", format(r[2], "%Y-%m-%d"), sep = "")
+    }
+    n_miss <- sum(is.na(ext$date_of_calculation))
+    if (n_miss > 0) cat(" (", n_miss, " without a calculation date)", sep = "")
+    cat("\n")
+  }
+
   invisible(x)
 }
 
@@ -704,6 +723,20 @@ summary.datras_raw <- function(object, ...) {
     }
   }
 
+  ext <- tryCatch(extraction(x), error = function(e) NULL)
+  if (!is.null(ext) && nrow(ext) > 0) {
+    cat("---\nExtraction:\n")
+    show <- ext[c("survey", "year", "quarter", "date_of_calculation",
+                  "extracted", "source")]
+    if (nrow(show) > 12) {
+      print(utils::head(show, 12), row.names = FALSE)
+      cat("  ... and", nrow(show) - 12, "further source(s);",
+          "see extraction() for the full record.\n")
+    } else {
+      print(show, row.names = FALSE)
+    }
+  }
+
   invisible(x)
 }
 
@@ -764,8 +797,14 @@ c.datras_raw <- function(...) {
     }
   }
 
+  ## DATRAS::c.DATRASraw rebuilds the object and keeps only the tables, so the
+  ## extraction records of the inputs have to be merged back in explicitly.
+  rec <- .extraction_merge(...)
+
   ans <- do.call(getFromNamespace("c.DATRASraw", "DATRAS"), args)
-  .add_class_datras(ans)
+  ans <- .add_class_datras(ans)
+  if (nrow(rec) > 0) attr(ans, "extraction") <- rec
+  ans
 }
 
 

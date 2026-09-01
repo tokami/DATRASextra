@@ -57,7 +57,23 @@
 ##' The following surveys are currently treated as problematic or test surveys:
 ##' `"NS-IDPS"`, `"IS-IDPS"`, `"Test-DATRAS"`, and `"NS-IBTS_UNIFtest"`.
 ##'
+##' Each downloaded survey-year is recorded in an archive manifest,
+##' `DATRAS_manifest.csv`, written in the root of `path`. The manifest holds the
+##' extraction date, the checksum of each exchange file, the ICES calculation
+##' date of the records it contains, and the package versions used, so that a
+##' snapshot can later be verified with [verify_extraction()] and so that data
+##' read from the archive can report where they came from. Existing manifest
+##' entries for the same survey, year and quarter are replaced.
+##'
+##' No manifest entries are written when `use_php = TRUE`, because
+##' `DATRAS::downloadExchange()` writes the files through an external script and
+##' reports nothing about what it retrieved. Run [write_manifest()] on the
+##' directory afterwards to describe such an archive.
+##'
 ##' @return Invisibly returns `NULL`.
+##'
+##' @seealso [read_datras()], [write_manifest()], [verify_extraction()],
+##'   [extraction()]
 ##'
 ##' @importFrom DATRAS downloadExchange getDatrasExchange
 ##' @importFrom utils URLencode
@@ -135,6 +151,10 @@ download_datras <- function(path = NULL,
     }
   }
 
+  ## Extraction records, accumulated across surveys and merged into the archive
+  ## manifest once all downloads have finished.
+  ext_rows <- list()
+
   ## Download data for each survey
   for (s in seq_along(surveys)) {
     survey <- surveys[s]
@@ -155,13 +175,25 @@ download_datras <- function(path = NULL,
         if (!overwrite && file.exists(zip_path)) next
 
         quarters <- .get_survey_year_quarter_list(survey, year, timeout = timeout)
+        extracted_at <- Sys.time()
         datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
                                                 strict = TRUE,
                                                 download.hl = download_hl,
                                                 download.ca = download_ca)
         datras_raw <- .add_class_datras(datras_raw)
         datras_clean <- .remove_extra_variables(datras_raw)
-        write_datras(datras_clean, zip_path)
+        zp <- write_datras(datras_clean, zip_path)
+
+        ext_rows[[length(ext_rows) + 1L]] <- .extraction_record(
+          datras_raw,
+          extracted = extracted_at,
+          source = "api",
+          endpoint = .datras_endpoint(),
+          file = file.path(survey, basename(zip_path)),
+          payload_hash = attr(zp, "payload_hash"),
+          zip_hash = attr(zp, "zip_hash"),
+          algo = attr(zp, "algo")
+        )
       }
 
     } else {
@@ -181,6 +213,13 @@ download_datras <- function(path = NULL,
       }
 
     }
+  }
+
+  ## Record the extraction in the archive manifest. The php route writes files
+  ## through an external script, so nothing is known about them here; the
+  ## manifest is rebuilt from the files on disk instead.
+  if (length(ext_rows) > 0) {
+    .update_manifest(path, ext_rows, verbose = verbose)
   }
 
   if(verbose) message("Survey information has been downloaded and saved in folder for each survey at: ", path)

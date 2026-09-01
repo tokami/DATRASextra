@@ -102,9 +102,11 @@
 ##' data directly from the ICES web service.
 ##'
 ##' @return A combined DATRAS survey object with classes `datras_raw` and
-##'   `DATRASraw`.
+##'   `DATRASraw`, carrying an extraction record retrievable with
+##'   [extraction()].
 ##'
-##' @seealso [download_datras()], [prune_datras()]
+##' @seealso [download_datras()], [prune_datras()], [extraction()],
+##'   [verify_extraction()]
 ##'
 ##' @examples
 ##' \dontrun{
@@ -316,6 +318,18 @@ read_datras <- function(path,
   }
 
   surv0 <- .add_class_datras(surv0)
+
+  ## Describe where the data came from. The survey, year, quarter and ICES
+  ## calculation date come from the data themselves and are therefore always
+  ## available; download date and checksums are filled in from the archive
+  ## manifest when one is present.
+  root <- if (any(dir.exists(path0))) {
+    path0[dir.exists(path0)][1]
+  } else {
+    dirname(path0)[1]
+  }
+  surv0 <- .extraction_on_read(surv0, root = root)
+
   return(surv0)
 }
 
@@ -334,7 +348,12 @@ read_datras <- function(path,
 ##' @param zip_file Character string giving the path and name of the output zip
 ##'   file. Defaults to `"DATRAS.zip"`.
 ##'
-##' @return Invisibly returns the path to the created zip file.
+##' @return Invisibly returns the path to the created zip file, carrying the
+##'   attributes `payload_hash`, `zip_hash` and `algo`. The payload hash is
+##'   taken over the exchange file inside the archive and is therefore identical
+##'   whenever the data are identical; the archive hash is not, because
+##'   [utils::zip()] stores the modification time of the file it compresses.
+##'   This is why [write_manifest()] records the payload hash.
 ##'
 ##' @details
 ##' The exchange file is first written to a temporary CSV file and then zipped
@@ -379,11 +398,20 @@ write_datras <- function(x,
   ## Flush and close before zipping, then null the handle so on.exit() does nothing
   close(con); con <- NULL
 
+  ## Checksum the exchange file itself. utils::zip() embeds the modification
+  ## time of the file it compresses, so the zip archive differs every time even
+  ## for identical data; only the payload hash is comparable across writes.
+  algo <- .hash_algo()
+  payload_hash <- unname(algo$fun(csvfile))
+
   if (file.exists(zip_file)) unlink(zip_file)
   utils::zip(zip_file, files = csvfile, flags = "-j")
 
   message("Created zip file: ", zip_file)
-  invisible(zip_file)
+  invisible(structure(zip_file,
+                      payload_hash = payload_hash,
+                      zip_hash = unname(algo$fun(zip_file)),
+                      algo = algo$name))
 }
 
 

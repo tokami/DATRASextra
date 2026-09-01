@@ -240,7 +240,7 @@ list_prune_datras_defaults <- function() {
            "Netopening", "Rigging", "Tickler", "Distance", "Warplngt",
            "Warpdia", "WarpDen", "DoorSurface", "DoorWgt", "DoorSpread",
            "WingSpread", "GroundSpeed", "haul.id", "abstime", "timeOfYear",
-           "TimeShotHour", "lon", "lat", "Roundfish"),
+           "TimeShotHour", "lon", "lat", "Roundfish", "DateofCalculation"),
 
     HL = c("RecordType", "haul.id", "Survey", "Quarter", "Country", "Ship",
            "Gear", "SweepLngt", "GearEx", "DoorType", "Year", "SpecVal", "Sex",

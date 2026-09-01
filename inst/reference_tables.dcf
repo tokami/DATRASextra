@@ -1,0 +1,61 @@
+## Registry of the reference tables bundled with DATRASextra.
+## Regenerate with DATRASextra:::.write_reference_registry() after
+## rebuilding any table in data-raw/. Read with reference_tables().
+
+Table: species_info
+Kind: exported
+Script: data-raw/make_species_info.R
+Source: WoRMS via the worrms package; FishBase via rfishbase; DATRAS
+  length-weight table (August 2023); functional groups from Walker et al.
+  (2017), van Denderen et al. (2020) and Mildenberger et al. (2025)
+Generated: 2026-03-18
+Hash: c37847b46d4f2a470df4fb0df1cff838af3b65f1537b8aecefbf3dfd322b6dc3
+Algo: sha256
+Datrasextra: 0.4.1
+
+Table: survey_info
+Kind: exported
+Script: data-raw/make_survey_info.R
+Source: ICES DATRAS web service (getSurveyList and related endpoints)
+Generated: 2026-03-17
+Hash: 6df10ac0133c50eb3da2cb7ce82adc3575523900d970968f98f8ec44f964ec8c
+Algo: sha256
+Datrasextra: 0.4.1
+
+Table: survey_info_full_raw
+Kind: exported
+Script: data-raw/make_survey_info_full.R
+Source: ICES DATRAS web service, haul positions by survey and year
+Generated: 2026-05-01
+Hash: 52eb95d1d6ac72bb7d7d8fb4116a42baea56757098c8b2272164329672c5d8d7
+Algo: sha256
+Datrasextra: 0.4.1
+
+Table: spawning_info
+Kind: exported
+Script: data-raw/make_spawning_info.R
+Source: length_at_maturity repository (GoFish and WKMAT),
+  https://github.com/federico-maioli/length_at_maturity
+Generated: 2026-06-11
+Hash: 89337a35c063f5079b6ed8838ccc6ee9662c9fe5d48e55b519d810c5b8e952ae
+Algo: sha256
+Datrasextra: 0.4.1
+
+Table: ices_area_lookup
+Kind: internal
+Script: data-raw/make_ices_area_lookup.R
+Source: ICES statistical rectangle and area shapefiles, https://gis.ices.dk
+Generated: 2026-06-07
+Hash: 2e6472424908d13790351f2aa44027b3994941f6b5b9c055ecea5b379caf8268
+Algo: sha256
+Datrasextra: 0.4.1
+
+Table: spread_models
+Kind: internal
+Script: data-raw/spread_models.R
+Source: Gear spread models fitted to DATRAS haul data by survey
+Generated: 2026-06-07
+Hash: d920ab2c31b55254c52340ec20316394766d1cc06e231c3ec81468ba779022e5
+Algo: sha256
+Datrasextra: 0.4.1
+
