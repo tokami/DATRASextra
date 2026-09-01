@@ -37,8 +37,8 @@
 ##' @param use_php Logical. If `FALSE` (default), data are downloaded via
 ##'   `DATRAS::getDatrasExchange()`. If `TRUE`, the legacy
 ##'   `DATRAS::downloadExchange()` method is used.
-##' @param include_flagged Logical. If `FALSE` (default), surveys known to be
-##'   test surveys or surveys with incomplete data are skipped. Set to `TRUE` to
+##' @param include_flagged Logical. If `FALSE` (default), known test surveys are
+##'   skipped when the survey list is taken from the server. Set to `TRUE` to
 ##'   download them anyway.
 ##' @param return_data Logical. If `TRUE` (default), the function returns the
 ##'   downloaded data by running `read_datras()` on the specified path.
@@ -54,8 +54,11 @@
 ##' Files are saved as zipped exchange files named
 ##' `"<survey>_<year>.zip"` inside survey-specific subfolders.
 ##'
-##' The following surveys are currently treated as problematic or test surveys:
-##' `"NS-IDPS"`, `"IS-IDPS"`, `"Test-DATRAS"`, and `"NS-IBTS_UNIFtest"`.
+##' The following surveys are treated as test surveys and are skipped unless
+##' `include_flagged = TRUE`: `"Test-DATRAS"` and `"NS-IBTS_UNIFtest"`. The
+##' filter applies only when `surveys` is `NULL`, i.e. when the survey list is
+##' taken from the DATRAS server; a survey named explicitly is always
+##' downloaded.
 ##'
 ##' Each downloaded survey-year is recorded in an archive manifest,
 ##' `DATRAS_manifest.csv`, written in the root of `path`. The manifest holds the
@@ -126,12 +129,14 @@ download_datras <- function(path = NULL,
   ## Surveys
   if (is.null(surveys)) {
     surveys <- .get_survey_list(timeout = timeout)
-    surveys_with_issues <- c(## "NS-IDPS", "IS-IDPS",
-      "Test-DATRAS", "NS-IBTS_UNIFtest")
+    ## Test surveys only. "NS-IDPS" and "IS-IDPS" were listed here previously
+    ## but are real surveys - the Norwegian Sea and Irminger Sea International
+    ## Deep Pelagic Surveys - so they are downloaded like any other.
+    surveys_with_issues <- c("Test-DATRAS", "NS-IBTS_UNIFtest")
 
     ind <- which(surveys %in% surveys_with_issues)
     if (length(ind) > 0 && !isTRUE(include_flagged)) {
-      message("These surveys are test surveys or do not contain all required data and will not be downloaded: ", paste(surveys[ind], collapse = ", "), " Please use include_flagged=TRUE if you want to download these surveys.")
+      message("These surveys are test surveys and will not be downloaded: ", paste(surveys[ind], collapse = ", "), ". Please use include_flagged = TRUE if you want to download these surveys.")
       surveys <- surveys[-ind]
     }
   }

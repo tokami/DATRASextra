@@ -46,8 +46,8 @@ data are also downloaded where available. This option is only used when
 \code{DATRAS::getDatrasExchange()}. If \code{TRUE}, the legacy
 \code{DATRAS::downloadExchange()} method is used.}
 
-\item{include_flagged}{Logical. If \code{FALSE} (default), surveys known to be
-test surveys or surveys with incomplete data are skipped. Set to \code{TRUE} to
+\item{include_flagged}{Logical. If \code{FALSE} (default), known test surveys are
+skipped when the survey list is taken from the server. Set to \code{TRUE} to
 download them anyway.}
 
 \item{return_data}{Logical. If \code{TRUE} (default), the function returns the
@@ -84,8 +84,11 @@ Alternatively, the legacy PHP-based download route from
 Files are saved as zipped exchange files named
 \code{"<survey>_<year>.zip"} inside survey-specific subfolders.
 
-The following surveys are currently treated as problematic or test surveys:
-\code{"NS-IDPS"}, \code{"IS-IDPS"}, \code{"Test-DATRAS"}, and \code{"NS-IBTS_UNIFtest"}.
+The following surveys are treated as test surveys and are skipped unless
+\code{include_flagged = TRUE}: \code{"Test-DATRAS"} and \code{"NS-IBTS_UNIFtest"}. The
+filter applies only when \code{surveys} is \code{NULL}, i.e. when the survey list is
+taken from the DATRAS server; a survey named explicitly is always
+downloaded.
 
 Each downloaded survey-year is recorded in an archive manifest,
 \code{DATRAS_manifest.csv}, written in the root of \code{path}. The manifest holds the
