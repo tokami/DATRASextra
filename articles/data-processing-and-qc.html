@@ -1710,13 +1710,13 @@ analysis can depend on how old they are. <code><a href="../reference/reference_t
 says:</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reference_tables.html">reference_tables</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"table"</span>, <span class="st">"kind"</span>, <span class="st">"rows"</span>, <span class="st">"generated"</span>, <span class="st">"status"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                  table     kind   rows  generated  status</span></span>
-<span><span class="co">#&gt; 1        spawning_info exported   1023 2026-06-11      ok</span></span>
-<span><span class="co">#&gt; 2         species_info exported   2064 2026-03-18 changed</span></span>
-<span><span class="co">#&gt; 3          survey_info exported     28 2026-03-17      ok</span></span>
-<span><span class="co">#&gt; 4 survey_info_full_raw exported 144401 2026-05-01 changed</span></span>
-<span><span class="co">#&gt; 5     ices_area_lookup internal   6758 2026-06-07      ok</span></span>
-<span><span class="co">#&gt; 6        spread_models internal     12 2026-06-07 changed</span></span></code></pre></div>
+<span><span class="co">#&gt;                  table     kind   rows  generated status</span></span>
+<span><span class="co">#&gt; 1        spawning_info exported   1023 2026-09-15     ok</span></span>
+<span><span class="co">#&gt; 2         species_info exported   2064 2026-09-15     ok</span></span>
+<span><span class="co">#&gt; 3          survey_info exported     28 2026-09-15     ok</span></span>
+<span><span class="co">#&gt; 4 survey_info_full_raw exported 144401 2026-09-15     ok</span></span>
+<span><span class="co">#&gt; 5     ices_area_lookup internal   6758 2026-09-15     ok</span></span>
+<span><span class="co">#&gt; 6        spread_models internal     12 2026-09-15     ok</span></span></code></pre></div>
 <p><code>generated</code> is when each table entered the package, and
 <code>status</code> compares the table against the hash recorded in the
 package registry, so <code>changed</code> means a table was regenerated

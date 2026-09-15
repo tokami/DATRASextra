@@ -74,12 +74,12 @@ cryptographic guarantee across R versions.
 ## Which reference tables are bundled, and how old are they
 reference_tables()
 #>                  table     kind   rows columns  generated
-#> 1        spawning_info exported   1023       7 2026-06-11
-#> 2         species_info exported   2064      24 2026-03-18
-#> 3          survey_info exported     28       4 2026-03-17
-#> 4 survey_info_full_raw exported 144401       7 2026-05-01
-#> 5     ices_area_lookup internal   6758       8 2026-06-07
-#> 6        spread_models internal     12      NA 2026-06-07
+#> 1        spawning_info exported   1023       7 2026-09-15
+#> 2         species_info exported   2064      24 2026-09-15
+#> 3          survey_info exported     28       4 2026-09-15
+#> 4 survey_info_full_raw exported 144401       7 2026-09-15
+#> 5     ices_area_lookup internal   6758       8 2026-09-15
+#> 6        spread_models internal     12      NA 2026-09-15
 #>                             script
 #> 1    data-raw/make_spawning_info.R
 #> 2     data-raw/make_species_info.R
@@ -94,23 +94,23 @@ reference_tables()
 #> 4                                                                                                                                             ICES DATRAS web service, haul positions by survey and year
 #> 5                                                                                                                                    ICES statistical rectangle and area shapefiles, https://gis.ices.dk
 #> 6                                                                                                                                                Gear spread models fitted to DATRAS haul data by survey
-#>                                                               hash  status
-#> 1 89337a35c063f5079b6ed8838ccc6ee9662c9fe5d48e55b519d810c5b8e952ae      ok
-#> 2 86ed4c635c8ee59492d58e20677a35108375dd59fca2f5d9e64b16bb98760773 changed
-#> 3 6df10ac0133c50eb3da2cb7ce82adc3575523900d970968f98f8ec44f964ec8c      ok
-#> 4 7133f1af5504269225148ceba7d3edaa8fe1a0424477c13d87112c1702010906 changed
-#> 5 2e6472424908d13790351f2aa44027b3994941f6b5b9c055ecea5b379caf8268      ok
-#> 6 2a0875426ba67e4b66ec9b1ea3e2c6a5c92376e1206bcd5f1a0f7e7ecd7ef24e changed
+#>                                                               hash status
+#> 1 89337a35c063f5079b6ed8838ccc6ee9662c9fe5d48e55b519d810c5b8e952ae     ok
+#> 2 86ed4c635c8ee59492d58e20677a35108375dd59fca2f5d9e64b16bb98760773     ok
+#> 3 6df10ac0133c50eb3da2cb7ce82adc3575523900d970968f98f8ec44f964ec8c     ok
+#> 4 7133f1af5504269225148ceba7d3edaa8fe1a0424477c13d87112c1702010906     ok
+#> 5 2e6472424908d13790351f2aa44027b3994941f6b5b9c055ecea5b379caf8268     ok
+#> 6 2a0875426ba67e4b66ec9b1ea3e2c6a5c92376e1206bcd5f1a0f7e7ecd7ef24e     ok
 
 ## Skip hashing
 reference_tables(check = FALSE)
 #>                  table     kind   rows columns  generated
-#> 1        spawning_info exported   1023       7 2026-06-11
-#> 2         species_info exported   2064      24 2026-03-18
-#> 3          survey_info exported     28       4 2026-03-17
-#> 4 survey_info_full_raw exported 144401       7 2026-05-01
-#> 5     ices_area_lookup internal   6758       8 2026-06-07
-#> 6        spread_models internal     12      NA 2026-06-07
+#> 1        spawning_info exported   1023       7 2026-09-15
+#> 2         species_info exported   2064      24 2026-09-15
+#> 3          survey_info exported     28       4 2026-09-15
+#> 4 survey_info_full_raw exported 144401       7 2026-09-15
+#> 5     ices_area_lookup internal   6758       8 2026-09-15
+#> 6        spread_models internal     12      NA 2026-09-15
 #>                             script
 #> 1    data-raw/make_spawning_info.R
 #> 2     data-raw/make_species_info.R

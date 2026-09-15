@@ -115,12 +115,12 @@ cryptographic guarantee across R versions.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Which reference tables are bundled, and how old are they</span></span></span>
 <span class="r-in"><span><span class="fu">reference_tables</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  table     kind   rows columns  generated</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        spawning_info exported   1023       7 2026-06-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         species_info exported   2064      24 2026-03-18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          survey_info exported     28       4 2026-03-17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 survey_info_full_raw exported 144401       7 2026-05-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     ices_area_lookup internal   6758       8 2026-06-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        spread_models internal     12      NA 2026-06-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        spawning_info exported   1023       7 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         species_info exported   2064      24 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          survey_info exported     28       4 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 survey_info_full_raw exported 144401       7 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     ices_area_lookup internal   6758       8 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        spread_models internal     12      NA 2026-09-15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                             script</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    data-raw/make_spawning_info.R</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2     data-raw/make_species_info.R</span>
@@ -135,23 +135,23 @@ cryptographic guarantee across R versions.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                                                                                                             ICES DATRAS web service, haul positions by survey and year</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                                                                                    ICES statistical rectangle and area shapefiles, https://gis.ices.dk</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                                                                                                Gear spread models fitted to DATRAS haul data by survey</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                               hash  status</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 89337a35c063f5079b6ed8838ccc6ee9662c9fe5d48e55b519d810c5b8e952ae      ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 86ed4c635c8ee59492d58e20677a35108375dd59fca2f5d9e64b16bb98760773 changed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 6df10ac0133c50eb3da2cb7ce82adc3575523900d970968f98f8ec44f964ec8c      ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 7133f1af5504269225148ceba7d3edaa8fe1a0424477c13d87112c1702010906 changed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2e6472424908d13790351f2aa44027b3994941f6b5b9c055ecea5b379caf8268      ok</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2a0875426ba67e4b66ec9b1ea3e2c6a5c92376e1206bcd5f1a0f7e7ecd7ef24e changed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                               hash status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 89337a35c063f5079b6ed8838ccc6ee9662c9fe5d48e55b519d810c5b8e952ae     ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 86ed4c635c8ee59492d58e20677a35108375dd59fca2f5d9e64b16bb98760773     ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 6df10ac0133c50eb3da2cb7ce82adc3575523900d970968f98f8ec44f964ec8c     ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 7133f1af5504269225148ceba7d3edaa8fe1a0424477c13d87112c1702010906     ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2e6472424908d13790351f2aa44027b3994941f6b5b9c055ecea5b379caf8268     ok</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2a0875426ba67e4b66ec9b1ea3e2c6a5c92376e1206bcd5f1a0f7e7ecd7ef24e     ok</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Skip hashing</span></span></span>
 <span class="r-in"><span><span class="fu">reference_tables</span><span class="op">(</span>check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  table     kind   rows columns  generated</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        spawning_info exported   1023       7 2026-06-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         species_info exported   2064      24 2026-03-18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          survey_info exported     28       4 2026-03-17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 survey_info_full_raw exported 144401       7 2026-05-01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     ices_area_lookup internal   6758       8 2026-06-07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        spread_models internal     12      NA 2026-06-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        spawning_info exported   1023       7 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         species_info exported   2064      24 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          survey_info exported     28       4 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 survey_info_full_raw exported 144401       7 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     ices_area_lookup internal   6758       8 2026-09-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        spread_models internal     12      NA 2026-09-15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                             script</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    data-raw/make_spawning_info.R</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2     data-raw/make_species_info.R</span>

@@ -1352,13 +1352,13 @@ says:
 ``` r
 
 reference_tables()[c("table", "kind", "rows", "generated", "status")]
-#>                  table     kind   rows  generated  status
-#> 1        spawning_info exported   1023 2026-06-11      ok
-#> 2         species_info exported   2064 2026-03-18 changed
-#> 3          survey_info exported     28 2026-03-17      ok
-#> 4 survey_info_full_raw exported 144401 2026-05-01 changed
-#> 5     ices_area_lookup internal   6758 2026-06-07      ok
-#> 6        spread_models internal     12 2026-06-07 changed
+#>                  table     kind   rows  generated status
+#> 1        spawning_info exported   1023 2026-09-15     ok
+#> 2         species_info exported   2064 2026-09-15     ok
+#> 3          survey_info exported     28 2026-09-15     ok
+#> 4 survey_info_full_raw exported 144401 2026-09-15     ok
+#> 5     ices_area_lookup internal   6758 2026-09-15     ok
+#> 6        spread_models internal     12 2026-09-15     ok
 ```
 
 `generated` is when each table entered the package, and `status`
