@@ -110,3 +110,21 @@ test_that("the registry parses when its header carries comment lines", {
   expect_equal(reg$table, "demo")
   expect_equal(reg$generated, as.Date("2024-01-02"))
 })
+
+
+test_that("object hashes ignore the R version in the serialisation header", {
+
+  algo <- .hash_algo()
+  skip_if_not("bytes" %in% names(formals(algo$fun)),
+              "hashing raw bytes needs R >= 4.5.0")
+
+  x <- data.frame(a = 1:3, b = letters[1:3], stringsAsFactors = FALSE)
+  bytes <- serialize(x, NULL, version = 2L, xdr = TRUE)
+
+  ## The first 14 bytes hold the format version, the R version that wrote the
+  ## stream and the minimum R version able to read it. Hashing them too would
+  ## make every reference table look regenerated on every R release.
+  expect_equal(.hash_object(x),
+               unname(algo$fun(bytes = bytes[-seq_len(14L)])))
+  expect_false(identical(.hash_object(x), unname(algo$fun(bytes = bytes))))
+})

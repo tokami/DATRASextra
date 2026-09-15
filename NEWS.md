@@ -78,6 +78,15 @@
   fail and the registry read back empty. The header is now stripped before
   parsing.
 
+* `reference_tables()` reported every bundled table as `"changed"` whenever it
+  ran under an R version other than the one that wrote the registry. The hashes
+  covered the serialisation header, which records the R version that produced
+  the stream, so they changed on every R release even though the tables had
+  not. The header is now excluded, and the registry has been regenerated; the
+  hashes in it therefore differ from those shipped in earlier versions.
+  `.hash_object()` also works again on R older than 4.5.0, where
+  `tools::md5sum()` has no `bytes` argument.
+
 * `download_datras()` returned data for the wrong years when several surveys
   were downloaded in one call without specifying `years`. The per-survey year
   list overwrote the `years` argument inside the download loop, so the archive

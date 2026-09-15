@@ -9,7 +9,7 @@ Source: WoRMS via the worrms package; FishBase via rfishbase; DATRAS
   length-weight table (August 2023); functional groups from Walker et al.
   (2017), van Denderen et al. (2020) and Mildenberger et al. (2025)
 Generated: 2026-09-15
-Hash: 86ed4c635c8ee59492d58e20677a35108375dd59fca2f5d9e64b16bb98760773
+Hash: 56d99e3f26f7568237606f9c0f70aa0ad38bab9d51e1b841b8620491623fc3a0
 Algo: sha256
 Datrasextra: 0.5.0
 
@@ -18,7 +18,7 @@ Kind: exported
 Script: data-raw/make_survey_info.R
 Source: ICES DATRAS web service (getSurveyList and related endpoints)
 Generated: 2026-09-15
-Hash: 6df10ac0133c50eb3da2cb7ce82adc3575523900d970968f98f8ec44f964ec8c
+Hash: 4dea03a65c4b1c9b097c468e5f2956426990fa69c3554aaea4d1dc2a5840341a
 Algo: sha256
 Datrasextra: 0.5.0
 
@@ -27,7 +27,7 @@ Kind: exported
 Script: data-raw/make_survey_info_full.R
 Source: ICES DATRAS web service, haul positions by survey and year
 Generated: 2026-09-15
-Hash: 7133f1af5504269225148ceba7d3edaa8fe1a0424477c13d87112c1702010906
+Hash: 0e23e487396e74af3555043e8fa2f5314795fae368f8c6c51851baddfd1f6e7f
 Algo: sha256
 Datrasextra: 0.5.0
 
@@ -37,7 +37,7 @@ Script: data-raw/make_spawning_info.R
 Source: length_at_maturity repository (GoFish and WKMAT),
   https://github.com/federico-maioli/length_at_maturity
 Generated: 2026-09-15
-Hash: 89337a35c063f5079b6ed8838ccc6ee9662c9fe5d48e55b519d810c5b8e952ae
+Hash: d80c7d5493de4baa792d2e1bad1eb99eaf5dc068490a1b6721249729513c5689
 Algo: sha256
 Datrasextra: 0.5.0
 
@@ -46,7 +46,7 @@ Kind: internal
 Script: data-raw/make_ices_area_lookup.R
 Source: ICES statistical rectangle and area shapefiles, https://gis.ices.dk
 Generated: 2026-09-15
-Hash: 2e6472424908d13790351f2aa44027b3994941f6b5b9c055ecea5b379caf8268
+Hash: d1af60fcdcc0f1bf2396454cee1242a9d6e10ed687f6a4cfe5a27057c1738bf1
 Algo: sha256
 Datrasextra: 0.5.0
 
@@ -55,7 +55,7 @@ Kind: internal
 Script: data-raw/spread_models.R
 Source: Gear spread models fitted to DATRAS haul data by survey
 Generated: 2026-09-15
-Hash: 2a0875426ba67e4b66ec9b1ea3e2c6a5c92376e1206bcd5f1a0f7e7ecd7ef24e
+Hash: a5a122e46dad2a661f3c0b7ec0d4a57c67dbdd94d8e7e31bcad7cc21872f8902
 Algo: sha256
 Datrasextra: 0.5.0
 

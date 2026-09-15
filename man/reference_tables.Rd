@@ -45,10 +45,10 @@ written, so \code{generated} and \code{source} may be out of date,
 \item \code{"missing"}: the registry lists a table that is not available.
 }
 
-Hashes are taken over the serialised object and are comparable within an
-installation and between installations of the same package version. They are
-intended to detect that a table has been regenerated, not as a
-cryptographic guarantee across R versions.
+Hashes are taken over the serialised object, with the stream header that
+records the writing R version stripped out, so a table that has not been
+rebuilt hashes the same under different R versions. They are intended to
+detect that a table has been regenerated, not as a cryptographic guarantee.
 }
 \examples{
 ## Which reference tables are bundled, and how old are they

@@ -35,10 +35,10 @@
 ##'   \item `"missing"`: the registry lists a table that is not available.
 ##' }
 ##'
-##' Hashes are taken over the serialised object and are comparable within an
-##' installation and between installations of the same package version. They are
-##' intended to detect that a table has been regenerated, not as a
-##' cryptographic guarantee across R versions.
+##' Hashes are taken over the serialised object, with the stream header that
+##' records the writing R version stripped out, so a table that has not been
+##' rebuilt hashes the same under different R versions. They are intended to
+##' detect that a table has been regenerated, not as a cryptographic guarantee.
 ##'
 ##' @return A data frame with one row per reference table and the columns
 ##'   `table`, `kind`, `rows`, `columns`, `generated`, `script`, `source`, and,
@@ -196,8 +196,30 @@ reference_tables <- function(check = TRUE) {
 
 ## Hash an R object by serialising it with a fixed format, so that the result
 ## does not depend on incidental session state.
+##
+## Format 2 is used rather than 3, and its header is dropped before hashing.
+## The header is "X\n" followed by three integers: the format version, the R
+## version that wrote the stream and the minimum R version able to read it.
+## Hashing that too would make every table look regenerated on every R release.
+## Format 3 additionally records the session's native encoding in the header,
+## and stores ALTREP objects in compact forms that are not stable across R
+## versions, so format 2 is the more comparable of the two.
 .hash_object <- function(x, algo = .hash_algo()) {
-  unname(algo$fun(bytes = serialize(x, NULL, version = 3L, xdr = TRUE)))
+
+  bytes <- serialize(x, NULL, version = 2L, xdr = TRUE)
+  if (length(bytes) > 14L && identical(as.integer(bytes[1:2]), c(88L, 10L))) {
+    bytes <- bytes[-seq_len(14L)]
+  }
+
+  ## tools::md5sum() and tools::sha256sum() only gained bytes= in R 4.5.0.
+  if ("bytes" %in% names(formals(algo$fun))) {
+    return(unname(algo$fun(bytes = bytes)))
+  }
+
+  f <- tempfile(pattern = "datras_hash_")
+  on.exit(unlink(f), add = TRUE)
+  writeBin(bytes, f)
+  unname(algo$fun(f))
 }
 
 
