@@ -42,13 +42,25 @@
 ##'   download them anyway.
 ##' @param return_data Logical. If `TRUE` (default), the function returns the
 ##'   downloaded data by running `read_datras()` on the specified path.
+##' @param strict Logical. Passed to [read_datras()] when `return_data = TRUE`,
+##'   and ignored otherwise. Controls how records in `CA` without a haul
+##'   identifier are matched back to a haul: if `TRUE` (default), a record
+##'   matching several candidate hauls is left as `NA`; if `FALSE`, it is
+##'   assigned one of them at random. It does not affect the files written to
+##'   disk, which always hold the exchange data as delivered by ICES.
 ##' @param verbose Logical. If `TRUE` (default), progress messages are printed.
 ##' @param timeout Numeric. Maximum number of seconds to wait for the ICES
 ##'   DATRAS server to respond when retrieving the list of available surveys or
 ##'   years. If the server does not respond within this time (e.g. because a
 ##'   firewall blocks the connection), the function falls back to locally cached
 ##'   information. Default is 10 seconds.
-##' @param ... Additional arguments for the function `read_datras()`.
+##' @param ... Additional arguments for the function `read_datras()`, used when
+##'   `return_data = TRUE`. The most useful ones control how much is held in
+##'   memory: `prune = TRUE` drops non-essential columns, `drop_hl = TRUE` and
+##'   `drop_ca = TRUE` omit the length-frequency and biological tables from the
+##'   returned object, and `ncores` sets the number of workers used to read the
+##'   files. None of them affect what is written to disk. See [read_datras()]
+##'   for the full list.
 ##'
 ##' @details
 ##' Files are saved as zipped exchange files named
@@ -67,6 +79,12 @@
 ##' snapshot can later be verified with [verify_extraction()] and so that data
 ##' read from the archive can report where they came from. Existing manifest
 ##' entries for the same survey, year and quarter are replaced.
+##'
+##' Downloading a large part of the database and returning it in one call can
+##' exhaust memory, because every survey-year is read back into a single object.
+##' Either set `return_data = FALSE` and read the archive in pieces afterwards,
+##' or pass the memory-reducing arguments of [read_datras()] through `...`, for
+##' example `prune = TRUE` and `drop_ca = TRUE`.
 ##'
 ##' No manifest entries are written when `use_php = TRUE`, because
 ##' `DATRAS::downloadExchange()` writes the files through an external script and
@@ -111,11 +129,10 @@ download_datras <- function(path = NULL,
                             use_php = FALSE,
                             include_flagged = FALSE,
                             return_data = TRUE,
+                            strict = TRUE,
                             verbose = TRUE,
                             timeout = 10,
                             ...) {
-
-  yearsin <- years
 
   dir0 <- getwd()
   on.exit(setwd(dir0), add = TRUE)
@@ -168,19 +185,28 @@ download_datras <- function(path = NULL,
 
     setwd(file.path(path, survey))
 
-    years <- .get_survey_year_list(survey, path, yearsin, timeout = timeout)
+    ## Per-survey year list. Kept in its own variable: `years` is the user's
+    ## request and must survive the loop intact, so that the archive is read
+    ## back with the filter that was asked for and not with the year coverage
+    ## of whichever survey happened to be downloaded last.
+    survey_years <- .get_survey_year_list(survey, path, years, timeout = timeout)
 
     ## if (.Platform$OS.type == "windows") {
     if (!use_php) {
 
-      for (y in seq_along(years)) {
-        year <- years[y]
+      for (y in seq_along(survey_years)) {
+        year <- survey_years[y]
 
         zip_path <- file.path(path, survey, paste0(survey, "_", year, ".zip"))
         if (!overwrite && file.exists(zip_path)) next
 
         quarters <- .get_survey_year_quarter_list(survey, year, timeout = timeout)
         extracted_at <- Sys.time()
+        ## strict is fixed here, not taken from the argument: it only sets
+        ## the derived haul.id column, which .remove_extra_variables() drops
+        ## before writing, so the archived file is the same either way. Using
+        ## strict = FALSE would call sample() for no gain. The user-facing
+        ## strict argument applies when the archive is read back below.
         datras_raw <- DATRAS::getDatrasExchange(survey, year, quarters,
                                                 strict = TRUE,
                                                 download.hl = download_hl,
@@ -206,15 +232,15 @@ download_datras <- function(path = NULL,
       if ((!download_hl || !download_ca) && verbose) message("Note that this functionality is not yet implemented, php always downloads HL and CA. Consider setting use_php = FALSE.")
 
       if (!overwrite) {
-        for (y in seq_along(years)) {
-          year <- years[y]
+        for (y in seq_along(survey_years)) {
+          year <- survey_years[y]
           zip_path <- file.path(path, survey, paste0(survey, "_", year, ".zip"))
           if (file.exists(zip_path)) next
 
           tmp <- DATRAS::downloadExchange(survey, year)
         }
       } else {
-        tmp <- DATRAS::downloadExchange(survey, years)
+        tmp <- DATRAS::downloadExchange(survey, survey_years)
       }
 
     }
@@ -230,7 +256,8 @@ download_datras <- function(path = NULL,
   if(verbose) message("Survey information has been downloaded and saved in folder for each survey at: ", path)
 
   if (isTRUE(return_data)) {
-    dat <- read_datras(path = path, surveys = surveys, years = years, ...)
+    dat <- read_datras(path = path, surveys = surveys, years = years,
+                       strict = strict, ...)
     return(dat)
   } else {
     return(invisible(path))

@@ -128,9 +128,10 @@ country, ship, and statistical rectangle. When that match is not unique, the
 \code{strict} argument decides what happens: \code{strict = FALSE} picks
 one of the candidate hauls at random, whereas the default \code{strict = TRUE} leaves the
 record unmatched. The number of records affected can be checked afterwards
-with \code{sum(is.na(x[["CA"]]$haul.id))}. Note that
-\code{\link[=download_datras]{download_datras()}} uses the equivalent of \code{strict = TRUE} when downloading
-data directly from the ICES web service.
+with \code{sum(is.na(x[["CA"]]$haul.id))}. The matching is not stored in the
+exchange files, which hold the data as delivered by ICES, so it is redone
+every time an archive is read. \code{\link[=download_datras]{download_datras()}} therefore takes the same
+\code{strict} argument and passes it on when it returns the downloaded data.
 }
 \examples{
 \dontrun{

@@ -14,6 +14,7 @@ download_datras(
   use_php = FALSE,
   include_flagged = FALSE,
   return_data = TRUE,
+  strict = TRUE,
   verbose = TRUE,
   timeout = 10,
   ...
@@ -53,6 +54,13 @@ download them anyway.}
 \item{return_data}{Logical. If \code{TRUE} (default), the function returns the
 downloaded data by running \code{read_datras()} on the specified path.}
 
+\item{strict}{Logical. Passed to \code{\link[=read_datras]{read_datras()}} when \code{return_data = TRUE},
+and ignored otherwise. Controls how records in \code{CA} without a haul
+identifier are matched back to a haul: if \code{TRUE} (default), a record
+matching several candidate hauls is left as \code{NA}; if \code{FALSE}, it is
+assigned one of them at random. It does not affect the files written to
+disk, which always hold the exchange data as delivered by ICES.}
+
 \item{verbose}{Logical. If \code{TRUE} (default), progress messages are printed.}
 
 \item{timeout}{Numeric. Maximum number of seconds to wait for the ICES
@@ -61,7 +69,13 @@ years. If the server does not respond within this time (e.g. because a
 firewall blocks the connection), the function falls back to locally cached
 information. Default is 10 seconds.}
 
-\item{...}{Additional arguments for the function \code{read_datras()}.}
+\item{...}{Additional arguments for the function \code{read_datras()}, used when
+\code{return_data = TRUE}. The most useful ones control how much is held in
+memory: \code{prune = TRUE} drops non-essential columns, \code{drop_hl = TRUE} and
+\code{drop_ca = TRUE} omit the length-frequency and biological tables from the
+returned object, and \code{ncores} sets the number of workers used to read the
+files. None of them affect what is written to disk. See \code{\link[=read_datras]{read_datras()}}
+for the full list.}
 }
 \value{
 Invisibly returns \code{NULL}.
@@ -97,6 +111,12 @@ date of the records it contains, and the package versions used, so that a
 snapshot can later be verified with \code{\link[=verify_extraction]{verify_extraction()}} and so that data
 read from the archive can report where they came from. Existing manifest
 entries for the same survey, year and quarter are replaced.
+
+Downloading a large part of the database and returning it in one call can
+exhaust memory, because every survey-year is read back into a single object.
+Either set \code{return_data = FALSE} and read the archive in pieces afterwards,
+or pass the memory-reducing arguments of \code{\link[=read_datras]{read_datras()}} through \code{...}, for
+example \code{prune = TRUE} and \code{drop_ca = TRUE}.
 
 No manifest entries are written when \code{use_php = TRUE}, because
 \code{DATRAS::downloadExchange()} writes the files through an external script and

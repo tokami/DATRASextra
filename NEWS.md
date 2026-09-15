@@ -66,9 +66,20 @@
   matched back to a haul: the default `strict = TRUE` leaves records with
   several candidate hauls unmatched, while `strict = FALSE` assigns records with
   several candidate hauls to one of them at random. This changes the default
-  behaviour of `read_datras()`.
+  behaviour of `read_datras()`. `download_datras()` takes the same argument and
+  passes it on when `return_data = TRUE`; it has no effect on the files written
+  to disk, which hold the exchange data as delivered by ICES.
 
 ## Bug fixes
+
+* `download_datras()` returned data for the wrong years when several surveys
+  were downloaded in one call without specifying `years`. The per-survey year
+  list overwrote the `years` argument inside the download loop, so the archive
+  was read back filtered to the year coverage of whichever survey came last:
+  `download_datras(surveys = c("NS-IBTS", "BITS"))` returned no NS-IBTS data
+  from before the first BITS year. Only the returned object was affected; the
+  files written to disk were always complete, and re-reading such an archive
+  with `read_datras()` gives the full data.
 
 * `download_datras()` failed for every survey and year with `Error in Year +
   (Month - 1) * 1/12 : non-numeric argument to binary operator`. The ICES DATRAS

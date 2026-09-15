@@ -97,9 +97,10 @@
 ##' `strict` argument decides what happens: `strict = FALSE` picks
 ##' one of the candidate hauls at random, whereas the default `strict = TRUE` leaves the
 ##' record unmatched. The number of records affected can be checked afterwards
-##' with `sum(is.na(x[["CA"]]$haul.id))`. Note that
-##' [download_datras()] uses the equivalent of `strict = TRUE` when downloading
-##' data directly from the ICES web service.
+##' with `sum(is.na(x[["CA"]]$haul.id))`. The matching is not stored in the
+##' exchange files, which hold the data as delivered by ICES, so it is redone
+##' every time an archive is read. [download_datras()] therefore takes the same
+##' `strict` argument and passes it on when it returns the downloaded data.
 ##'
 ##' @return A combined DATRAS survey object with classes `datras_raw` and
 ##'   `DATRASraw`, carrying an extraction record retrievable with
