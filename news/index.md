@@ -112,6 +112,17 @@
   `inst/reference_tables.dcf` made the parser fail and the registry read
   back empty. The header is now stripped before parsing.
 
+- [`reference_tables()`](https://tokami.github.io/DATRASextra/reference/reference_tables.md)
+  reported every bundled table as `"changed"` whenever it ran under an R
+  version other than the one that wrote the registry. The hashes covered
+  the serialisation header, which records the R version that produced
+  the stream, so they changed on every R release even though the tables
+  had not. The header is now excluded, and the registry has been
+  regenerated; the hashes in it therefore differ from those shipped in
+  earlier versions. `.hash_object()` also works again on R older than
+  4.5.0, where [`tools::md5sum()`](https://rdrr.io/r/tools/md5sum.html)
+  has no `bytes` argument.
+
 - [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
   returned data for the wrong years when several surveys were downloaded
   in one call without specifying `years`. The per-survey year list

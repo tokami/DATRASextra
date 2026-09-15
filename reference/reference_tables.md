@@ -57,10 +57,11 @@ When `check = TRUE`, the `status` column takes one of:
 
 - `"missing"`: the registry lists a table that is not available.
 
-Hashes are taken over the serialised object and are comparable within an
-installation and between installations of the same package version. They
-are intended to detect that a table has been regenerated, not as a
-cryptographic guarantee across R versions.
+Hashes are taken over the serialised object, with the stream header that
+records the writing R version stripped out, so a table that has not been
+rebuilt hashes the same under different R versions. They are intended to
+detect that a table has been regenerated, not as a cryptographic
+guarantee.
 
 ## See also
 
@@ -95,12 +96,12 @@ reference_tables()
 #> 5                                                                                                                                    ICES statistical rectangle and area shapefiles, https://gis.ices.dk
 #> 6                                                                                                                                                Gear spread models fitted to DATRAS haul data by survey
 #>                                                               hash status
-#> 1 89337a35c063f5079b6ed8838ccc6ee9662c9fe5d48e55b519d810c5b8e952ae     ok
-#> 2 86ed4c635c8ee59492d58e20677a35108375dd59fca2f5d9e64b16bb98760773     ok
-#> 3 6df10ac0133c50eb3da2cb7ce82adc3575523900d970968f98f8ec44f964ec8c     ok
-#> 4 7133f1af5504269225148ceba7d3edaa8fe1a0424477c13d87112c1702010906     ok
-#> 5 2e6472424908d13790351f2aa44027b3994941f6b5b9c055ecea5b379caf8268     ok
-#> 6 2a0875426ba67e4b66ec9b1ea3e2c6a5c92376e1206bcd5f1a0f7e7ecd7ef24e     ok
+#> 1 d80c7d5493de4baa792d2e1bad1eb99eaf5dc068490a1b6721249729513c5689     ok
+#> 2 56d99e3f26f7568237606f9c0f70aa0ad38bab9d51e1b841b8620491623fc3a0     ok
+#> 3 4dea03a65c4b1c9b097c468e5f2956426990fa69c3554aaea4d1dc2a5840341a     ok
+#> 4 0e23e487396e74af3555043e8fa2f5314795fae368f8c6c51851baddfd1f6e7f     ok
+#> 5 d1af60fcdcc0f1bf2396454cee1242a9d6e10ed687f6a4cfe5a27057c1738bf1     ok
+#> 6 a5a122e46dad2a661f3c0b7ec0d4a57c67dbdd94d8e7e31bcad7cc21872f8902     ok
 
 ## Skip hashing
 reference_tables(check = FALSE)
