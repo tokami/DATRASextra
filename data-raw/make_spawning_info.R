@@ -13,7 +13,7 @@ download.file(url, tmp, mode = "wb")
 spawning_info <- readRDS(tmp)
 
 ## Add the WoRMS AphiaID by matching scientific names against species_info
-load("data/species_info.rda")
+load("../data/species_info.rda")
 spawning_info$aphia <- species_info$WoRMS_AphiaID[
   match(spawning_info$species, species_info$ScientificName_WoRMS)
 ]

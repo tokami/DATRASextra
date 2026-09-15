@@ -20,7 +20,7 @@ for (si in seq_along(surveys)) {
       tag = "Quarter"
     ))
     for (qi in seq_along(quarters)) {
-      tmp <- getHHdata(surveys[si], years[yi], quarters[qi])
+      tmp <- icesDatras::getHHdata(surveys[si], years[yi], quarters[qi])
       res.list[[ci]] <- tmp[
         tmp$HaulVal == "V",
         c("Survey", "Year", "Quarter", "Country", "Ship", "Gear", "DayNight", "Depth", "StatRec", "ShootLong", "ShootLat")

@@ -59,3 +59,4 @@ DATRASextra.Rproj
 
 # Ignore paper for now
 /paper/
+wget-log*

@@ -1,7 +1,6 @@
 ## Species information
 ## created: 04/03/2026
 
-## TODO revise when gear indices ready!
 
 library(DATRASextra)
 library(worrms)
@@ -9,7 +8,7 @@ library(rfishbase)
 
 
 ## Species and life-history table ---------------------------------
-tab <- read.csv("data-raw/WoRMSTable_updated.csv")
+tab <- read.csv("WoRMSTable_updated.csv")
 tab <- tab[,c("WoRMS_AphiaID","ScientificName_WoRMS")]
 
 any(is.na(tab$WoRMS_AphiaID))
@@ -111,9 +110,9 @@ table(tab$funcGroupFB)
 
 
 ## Walker / Daniel groups? -----------
-tmp <- load("data-raw/Names_DATRAS_Walker_match.Rdata")
-walker <- read.csv("data-raw/EfficiencyTab.csv")
-walker_raw <- read.csv("data-raw/walker_raw.csv")
+tmp <- load("Names_DATRAS_Walker_match.Rdata")
+walker <- read.csv("EfficiencyTab.csv")
+walker_raw <- read.csv("walker_raw.csv")
 all(unique(q_names$q_group) %in% unique(walker$Code))
 
 
@@ -157,7 +156,7 @@ all(tab[!is.na(tab$funcGroupWalker) &
 tab$funcGroupMildenberger <- tab$funcGroupWalker
 
 ## Species to assign
-tmp <- read.csv("data-raw/aphias_not_in_walker.csv")
+tmp <- read.csv("aphias_not_in_walker.csv")
 tmp[tmp$perHaul > 1 | (tmp$relMax > 1 & !is.na(tmp$relMax)),]
 
 ## Callionymus genus
@@ -340,7 +339,7 @@ tab$funcGroupWalkerAll[tab$genus == id & !is.na(tab$genus)] <- 3
 
 
 ## a and b from fishglob
-dati <- read.csv("data-raw/length.weight_DATRAS_3August2023.csv")
+dati <- read.csv("length.weight_DATRAS_3August2023.csv")
 
 indi <- match(tab$ScientificName_WoRMS, dati$taxa)
 any(is.na(indi))

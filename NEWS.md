@@ -1,4 +1,4 @@
-# DATRASextra 0.4.1
+# DATRASextra 0.5.0
 
 ## New features
 

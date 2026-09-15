@@ -340,7 +340,9 @@ download_datras <- function(path = NULL,
 
 
 ## Make a GET request to the ICES DATRAS web service and return the values of
-## `tag` elements from the XML response as a character vector.
+## `tag` elements from the XML response as a character vector.  The service pads
+## some values to a fixed width (e.g. "EVHOE     "), so values are trimmed and
+## any that are empty afterwards are dropped.
 .datras_api_get <- function(endpoint, query = "", tag) {
   base <- "https://datras.ices.dk/WebServices/DATRASWebService.asmx/"
   addr <- if (nchar(query) > 0) paste0(base, endpoint, "?", query) else paste0(base, endpoint)
@@ -348,7 +350,8 @@ download_datras <- function(path = NULL,
   on.exit(close(con), add = TRUE)
   txt <- paste(readLines(con, warn = FALSE), collapse = "")
   m <- gregexpr(paste0("(?<=<", tag, ">)[^<]+"), txt, perl = TRUE)
-  regmatches(txt, m)[[1]]
+  vals <- trimws(regmatches(txt, m)[[1]])
+  vals[nzchar(vals)]
 }
 
 

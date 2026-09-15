@@ -16,7 +16,7 @@ surv <- prune_datras(surv0,
                               "Netopening","Rigging","Tickler", "Warplngt",
                               "Warpdia","WarpDen", "DoorSurface",
                               "DoorWgt","Roundfish"),
-                      remove_ca = TRUE)
+                      drop_ca = TRUE)
 
 wolffish <- clean_datras(surv, aphias = "126758")
 

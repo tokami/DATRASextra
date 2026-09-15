@@ -8,8 +8,10 @@
 
 library(sf)
 
-areas_path <- "../dev/ICES_areas/ICES_Areas_20160601_cut_dense_3857.shp"
-rects_path <- "../dev/ICES_rectangles/ICES_Statistical_Rectangles_Eco.shp"
+base_dir <- "../"  ## TODO: set this to . for .Rproj use
+
+areas_path <- file.path(base_dir, "../dev/ICES_areas/ICES_Areas_20160601_cut_dense_3857.shp")
+rects_path <- file.path(base_dir, "../dev/ICES_rectangles/ICES_Statistical_Rectangles_Eco.shp")
 
 areas <- st_read(areas_path)
 rects <- st_read(rects_path)
@@ -40,6 +42,6 @@ cat("Rows:", nrow(ices_area_lookup), "\n")
 cat("Unmatched rectangles:", sum(is.na(ices_area_lookup$Area_27)), "\n")
 
 ## Add to sysdata.rda alongside existing objects
-load("R/sysdata.rda")  ## loads spread_models
+load(file.path(base_dir, "R/sysdata.rda"))  ## loads spread_models
 usethis::use_data(spread_models, ices_area_lookup,
                   internal = TRUE, overwrite = TRUE)
