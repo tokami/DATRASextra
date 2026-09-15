@@ -2,6 +2,7 @@
 <url><loc>https://tokami.github.io/DATRASextra/404.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/LICENSE.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/custom-length-classes.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/articles/data-processing-and-qc.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/datras-raw-object.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/articles/fishglob.html</loc></url>
@@ -42,6 +43,7 @@
 <url><loc>https://tokami.github.io/DATRASextra/reference/download_datras.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/drop_ca.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/drop_hl.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/extraction.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/get_accuracy_cm.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/get_aphia.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/get_land.html</loc></url>
@@ -61,11 +63,15 @@
 <url><loc>https://tokami.github.io/DATRASextra/reference/prune_datras.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/prune_fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/read_datras.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/read_manifest.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/reference_tables.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/spawning_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/species_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/survey_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/survey_info_full_raw.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/verify_extraction.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/wolffish.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/write_datras.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/write_manifest.html</loc></url>
 </urlset>
 

@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +84,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Processing ICES DATRAS Data for FishGlob</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/v0.4.0/vignettes/articles/fishglob.Rmd" class="external-link"><code>vignettes/articles/fishglob.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/vignettes/articles/fishglob.Rmd" class="external-link"><code>vignettes/articles/fishglob.Rmd</code></a></small>
       <div class="d-none name"><code>fishglob.Rmd</code></div>
     </div>
 
@@ -213,12 +213,12 @@ structure</strong>.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">datras</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     survey      source timestamp                          haul_id</span></span>
-<span><span class="co">#&gt; 2     BITS DATRAS ICES   2026-06  BITS:2015:1:DE:06SL:TVS:22004:7</span></span>
-<span><span class="co">#&gt; 4     BITS DATRAS ICES   2026-06  BITS:2015:1:DE:06SL:TVS:22007:8</span></span>
-<span><span class="co">#&gt; 44    BITS DATRAS ICES   2026-06 BITS:2015:1:DE:06SL:TVS:24212:15</span></span>
-<span><span class="co">#&gt; 110   BITS DATRAS ICES   2026-06      BITS:2015:1:DK:26HI:TVS:1:1</span></span>
-<span><span class="co">#&gt; 111   BITS DATRAS ICES   2026-06    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
-<span><span class="co">#&gt; 112   BITS DATRAS ICES   2026-06    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
+<span><span class="co">#&gt; 2     BITS DATRAS ICES   2026-09  BITS:2015:1:DE:06SL:TVS:22004:7</span></span>
+<span><span class="co">#&gt; 4     BITS DATRAS ICES   2026-09  BITS:2015:1:DE:06SL:TVS:22007:8</span></span>
+<span><span class="co">#&gt; 44    BITS DATRAS ICES   2026-09 BITS:2015:1:DE:06SL:TVS:24212:15</span></span>
+<span><span class="co">#&gt; 110   BITS DATRAS ICES   2026-09      BITS:2015:1:DK:26HI:TVS:1:1</span></span>
+<span><span class="co">#&gt; 111   BITS DATRAS ICES   2026-09    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
+<span><span class="co">#&gt; 112   BITS DATRAS ICES   2026-09    BITS:2015:1:DK:26HI:TVS:10:10</span></span>
 <span><span class="co">#&gt;             country sub_area continent stat_rec station stratum year month day</span></span>
 <span><span class="co">#&gt; 2   multi-countries     &lt;NA&gt;    europe     37G0    &lt;NA&gt;    &lt;NA&gt; 2015     2  25</span></span>
 <span><span class="co">#&gt; 4   multi-countries     &lt;NA&gt;    europe     37G1    &lt;NA&gt;    &lt;NA&gt; 2015     2  26</span></span>
@@ -227,19 +227,19 @@ structure</strong>.</p>
 <span><span class="co">#&gt; 111 multi-countries     &lt;NA&gt;    europe     41G2    &lt;NA&gt;    &lt;NA&gt; 2015     2  27</span></span>
 <span><span class="co">#&gt; 112 multi-countries     &lt;NA&gt;    europe     41G2    &lt;NA&gt;    &lt;NA&gt; 2015     2  27</span></span>
 <span><span class="co">#&gt;     quarter latitude longitude haul_dur area_swept gear depth     num num_cpue</span></span>
-<span><span class="co">#&gt; 2         1  54.4427   10.6547      0.5 0.07697517  TVS    19   1.000    2.000</span></span>
-<span><span class="co">#&gt; 4         1  54.4513   11.3738      0.5 0.08368994  TVS    20   1.000    2.000</span></span>
-<span><span class="co">#&gt; 44        1  54.9908   13.3447      0.5 0.09056468  TVS    47   1.000    2.000</span></span>
-<span><span class="co">#&gt; 110       1  57.4721   10.6695      0.5 0.07173646  TVS    26  90.573  181.146</span></span>
-<span><span class="co">#&gt; 111       1  56.1206   12.4688      0.5 0.06509888  TVS    26   1.000    2.000</span></span>
-<span><span class="co">#&gt; 112       1  56.1206   12.4688      0.5 0.06509888  TVS    26 118.635  237.270</span></span>
+<span><span class="co">#&gt; 2         1  54.4427   10.6547      0.5 0.07679683  TVS    19   1.000    2.000</span></span>
+<span><span class="co">#&gt; 4         1  54.4513   11.3738      0.5 0.08350674  TVS    20   1.000    2.000</span></span>
+<span><span class="co">#&gt; 44        1  54.9908   13.3447      0.5 0.09038306  TVS    47   1.000    2.000</span></span>
+<span><span class="co">#&gt; 110       1  57.4721   10.6695      0.5 0.07157098  TVS    26  90.573  181.146</span></span>
+<span><span class="co">#&gt; 111       1  56.1206   12.4688      0.5 0.06494740  TVS    26   1.000    2.000</span></span>
+<span><span class="co">#&gt; 112       1  56.1206   12.4688      0.5 0.06494740  TVS    26 118.635  237.270</span></span>
 <span><span class="co">#&gt;       num_cpua        wgt   wgt_cpue   wgt_cpua verbatim_name verbatim_aphia_id</span></span>
-<span><span class="co">#&gt; 2     12.99120 0.01259440  0.0251888  0.1636164          &lt;NA&gt;                NA</span></span>
-<span><span class="co">#&gt; 4     11.94887 0.06313433  0.1262687  0.7543837          &lt;NA&gt;                NA</span></span>
-<span><span class="co">#&gt; 44    11.04183 0.05369922  0.1073984  0.5929377          &lt;NA&gt;                NA</span></span>
-<span><span class="co">#&gt; 110 1262.57974 2.06026668  4.1205334 28.7199381          &lt;NA&gt;                NA</span></span>
-<span><span class="co">#&gt; 111   15.36125 2.93347786  5.8669557 45.0618790          &lt;NA&gt;                NA</span></span>
-<span><span class="co">#&gt; 112 1822.38158 5.13663026 10.2732605 78.9050479          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 2     13.02137 0.01259440  0.0251888  0.1639963          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 4     11.97508 0.06313433  0.1262687  0.7560387          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 44    11.06402 0.05369922  0.1073984  0.5941292          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 110 1265.49892 2.06026668  4.1205334 28.7863408          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 111   15.39708 2.93347786  5.8669557 45.1669815          &lt;NA&gt;                NA</span></span>
+<span><span class="co">#&gt; 112 1826.63211 5.13663026 10.2732605 79.0890863          &lt;NA&gt;                NA</span></span>
 <span><span class="co">#&gt;                    accepted_name aphia_id          class             order</span></span>
 <span><span class="co">#&gt; 2   Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
 <span><span class="co">#&gt; 4   Hippoglossoides platessoides   127137      Teleostei Pleuronectiformes</span></span>
@@ -384,7 +384,7 @@ include multiple decades of trawl survey data.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -45,7 +45,7 @@ download.
 ## Restrict to a small area (central North Sea)
 box <- subset(dab, lon > 2 & lon < 4 & lat > 54 & lat < 55)
 nrow(box[["HH"]])
-#> [1] 60
+#> [1] 61
 ```
 
 The `HH` table stores haul positions in the `lon` / `lat` columns
@@ -62,23 +62,23 @@ hauls <- st_as_sf(
 )
 
 hauls
-#> Simple feature collection with 60 features and 1 field
+#> Simple feature collection with 61 features and 1 field
 #> Geometry type: POINT
 #> Dimension:     XY
 #> Bounding box:  xmin: 2.029 ymin: 54.063 xmax: 3.8461 ymax: 54.9065
 #> Geodetic CRS:  WGS 84
 #> First 10 features:
-#>                                  haul.id               geometry
-#> 304 NS-IBTS:2020:1:NL:64T2:GOV:37F345:45 POINT (3.8426 54.0975)
-#> 305 NS-IBTS:2020:1:NL:64T2:GOV:37F344:44 POINT (3.4598 54.2928)
-#> 306 NS-IBTS:2020:1:NL:64T2:GOV:38F343:43 POINT (3.4081 54.5398)
-#> 311 NS-IBTS:2020:1:NL:64T2:GOV:37F238:38 POINT (2.3995 54.1398)
-#> 312 NS-IBTS:2020:1:NL:64T2:GOV:37F237:37   POINT (2.173 54.347)
-#> 313 NS-IBTS:2020:1:NL:64T2:GOV:38F236:36 POINT (2.3038 54.6708)
-#> 314 NS-IBTS:2020:1:NL:64T2:GOV:38F235:35 POINT (2.3051 54.8311)
-#> 343  NS-IBTS:2020:1:NL:64T2:GOV:38F306:6 POINT (3.7726 54.7061)
-#> 358    NS-IBTS:2020:3:DK:26D4:GOV:175:55 POINT (3.1305 54.2941)
-#> 359    NS-IBTS:2020:3:DK:26D4:GOV:173:54  POINT (2.6208 54.139)
+#>                                    haul.id               geometry
+#> 147    NS-IBTS:2020:1:NL:64T2:GOV:38F306:6 POINT (3.7726 54.7061)
+#> 176   NS-IBTS:2020:1:NL:64T2:GOV:38F235:35 POINT (2.3051 54.8311)
+#> 177   NS-IBTS:2020:1:NL:64T2:GOV:38F236:36 POINT (2.3038 54.6708)
+#> 178   NS-IBTS:2020:1:NL:64T2:GOV:37F237:37   POINT (2.173 54.347)
+#> 179   NS-IBTS:2020:1:NL:64T2:GOV:37F238:38 POINT (2.3995 54.1398)
+#> 184   NS-IBTS:2020:1:NL:64T2:GOV:38F343:43 POINT (3.4081 54.5398)
+#> 185   NS-IBTS:2020:1:NL:64T2:GOV:37F344:44 POINT (3.4598 54.2928)
+#> 186   NS-IBTS:2020:1:NL:64T2:GOV:37F345:45 POINT (3.8426 54.0975)
+#> 365 NS-IBTS:2020:3:GB-SCT:748S:GOV:189:189   POINT (2.502 54.571)
+#> 366 NS-IBTS:2020:3:GB-SCT:748S:GOV:190:190   POINT (2.319 54.396)
 ```
 
 ## Download the EUSeaMap layer
@@ -173,13 +173,13 @@ joined  <- st_join(hauls_m, habitat[habitat_col], join = st_intersects)
 
 ## One habitat value per haul.id
 head(st_drop_geometry(joined))
-#>                                  haul.id  substrate
-#> 304 NS-IBTS:2020:1:NL:64T2:GOV:37F345:45 Muddy sand
-#> 305 NS-IBTS:2020:1:NL:64T2:GOV:37F344:44       Sand
-#> 306 NS-IBTS:2020:1:NL:64T2:GOV:38F343:43       Sand
-#> 311 NS-IBTS:2020:1:NL:64T2:GOV:37F238:38       Sand
-#> 312 NS-IBTS:2020:1:NL:64T2:GOV:37F237:37       Sand
-#> 313 NS-IBTS:2020:1:NL:64T2:GOV:38F236:36       Sand
+#>                                  haul.id substrate
+#> 147  NS-IBTS:2020:1:NL:64T2:GOV:38F306:6      Sand
+#> 176 NS-IBTS:2020:1:NL:64T2:GOV:38F235:35      Sand
+#> 177 NS-IBTS:2020:1:NL:64T2:GOV:38F236:36      Sand
+#> 178 NS-IBTS:2020:1:NL:64T2:GOV:37F237:37      Sand
+#> 179 NS-IBTS:2020:1:NL:64T2:GOV:37F238:38      Sand
+#> 184 NS-IBTS:2020:1:NL:64T2:GOV:38F343:43      Sand
 ```
 
 Because polygon boundaries can overlap or hauls can sit on a border,
@@ -210,7 +210,7 @@ box[["HH"]]$habitat <- joined[[habitat_col]][
 table(box[["HH"]]$habitat, useNA = "ifany")
 #> 
 #> Coarse substrate       Muddy sand             Sand        Sandy mud 
-#>                7                1               44                8
+#>                7                1               45                8
 ```
 
 Because we worked on the `box` subset throughout, every haul in it gets

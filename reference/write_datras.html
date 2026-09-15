@@ -15,7 +15,7 @@ file in DATRAS exchange format and compress it into a zip archive."><meta proper
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ file in DATRAS exchange format and compress it into a zip archive."><meta proper
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Write a <code>datras_raw</code> object to a DATRAS exchange zip file</h1>
-      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/v0.4.0/R/read_write.R" class="external-link"><code>R/read_write.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/R/read_write.R" class="external-link"><code>R/read_write.R</code></a></small>
       <div class="d-none name"><code>write_datras.Rd</code></div>
     </div>
 
@@ -78,7 +78,12 @@ file. Defaults to <code>"DATRAS.zip"</code>.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Invisibly returns the path to the created zip file.</p>
+    <p>Invisibly returns the path to the created zip file, carrying the
+attributes <code>payload_hash</code>, <code>zip_hash</code> and <code>algo</code>. The payload hash is
+taken over the exchange file inside the archive and is therefore identical
+whenever the data are identical; the archive hash is not, because
+<code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> stores the modification time of the file it compresses.
+This is why <code><a href="write_manifest.html">write_manifest()</a></code> records the payload hash.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -108,7 +113,7 @@ using <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">uti
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

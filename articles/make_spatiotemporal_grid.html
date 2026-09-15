@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +84,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Building a spatiotemporal prediction grid</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/v0.4.0/vignettes/articles/make_spatiotemporal_grid.Rmd" class="external-link"><code>vignettes/articles/make_spatiotemporal_grid.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/vignettes/articles/make_spatiotemporal_grid.Rmd" class="external-link"><code>vignettes/articles/make_spatiotemporal_grid.Rmd</code></a></small>
       <div class="d-none name"><code>make_spatiotemporal_grid.Rmd</code></div>
     </div>
 
@@ -123,13 +123,13 @@ we only need the <code>lon</code> and <code>lat</code> columns.</p>
 <code class="sourceCode R"><span><span class="co">## Unique trawl locations</span></span>
 <span><span class="va">trawls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"haul.id"</span>, <span class="st">"lon"</span>, <span class="st">"lat"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">trawls</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                               haul.id    lon     lat</span></span>
-<span><span class="co">#&gt; 1 NS-IBTS:2020:1:NO:58G2:GOV:60055:55 3.2725 59.2533</span></span>
-<span><span class="co">#&gt; 2 NS-IBTS:2020:1:NO:58G2:GOV:60054:54 3.1695 59.7019</span></span>
-<span><span class="co">#&gt; 3 NS-IBTS:2020:1:NO:58G2:GOV:60053:53 2.4838 58.6749</span></span>
-<span><span class="co">#&gt; 4 NS-IBTS:2020:1:NO:58G2:GOV:60052:52 2.7423 58.2584</span></span>
-<span><span class="co">#&gt; 5 NS-IBTS:2020:1:NO:58G2:GOV:60051:51 3.4483 58.2483</span></span>
-<span><span class="co">#&gt; 6 NS-IBTS:2020:1:NO:58G2:GOV:60050:50 3.3026 58.8872</span></span></code></pre></div>
+<span><span class="co">#&gt;                           haul.id    lon     lat</span></span>
+<span><span class="co">#&gt; 1  NS-IBTS:2020:1:DK:26D4:GOV:6:1 7.1445 56.6076</span></span>
+<span><span class="co">#&gt; 2  NS-IBTS:2020:1:DK:26D4:GOV:8:2 6.8874 56.5951</span></span>
+<span><span class="co">#&gt; 3 NS-IBTS:2020:1:DK:26D4:GOV:10:3 7.1858 56.3057</span></span>
+<span><span class="co">#&gt; 4 NS-IBTS:2020:1:DK:26D4:GOV:11:4 6.8544 56.3333</span></span>
+<span><span class="co">#&gt; 5 NS-IBTS:2020:1:DK:26D4:GOV:19:5 2.4918 56.7180</span></span>
+<span><span class="co">#&gt; 6 NS-IBTS:2020:1:DK:26D4:GOV:21:6 1.5045 56.7494</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="a-spatial-grid">A spatial grid<a class="anchor" aria-label="anchor" href="#a-spatial-grid"></a>
@@ -199,7 +199,7 @@ per grid node and year.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">grid_st</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 27416</span></span>
+<span><span class="co">#&gt; [1] 27424</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">grid_st</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      X    Y year</span></span>
 <span><span class="co">#&gt; 1 -0.1 49.5 2020</span></span>
@@ -213,7 +213,7 @@ per grid node and year.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">grid_st</span><span class="op">$</span><span class="va">year</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 2020 2021 2022 2023 </span></span>
-<span><span class="co">#&gt; 6854 6854 6854 6854</span></span></code></pre></div>
+<span><span class="co">#&gt; 6856 6856 6856 6856</span></span></code></pre></div>
 <p>This <code>grid_st</code> data frame - with <code>X</code>,
 <code>Y</code>, and <code>year</code> - can be passed directly to a
 spatiotemporal model as the set of locations to predict on.</p>
@@ -248,7 +248,7 @@ obtain a sea-only spatiotemporal grid.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -22,7 +22,14 @@ write_datras(x, zip_file = "DATRAS.zip")
 
 ## Value
 
-Invisibly returns the path to the created zip file.
+Invisibly returns the path to the created zip file, carrying the
+attributes `payload_hash`, `zip_hash` and `algo`. The payload hash is
+taken over the exchange file inside the archive and is therefore
+identical whenever the data are identical; the archive hash is not,
+because [`utils::zip()`](https://rdrr.io/r/utils/zip.html) stores the
+modification time of the file it compresses. This is why
+[`write_manifest()`](https://tokami.github.io/DATRASextra/reference/write_manifest.md)
+records the payload hash.
 
 ## Details
 

@@ -1,5 +1,207 @@
 # Changelog
 
+## DATRASextra 0.5.0
+
+### New features
+
+- Data extracted from ICES DATRAS now carries a record of where it came
+  from, retrievable with the new
+  [`extraction()`](https://tokami.github.io/DATRASextra/reference/extraction.md)
+  function. The record has one row per survey, year and quarter and
+  reports the ICES calculation date, the extraction date, the source and
+  endpoint, the archive file and its checksum, and the versions of
+  DATRASextra, DATRAS, icesDatras and R that produced the object. It
+  follows the data through the processing pipeline and is reconciled
+  with the records still present, so subsetting narrows it instead of
+  leaving stale entries behind.
+
+  The central field is `DateofCalculation`, supplied by ICES, which
+  records when a block of records was last recalculated. Because ICES
+  revises historical data as well as appending to it, this is the only
+  reliable way to tell that an analysis will no longer reproduce against
+  the current database. It is reconstructed from the data themselves
+  when no explicit record is available, so
+  [`extraction()`](https://tokami.github.io/DATRASextra/reference/extraction.md)
+  also works on archives and objects created before this release.
+
+- New
+  [`write_manifest()`](https://tokami.github.io/DATRASextra/reference/write_manifest.md),
+  [`read_manifest()`](https://tokami.github.io/DATRASextra/reference/read_manifest.md)
+  and
+  [`verify_extraction()`](https://tokami.github.io/DATRASextra/reference/verify_extraction.md)
+  describe and check a local archive.
+  [`write_manifest()`](https://tokami.github.io/DATRASextra/reference/write_manifest.md)
+  records a checksum and the ICES calculation date for every
+  survey-year-quarter in a directory of exchange files, and
+  [`verify_extraction()`](https://tokami.github.io/DATRASextra/reference/verify_extraction.md)
+  re-reads the archive and reports each entry as `ok`, `changed`
+  (contents differ locally), `revised` (ICES recalculated the data
+  upstream), `missing` or `new`. Two users can compare manifests to
+  confirm they hold identical data without hosting anything.
+
+  [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+  maintains the manifest automatically, and it can be built for any
+  directory of exchange files regardless of how it was produced.
+
+- [`write_datras()`](https://tokami.github.io/DATRASextra/reference/write_datras.md)
+  now returns the path with `payload_hash`, `zip_hash` and `algo`
+  attributes. The payload hash is taken over the exchange file inside
+  the archive, so it is identical whenever the data are identical; the
+  archive hash is not, because
+  [`utils::zip()`](https://rdrr.io/r/utils/zip.html) stores the
+  modification time of the file it compresses.
+
+- New
+  [`reference_tables()`](https://tokami.github.io/DATRASextra/reference/reference_tables.md)
+  reports the lookup tables bundled with the package
+
+  - `species_info`, `survey_info`, `survey_info_full_raw`,
+    `spawning_info` and the internal ICES area and gear-spread tables -
+    together with when each was generated, which script generated it,
+    what it was generated from, and a hash that shows whether it still
+    matches the version recorded in the package registry
+    (`inst/reference_tables.dcf`). These tables are snapshots of
+    external sources such as WoRMS and the ICES web services, so an
+    analysis can depend on how old they are; this makes that visible.
+    Maintainers regenerate the registry with
+    `DATRASextra:::.write_reference_registry()` after rebuilding any
+    table in `data-raw/`, and a test fails if the two drift apart.
+
+- The vignette
+  [`vignette("data-processing-and-qc")`](https://tokami.github.io/DATRASextra/articles/data-processing-and-qc.md)
+  gains a section on recording and verifying an extraction, and on the
+  age of the bundled reference tables.
+
+- New vignette
+  [`vignette("data-processing-and-qc")`](https://tokami.github.io/DATRASextra/articles/data-processing-and-qc.md)
+  documenting every processing and quality-control step from download to
+  analysis-ready object. It covers what
+  [`DATRAS::getDatrasExchange()`](https://rdrr.io/pkg/DATRAS/man/getDatrasExchange.html)
+  and
+  [`DATRAS::readICES()`](https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html)
+  do before any DATRASextra function is called (column renaming, the
+  `-9` missing value sentinel, matching of orphan `CA` records, and the
+  derived `haul.id`, `LngtCm`, `Species` and `Count` columns),
+  enumerates the filters applied by
+  [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md)
+  and how to change or replace them, documents the rule-based and
+  percentile checks of
+  [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md)
+  together with the diagnostic attributes it attaches, and lists further
+  checks left to the user.
+
+- [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
+  gains a `strict` argument, passed through to the underlying DATRAS
+  reader. It controls how `CA` records without a haul identifier are
+  matched back to a haul: the default `strict = TRUE` leaves records
+  with several candidate hauls unmatched, while `strict = FALSE` assigns
+  records with several candidate hauls to one of them at random. This
+  changes the default behaviour of
+  [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md).
+  [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+  takes the same argument and passes it on when `return_data = TRUE`; it
+  has no effect on the files written to disk, which hold the exchange
+  data as delivered by ICES.
+
+### Bug fixes
+
+- [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+  returned data for the wrong years when several surveys were downloaded
+  in one call without specifying `years`. The per-survey year list
+  overwrote the `years` argument inside the download loop, so the
+  archive was read back filtered to the year coverage of whichever
+  survey came last: `download_datras(surveys = c("NS-IBTS", "BITS"))`
+  returned no NS-IBTS data from before the first BITS year. Only the
+  returned object was affected; the files written to disk were always
+  complete, and re-reading such an archive with
+  [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
+  gives the full data.
+
+- [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+  failed for every survey and year with
+  `Error in Year + (Month - 1) * 1/12 : non-numeric argument to binary operator`.
+  The ICES DATRAS field list declares `Year` and `TimeShot` as character
+  fields, and icesDatras 1.5.2 (released 2026-06-25) started applying
+  that schema to downloaded data by default, so the arithmetic in
+  `DATRAS:::addExtraVariables()` was handed character vectors. Reading
+  archived exchange files was never affected, because those are parsed
+  from CSV. The fix is in DATRAS, which now coerces the fields that must
+  be numeric, so DATRASextra requires DATRAS \>= 1.01.2. Users on an
+  older DATRAS can work around it with
+  `options(icesDatras.fix_types = FALSE)`.
+
+- `check_outliers(action = "remove")` discarded every attribute of the
+  object it returned, because the removal step rebuilt the object with
+  [`lapply()`](https://rdrr.io/r/base/lapply.html) and restored only the
+  class. Objects lost `cm.breaks`, `swept_area_summary` and
+  `swept_area_unit`, so a subsequent call to a function depending on
+  them failed with a message about a missing spectrum. Attributes are
+  now preserved.
+
+- [`c()`](https://rdrr.io/r/base/c.html) on two `datras_raw` objects
+  discarded the attributes of both. This was invisible before extraction
+  records existed, but it is the point at which survey-year files read
+  separately are combined, so it now merges their records instead.
+
+- `clean_datras(impute_missing_depth = TRUE)` failed for every input
+  with `invalid type (list) for variable 'mgcv::s(lon, lat, k = 200)'`.
+  `mgcv` identifies smooth terms by matching the bare symbol `s`, so the
+  namespace-qualified call in the model formula was never recognised as
+  a smooth. The formula is now built in an environment that provides
+  `s`, and the basis dimension is capped at the number of unique haul
+  positions so that imputation also works for small objects.
+
+### Minor changes
+
+- [`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)
+  now retains `DateofCalculation` in `HH`. It was previously dropped,
+  which removed the only indication of when ICES last recalculated the
+  records. This adds one integer column per haul.
+
+- The default discrete colour palette used by the plotting functions is
+  now sampled at equally spaced CIE L\* lightness along the package
+  colour ramp instead of taking the first `n` anchor colours. Previously
+  two or three groups were assigned neighbouring colours from the light
+  end of the ramp (sand, algae green, sea green), which separated poorly
+  on screen and in print, and were close to indistinguishable under
+  red-green colour vision deficiency. The new selection spans the full
+  ramp, keeps the light-to-dark ordering, and increases the smallest
+  pairwise colour distance for two groups by roughly a factor of four.
+  Plots that rely on the default palette will change appearance; passing
+  `col` explicitly reproduces any previous colours.
+
+- Plots with a single group now use the teal anchor as the default
+  colour rather than the palest anchor of the ramp, which had very
+  little contrast against a white background. This affects
+  [`plot_stratified_index()`](https://tokami.github.io/DATRASextra/reference/plot_stratified_index.md),
+  [`plot_spatial_indicators()`](https://tokami.github.io/DATRASextra/reference/plot_spatial_indicators.md)
+  and
+  [`plot_length_distribution()`](https://tokami.github.io/DATRASextra/reference/plot_length_distribution.md).
+
+- [`calc_stratified_index()`](https://tokami.github.io/DATRASextra/reference/calc_stratified_index.md)
+  and
+  [`calc_spatial_indicators()`](https://tokami.github.io/DATRASextra/reference/calc_spatial_indicators.md)
+  now return grouping columns with their natural type. `HH$Year` is
+  stored as a factor, which was carried into the result tables, so
+  `Year` came back as a factor or a character string. Columns whose
+  values are all numeric are converted back to numeric; genuinely
+  categorical groups such as `Survey` are unchanged.
+
+- [`plot_spatial_indicators()`](https://tokami.github.io/DATRASextra/reference/plot_spatial_indicators.md)
+  draws connected lines and a continuous axis whenever the x variable is
+  numeric-valued, including years stored as a factor or character.
+  Previously such an x variable took the categorical branch, which drew
+  unconnected points and one tick mark per level. Non-numeric x
+  variables are still drawn as categories.
+
+- [`plot_stratified_index()`](https://tokami.github.io/DATRASextra/reference/plot_stratified_index.md)
+  gains `y_scale`. By default (`"auto"`) the index is divided by a power
+  of 1000 chosen from the data and the factor is stated in the y-axis
+  label, for example `Index (per km^2) [10^9]`, so that wide tick labels
+  no longer overlap the axis label. Use `y_scale = "none"` for the
+  previous behaviour or pass an exponent directly. `ylim` is still given
+  in the original units.
+
 ## DATRASextra 0.4.0
 
 This release focuses on API consistency. Several arguments and function

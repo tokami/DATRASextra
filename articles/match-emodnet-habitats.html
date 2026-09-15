@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +84,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Matching EMODnet seabed habitats to hauls</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/v0.4.0/vignettes/articles/match-emodnet-habitats.Rmd" class="external-link"><code>vignettes/articles/match-emodnet-habitats.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/vignettes/articles/match-emodnet-habitats.Rmd" class="external-link"><code>vignettes/articles/match-emodnet-habitats.Rmd</code></a></small>
       <div class="d-none name"><code>match-emodnet-habitats.Rmd</code></div>
     </div>
 
@@ -127,7 +127,7 @@ unmatched (<code>NA</code>) hauls from areas we did not download.</p>
 <code class="sourceCode R"><span><span class="co">## Restrict to a small area (central North Sea)</span></span>
 <span><span class="va">box</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">dab</span>, <span class="va">lon</span> <span class="op">&gt;</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">lon</span> <span class="op">&lt;</span> <span class="fl">4</span> <span class="op">&amp;</span> <span class="va">lat</span> <span class="op">&gt;</span> <span class="fl">54</span> <span class="op">&amp;</span> <span class="va">lat</span> <span class="op">&lt;</span> <span class="fl">55</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">box</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 60</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 61</span></span></code></pre></div>
 <p>The <code>HH</code> table stores haul positions in the
 <code>lon</code> / <code>lat</code> columns (longitude/latitude, WGS84).
 We build an <code>sf</code> point layer from them, keeping
@@ -142,23 +142,23 @@ We build an <code>sf</code> point layer from them, keeping
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">hauls</span></span>
-<span><span class="co">#&gt; Simple feature collection with 60 features and 1 field</span></span>
+<span><span class="co">#&gt; Simple feature collection with 61 features and 1 field</span></span>
 <span><span class="co">#&gt; Geometry type: POINT</span></span>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
 <span><span class="co">#&gt; Bounding box:  xmin: 2.029 ymin: 54.063 xmax: 3.8461 ymax: 54.9065</span></span>
 <span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
 <span><span class="co">#&gt; First 10 features:</span></span>
-<span><span class="co">#&gt;                                  haul.id               geometry</span></span>
-<span><span class="co">#&gt; 304 NS-IBTS:2020:1:NL:64T2:GOV:37F345:45 POINT (3.8426 54.0975)</span></span>
-<span><span class="co">#&gt; 305 NS-IBTS:2020:1:NL:64T2:GOV:37F344:44 POINT (3.4598 54.2928)</span></span>
-<span><span class="co">#&gt; 306 NS-IBTS:2020:1:NL:64T2:GOV:38F343:43 POINT (3.4081 54.5398)</span></span>
-<span><span class="co">#&gt; 311 NS-IBTS:2020:1:NL:64T2:GOV:37F238:38 POINT (2.3995 54.1398)</span></span>
-<span><span class="co">#&gt; 312 NS-IBTS:2020:1:NL:64T2:GOV:37F237:37   POINT (2.173 54.347)</span></span>
-<span><span class="co">#&gt; 313 NS-IBTS:2020:1:NL:64T2:GOV:38F236:36 POINT (2.3038 54.6708)</span></span>
-<span><span class="co">#&gt; 314 NS-IBTS:2020:1:NL:64T2:GOV:38F235:35 POINT (2.3051 54.8311)</span></span>
-<span><span class="co">#&gt; 343  NS-IBTS:2020:1:NL:64T2:GOV:38F306:6 POINT (3.7726 54.7061)</span></span>
-<span><span class="co">#&gt; 358    NS-IBTS:2020:3:DK:26D4:GOV:175:55 POINT (3.1305 54.2941)</span></span>
-<span><span class="co">#&gt; 359    NS-IBTS:2020:3:DK:26D4:GOV:173:54  POINT (2.6208 54.139)</span></span></code></pre></div>
+<span><span class="co">#&gt;                                    haul.id               geometry</span></span>
+<span><span class="co">#&gt; 147    NS-IBTS:2020:1:NL:64T2:GOV:38F306:6 POINT (3.7726 54.7061)</span></span>
+<span><span class="co">#&gt; 176   NS-IBTS:2020:1:NL:64T2:GOV:38F235:35 POINT (2.3051 54.8311)</span></span>
+<span><span class="co">#&gt; 177   NS-IBTS:2020:1:NL:64T2:GOV:38F236:36 POINT (2.3038 54.6708)</span></span>
+<span><span class="co">#&gt; 178   NS-IBTS:2020:1:NL:64T2:GOV:37F237:37   POINT (2.173 54.347)</span></span>
+<span><span class="co">#&gt; 179   NS-IBTS:2020:1:NL:64T2:GOV:37F238:38 POINT (2.3995 54.1398)</span></span>
+<span><span class="co">#&gt; 184   NS-IBTS:2020:1:NL:64T2:GOV:38F343:43 POINT (3.4081 54.5398)</span></span>
+<span><span class="co">#&gt; 185   NS-IBTS:2020:1:NL:64T2:GOV:37F344:44 POINT (3.4598 54.2928)</span></span>
+<span><span class="co">#&gt; 186   NS-IBTS:2020:1:NL:64T2:GOV:37F345:45 POINT (3.8426 54.0975)</span></span>
+<span><span class="co">#&gt; 365 NS-IBTS:2020:3:GB-SCT:748S:GOV:189:189   POINT (2.502 54.571)</span></span>
+<span><span class="co">#&gt; 366 NS-IBTS:2020:3:GB-SCT:748S:GOV:190:190   POINT (2.319 54.396)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="download-the-euseamap-layer">Download the EUSeaMap layer<a class="anchor" aria-label="anchor" href="#download-the-euseamap-layer"></a>
@@ -241,13 +241,13 @@ habitat description):</p>
 <span></span>
 <span><span class="co">## One habitat value per haul.id</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">joined</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                                  haul.id  substrate</span></span>
-<span><span class="co">#&gt; 304 NS-IBTS:2020:1:NL:64T2:GOV:37F345:45 Muddy sand</span></span>
-<span><span class="co">#&gt; 305 NS-IBTS:2020:1:NL:64T2:GOV:37F344:44       Sand</span></span>
-<span><span class="co">#&gt; 306 NS-IBTS:2020:1:NL:64T2:GOV:38F343:43       Sand</span></span>
-<span><span class="co">#&gt; 311 NS-IBTS:2020:1:NL:64T2:GOV:37F238:38       Sand</span></span>
-<span><span class="co">#&gt; 312 NS-IBTS:2020:1:NL:64T2:GOV:37F237:37       Sand</span></span>
-<span><span class="co">#&gt; 313 NS-IBTS:2020:1:NL:64T2:GOV:38F236:36       Sand</span></span></code></pre></div>
+<span><span class="co">#&gt;                                  haul.id substrate</span></span>
+<span><span class="co">#&gt; 147  NS-IBTS:2020:1:NL:64T2:GOV:38F306:6      Sand</span></span>
+<span><span class="co">#&gt; 176 NS-IBTS:2020:1:NL:64T2:GOV:38F235:35      Sand</span></span>
+<span><span class="co">#&gt; 177 NS-IBTS:2020:1:NL:64T2:GOV:38F236:36      Sand</span></span>
+<span><span class="co">#&gt; 178 NS-IBTS:2020:1:NL:64T2:GOV:37F237:37      Sand</span></span>
+<span><span class="co">#&gt; 179 NS-IBTS:2020:1:NL:64T2:GOV:37F238:38      Sand</span></span>
+<span><span class="co">#&gt; 184 NS-IBTS:2020:1:NL:64T2:GOV:38F343:43      Sand</span></span></code></pre></div>
 <p>Because polygon boundaries can overlap or hauls can sit on a border,
 make sure there is exactly one row per haul before writing back (keep
 the first match):</p>
@@ -273,7 +273,7 @@ during the join:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">box</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">habitat</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coarse substrate       Muddy sand             Sand        Sandy mud </span></span>
-<span><span class="co">#&gt;                7                1               44                8</span></span></code></pre></div>
+<span><span class="co">#&gt;                7                1               45                8</span></span></code></pre></div>
 <p>Because we worked on the <code>box</code> subset throughout, every
 haul in it gets a habitat (apart from any haul that genuinely falls
 outside the mapped area, which stays <code>NA</code>). The
@@ -333,7 +333,7 @@ read it locally.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

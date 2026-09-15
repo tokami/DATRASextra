@@ -15,7 +15,7 @@ one or more directories, into a single datras_raw / DATRASraw object."><meta pro
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ one or more directories, into a single datras_raw / DATRASraw object."><meta pro
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Read ICES DATRAS survey data from zipped exchange files</h1>
-      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/v0.4.0/R/read_write.R" class="external-link"><code>R/read_write.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/R/read_write.R" class="external-link"><code>R/read_write.R</code></a></small>
       <div class="d-none name"><code>read_datras.Rd</code></div>
     </div>
 
@@ -69,6 +69,7 @@ one or more directories, into a single <code>datras_raw</code> / <code>DATRASraw
 <span>  prune <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  drop_hl <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  drop_ca <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  strict <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ncores <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -128,6 +129,16 @@ set to <code>NULL</code> after reading each file. Can be combined with <code>pru
 <code>drop_hl</code>.</p></dd>
 
 
+<dt id="arg-strict">strict<a class="anchor" aria-label="anchor" href="#arg-strict"></a></dt>
+<dd><p>Logical. Controls how records in <code>CA</code> without a haul
+identifier are matched back to a haul by <code><a href="https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html" class="external-link">DATRAS::readICES()</a></code>. If
+<code>FALSE</code>, a record that matches several candidate hauls is
+assigned one of them at random. If <code>TRUE</code> (default), such ambiguous records are
+left as <code>NA</code> and are dropped by any subsequent subsetting. Use
+<code>strict = TRUE</code> when individual biological records must not be attributed
+to an arbitrary haul.</p></dd>
+
+
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), progress messages are printed.</p></dd>
 
@@ -141,7 +152,8 @@ files. Defaults to <code>1</code> (sequential). Values greater than 1 use
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A combined DATRAS survey object with classes <code>datras_raw</code> and
-<code>DATRASraw</code>.</p>
+<code>DATRASraw</code>, carrying an extraction record retrievable with
+<code><a href="extraction.html">extraction()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -176,10 +188,21 @@ consider loading in parts and combining with <code><a href="https://rdrr.io/r/ba
 <p>If you need a different set of retained columns than provided by
 <code><a href="prune_datras.html">prune_datras()</a></code>, you may wish to apply your own pruning function after
 reading or adapt the pruning code.</p>
+<p>Records in the <code>CA</code> table frequently lack the station and haul numbers that
+make up <code>haul.id</code>, and are matched back to a haul by survey, year, quarter,
+country, ship, and statistical rectangle. When that match is not unique, the
+<code>strict</code> argument decides what happens: <code>strict = FALSE</code> picks
+one of the candidate hauls at random, whereas the default <code>strict = TRUE</code> leaves the
+record unmatched. The number of records affected can be checked afterwards
+with <code>sum(is.na(x[["CA"]]$haul.id))</code>. The matching is not stored in the
+exchange files, which hold the data as delivered by ICES, so it is redone
+every time an archive is read. <code><a href="download_datras.html">download_datras()</a></code> therefore takes the same
+<code>strict</code> argument and passes it on when it returns the downloaded data.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="download_datras.html">download_datras()</a></code>, <code><a href="prune_datras.html">prune_datras()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="download_datras.html">download_datras()</a></code>, <code><a href="prune_datras.html">prune_datras()</a></code>, <code><a href="extraction.html">extraction()</a></code>,
+<code><a href="verify_extraction.html">verify_extraction()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -210,6 +233,9 @@ reading or adapt the pruning code.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Prune columns and also drop the CA table</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">read_datras</span><span class="op">(</span><span class="st">"data/NS-IBTS"</span>, prune <span class="op">=</span> <span class="cn">TRUE</span>, drop_ca <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Attribute ambiguous CA records to an arbitrary haul</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">read_datras</span><span class="op">(</span><span class="st">"data/NS-IBTS"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -223,7 +249,7 @@ reading or adapt the pruning code.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

@@ -234,13 +234,13 @@ function:
 ``` r
 
 head(attr(surv, "outlier_report"))
-#>   table     var row                              haul.id value
-#> 1    HH HaulDur  20   NS-IBTS:2020:1:NO:58G2:GOV:60009:9    15
-#> 2    HH HaulDur 127     NS-IBTS:2020:1:DE:26D4:GOV:40:12    31
-#> 3    HH HaulDur 140    NS-IBTS:2020:1:DE:26D4:GOV:238:60    31
-#> 4    HH HaulDur 150    NS-IBTS:2020:1:DE:26D4:GOV:209:52    31
-#> 5    HH HaulDur 226 NS-IBTS:2020:1:GB-SCT:748S:GOV:23:23    31
-#> 6    HH HaulDur 236  NS-IBTS:2020:1:FR:35HT:GOV:Y0184:59    16
+#>   table     var row                             haul.id value
+#> 1    HH HaulDur  65   NS-IBTS:2020:1:DE:26D4:GOV:209:52    31
+#> 2    HH HaulDur  75   NS-IBTS:2020:1:DE:26D4:GOV:238:60    31
+#> 3    HH HaulDur  88    NS-IBTS:2020:1:DE:26D4:GOV:40:12    31
+#> 4    HH HaulDur 145 NS-IBTS:2020:1:NL:64T2:GOV:38F306:6    32
+#> 5    HH HaulDur 245 NS-IBTS:2020:1:FR:35HT:GOV:Y0184:59    16
+#> 6    HH HaulDur 246  NS-IBTS:2020:1:NO:58G2:GOV:60009:9    15
 #>                                                      reason     method severity
 #> 1 outside 0.01-0.99 percentiles by Survey+Quarter+Gear+Ship percentile  extreme
 #> 2 outside 0.01-0.99 percentiles by Survey+Quarter+Gear+Ship percentile  extreme
@@ -249,12 +249,12 @@ head(attr(surv, "outlier_report"))
 #> 5 outside 0.01-0.99 percentiles by Survey+Quarter+Gear+Ship percentile  extreme
 #> 6 outside 0.01-0.99 percentiles by Survey+Quarter+Gear+Ship percentile  extreme
 #>   p_lo p_hi thr_lo thr_hi                 group
-#> 1 0.01 0.99  17.00  31.00 NS-IBTS\r1\rGOV\r58G2
+#> 1 0.01 0.99  20.00  30.87 NS-IBTS\r1\rGOV\r26D4
 #> 2 0.01 0.99  20.00  30.87 NS-IBTS\r1\rGOV\r26D4
 #> 3 0.01 0.99  20.00  30.87 NS-IBTS\r1\rGOV\r26D4
-#> 4 0.01 0.99  20.00  30.87 NS-IBTS\r1\rGOV\r26D4
-#> 5 0.01 0.99  16.00  30.00 NS-IBTS\r1\rGOV\r748S
-#> 6 0.01 0.99  17.36  31.00 NS-IBTS\r1\rGOV\r35HT
+#> 4 0.01 0.99  16.56  31.00 NS-IBTS\r1\rGOV\r64T2
+#> 5 0.01 0.99  17.36  31.00 NS-IBTS\r1\rGOV\r35HT
+#> 6 0.01 0.99  17.00  31.00 NS-IBTS\r1\rGOV\r58G2
 ```
 
 A shorter list of affected hauls can be obtained with:
@@ -262,12 +262,9 @@ A shorter list of affected hauls can be obtained with:
 ``` r
 
 head(attr(surv, "outlier_hauls"))
-#> [1] "NS-IBTS:2020:1:NO:58G2:GOV:60009:9"  
-#> [2] "NS-IBTS:2020:1:DE:26D4:GOV:40:12"    
-#> [3] "NS-IBTS:2020:1:DE:26D4:GOV:238:60"   
-#> [4] "NS-IBTS:2020:1:DE:26D4:GOV:209:52"   
-#> [5] "NS-IBTS:2020:1:GB-SCT:748S:GOV:23:23"
-#> [6] "NS-IBTS:2020:1:FR:35HT:GOV:Y0184:59"
+#> [1] "NS-IBTS:2020:1:DE:26D4:GOV:209:52"   "NS-IBTS:2020:1:DE:26D4:GOV:238:60"  
+#> [3] "NS-IBTS:2020:1:DE:26D4:GOV:40:12"    "NS-IBTS:2020:1:NL:64T2:GOV:38F306:6"
+#> [5] "NS-IBTS:2020:1:FR:35HT:GOV:Y0184:59" "NS-IBTS:2020:1:NO:58G2:GOV:60009:9"
 ```
 
 For the example data set used here, no clearly invalid values were

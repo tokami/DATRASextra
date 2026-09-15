@@ -15,7 +15,7 @@ point maps, with optional grouping and faceting."><meta property="og:image" cont
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ point maps, with optional grouping and faceting."><meta property="og:image" cont
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Unified DATRAS overview plotting</h1>
-      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/v0.4.0/R/plotting.R" class="external-link"><code>R/plotting.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/R/plotting.R" class="external-link"><code>R/plotting.R</code></a></small>
       <div class="d-none name"><code>plot_datras_overview.Rd</code></div>
     </div>
 
@@ -76,6 +76,7 @@ point maps, with optional grouping and faceting.</p>
 <span>  panel_layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"horizontal"</span>, <span class="st">"vertical"</span><span class="op">)</span>,</span>
 <span>  value_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  offset_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  group_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  positive_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  transform <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"log1p"</span>, <span class="st">"sqrt"</span>, <span class="st">"log10"</span><span class="op">)</span>,</span>
 <span>  fixed_scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -156,11 +157,23 @@ crossed with groups), <code>"horizontal"</code> transposes the row/column assign
 
 
 <dt id="arg-value-var">value_var<a class="anchor" aria-label="anchor" href="#arg-value-var"></a></dt>
-<dd><p>Optional haul-level variable to map to values.</p></dd>
+<dd><p>Optional haul-level variable to map to values. When
+supplied and <code>metric</code> is left at its default (<code>"presence"</code>), <code>metric</code> is
+automatically switched to <code>"sum"</code> so points/cells are coloured by the
+value; pass an explicit <code>metric</code> to override.</p></dd>
 
 
 <dt id="arg-offset-var">offset_var<a class="anchor" aria-label="anchor" href="#arg-offset-var"></a></dt>
 <dd><p>Optional haul-level denominator variable.</p></dd>
+
+
+<dt id="arg-group-var">group_var<a class="anchor" aria-label="anchor" href="#arg-group-var"></a></dt>
+<dd><p>Optional name of a categorical <code>HH</code> column used to colour
+hauls (points mode) or cells (grid mode) by category, with a discrete
+palette and a category legend. Acts as an additional grouping dimension
+alongside the <code>by_*</code> toggles, and can be combined with <code>multi_panels</code> to
+facet by category. Use this (rather than <code>value_var</code>) for non-numeric
+variables such as habitat or substrate class.</p></dd>
 
 
 <dt id="arg-positive-only">positive_only<a class="anchor" aria-label="anchor" href="#arg-positive-only"></a></dt>
@@ -295,7 +308,7 @@ setting appropriate margins.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

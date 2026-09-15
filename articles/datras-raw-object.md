@@ -48,8 +48,9 @@ Printing the object gives a survey overview:
 dab
 #> Object of class 'datras_raw'
 #> ===========================
-#> Number of hauls: 2651 
+#> Number of hauls: 2660 
 #> Number of species: 1 [Limanda limanda (127139)]
+#> Number of surveys: 1 [NS-IBTS]
 #> Number of gears: 1 [GOV]
 #> Number of countries: 8 
 #> Years: 2020 - 2023 
@@ -58,8 +59,9 @@ dab
 #> Latitude range: 49.57 - 61.75 deg
 #> Depth range: 14 - 257 m
 #> Haul duration: 5 - 34 minutes
-#> Valid hauls: 2651
-#> Hauls with catch: 2255 (zero catch: 396)
+#> Valid hauls: 2660
+#> Hauls with catch: 2263 (zero catch: 397)
+#> Extraction: 8 source(s), extracted 2026-09-15, ICES calculation 2022-04-08 to 2026-06-25
 ```
 
 ## Indexing
@@ -71,7 +73,7 @@ Use `[[ ]]` to reach a table:
 ## The haul table
 hh <- dab[["HH"]]
 dim(hh)
-#> [1] 2651   76
+#> [1] 2660   76
 ```
 
 Within a table, columns are accessed and assigned with `$` as usual:
@@ -80,20 +82,20 @@ Within a table, columns are accessed and assigned with `$` as usual:
 
 ## A single column and a few columns
 head(dab[["HH"]]$Depth)
-#> [1] 151 144 105  72 102 128
+#> [1] 35 45 33 36 73 98
 head(dab[["HH"]][, c("Year", "Quarter", "Gear", "Depth")])
 #>   Year Quarter Gear Depth
-#> 1 2020       1  GOV   151
-#> 2 2020       1  GOV   144
-#> 3 2020       1  GOV   105
-#> 4 2020       1  GOV    72
-#> 5 2020       1  GOV   102
-#> 6 2020       1  GOV   128
+#> 1 2020       1  GOV    35
+#> 2 2020       1  GOV    45
+#> 3 2020       1  GOV    33
+#> 4 2020       1  GOV    36
+#> 5 2020       1  GOV    73
+#> 6 2020       1  GOV    98
 
 ## Add or modify a column
 dab[["HH"]]$DepthLog <- log(dab[["HH"]]$Depth)
 head(dab[["HH"]]$DepthLog)
-#> [1] 5.017280 4.969813 4.653960 4.276666 4.624973 4.852030
+#> [1] 3.555348 3.806662 3.496508 3.583519 4.290459 4.584967
 ```
 
 [`subset()`](https://rdrr.io/r/base/subset.html) filters the whole
@@ -109,6 +111,7 @@ q1
 #> ===========================
 #> Number of hauls: 1268 
 #> Number of species: 1 [Limanda limanda (127139)]
+#> Number of surveys: 1 [NS-IBTS]
 #> Number of gears: 1 [GOV]
 #> Number of countries: 7 
 #> Years: 2020 - 2023 
@@ -119,6 +122,7 @@ q1
 #> Haul duration: 15 - 34 minutes
 #> Valid hauls: 1268
 #> Hauls with catch: 1133 (zero catch: 135)
+#> Extraction: 4 source(s), extracted 2026-09-15, ICES calculation 2026-06-25
 ```
 
 ## Coded variables (ICES vocabulary)

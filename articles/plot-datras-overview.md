@@ -293,7 +293,7 @@ duration or swept area for example by:
 dab <- add_swept_area(dab)
 #> Swept-area missingness and imputation by survey and gear:
 #>   survey gear n_records n_imputed prop_imputed n_NA prop_NA
-#>  NS-IBTS  GOV      2651       811        0.306    0       0
+#>  NS-IBTS  GOV      2660       812        0.305    0       0
 ```
 
 Then this information can also be incorporated and the hauls with the

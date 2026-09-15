@@ -22,6 +22,7 @@ plot_datras_overview(
   panel_layout = c("auto", "horizontal", "vertical"),
   value_var = NULL,
   offset_var = NULL,
+  group_var = NULL,
   positive_only = FALSE,
   transform = c("none", "log1p", "sqrt", "log10"),
   fixed_scale = TRUE,
@@ -102,11 +103,24 @@ plot_datras_overview(
 
 - value_var:
 
-  Optional haul-level variable to map to values.
+  Optional haul-level variable to map to values. When supplied and
+  `metric` is left at its default (`"presence"`), `metric` is
+  automatically switched to `"sum"` so points/cells are coloured by the
+  value; pass an explicit `metric` to override.
 
 - offset_var:
 
   Optional haul-level denominator variable.
+
+- group_var:
+
+  Optional name of a categorical `HH` column used to colour hauls
+  (points mode) or cells (grid mode) by category, with a discrete
+  palette and a category legend. Acts as an additional grouping
+  dimension alongside the `by_*` toggles, and can be combined with
+  `multi_panels` to facet by category. Use this (rather than
+  `value_var`) for non-numeric variables such as habitat or substrate
+  class.
 
 - positive_only:
 

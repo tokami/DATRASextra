@@ -40,13 +40,13 @@ works directly on coordinate vectors, so we only need the `lon` and
 ## Unique trawl locations
 trawls <- unique(dab[["HH"]][, c("haul.id", "lon", "lat")])
 head(trawls)
-#>                               haul.id    lon     lat
-#> 1 NS-IBTS:2020:1:NO:58G2:GOV:60055:55 3.2725 59.2533
-#> 2 NS-IBTS:2020:1:NO:58G2:GOV:60054:54 3.1695 59.7019
-#> 3 NS-IBTS:2020:1:NO:58G2:GOV:60053:53 2.4838 58.6749
-#> 4 NS-IBTS:2020:1:NO:58G2:GOV:60052:52 2.7423 58.2584
-#> 5 NS-IBTS:2020:1:NO:58G2:GOV:60051:51 3.4483 58.2483
-#> 6 NS-IBTS:2020:1:NO:58G2:GOV:60050:50 3.3026 58.8872
+#>                           haul.id    lon     lat
+#> 1  NS-IBTS:2020:1:DK:26D4:GOV:6:1 7.1445 56.6076
+#> 2  NS-IBTS:2020:1:DK:26D4:GOV:8:2 6.8874 56.5951
+#> 3 NS-IBTS:2020:1:DK:26D4:GOV:10:3 7.1858 56.3057
+#> 4 NS-IBTS:2020:1:DK:26D4:GOV:11:4 6.8544 56.3333
+#> 5 NS-IBTS:2020:1:DK:26D4:GOV:19:5 2.4918 56.7180
+#> 6 NS-IBTS:2020:1:DK:26D4:GOV:21:6 1.5045 56.7494
 ```
 
 ## A spatial grid
@@ -120,7 +120,7 @@ grid_st <- make_survey_grid(
 )
 
 nrow(grid_st)
-#> [1] 27416
+#> [1] 27424
 head(grid_st)
 #>      X    Y year
 #> 1 -0.1 49.5 2020
@@ -137,7 +137,7 @@ head(grid_st)
 table(grid_st$year)
 #> 
 #> 2020 2021 2022 2023 
-#> 6854 6854 6854 6854
+#> 6856 6856 6856 6856
 ```
 
 This `grid_st` data frame - with `X`, `Y`, and `year` - can be passed

@@ -83,29 +83,29 @@ dab <- add_numbers_at_length(dab)
 dab <- check_weights(dab)
 #> [1] "Length statistics:"
 #>   min  mean median max
-#> 1   3 18.94     19  35
+#> 1   3 18.96     19  35
 #> [1] "Weight statistics:"
 #>   min  mean median max
-#> 1   1 85.93     66 559
+#> 1   1 86.25     66 559
 
 #> [1] "Estimated LW parameters:"
-#> [1] "a = 0.014 b = 2.903"
+#> [1] "a = 0.013 b = 2.904"
 #> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.007 b = 3.119"
 attr(dab, "weight_check")$parEst
 #>            a        b
-#> 1 0.01350792 2.902568
+#> 1 0.01344814 2.904176
 
 ## Restrict to plausible values
 dab <- check_weights(dab, max_length = 100, max_weight = 10000)
 #> [1] "Length statistics:"
 #>   min  mean median max
-#> 1   3 18.94     19  35
+#> 1   3 18.96     19  35
 #> [1] "Weight statistics:"
 #>   min  mean median max
-#> 1   1 85.93     66 559
+#> 1   1 86.25     66 559
 #> [1] "Estimated LW parameters:"
-#> [1] "a = 0.014 b = 2.903"
+#> [1] "a = 0.013 b = 2.904"
 #> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.007 b = 3.119"
 ```

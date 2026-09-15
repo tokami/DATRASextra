@@ -28,7 +28,8 @@ plot_stratified_index(
   ylim = NULL,
   main = NULL,
   xlab = NULL,
-  ylab = NULL
+  ylab = NULL,
+  y_scale = "auto"
 )
 ```
 
@@ -108,6 +109,15 @@ plot_stratified_index(
 - xlab, ylab:
 
   Axis labels. Auto-generated from `cpue_method` if `NULL`.
+
+- y_scale:
+
+  Rescaling of the y axis to keep the tick labels short. `"auto"`
+  (default) divides the index by a power of 1000 chosen from the data
+  and appends the factor to `ylab`; `"none"` plots the raw values; a
+  number gives the exponent directly (e.g. `6` to plot in millions).
+  Ignored when `log_scale = TRUE`. `ylim`, if supplied, is given in the
+  original units.
 
 ## Value
 

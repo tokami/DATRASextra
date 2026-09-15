@@ -15,7 +15,7 @@ datras_raw / DATRASraw object."><meta property="og:image" content="https://tokam
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ datras_raw / DATRASraw object."><meta property="og:image" content="https://tokam
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Check and summarize individual weight information in a <code>datras_raw</code> object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/v0.4.0/R/weight.R" class="external-link"><code>R/weight.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/R/weight.R" class="external-link"><code>R/weight.R</code></a></small>
       <div class="d-none name"><code>check_weights.Rd</code></div>
     </div>
 
@@ -140,29 +140,29 @@ $$</p>
 <span class="r-in"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu">check_weights</span><span class="op">(</span><span class="va">dab</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Length statistics:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   min  mean median max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   3 18.94     19  35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   3 18.96     19  35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Weight statistics:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   min  mean median max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 85.93     66 559</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 86.25     66 559</span>
 <span class="r-plt img"><img src="check_weights-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Estimated LW parameters:"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.014 b = 2.903"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.013 b = 2.904"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Lookup LW parameters in the species_info table:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.007 b = 3.119"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dab</span>, <span class="st">"weight_check"</span><span class="op">)</span><span class="op">$</span><span class="va">parEst</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            a        b</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.01350792 2.902568</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.01344814 2.904176</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Restrict to plausible values</span></span></span>
 <span class="r-in"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu">check_weights</span><span class="op">(</span><span class="va">dab</span>, max_length <span class="op">=</span> <span class="fl">100</span>, max_weight <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Length statistics:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   min  mean median max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   3 18.94     19  35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   3 18.96     19  35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Weight statistics:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   min  mean median max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 85.93     66 559</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 86.25     66 559</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Estimated LW parameters:"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.014 b = 2.903"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.013 b = 2.904"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Lookup LW parameters in the species_info table:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.007 b = 3.119"</span>
 <span class="r-in"><span></span></span>
@@ -177,7 +177,7 @@ $$</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

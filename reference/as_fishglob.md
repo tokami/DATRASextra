@@ -68,6 +68,7 @@ that approximate the FishGlob workflow.
 
 ``` r
 if (FALSE) { # \dontrun{
+## one row per haul and taxon, with FishGlob field names and CPUE
 fg <- as_fishglob(x)
 } # }
 ```

@@ -58,17 +58,17 @@ If a requested column already exists in `HH`, it is overwritten.
 ``` r
 ## Add default columns (Area_Full, Area_27, Ecoregion)
 dab2 <- add_ices_areas(dab)
-#> Matched 2651 of 2651 hauls to ICES areas.
+#> Matched 2660 of 2660 hauls to ICES areas.
 head(dab2$HH[, c("StatRec", "Area_Full", "Area_27", "Ecoregion")])
 #>   StatRec Area_Full Area_27         Ecoregion
-#> 1    47F3    27.4.a     4.a Greater North Sea
-#> 2    48F3    27.4.a     4.a Greater North Sea
-#> 3    46F2    27.4.a     4.a Greater North Sea
-#> 4    45F2    27.4.a     4.a Greater North Sea
-#> 5    45F3    27.4.a     4.a Greater North Sea
-#> 6    46F3    27.4.a     4.a Greater North Sea
+#> 1    42F7    27.4.b     4.b Greater North Sea
+#> 2    42F6    27.4.b     4.b Greater North Sea
+#> 3    41F7    27.4.b     4.b Greater North Sea
+#> 4    41F6    27.4.b     4.b Greater North Sea
+#> 5    42F2    27.4.b     4.b Greater North Sea
+#> 6    42F1    27.4.b     4.b Greater North Sea
 
 ## Add only Area_27
 dab3 <- add_ices_areas(dab, vars = "Area_27")
-#> Matched 2651 of 2651 hauls to ICES areas.
+#> Matched 2660 of 2660 hauls to ICES areas.
 ```

@@ -16,6 +16,7 @@ read_datras(
   prune = FALSE,
   drop_hl = FALSE,
   drop_ca = FALSE,
+  strict = TRUE,
   verbose = TRUE,
   ncores = 1
 )
@@ -73,6 +74,17 @@ read_datras(
   `NULL` after reading each file. Can be combined with `prune` and
   `drop_hl`.
 
+- strict:
+
+  Logical. Controls how records in `CA` without a haul identifier are
+  matched back to a haul by
+  [`DATRAS::readICES()`](https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html).
+  If `FALSE`, a record that matches several candidate hauls is assigned
+  one of them at random. If `TRUE` (default), such ambiguous records are
+  left as `NA` and are dropped by any subsequent subsetting. Use
+  `strict = TRUE` when individual biological records must not be
+  attributed to an arbitrary haul.
+
 - verbose:
 
   Logical. If `TRUE` (default), progress messages are printed.
@@ -87,7 +99,8 @@ read_datras(
 ## Value
 
 A combined DATRAS survey object with classes `datras_raw` and
-`DATRASraw`.
+`DATRASraw`, carrying an extraction record retrievable with
+[`extraction()`](https://tokami.github.io/DATRASextra/reference/extraction.md).
 
 ## Details
 
@@ -138,10 +151,25 @@ If you need a different set of retained columns than provided by
 you may wish to apply your own pruning function after reading or adapt
 the pruning code.
 
+Records in the `CA` table frequently lack the station and haul numbers
+that make up `haul.id`, and are matched back to a haul by survey, year,
+quarter, country, ship, and statistical rectangle. When that match is
+not unique, the `strict` argument decides what happens: `strict = FALSE`
+picks one of the candidate hauls at random, whereas the default
+`strict = TRUE` leaves the record unmatched. The number of records
+affected can be checked afterwards with `sum(is.na(x[["CA"]]$haul.id))`.
+The matching is not stored in the exchange files, which hold the data as
+delivered by ICES, so it is redone every time an archive is read.
+[`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+therefore takes the same `strict` argument and passes it on when it
+returns the downloaded data.
+
 ## See also
 
 [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md),
-[`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md)
+[`prune_datras()`](https://tokami.github.io/DATRASextra/reference/prune_datras.md),
+[`extraction()`](https://tokami.github.io/DATRASextra/reference/extraction.md),
+[`verify_extraction()`](https://tokami.github.io/DATRASextra/reference/verify_extraction.md)
 
 ## Examples
 
@@ -172,5 +200,8 @@ x <- read_datras("data/DATRAS", drop_hl = TRUE, drop_ca = TRUE)
 
 ## Prune columns and also drop the CA table
 x <- read_datras("data/NS-IBTS", prune = TRUE, drop_ca = TRUE)
+
+## Attribute ambiguous CA records to an arbitrary haul
+x <- read_datras("data/NS-IBTS", strict = FALSE)
 } # }
 ```

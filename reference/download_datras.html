@@ -17,7 +17,7 @@ subdirectory."><meta property="og:image" content="https://tokami.github.io/DATRA
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ subdirectory."><meta property="og:image" content="https://tokami.github.io/DATRA
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Download ICES DATRAS survey data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/v0.4.0/R/download.R" class="external-link"><code>R/download.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tokami/DATRASextra/blob/main/R/download.R" class="external-link"><code>R/download.R</code></a></small>
       <div class="d-none name"><code>download_datras.Rd</code></div>
     </div>
 
@@ -73,6 +73,7 @@ subdirectory.</p>
 <span>  use_php <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  include_flagged <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  return_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  strict <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  timeout <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -124,14 +125,23 @@ data are also downloaded where available. This option is only used when
 
 
 <dt id="arg-include-flagged">include_flagged<a class="anchor" aria-label="anchor" href="#arg-include-flagged"></a></dt>
-<dd><p>Logical. If <code>FALSE</code> (default), surveys known to be
-test surveys or surveys with incomplete data are skipped. Set to <code>TRUE</code> to
+<dd><p>Logical. If <code>FALSE</code> (default), known test surveys are
+skipped when the survey list is taken from the server. Set to <code>TRUE</code> to
 download them anyway.</p></dd>
 
 
 <dt id="arg-return-data">return_data<a class="anchor" aria-label="anchor" href="#arg-return-data"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), the function returns the
 downloaded data by running <code><a href="read_datras.html">read_datras()</a></code> on the specified path.</p></dd>
+
+
+<dt id="arg-strict">strict<a class="anchor" aria-label="anchor" href="#arg-strict"></a></dt>
+<dd><p>Logical. Passed to <code><a href="read_datras.html">read_datras()</a></code> when <code>return_data = TRUE</code>,
+and ignored otherwise. Controls how records in <code>CA</code> without a haul
+identifier are matched back to a haul: if <code>TRUE</code> (default), a record
+matching several candidate hauls is left as <code>NA</code>; if <code>FALSE</code>, it is
+assigned one of them at random. It does not affect the files written to
+disk, which always hold the exchange data as delivered by ICES.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -147,7 +157,13 @@ information. Default is 10 seconds.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments for the function <code><a href="read_datras.html">read_datras()</a></code>.</p></dd>
+<dd><p>Additional arguments for the function <code><a href="read_datras.html">read_datras()</a></code>, used when
+<code>return_data = TRUE</code>. The most useful ones control how much is held in
+memory: <code>prune = TRUE</code> drops non-essential columns, <code>drop_hl = TRUE</code> and
+<code>drop_ca = TRUE</code> omit the length-frequency and biological tables from the
+returned object, and <code>ncores</code> sets the number of workers used to read the
+files. None of them affect what is written to disk. See <code><a href="read_datras.html">read_datras()</a></code>
+for the full list.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -165,8 +181,32 @@ Alternatively, the legacy PHP-based download route from
 <code><a href="https://rdrr.io/pkg/DATRAS/man/downloadExchange.html" class="external-link">DATRAS::downloadExchange()</a></code> can be used by setting <code>use_php = TRUE</code>.</p>
 <p>Files are saved as zipped exchange files named
 <code>"&lt;survey&gt;_&lt;year&gt;.zip"</code> inside survey-specific subfolders.</p>
-<p>The following surveys are currently treated as problematic or test surveys:
-<code>"NS-IDPS"</code>, <code>"IS-IDPS"</code>, <code>"Test-DATRAS"</code>, and <code>"NS-IBTS_UNIFtest"</code>.</p>
+<p>The following surveys are treated as test surveys and are skipped unless
+<code>include_flagged = TRUE</code>: <code>"Test-DATRAS"</code> and <code>"NS-IBTS_UNIFtest"</code>. The
+filter applies only when <code>surveys</code> is <code>NULL</code>, i.e. when the survey list is
+taken from the DATRAS server; a survey named explicitly is always
+downloaded.</p>
+<p>Each downloaded survey-year is recorded in an archive manifest,
+<code>DATRAS_manifest.csv</code>, written in the root of <code>path</code>. The manifest holds the
+extraction date, the checksum of each exchange file, the ICES calculation
+date of the records it contains, and the package versions used, so that a
+snapshot can later be verified with <code><a href="verify_extraction.html">verify_extraction()</a></code> and so that data
+read from the archive can report where they came from. Existing manifest
+entries for the same survey, year and quarter are replaced.</p>
+<p>Downloading a large part of the database and returning it in one call can
+exhaust memory, because every survey-year is read back into a single object.
+Either set <code>return_data = FALSE</code> and read the archive in pieces afterwards,
+or pass the memory-reducing arguments of <code><a href="read_datras.html">read_datras()</a></code> through <code>...</code>, for
+example <code>prune = TRUE</code> and <code>drop_ca = TRUE</code>.</p>
+<p>No manifest entries are written when <code>use_php = TRUE</code>, because
+<code><a href="https://rdrr.io/pkg/DATRAS/man/downloadExchange.html" class="external-link">DATRAS::downloadExchange()</a></code> writes the files through an external script and
+reports nothing about what it retrieved. Run <code><a href="write_manifest.html">write_manifest()</a></code> on the
+directory afterwards to describe such an archive.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="read_datras.html">read_datras()</a></code>, <code><a href="write_manifest.html">write_manifest()</a></code>, <code><a href="verify_extraction.html">verify_extraction()</a></code>,
+<code><a href="extraction.html">extraction()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -201,7 +241,7 @@ Alternatively, the legacy PHP-based download route from
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

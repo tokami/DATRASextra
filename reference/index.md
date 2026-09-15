@@ -110,6 +110,11 @@
 
   Remove the HL table from a `datras_raw` object
 
+- [`extraction()`](https://tokami.github.io/DATRASextra/reference/extraction.md)
+  :
+
+  Extraction record of a `datras_raw` object
+
 - [`get_accuracy_cm()`](https://tokami.github.io/DATRASextra/reference/get_accuracy_cm.md)
   : Get length measurement accuracy in cm
 
@@ -168,6 +173,12 @@
 - [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
   : Read ICES DATRAS survey data from zipped exchange files
 
+- [`read_manifest()`](https://tokami.github.io/DATRASextra/reference/read_manifest.md)
+  : Read the manifest of a DATRAS archive
+
+- [`reference_tables()`](https://tokami.github.io/DATRASextra/reference/reference_tables.md)
+  : Versions of the bundled reference tables
+
 - [`spawning_info`](https://tokami.github.io/DATRASextra/reference/spawning_info.md)
   : Spawning information lookup table
 
@@ -180,6 +191,9 @@
 - [`survey_info_full_raw`](https://tokami.github.io/DATRASextra/reference/survey_info_full_raw.md)
   : Full survey information table
 
+- [`verify_extraction()`](https://tokami.github.io/DATRASextra/reference/verify_extraction.md)
+  : Verify a DATRAS archive against its manifest
+
 - [`wolffish`](https://tokami.github.io/DATRASextra/reference/wolffish.md)
   : Wolffish survey data (example dataset)
 
@@ -187,3 +201,6 @@
   :
 
   Write a `datras_raw` object to a DATRAS exchange zip file
+
+- [`write_manifest()`](https://tokami.github.io/DATRASextra/reference/write_manifest.md)
+  : Write a manifest for an archive of DATRAS exchange files

@@ -6,6 +6,8 @@
   object](https://tokami.github.io/DATRASextra/articles/datras-raw-object.md):
 - [A Step-by-step guide to working with the ICES DATRAS database using
   DATRASextra](https://tokami.github.io/DATRASextra/articles/datrasextra-tutorial.md):
+- [Data processing and quality
+  control](https://tokami.github.io/DATRASextra/articles/data-processing-and-qc.md):
 - [Plotting DATRAS
   overviews](https://tokami.github.io/DATRASextra/articles/plot-datras-overview.md):
 - [Building a spatiotemporal prediction

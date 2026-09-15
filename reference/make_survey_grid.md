@@ -2,7 +2,7 @@
 
 Creates an equally spaced grid covering the range of the supplied
 coordinates. Works with any coordinate system (UTM metres, UTM
-kilometres, lon/lat degrees, etc.) — `resolution` and the coordinates
+kilometres, lon/lat degrees, etc.) - `resolution` and the coordinates
 must simply be in the same units. The grid origin is snapped down to the
 nearest `resolution` multiple below each coordinate minimum. Optionally
 repeats the spatial grid for every element of `time`, adding a `year`
