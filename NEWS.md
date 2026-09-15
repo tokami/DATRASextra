@@ -72,6 +72,12 @@
 
 ## Bug fixes
 
+* `reference_tables()` reported every bundled table as `"unregistered"` on R
+  older than 4.6.0. `read.dcf()` only learned to skip `#` comment lines in R
+  4.6.0, so the comment header of `inst/reference_tables.dcf` made the parser
+  fail and the registry read back empty. The header is now stripped before
+  parsing.
+
 * `download_datras()` returned data for the wrong years when several surveys
   were downloaded in one call without specifying `years`. The per-survey year
   list overwrote the `years` argument inside the download loop, so the archive

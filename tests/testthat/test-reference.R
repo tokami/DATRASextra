@@ -84,3 +84,29 @@ test_that("a missing registry degrades to an empty table", {
   expect_equal(nrow(reg), 0L)
   expect_true(all(c("table", "generated", "hash") %in% names(reg)))
 })
+
+
+test_that("the registry parses when its header carries comment lines", {
+
+  ## read.dcf() only learned to skip '#' lines in R 4.6.0, so the reader has
+  ## to strip the registry header itself; without that, every table reads
+  ## back as "unregistered" on older R.
+  f <- file.path(tempdir(), "registry-with-comments.dcf")
+  on.exit(unlink(f), add = TRUE)
+  writeLines(c("## Registry of the reference tables bundled with DATRASextra.",
+               "# second comment line",
+               "",
+               "Table: demo",
+               "Kind: exported",
+               "Script: data-raw/make_demo.R",
+               "Source: nowhere in particular",
+               "Generated: 2024-01-02",
+               "Hash: abc123",
+               "Algo: sha256"), f)
+
+  reg <- .read_reference_registry(f)
+
+  expect_equal(nrow(reg), 1L)
+  expect_equal(reg$table, "demo")
+  expect_equal(reg$generated, as.Date("2024-01-02"))
+})

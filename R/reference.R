@@ -217,7 +217,16 @@ reference_tables <- function(check = TRUE) {
 
   if (is.null(path) || !nzchar(path) || !file.exists(path)) return(empty)
 
-  d <- tryCatch(as.data.frame(read.dcf(path), stringsAsFactors = FALSE),
+  ## read.dcf() only learned to skip comment lines in R 4.6.0, so drop the
+  ## registry header here rather than handing it straight to the parser.
+  lines <- tryCatch(readLines(path, warn = FALSE), error = function(e) NULL)
+  if (is.null(lines)) return(empty)
+  lines <- lines[!startsWith(lines, "#")]
+  if (length(lines) == 0) return(empty)
+
+  con <- textConnection(lines)
+  on.exit(close(con), add = TRUE)
+  d <- tryCatch(as.data.frame(read.dcf(con), stringsAsFactors = FALSE),
                 error = function(e) NULL)
   if (is.null(d) || nrow(d) == 0) return(empty)
 
