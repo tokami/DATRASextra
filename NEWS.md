@@ -70,6 +70,14 @@
   passes it on when `return_data = TRUE`; it has no effect on the files written
   to disk, which hold the exchange data as delivered by ICES.
 
+* `plot_datras_overview()` gains `subset`, a filter applied to the haul table
+  before anything is plotted. It takes an unquoted expression evaluated within
+  the data, as in `subset()`, for example
+  `plot_datras_overview(subset = Survey %in% c("DYFS", "SNS"), by_survey = TRUE)`
+  to plot two surveys from the bundled overview instead of all of them. A
+  character string or a logical vector are also accepted for filters built
+  programmatically.
+
 ## Bug fixes
 
 * `reference_tables()` reported every bundled table as `"unregistered"` on R
@@ -77,6 +85,11 @@
   4.6.0, so the comment header of `inst/reference_tables.dcf` made the parser
   fail and the registry read back empty. The header is now stripped before
   parsing.
+
+* `plot_datras_overview(years = ...)` matched nothing when `Year` was stored as
+  a character string, which is the case for the bundled
+  `survey_info_full_raw` used when `x = NULL`. Years are now compared as
+  character, so numeric `years` work for both character and integer columns.
 
 * `reference_tables()` reported every bundled table as `"changed"` whenever it
   ran under an R version other than the one that wrote the registry. The hashes

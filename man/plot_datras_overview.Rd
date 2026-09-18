@@ -42,6 +42,7 @@ plot_datras_overview(
   legend_cex = NULL,
   grid_group_strategy = c("dominant", "mixed", "error"),
   main = NULL,
+  subset = NULL,
   years = NULL,
   asp = "auto",
   add = FALSE
@@ -146,6 +147,17 @@ multiple groups occur in the same cell: \code{"dominant"}, \code{"mixed"}, or
 \code{"error"}.}
 
 \item{main}{Optional title for single-panel mode.}
+
+\item{subset}{Optional filter applied to the haul table before anything is
+plotted, given as an unquoted expression evaluated within the data (as in
+\code{\link[base:subset]{base::subset()}}), e.g. \code{subset = Survey \%in\% c("DYFS", "SNS")} or
+\code{subset = Survey == "BITS" & Quarter == 4}. Any column of the haul table
+can be used, including \code{lon}/\code{lat} and, with the default
+\code{x = NULL}, the columns of \code{DATRASextra::survey_info_full_raw} (\code{Survey},
+\code{Year}, \code{Quarter}, \code{Gear}, \code{StatRec}). A single character string such as
+\code{"Survey \%in\% c('DYFS', 'SNS')"} or a pre-computed logical vector are also
+accepted, which is useful when the filter is built programmatically.
+\code{NA} results are treated as \code{FALSE}.}
 
 \item{years}{Optional integer vector of years to include. If \code{NULL}
 (default), all years in the data are plotted.}

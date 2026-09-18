@@ -81,6 +81,16 @@
 #'   leave the aspect ratio determined by the device dimensions (current
 #'   behaviour of base `plot()`). Fixing `asp` prevents the map from distorting
 #'   when figure margins or device dimensions change.
+#' @param subset Optional filter applied to the haul table before anything is
+#'   plotted, given as an unquoted expression evaluated within the data (as in
+#'   [base::subset()]), e.g. `subset = Survey %in% c("DYFS", "SNS")` or
+#'   `subset = Survey == "BITS" & Quarter == 4`. Any column of the haul table
+#'   can be used, including `lon`/`lat` and, with the default
+#'   `x = NULL`, the columns of `DATRASextra::survey_info_full_raw` (`Survey`,
+#'   `Year`, `Quarter`, `Gear`, `StatRec`). A single character string such as
+#'   `"Survey %in% c('DYFS', 'SNS')"` or a pre-computed logical vector are also
+#'   accepted, which is useful when the filter is built programmatically.
+#'   `NA` results are treated as `FALSE`.
 #' @param years Optional integer vector of years to include. If `NULL`
 #'   (default), all years in the data are plotted.
 #' @param add Logical. If `FALSE` (default), the function configures its own
@@ -129,9 +139,14 @@ plot_datras_overview <- function(x = NULL,
                                  legend_cex = NULL,
                                  grid_group_strategy = c("dominant", "mixed", "error"),
                                  main = NULL,
+                                 subset = NULL,
                                  years = NULL,
                                  asp = "auto",
                                  add = FALSE) {
+  ## Capture the `subset` filter unevaluated so it can be evaluated within the
+  ## haul table further down (base-R `subset()` semantics).
+  subset_expr <- substitute(subset)
+  subset_env <- parent.frame()
   metric_missing <- missing(metric)
   mode <- match.arg(mode)
   metric <- match.arg(metric)
@@ -156,9 +171,12 @@ plot_datras_overview <- function(x = NULL,
   hh <- .prepare_spatial_basis(hh, spatial_basis = spatial_basis)
   x_col <- "lon"
   y_col <- "lat"
+  hh <- .apply_subset(hh, subset_expr, subset_env)
   if (!is.null(years)) {
     if ("Year" %in% names(hh)) {
-      hh <- hh[hh$Year %in% years, , drop = FALSE]
+      ## `Year` is character in survey_info_full_raw but integer in HH, so
+      ## compare as character to accept numeric `years` in both cases.
+      hh <- hh[as.character(hh$Year) %in% as.character(years), , drop = FALSE]
     } else {
       warning("`years` supplied but no `Year` column found in HH; ignoring.", call. = FALSE)
     }
@@ -1198,6 +1216,40 @@ plot_species_composition <- function(x,
                    error = function(e) NULL)
   if (is.null(land)) return(NULL)
   land
+}
+
+
+.apply_subset <- function(hh, expr, env = parent.frame()) {
+  if (is.null(expr) || identical(expr, quote(NULL))) return(hh)
+  ## A literal string, e.g. subset = "Survey %in% c('DYFS', 'SNS')".
+  if (is.character(expr)) expr <- .parse_subset_string(expr)
+  keep <- tryCatch(eval(expr, hh, env),
+                   error = function(e)
+                     stop("`subset` could not be evaluated: ", conditionMessage(e),
+                          call. = FALSE))
+  ## A string held in a variable only becomes visible after evaluation.
+  if (is.character(keep) && length(keep) == 1)
+    keep <- eval(.parse_subset_string(keep), hh, env)
+  if (!is.logical(keep))
+    stop("`subset` must evaluate to a logical vector, not ", class(keep)[1], ".",
+         call. = FALSE)
+  if (length(keep) != nrow(hh))
+    stop("`subset` evaluated to ", length(keep), " value(s) but the haul table has ",
+         nrow(hh), " row(s).", call. = FALSE)
+  keep[is.na(keep)] <- FALSE
+  hh <- hh[keep, , drop = FALSE]
+  if (nrow(hh) == 0) stop("No rows left after applying `subset`.", call. = FALSE)
+  hh
+}
+
+
+.parse_subset_string <- function(txt) {
+  if (length(txt) != 1 || is.na(txt) || !nzchar(trimws(txt)))
+    stop("`subset` given as a string must be a single non-empty expression.",
+         call. = FALSE)
+  tryCatch(str2lang(txt),
+           error = function(e)
+             stop("`subset` is not a valid R expression: ", txt, call. = FALSE))
 }
 
 
