@@ -47,6 +47,10 @@ mini_fishglob <- subset(surv0,
                  ## bottom trawls.
                  "105865"))
 
+## The FishGlob workflow does not use CA (clean_fishglob() drops it), and it
+## is half the size of the data set
+mini_fishglob["CA"] <- list(NULL)
+
 format(object.size(mini_fishglob), units = "auto")
 
-usethis::use_data(mini_fishglob, overwrite = TRUE)
+usethis::use_data(mini_fishglob, overwrite = TRUE, compress = "xz")

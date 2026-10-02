@@ -106,6 +106,15 @@
 * The article on building a spatiotemporal prediction grid covers projected
   coordinates, gap filling, support per year and depth.
 
+* The package is much smaller: the source package went from 11.6 MB to
+  4.2 MB, below the 5 MB that CRAN expects. The gear spread models used by
+  `add_swept_area(method = "fishglob")` no longer carry the residuals, fitted
+  values and model frames of the hauls they were fitted to. This takes them
+  from 59 MB in memory, loaded with the package every time, to 0.3 MB; their
+  predictions are unchanged. The example data are compressed with xz, and
+  `mini_fishglob` no longer contains the `CA` table, which the FishGlob
+  workflow does not use.
+
 ## Breaking changes
 
 * `read_datras()` returns empty fields in exchange files as `NA` instead of an

@@ -11,7 +11,7 @@ Source: WoRMS via the worrms package; FishBase via rfishbase; DATRAS
 Generated: 2026-09-15
 Hash: 56d99e3f26f7568237606f9c0f70aa0ad38bab9d51e1b841b8620491623fc3a0
 Algo: sha256
-Datrasextra: 0.5.0
+Datrasextra: 0.5.1
 
 Table: survey_info
 Kind: exported
@@ -20,7 +20,7 @@ Source: ICES DATRAS web service (getSurveyList and related endpoints)
 Generated: 2026-09-15
 Hash: 4dea03a65c4b1c9b097c468e5f2956426990fa69c3554aaea4d1dc2a5840341a
 Algo: sha256
-Datrasextra: 0.5.0
+Datrasextra: 0.5.1
 
 Table: survey_info_full_raw
 Kind: exported
@@ -29,7 +29,7 @@ Source: ICES DATRAS web service, haul positions by survey and year
 Generated: 2026-09-15
 Hash: 0e23e487396e74af3555043e8fa2f5314795fae368f8c6c51851baddfd1f6e7f
 Algo: sha256
-Datrasextra: 0.5.0
+Datrasextra: 0.5.1
 
 Table: spawning_info
 Kind: exported
@@ -39,7 +39,7 @@ Source: length_at_maturity repository (GoFish and WKMAT),
 Generated: 2026-09-15
 Hash: d80c7d5493de4baa792d2e1bad1eb99eaf5dc068490a1b6721249729513c5689
 Algo: sha256
-Datrasextra: 0.5.0
+Datrasextra: 0.5.1
 
 Table: ices_area_lookup
 Kind: internal
@@ -48,14 +48,14 @@ Source: ICES statistical rectangle and area shapefiles, https://gis.ices.dk
 Generated: 2026-09-15
 Hash: d1af60fcdcc0f1bf2396454cee1242a9d6e10ed687f6a4cfe5a27057c1738bf1
 Algo: sha256
-Datrasextra: 0.5.0
+Datrasextra: 0.5.1
 
 Table: spread_models
 Kind: internal
 Script: data-raw/spread_models.R
 Source: Gear spread models fitted to DATRAS haul data by survey
 Generated: 2026-09-15
-Hash: a5a122e46dad2a661f3c0b7ec0d4a57c67dbdd94d8e7e31bcad7cc21872f8902
+Hash: fb0c7e2f22cc85bc97baefcf5e2372e98140997f9c218b49aadf3d7f863119d2
 Algo: sha256
-Datrasextra: 0.5.0
+Datrasextra: 0.5.1
 

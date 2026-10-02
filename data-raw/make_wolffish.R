@@ -26,7 +26,7 @@ format(object.size(wolffish), units = "auto") ## 6.8 Kb
 
 class(wolffish)
 
-usethis::use_data(wolffish, overwrite = TRUE)
+usethis::use_data(wolffish, overwrite = TRUE, compress = "xz")
 
 
 

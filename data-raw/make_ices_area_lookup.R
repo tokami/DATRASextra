@@ -44,4 +44,4 @@ cat("Unmatched rectangles:", sum(is.na(ices_area_lookup$Area_27)), "\n")
 ## Add to sysdata.rda alongside existing objects
 load(file.path(base_dir, "R/sysdata.rda"))  ## loads spread_models
 usethis::use_data(spread_models, ices_area_lookup,
-                  internal = TRUE, overwrite = TRUE)
+                  internal = TRUE, overwrite = TRUE, compress = "xz")

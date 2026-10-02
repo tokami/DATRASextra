@@ -5,9 +5,9 @@
 \alias{mini_fishglob}
 \title{Mini DATRAS survey data for fishglob comparison (example dataset)}
 \format{
-A list of class 'datras_raw' with 3 elements:
+A list of class 'datras_raw' with the elements:
 \describe{
-\item{CA}{Biological data}
+\item{CA}{\code{NULL}; not included}
 \item{HH}{Survey level information}
 \item{HL}{Length measurements}
 }
@@ -24,5 +24,9 @@ BTS, and EVHOE), and 5 species: Lophius piscatorius (European anglerfish),
 Lepidorhombus whiffiagonis (Megrim), Hippoglossoides platessoides (American
 plaice), Trisopterus esmarkii (Norway pout), and Amblyraja radiata (Starry
 ray).
+}
+\details{
+The biological data (\code{CA}) are not included, as the FishGlob workflow
+(\code{\link[=clean_fishglob]{clean_fishglob()}}) does not use them.
 }
 \keyword{datasets}

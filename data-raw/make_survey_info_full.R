@@ -70,7 +70,7 @@ survey_info_full_raw$Ship <- NULL
 survey_info_full_raw$Country <- NULL
 
 ## Save canonical raw dataset only; plotting can aggregate internally.
-usethis::use_data(survey_info_full_raw, overwrite = TRUE)
+usethis::use_data(survey_info_full_raw, overwrite = TRUE, compress = "xz")
 
 base::format(object.size(survey_info_full_raw), units = "auto") ## 15.5 Mb
 

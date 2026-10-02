@@ -378,7 +378,22 @@ spread_models <- list(
   )
 )
 
-usethis::use_data(spread_models, internal = TRUE, overwrite = TRUE)
+## Keep only what predict.lm() needs for point predictions. The full fits
+## carry residuals, fitted values, the QR decomposition and the model frame of
+## every haul (59 MB in memory, 5 MB in R/sysdata.rda), which would be loaded
+## with the package each time. Predictions are identical; standard errors
+## (predict(se.fit = TRUE)) are no longer available, and are not used by
+## .safe_predict_hierarchy().
+strip_lm <- function(m) {
+  m$qr <- structure(list(pivot = m$qr$pivot, rank = m$qr$rank), class = "qr")
+  m$residuals <- m$fitted.values <- m$effects <- m$model <- m$na.action <- NULL
+  attr(m$terms, ".Environment") <- globalenv()
+  m
+}
+spread_models <- lapply(spread_models, function(s) lapply(s, strip_lm))
+
+usethis::use_data(spread_models, internal = TRUE, overwrite = TRUE,
+                  compress = "xz")
 
 ## re-run script to add ices areas to sysdata.rda
 source("make_ices_area_lookup.R")

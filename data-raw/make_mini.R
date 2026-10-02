@@ -51,4 +51,4 @@ format(object.size(mini), units = "auto") ## 10.1 Mb
 
 class(mini)
 
-usethis::use_data(mini, overwrite = TRUE)
+usethis::use_data(mini, overwrite = TRUE, compress = "xz")

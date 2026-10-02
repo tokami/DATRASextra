@@ -17,3 +17,5 @@
 ^pkgdown$
 ^docs$
 ^wget-log$
+^README\.html$
+^vignettes/.*-exported\.html$

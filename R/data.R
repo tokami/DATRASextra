@@ -39,9 +39,12 @@
 #' plaice), Trisopterus esmarkii (Norway pout), and Amblyraja radiata (Starry
 #' ray).
 #'
-#' @format A list of class 'datras_raw' with 3 elements:
+#' The biological data (`CA`) are not included, as the FishGlob workflow
+#' ([clean_fishglob()]) does not use them.
+#'
+#' @format A list of class 'datras_raw' with the elements:
 #' \describe{
-#'   \item{CA}{Biological data}
+#'   \item{CA}{`NULL`; not included}
 #'   \item{HH}{Survey level information}
 #'   \item{HL}{Length measurements}
 #' }
