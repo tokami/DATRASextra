@@ -17,7 +17,7 @@ Invisibly returns the path to the created zip file, carrying the
 attributes \code{payload_hash}, \code{zip_hash} and \code{algo}. The payload hash is
 taken over the exchange file inside the archive and is therefore identical
 whenever the data are identical; the archive hash is not, because
-\code{\link[utils:zip]{utils::zip()}} stores the modification time of the file it compresses.
+\code{\link[zip:zip]{zip::zip()}} stores the modification time of the file it compresses.
 This is why \code{\link[=write_manifest]{write_manifest()}} records the payload hash.
 }
 \description{
@@ -30,7 +30,7 @@ and \code{CA}. For each component, the column names are written as a header line
 followed by the corresponding data rows.
 
 The exchange file is first written to a temporary CSV file and then zipped
-using \code{\link[utils:zip]{utils::zip()}}. If \code{zip_file} already exists, it is overwritten.
+using \code{\link[zip:zip]{zip::zip()}}. If \code{zip_file} already exists, it is overwritten.
 
 Empty or missing components among \code{HH}, \code{HL}, and \code{CA} are skipped.
 }

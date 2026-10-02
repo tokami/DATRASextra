@@ -348,7 +348,7 @@ verify_extraction <- function(path,
 
 ## Hash the exchange file inside a zip archive, and the archive itself.
 ##
-## The payload hash is the meaningful one: utils::zip() stores the modification
+## The payload hash is the meaningful one: zip::zip() stores the modification
 ## time of the file it compresses, so writing identical data twice produces
 ## different zip bytes but an identical payload.
 .hash_payload <- function(zipfile, algo = .hash_algo()) {

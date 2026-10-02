@@ -24,6 +24,8 @@ Description: DATRASextra is an R package for working with ICES DATRAS survey
 Depends:
     R (>= 4.0),
     DATRAS (>= 1.01.2)
+Imports:
+    zip
 Suggests:
     mgcv,
     mapdata,

@@ -353,12 +353,12 @@ read_datras <- function(path,
 ##'   attributes `payload_hash`, `zip_hash` and `algo`. The payload hash is
 ##'   taken over the exchange file inside the archive and is therefore identical
 ##'   whenever the data are identical; the archive hash is not, because
-##'   [utils::zip()] stores the modification time of the file it compresses.
+##'   [zip::zip()] stores the modification time of the file it compresses.
 ##'   This is why [write_manifest()] records the payload hash.
 ##'
 ##' @details
 ##' The exchange file is first written to a temporary CSV file and then zipped
-##' using [utils::zip()]. If `zip_file` already exists, it is overwritten.
+##' using [zip::zip()]. If `zip_file` already exists, it is overwritten.
 ##'
 ##' Empty or missing components among `HH`, `HL`, and `CA` are skipped.
 ##'
@@ -399,14 +399,17 @@ write_datras <- function(x,
   ## Flush and close before zipping, then null the handle so on.exit() does nothing
   close(con); con <- NULL
 
-  ## Checksum the exchange file itself. utils::zip() embeds the modification
+  ## Checksum the exchange file itself. zip::zip() embeds the modification
   ## time of the file it compresses, so the zip archive differs every time even
   ## for identical data; only the payload hash is comparable across writes.
   algo <- .hash_algo()
   payload_hash <- unname(algo$fun(csvfile))
 
+  ## zip::zip() is used instead of utils::zip(), which calls an external zip
+  ## program that is often missing on Windows and then fails with only a warning.
   if (file.exists(zip_file)) unlink(zip_file)
-  utils::zip(zip_file, files = csvfile, flags = "-j")
+  zip::zip(zip_file, files = csvfile, mode = "cherry-pick")
+  if (!file.exists(zip_file)) stop("Failed to create zip file: ", zip_file)
 
   message("Created zip file: ", zip_file)
   invisible(structure(zip_file,

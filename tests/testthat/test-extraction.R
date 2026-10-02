@@ -130,7 +130,7 @@ test_that("payload checksums are stable across writes but zip checksums are not"
   expect_equal(attr(z1, "payload_hash"), attr(z2, "payload_hash"))
   expect_true(nchar(attr(z1, "payload_hash")) %in% c(32L, 64L))
 
-  ## ... while the zip archives differ, because utils::zip() stores the
+  ## ... while the zip archives differ, because zip::zip() stores the
   ## modification time of the file it compresses. This is why the manifest
   ## records the payload hash rather than the archive hash.
   expect_false(identical(attr(z1, "zip_hash"), attr(z2, "zip_hash")))
@@ -164,6 +164,38 @@ test_that("a write and read round trip preserves the extraction keys", {
   expect_true(all(!is.na(after$read)))
   expect_equal(unique(after$datrasextra),
                as.character(utils::packageVersion("DATRASextra")))
+})
+
+
+test_that("write_datras does not need an external zip program", {
+
+  skip_on_cran()
+
+  d <- file.path(tempdir(), "datrasextra-zipcmd-test")
+  unlink(d, recursive = TRUE)
+  dir.create(d, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+
+  ## utils::zip() fails with only a warning when this program is missing, as
+  ## on Windows without Rtools
+  old <- Sys.getenv("R_ZIPCMD", unset = NA)
+  Sys.setenv(R_ZIPCMD = "nonexistent_zip_program")
+  on.exit(if (is.na(old)) Sys.unsetenv("R_ZIPCMD") else Sys.setenv(R_ZIPCMD = old),
+          add = TRUE)
+
+  x <- .remove_extra_variables(subset(mini, Survey == "EVHOE"))
+  zip_path <- file.path(d, "EVHOE_2022.zip")
+  z <- suppressMessages(write_datras(x, zip_path))
+
+  expect_true(file.exists(zip_path))
+  expect_false(is.na(attr(z, "payload_hash")))
+  expect_false(is.na(attr(z, "zip_hash")))
+  expect_equal(basename(utils::unzip(zip_path, list = TRUE)$Name), "DATRAS.csv")
+
+  y <- suppressMessages(read_datras(d))
+  expect_equal(nrow(y[["HH"]]), nrow(x[["HH"]]))
+  expect_equal(nrow(y[["HL"]]), nrow(x[["HL"]]))
+  expect_equal(nrow(y[["CA"]]), nrow(x[["CA"]]))
 })
 
 
