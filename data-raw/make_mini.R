@@ -9,7 +9,7 @@ download_datras(surveys = c("NS-IBTS",
                            "BTS",
                            "EVHOE",
                            "BITS"),
-               years = 2022:2023, path = tmp)
+               years = 2015:2020, path = tmp)
 
 surv0 <- read_datras(file.path(tmp, c("NS-IBTS",
                                      "BTS",
@@ -47,7 +47,7 @@ mini <- subset(surv0,
                                   ## bottom trawls.
                                   "105865"))
 
-format(object.size(mini), units = "auto") ## 10.1 Mb
+format(object.size(mini), units = "auto") 
 
 class(mini)
 

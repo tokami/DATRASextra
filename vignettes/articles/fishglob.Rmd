@@ -71,13 +71,13 @@ This vignette demonstrates a workflow to:
 The workflow can be applied to a single species or to multiple species.
 For illustration, this vignette uses `mini`.
 ```{r}
-data("mini_fishglob", package = "DATRASextra")
+data("mini", package = "DATRASextra")
 ```
-an example dataset containing `r length(unique(mini_fishglob$HL$Species))` species
-across `r length(unique(mini_fishglob$HH$Survey))` surveys
-(`r paste(sort(unique(mini_fishglob$HH$Survey)), collapse = ", ")`):
+an example dataset containing `r length(unique(mini$HL$Species))` species
+across `r length(unique(mini$HH$Survey))` surveys
+(`r paste(sort(unique(mini$HH$Survey)), collapse = ", ")`):
 
-`r paste(sort(unique(mini_fishglob$HL$Species)), collapse = ", ")`
+`r paste(sort(unique(mini$HL$Species)), collapse = ", ")`
 
 ## References
 Maureaud, A., et al. (2021) FISHGLOB_data: an integrated dataset of fish biodiversity sampled with scientific bottom-trawl surveys. Sci Data 11, 24 (2024). [https://doi.org/10.1038/s41597-023-02866-w](https://doi.org/10.1038/s41597-023-02866-w)
@@ -96,7 +96,7 @@ library(dplyr)
 ## Load the dataset
 
 ```{r}
-data(mini_fishglob)
+data(mini)
 ```
 
 ## Clean the dataset
@@ -109,7 +109,7 @@ This step ensures:
 - standardized taxonomic classification
 
 ```{r}
-dat <- clean_fishglob(mini_fishglob)
+dat <- clean_fishglob(mini)
 ```
 
 ## Reduce dataset size

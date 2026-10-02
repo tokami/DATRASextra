@@ -89,8 +89,8 @@ test_that("read_datras returns empty fields as NA but keeps haul ids", {
   on.exit(unlink(d, recursive = TRUE), add = TRUE)
 
   ## BTS hauls without a station number
-  x <- subset(mini, Survey == "BTS" & Year == "2022")
-  suppressMessages(write_datras(.remove_extra_variables(x), file.path(d, "BTS_2022.zip")))
+  x <- subset(mini, Survey == "BTS" & Year == "2020")
+  suppressMessages(write_datras(.remove_extra_variables(x), file.path(d, "BTS_2020.zip")))
   y <- suppressMessages(read_datras(d))
 
   for (r in c("HH", "HL", "CA")) {

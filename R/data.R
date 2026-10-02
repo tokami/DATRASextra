@@ -15,11 +15,14 @@
 
 #' Mini DATRAS survey data (example dataset)
 #'
-#' Example ICES DATRAS data for 2 years (2022-2023), 4 surveys (NS-IBTS, BITS,
-#' BTS, and EVHOE), and 5 species: Lophius piscatorius (European anglerfish),
+#' Example ICES DATRAS data for 6 years (2015-2020), 4 surveys (NS-IBTS, BITS,
+#' BTS, and EVHOE), all quarters, and 5 species: Lophius piscatorius (European anglerfish),
 #' Lepidorhombus whiffiagonis (Megrim), Hippoglossoides platessoides (American
 #' plaice), Trisopterus esmarkii (Norway pout), and Amblyraja radiata (Starry
 #' ray).
+#'
+#' The years overlap with the public FishGlob data, so the data set is also
+#' used to compare [clean_fishglob()] with FishGlob.
 #'
 #' @format A list of class 'datras_raw' with 3 elements:
 #' \describe{
@@ -30,26 +33,6 @@
 #' @source ICES DATRAS database \url{https://datras.ices.dk}
 "mini"
 
-
-#' Mini DATRAS survey data for fishglob comparison (example dataset)
-#'
-#' Example ICES DATRAS data for 5 years (2015-2020), 4 surveys (NS-IBTS, BITS,
-#' BTS, and EVHOE), and 5 species: Lophius piscatorius (European anglerfish),
-#' Lepidorhombus whiffiagonis (Megrim), Hippoglossoides platessoides (American
-#' plaice), Trisopterus esmarkii (Norway pout), and Amblyraja radiata (Starry
-#' ray).
-#'
-#' The biological data (`CA`) are not included, as the FishGlob workflow
-#' ([clean_fishglob()]) does not use them.
-#'
-#' @format A list of class 'datras_raw' with the elements:
-#' \describe{
-#'   \item{CA}{`NULL`; not included}
-#'   \item{HH}{Survey level information}
-#'   \item{HL}{Length measurements}
-#' }
-#' @source ICES DATRAS database \url{https://datras.ices.dk}
-"mini_fishglob"
 
 
 #' Species information lookup table

@@ -82,8 +82,8 @@ Two principles guide the design:
 | 7. Extraction record | `extraction()`, `write_manifest()`, `verify_extraction()` | Record where the data came from and detect upstream revisions | automatic record, opt-in verification |
 
 
-Throughout we use the bundled example data set `mini`: four surveys, seven
-gears, five species, 2022-2023. Unlike the `dab` example, `mini` has not been
+Throughout we use the bundled example data set `mini`: four surveys, nine
+gears, five species, 2015-2020. Unlike the `dab` example, `mini` has not been
 pre-cleaned, so every filter described below actually does something.
 
 ```{r}
@@ -480,7 +480,7 @@ ICES extract.
 a convenience:
 
 ```{r}
-surv_sub <- clean_datras(mini, years = 2023, quarters = 1,
+surv_sub <- clean_datras(mini, years = 2020, quarters = 1,
                          aphias = 127137, verbose = FALSE)
 surv_sub
 ```
@@ -846,9 +846,9 @@ calculation date are reconstructed from the data themselves whenever no explicit
 record is available. The same is true of any archive downloaded with an earlier
 version of the package.
 
-Reading this table is already informative. Above, NS-IBTS 2022 quarter 3 was
-last recalculated well after the other blocks, so results using it may differ
-from an analysis run before that date.
+Reading this table is already informative. Above, NS-IBTS quarter 1 was
+recalculated for all six years on 2026-06-25, long after most other blocks, so
+results using it may differ from an analysis run before that date.
 
 ## What else is recorded
 
@@ -875,7 +875,7 @@ It is also reconciled with the data actually present, so subsetting narrows it
 rather than leaving stale entries behind:
 
 ```{r}
-extraction(subset(mini, Year == 2023 & Quarter == 1))[1:4]
+extraction(subset(mini, Year == 2020 & Quarter == 1))[1:4]
 ```
 
 `survey` and `extracted` are exactly the two fields the ICES citation format

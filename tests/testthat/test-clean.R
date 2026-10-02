@@ -20,7 +20,7 @@ test_that("clean_datras imputes missing depths", {
 mini_without_hl <- function() {
   x <- mini
   hl <- x[["HL"]]
-  x[["HL"]] <- hl[!(hl$Survey == "EVHOE" & hl$Year == "2023"), ]
+  x[["HL"]] <- hl[!(hl$Survey == "EVHOE" & hl$Year == "2020"), ]
   x
 }
 
@@ -32,9 +32,9 @@ test_that("survey-year-quarters with hauls but no HL records are found", {
   x <- mini_without_hl()
   g <- .groups_without_hl(x)
   expect_equal(g$Survey, "EVHOE")
-  expect_equal(g$Year, 2023L)
+  expect_equal(g$Year, 2020L)
   expect_equal(g$Quarter, 4L)
-  expect_equal(g$n_hauls, sum(x[["HH"]]$Survey == "EVHOE" & x[["HH"]]$Year == "2023"))
+  expect_equal(g$n_hauls, sum(x[["HH"]]$Survey == "EVHOE" & x[["HH"]]$Year == "2020"))
 
   ## Nothing to check against without HL
   x[["HL"]] <- NULL
@@ -46,8 +46,8 @@ test_that("clean_datras reports survey-year-quarters without HL by default", {
 
   x <- mini_without_hl()
   expect_message(out <- clean_datras(x, correct_species = FALSE),
-                 "EVHOE 2023 Q4")
-  expect_true(any(out[["HH"]]$Survey == "EVHOE" & out[["HH"]]$Year == "2023"))
+                 "EVHOE 2020 Q4")
+  expect_true(any(out[["HH"]]$Survey == "EVHOE" & out[["HH"]]$Year == "2020"))
 
   ## Silent with verbose = FALSE, and no report for complete data
   expect_silent(clean_datras(x, correct_species = FALSE, verbose = FALSE))
@@ -63,7 +63,7 @@ test_that("clean_datras drops survey-year-quarters without HL when asked", {
                       drop_without_hl = TRUE)
   ref <- clean_datras(x, correct_species = FALSE, verbose = FALSE)
 
-  is_gone <- function(d) d$Survey == "EVHOE" & d$Year == "2023"
+  is_gone <- function(d) d$Survey == "EVHOE" & d$Year == "2020"
   expect_false(any(is_gone(out[["HH"]])))
   expect_false(any(is_gone(out[["CA"]])))
   expect_true(any(is_gone(ref[["CA"]])))

@@ -19,10 +19,14 @@ ICES DATRAS database \url{https://datras.ices.dk}
 mini
 }
 \description{
-Example ICES DATRAS data for 2 years (2022-2023), 4 surveys (NS-IBTS, BITS,
-BTS, and EVHOE), and 5 species: Lophius piscatorius (European anglerfish),
+Example ICES DATRAS data for 6 years (2015-2020), 4 surveys (NS-IBTS, BITS,
+BTS, and EVHOE), all quarters, and 5 species: Lophius piscatorius (European anglerfish),
 Lepidorhombus whiffiagonis (Megrim), Hippoglossoides platessoides (American
 plaice), Trisopterus esmarkii (Norway pout), and Amblyraja radiata (Starry
 ray).
+}
+\details{
+The years overlap with the public FishGlob data, so the data set is also
+used to compare \code{\link[=clean_fishglob]{clean_fishglob()}} with FishGlob.
 }
 \keyword{datasets}

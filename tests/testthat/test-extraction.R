@@ -76,8 +76,8 @@ test_that("combining objects merges their extraction records", {
   x <- mini
   attr(x, "extraction") <- extraction(mini)
 
-  a <- subset(x, Year == 2022)
-  b <- subset(x, Year == 2023)
+  a <- subset(x, Year == 2019)
+  b <- subset(x, Year == 2020)
 
   expect_true(nrow(extraction(a)) > 0)
   expect_true(nrow(extraction(b)) > 0)
@@ -95,11 +95,11 @@ test_that("extraction is reconciled with the data still present", {
 
   ## Subsetting does not touch attributes, so the record must be reconciled
   ## against the data rather than reported verbatim.
-  sub <- subset(x, Year == 2023)
+  sub <- subset(x, Year == 2020)
   e <- extraction(sub)
 
   expect_true(nrow(e) < nrow(extraction(x)))
-  expect_true(all(e$year == 2023))
+  expect_true(all(e$year == 2020))
 })
 
 

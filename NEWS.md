@@ -107,13 +107,11 @@
   coordinates, gap filling, support per year and depth.
 
 * The package is much smaller: the source package went from 11.6 MB to
-  4.2 MB, below the 5 MB that CRAN expects. The gear spread models used by
+  3.4 MB, below the 5 MB that CRAN expects. The gear spread models used by
   `add_swept_area(method = "fishglob")` no longer carry the residuals, fitted
   values and model frames of the hauls they were fitted to. This takes them
   from 59 MB in memory, loaded with the package every time, to 0.3 MB; their
-  predictions are unchanged. The example data are compressed with xz, and
-  `mini_fishglob` no longer contains the `CA` table, which the FishGlob
-  workflow does not use.
+  predictions are unchanged. The example data are compressed with xz.
 
   "Data processing and quality control" is now an article on the package
   website (https://tokami.github.io/DATRASextra/articles/data-processing-and-qc.html)
@@ -121,6 +119,14 @@
   maps in the tutorial vignette are lighter, using `plot_datras_overview()`.
 
 ## Breaking changes
+
+* The two example data sets `mini` and `mini_fishglob` are merged into one,
+  `mini`, which now holds the former `mini_fishglob`: the same four surveys
+  (NS-IBTS, BITS, BTS, EVHOE) and five species as before, but for 2015-2020
+  and all quarters instead of 2022-2023 (13,080 hauls instead of 3,939).
+  These years overlap with the public FishGlob data, which the FishGlob
+  article needs. `mini_fishglob` is removed; use `mini` instead. Code that
+  relied on the years 2022-2023 in `mini` needs to use 2015-2020.
 
 * `read_datras()` returns empty fields in exchange files as `NA` instead of an
   empty string or an empty factor level (`""`). Archives written by the web
