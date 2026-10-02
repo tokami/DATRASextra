@@ -96,12 +96,15 @@ available surveys with:
 list_surveys()
 ```
 
-Or visually with:
+Or visually, as the number of surveys sampling each area:
 
-```{r, eval = TRUE, echo = TRUE, fig.alt = "Map with available surveys in DATRAS"}
-## Plot available DATRAS surveys
-plot_datras_overview(by_survey = TRUE, multi_panels = TRUE)
+```{r, eval = TRUE, echo = TRUE, fig.alt = "Map of the number of DATRAS surveys per grid cell"}
+## Plot where DATRAS surveys sample
+plot_datras_overview(mode = "grid", metric = "count_surveys")
 ```
+
+`plot_datras_overview(by_survey = TRUE, multi_panels = TRUE)` shows one map
+per survey instead.
 
 
 The `download_datras()` function can be used to download data for one or more
@@ -211,10 +214,11 @@ head(attr(surv, "outlier_hauls"))
 For the example data set used here, no clearly invalid values were detected, so
 we proceed without further filtering.
 
-A quick overview of the cleaned survey data can be obtained with:
+A quick overview of the cleaned survey data, here the number of hauls per
+grid cell, can be obtained with:
 
-```{r, fig.alt = ""}
-plot(surv)
+```{r, fig.alt = "Map of the number of hauls per grid cell"}
+plot_datras_overview(surv, mode = "grid", metric = "count_hauls")
 ```
 
 

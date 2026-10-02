@@ -1,4 +1,4 @@
-# DATRASextra 0.5.1
+# DATRASextra 0.5.2
 
 ## New features
 
@@ -114,6 +114,11 @@
   predictions are unchanged. The example data are compressed with xz, and
   `mini_fishglob` no longer contains the `CA` table, which the FishGlob
   workflow does not use.
+
+  "Data processing and quality control" is now an article on the package
+  website (https://tokami.github.io/DATRASextra/articles/data-processing-and-qc.html)
+  instead of a vignette, so it is no longer available with `vignette()`. The
+  maps in the tutorial vignette are lighter, using `plot_datras_overview()`.
 
 ## Breaking changes
 
