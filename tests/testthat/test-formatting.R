@@ -184,3 +184,34 @@ testthat::test_that("as_table type=wide matches as_wide_format", {
   out2 <- as_wide_format(dab_cut, vars = c("Survey", "Year"))
   testthat::expect_equal(out1, out2)
 })
+
+
+## as_tibble -------------------------------------------------------------------
+
+testthat::test_that("as_tibble returns the as_table output as a tibble", {
+  testthat::skip_if_not_installed("tibble")
+
+  out <- tibble::as_tibble(dab_cut)
+  testthat::expect_s3_class(out, "tbl_df")
+  testthat::expect_equal(as.data.frame(out), as_table(dab_cut))
+})
+
+testthat::test_that("as_tibble passes the as_table arguments on", {
+  testthat::skip_if_not_installed("tibble")
+
+  out <- tibble::as_tibble(dab_cut, type = "wide", add_vars = "Depth",
+                           remove_vars = "Ship")
+  ref <- as_table(dab_cut, type = "wide", add_vars = "Depth",
+                  remove_vars = "Ship")
+  testthat::expect_equal(as.data.frame(out), ref)
+  testthat::expect_true(any(grepl("^HaulN_", names(out))))
+  testthat::expect_false("Ship" %in% names(out))
+})
+
+testthat::test_that("as_tibble passes other arguments to tibble", {
+  testthat::skip_if_not_installed("tibble")
+
+  out <- tibble::as_tibble(dab, vars = c("Survey", "Year"),
+                           .name_repair = toupper)
+  testthat::expect_equal(names(out), c("HAUL.ID", "SURVEY", "YEAR"))
+})

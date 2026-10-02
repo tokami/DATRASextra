@@ -296,3 +296,45 @@ as_wide_format <- function(x,
   rownames(res) <- NULL
   return(res)
 }
+
+
+
+##' Convert a `datras_raw` object to a tibble
+##'
+##' Method for [tibble::as_tibble()]: the same table as [as_table()], returned
+##' as a tibble, so that `as_tibble(x)` and `x |> as_tibble()` work in tidyverse
+##' workflows. Only `HH` (haul-level) variables are used, as in [as_table()].
+##'
+##' The method is registered when the tibble package is installed; tibble is
+##' not required otherwise.
+##'
+##' @param x A `datras_raw` object.
+##' @param ... Passed to [tibble::as_tibble()] for the converted table, e.g.
+##'   `.name_repair`.
+##' @inheritParams as_table
+##'
+##' @return A tibble with one row per haul, or per haul x length group for
+##'   `type = "long"` when matrix columns are present. See [as_table()].
+##'
+##' @seealso [as_table()], [as_long_format()], [as_wide_format()]
+##'
+##' @examples
+##' if (requireNamespace("tibble", quietly = TRUE)) {
+##'   dab <- add_numbers_at_length(dab)
+##'   dab <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
+##'
+##'   tibble::as_tibble(dab)
+##'   tibble::as_tibble(dab, type = "wide", add_vars = "Depth")
+##' }
+##'
+##' @exportS3Method tibble::as_tibble
+as_tibble.datras_raw <- function(x,
+                                 ...,
+                                 vars = .default_hh_vars,
+                                 add_vars = NULL,
+                                 remove_vars = NULL,
+                                 type = "long") {
+  tab <- as_table(x, vars = vars, add_vars = add_vars,
+                  remove_vars = remove_vars, type = type)
+  tibble::as_tibble(tab, ...)
+}

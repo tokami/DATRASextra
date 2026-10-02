@@ -48,6 +48,11 @@
   table, and data whose `HL` was subset to some species beforehand cannot be
   checked reliably.
 
+* New `as_tibble()` method for `datras_raw` objects, so that
+  `tibble::as_tibble(x)` and `x |> as_tibble()` return the table of
+  `as_table()` as a tibble. It takes the same arguments as `as_table()`. The
+  method is registered only when tibble is installed, which is not required.
+
 ## Breaking changes
 
 * `read_datras()` returns empty fields in exchange files as `NA` instead of an
