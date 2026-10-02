@@ -36,6 +36,7 @@ Suggests:
     testthat (>= 3.0.0),
     dplyr,
     tibble,
+    marmap,
     ggplot2,
     sf,
     rnaturalearth,

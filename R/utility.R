@@ -305,6 +305,98 @@ get_latin <- function(aphia, use_worrms = FALSE) {
 
 
 
+##' Add projected coordinates
+##'
+##' Adds projected coordinates `X` and `Y` to a data frame with longitude and
+##' latitude, or the reverse: longitude and latitude to a data frame with
+##' projected `X` and `Y`, e.g. a prediction grid built in kilometres with
+##' [make_survey_grid()].  Spatial models and distance-based grid operations
+##' need projected coordinates, in which a distance is the same in all
+##' directions.
+##'
+##' @param d A data frame, or a `datras_raw` object, in which case the
+##'   coordinates are added to `HH`.
+##' @param crs Coordinate reference system of `X` and `Y`, as accepted by
+##'   [sf::st_crs()]. Default 3035, the ETRS89 Lambert azimuthal equal-area
+##'   projection for Europe.
+##' @param units Units of `X` and `Y`: `"km"` (default) or `"m"`.
+##' @param lon,lat Names of the longitude and latitude columns (decimal
+##'   degrees, WGS84).
+##' @param xy Names of the projected coordinate columns. Default
+##'   `c("X", "Y")`, as in the output of [make_survey_grid()].
+##' @param inverse Logical. If `FALSE` (default), `X` and `Y` are computed from
+##'   longitude and latitude. If `TRUE`, longitude and latitude are computed
+##'   from `X` and `Y`.
+##'
+##' @details
+##' Rows with missing coordinates get `NA`.  Existing columns of the same
+##' names are overwritten.
+##'
+##' @return `d` with the coordinate columns added.
+##'
+##' @seealso [make_survey_grid()], [add_bathymetry()]
+##'
+##' @examples
+##' if (requireNamespace("sf", quietly = TRUE)) {
+##'   x <- add_xy(dab)
+##'   head(x[["HH"]][, c("lon", "lat", "X", "Y")])
+##'
+##'   ## A 10 km grid, with longitude and latitude for each node
+##'   grid <- make_survey_grid(x[["HH"]]$X, x[["HH"]]$Y, resolution = 10)
+##'   grid <- add_xy(grid, inverse = TRUE)
+##'   head(grid)
+##' }
+##'
+##' @export
+add_xy <- function(d,
+                   crs = 3035,
+                   units = c("km", "m"),
+                   lon = "lon",
+                   lat = "lat",
+                   xy = c("X", "Y"),
+                   inverse = FALSE) {
+
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    stop("Package 'sf' is required for add_xy(). Install with install.packages('sf').")
+  }
+  units <- match.arg(units)
+  scale <- if (units == "km") 1000 else 1
+
+  if (inherits(d, "datras_raw") || inherits(d, "DATRASraw")) {
+    d[["HH"]] <- add_xy(d[["HH"]], crs = crs, units = units, lon = lon,
+                        lat = lat, xy = xy, inverse = inverse)
+    return(d)
+  }
+
+  from <- if (inverse) xy else c(lon, lat)
+  to <- if (inverse) c(lon, lat) else xy
+  if (!all(from %in% names(d))) {
+    stop("d must have the columns '", from[1], "' and '", from[2], "'.")
+  }
+
+  a <- as.numeric(d[[from[1]]])
+  b <- as.numeric(d[[from[2]]])
+  ok <- is.finite(a) & is.finite(b)
+  out <- matrix(NA_real_, nrow = nrow(d), ncol = 2)
+
+  if (any(ok)) {
+    if (inverse) {
+      pts <- sf::st_as_sf(data.frame(a = a[ok] * scale, b = b[ok] * scale),
+                          coords = c("a", "b"), crs = sf::st_crs(crs))
+      out[ok, ] <- sf::st_coordinates(sf::st_transform(pts, 4326))
+    } else {
+      pts <- sf::st_as_sf(data.frame(a = a[ok], b = b[ok]),
+                          coords = c("a", "b"), crs = 4326)
+      out[ok, ] <- sf::st_coordinates(sf::st_transform(pts, sf::st_crs(crs))) / scale
+    }
+  }
+
+  d[[to[1]]] <- out[, 1]
+  d[[to[2]]] <- out[, 2]
+  d
+}
+
+
 ##' Make a regular prediction grid from coordinate vectors
 ##'
 ##' Creates an equally spaced grid covering the range of the supplied
@@ -315,7 +407,8 @@ get_latin <- function(aphia, use_worrms = FALSE) {
 ##' coordinate minimum.  Optionally repeats the spatial grid for every
 ##' element of \code{time}, adding a \code{year} column.  Optionally
 ##' removes grid nodes that are farther than \code{max_dist} from any
-##' observation (requires the \pkg{RANN} package).
+##' observation (requires the \pkg{RANN} package), and fills gaps in the
+##' remaining footprint with \code{fill_gaps}.
 ##'
 ##' @param x Numeric vector of X coordinates (any units).
 ##' @param y Numeric vector of Y coordinates (same units as \code{x}).
@@ -328,23 +421,61 @@ get_latin <- function(aphia, use_worrms = FALSE) {
 ##' @param time Optional vector of time values (e.g. \code{1990:2000}).
 ##'   When supplied the spatial grid is crossed with \code{time} and a
 ##'   \code{year} column is added.
+##' @param fill_gaps Optional distance in the same units as \code{x} and
+##'   \code{y}, used together with \code{max_dist}.  Holes and bays in the
+##'   footprint that are narrower than about \code{2 * fill_gaps} are filled,
+##'   without extending the outer edge of the footprint.  See Details.
+##'
+##' @details
+##' With \code{max_dist} alone, the grid keeps the nodes within
+##' \code{max_dist} of an observation.  Where hauls are farther than
+##' \code{2 * max_dist} apart, this leaves holes inside the survey area and
+##' notches along its edge, although the survey covers the area between
+##' them.  \code{fill_gaps} closes these: the footprint is first grown by
+##' \code{max_dist + fill_gaps} around each observation and then shrunk by
+##' \code{fill_gaps} again (a morphological closing).  Gaps narrower than
+##' about \code{2 * fill_gaps} disappear, while the outer edge stays at
+##' \code{max_dist} from the outermost observations.  Nodes kept by
+##' \code{max_dist} are always kept.
+##'
+##' The closing is computed on the grid nodes, so it is accurate to about one
+##' \code{resolution}.  Distances are measured in the units of the
+##' coordinates; in lon/lat degrees a degree of longitude is shorter than a
+##' degree of latitude, so project the coordinates first (e.g. with
+##' [add_xy()]) when distances should be equal in all directions.
 ##'
 ##' @return A data.frame with columns \code{X}, \code{Y}, and (if
 ##'   \code{time} is supplied) \code{year}.
 ##'
+##' @seealso [add_grid_support()] to flag the grid nodes covered by the
+##'   hauls of each year, [add_bathymetry()] to add depth.
+##'
+##' @examples
+##' trawls <- unique(dab[["HH"]][, c("lon", "lat")])
+##' if (requireNamespace("RANN", quietly = TRUE)) {
+##'   grid <- make_survey_grid(trawls$lon, trawls$lat, resolution = 0.1,
+##'                            max_dist = 0.2)
+##'   grid_filled <- make_survey_grid(trawls$lon, trawls$lat, resolution = 0.1,
+##'                                   max_dist = 0.2, fill_gaps = 0.3)
+##'   c(nrow(grid), nrow(grid_filled))
+##' }
+##'
 ##' @export
-make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL) {
+make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL,
+                             fill_gaps = NULL) {
+  if (!is.null(fill_gaps) && is.null(max_dist)) {
+    stop("fill_gaps requires max_dist.")
+  }
+
   snap <- function(v) resolution * floor(v / resolution)
   xs <- seq(snap(min(x, na.rm = TRUE)), max(x, na.rm = TRUE), by = resolution)
   ys <- seq(snap(min(y, na.rm = TRUE)), max(y, na.rm = TRUE), by = resolution)
   grid <- expand.grid(X = xs, Y = ys)
 
   if (!is.null(max_dist)) {
-    if (!requireNamespace("RANN", quietly = TRUE))
-      stop("Package 'RANN' is required for max_dist filtering. Install with install.packages('RANN').")
-    obs <- unique(na.omit(cbind(x, y)))
-    nn_dist <- RANN::nn2(data = obs, query = as.matrix(grid), k = 1L)$nn.dists[, 1L]
-    grid <- grid[nn_dist <= max_dist, ]
+    keep <- .grid_coverage(grid$X, grid$Y, x, y, resolution = resolution,
+                           max_dist = max_dist, fill_gaps = fill_gaps)
+    grid <- grid[keep, ]
     rownames(grid) <- NULL
   }
 
@@ -356,9 +487,172 @@ make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL) {
 }
 
 
+##' Flag grid nodes covered by the hauls of each year
+##'
+##' Adds two columns to a prediction grid from [make_survey_grid()] that show
+##' where the survey actually sampled: `supported`, whether the hauls of a
+##' year (and its neighbouring years) cover a node, and `coverage`, the share
+##' of years in which a node is covered.  Predictions in nodes without
+##' support are extrapolations.
+##'
+##' A node is covered by a set of hauls when it lies within `max_dist` of one
+##' of them, after filling gaps with `fill_gaps`, exactly as in
+##' [make_survey_grid()].
+##'
+##' @param grid A data frame with columns `X` and `Y` on a regular grid, and
+##'   optionally `year`, e.g. from [make_survey_grid()].
+##' @param x,y Numeric vectors of haul coordinates, in the units of the grid.
+##' @param time Vector of haul years, the same length as `x`.
+##' @param max_dist,fill_gaps Distances as in [make_survey_grid()].
+##' @param window Non-negative number. A node is `supported` in a year when
+##'   hauls from years at most `window` away cover it. Default 1: the year
+##'   itself and the years before and after.
+##' @param resolution Grid spacing. If `NULL` (default), taken from the
+##'   spacing of `grid`.
+##'
+##' @details
+##' `coverage` is computed per node from the hauls of each year alone,
+##' without `window`.  The years counted are those in `grid$year` when the
+##' grid has a `year` column, so that years without hauls count as not
+##' covered, and those in `time` otherwise.  A threshold such as
+##' `coverage >= 0.25` keeps the nodes the survey covers regularly.
+##'
+##' Surveys sampled in several quarters usually cover different areas in
+##' each.  Run the function per quarter, with the hauls of that quarter (see
+##' the examples).
+##'
+##' @return `grid` with the columns `supported` (logical; only when `grid`
+##'   has a `year` column, otherwise coverage by all hauls) and `coverage`
+##'   (numeric between 0 and 1) added.
+##'
+##' @seealso [make_survey_grid()]
+##'
+##' @examples
+##' if (requireNamespace("RANN", quietly = TRUE)) {
+##'   hh <- dab[["HH"]]
+##'   hh <- hh[!is.na(hh$lon) & !is.na(hh$lat), ]
+##'   years <- as.numeric(as.character(hh$Year))
+##'   grid <- make_survey_grid(hh$lon, hh$lat, resolution = 0.2,
+##'                            max_dist = 0.3, time = sort(unique(years)))
+##'
+##'   ## One quarter
+##'   q1 <- hh$Quarter == "1"
+##'   g1 <- add_grid_support(grid, hh$lon[q1], hh$lat[q1], years[q1],
+##'                          max_dist = 0.3)
+##'   table(g1$supported, g1$year)
+##'
+##'   ## Nodes covered in at least a quarter of the years
+##'   core <- g1[g1$coverage >= 0.25, ]
+##' }
+##'
+##' @export
+add_grid_support <- function(grid, x, y, time, max_dist, fill_gaps = NULL,
+                             window = 1, resolution = NULL) {
+  if (!all(c("X", "Y") %in% names(grid))) stop("grid must have columns X and Y.")
+  if (length(y) != length(x) || length(time) != length(x)) {
+    stop("x, y and time must have the same length.")
+  }
+  if (!is.numeric(window) || length(window) != 1 || window < 0) {
+    stop("window must be a single non-negative number.")
+  }
+  time <- as.numeric(as.character(time))
+
+  nodes <- unique(grid[, c("X", "Y")])
+  if (is.null(resolution)) resolution <- .grid_resolution(nodes)
+  node_of <- match(paste(grid$X, grid$Y), paste(nodes$X, nodes$Y))
+
+  covered <- function(sel) {
+    if (!any(sel)) return(rep(FALSE, nrow(nodes)))
+    .grid_coverage(nodes$X, nodes$Y, x[sel], y[sel], resolution = resolution,
+                   max_dist = max_dist, fill_gaps = fill_gaps)
+  }
+
+  has_year <- "year" %in% names(grid)
+  years <- if (has_year) sort(unique(as.numeric(as.character(grid$year)))) else
+    sort(unique(time[!is.na(time)]))
+
+  by_year <- vapply(years, function(yr) covered(!is.na(time) & time == yr),
+                    logical(nrow(nodes)))
+  by_year <- matrix(by_year, nrow = nrow(nodes))
+  grid$coverage <- rowMeans(by_year)[node_of]
+
+  if (has_year) {
+    gy <- as.numeric(as.character(grid$year))
+    sup <- vapply(years, function(yr) covered(!is.na(time) & abs(time - yr) <= window),
+                  logical(nrow(nodes)))
+    sup <- matrix(sup, nrow = nrow(nodes))
+    grid$supported <- sup[cbind(node_of, match(gy, years))]
+  } else {
+    grid$supported <- covered(rep(TRUE, length(x)))[node_of]
+  }
+
+  grid[, c(setdiff(names(grid), c("supported", "coverage")), "supported", "coverage")]
+}
+
+
 
 
 ## Internal functions ------------------------------------------------------------
+
+## Which of the nodes (gx, gy) are within max_dist of an observation (ox, oy),
+## after closing gaps narrower than about 2 * fill_gaps. The plain max_dist
+## test is made on the nodes themselves, so that fill_gaps = NULL gives exactly
+## the nearest-neighbour filter. The closing (grow by max_dist + fill_gaps,
+## shrink by fill_gaps) is made on a regular lattice through the nodes, padded
+## so that the grown footprint is surrounded by empty cells.
+.grid_coverage <- function(gx, gy, ox, oy, resolution, max_dist,
+                           fill_gaps = NULL) {
+  if (!requireNamespace("RANN", quietly = TRUE))
+    stop("Package 'RANN' is required for max_dist filtering. Install with install.packages('RANN').")
+
+  obs <- unique(stats::na.omit(cbind(ox, oy)))
+  if (nrow(obs) == 0) return(rep(FALSE, length(gx)))
+  nodes <- cbind(gx, gy)
+
+  d_obs <- RANN::nn2(data = obs, query = nodes, k = 1L)$nn.dists[, 1L]
+  keep <- d_obs <= max_dist
+  if (is.null(fill_gaps) || fill_gaps <= 0) return(keep)
+
+  ## Lattice through the nodes, extending beyond the nodes and the
+  ## observations by more than the grown footprint
+  pad <- max_dist + 2 * fill_gaps + 2 * resolution
+  axis <- function(g, o) {
+    lo <- min(c(g, o)) - pad
+    hi <- max(c(g, o)) + pad
+    g0 <- min(g)
+    n_lo <- ceiling((g0 - lo) / resolution)
+    n_hi <- ceiling((hi - g0) / resolution)
+    g0 + (-n_lo:n_hi) * resolution
+  }
+  lx <- axis(gx, obs[, 1])
+  ly <- axis(gy, obs[, 2])
+  lat <- as.matrix(expand.grid(X = lx, Y = ly))
+
+  grown <- RANN::nn2(data = obs, query = lat, k = 1L)$nn.dists[, 1L] <=
+    max_dist + fill_gaps
+  closed <- rep(FALSE, nrow(lat))
+  if (any(grown)) {
+    d_out <- RANN::nn2(data = lat[!grown, , drop = FALSE],
+                       query = lat[grown, , drop = FALSE], k = 1L)$nn.dists[, 1L]
+    ## The edge of the grown footprint lies about half a cell before the
+    ## nearest cell outside it
+    closed[grown] <- d_out > fill_gaps + resolution / 2
+  }
+
+  ## Lattice cell of each node
+  ix <- round((gx - lx[1]) / resolution) + 1L
+  iy <- round((gy - ly[1]) / resolution) + 1L
+  keep | closed[ix + (iy - 1L) * length(lx)]
+}
+
+
+## Spacing of a regular grid, from the distinct X and Y values.
+.grid_resolution <- function(nodes) {
+  d <- c(diff(sort(unique(nodes$X))), diff(sort(unique(nodes$Y))))
+  d <- d[d > 0]
+  if (length(d) == 0) stop("Cannot infer the grid resolution; please supply resolution.")
+  min(d)
+}
 
 .format_code_table <- function(df) {
   cols <- lapply(seq_along(df), function(i) {

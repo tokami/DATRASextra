@@ -72,6 +72,40 @@
   including `table`. The method is registered only when tibble is installed,
   which is not required.
 
+* `make_survey_grid()` gains `fill_gaps`, which closes holes and bays in the
+  grid footprint narrower than about `2 * fill_gaps`, while the outer edge
+  stays at `max_dist` from the outermost hauls. With `max_dist` alone, hauls
+  farther apart than `2 * max_dist` leave holes inside the survey area. The
+  grid is unchanged when `fill_gaps` is not used.
+
+  This and the following four functions come from the FishMap project, where
+  the same steps were repeated in several scripts. Rebuilt with them, the
+  prediction grid of the FishMap cod model (quarters 1, 3 and 4) kept all but
+  4 of the 20,483 nodes of the original, which was built with polygon
+  buffers, and added 0.7-1 %; the per-year support agreed for 99.4-99.6 % of
+  the nodes.
+
+* New `add_grid_support()` flags where the survey sampled each year. It adds
+  `supported`, whether the hauls of a year and its neighbouring years cover a
+  grid node, and `coverage`, the share of years in which a node is covered.
+  Predictions in unsupported nodes are extrapolations.
+
+* New `add_bathymetry()` adds the depth from NOAA's ETOPO bathymetry, via the
+  `marmap` package, to a grid or to `HH`. The download can be kept and
+  reused, and `depth_range` flags positions within the depths the survey
+  fishes.
+
+* New `add_xy()` adds projected coordinates (by default EPSG:3035 in km) to
+  `HH` or a data frame, and with `inverse = TRUE` longitude and latitude to a
+  projected grid.
+
+* New `suggest_length_cuts()` derives length groups with about equal numbers
+  of fish, for `length_cuts` in `add_total_numbers_by_haul()`, with the
+  realised share of fish and a label for each group.
+
+* The article on building a spatiotemporal prediction grid covers projected
+  coordinates, gap filling, support per year and depth.
+
 ## Breaking changes
 
 * `read_datras()` returns empty fields in exchange files as `NA` instead of an

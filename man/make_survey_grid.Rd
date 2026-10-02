@@ -4,7 +4,14 @@
 \alias{make_survey_grid}
 \title{Make a regular prediction grid from coordinate vectors}
 \usage{
-make_survey_grid(x, y, resolution, max_dist = NULL, time = NULL)
+make_survey_grid(
+  x,
+  y,
+  resolution,
+  max_dist = NULL,
+  time = NULL,
+  fill_gaps = NULL
+)
 }
 \arguments{
 \item{x}{Numeric vector of X coordinates (any units).}
@@ -22,6 +29,11 @@ farther than \code{max_dist} are dropped.  Uses a k-d tree via
 \item{time}{Optional vector of time values (e.g. \code{1990:2000}).
 When supplied the spatial grid is crossed with \code{time} and a
 \code{year} column is added.}
+
+\item{fill_gaps}{Optional distance in the same units as \code{x} and
+\code{y}, used together with \code{max_dist}.  Holes and bays in the
+footprint that are narrower than about \code{2 * fill_gaps} are filled,
+without extending the outer edge of the footprint.  See Details.}
 }
 \value{
 A data.frame with columns \code{X}, \code{Y}, and (if
@@ -36,5 +48,39 @@ snapped down to the nearest \code{resolution} multiple below each
 coordinate minimum.  Optionally repeats the spatial grid for every
 element of \code{time}, adding a \code{year} column.  Optionally
 removes grid nodes that are farther than \code{max_dist} from any
-observation (requires the \pkg{RANN} package).
+observation (requires the \pkg{RANN} package), and fills gaps in the
+remaining footprint with \code{fill_gaps}.
+}
+\details{
+With \code{max_dist} alone, the grid keeps the nodes within
+\code{max_dist} of an observation.  Where hauls are farther than
+\code{2 * max_dist} apart, this leaves holes inside the survey area and
+notches along its edge, although the survey covers the area between
+them.  \code{fill_gaps} closes these: the footprint is first grown by
+\code{max_dist + fill_gaps} around each observation and then shrunk by
+\code{fill_gaps} again (a morphological closing).  Gaps narrower than
+about \code{2 * fill_gaps} disappear, while the outer edge stays at
+\code{max_dist} from the outermost observations.  Nodes kept by
+\code{max_dist} are always kept.
+
+The closing is computed on the grid nodes, so it is accurate to about one
+\code{resolution}.  Distances are measured in the units of the
+coordinates; in lon/lat degrees a degree of longitude is shorter than a
+degree of latitude, so project the coordinates first (e.g. with
+\code{\link[=add_xy]{add_xy()}}) when distances should be equal in all directions.
+}
+\examples{
+trawls <- unique(dab[["HH"]][, c("lon", "lat")])
+if (requireNamespace("RANN", quietly = TRUE)) {
+  grid <- make_survey_grid(trawls$lon, trawls$lat, resolution = 0.1,
+                           max_dist = 0.2)
+  grid_filled <- make_survey_grid(trawls$lon, trawls$lat, resolution = 0.1,
+                                  max_dist = 0.2, fill_gaps = 0.3)
+  c(nrow(grid), nrow(grid_filled))
+}
+
+}
+\seealso{
+\code{\link[=add_grid_support]{add_grid_support()}} to flag the grid nodes covered by the
+hauls of each year, \code{\link[=add_bathymetry]{add_bathymetry()}} to add depth.
 }

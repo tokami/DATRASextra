@@ -353,6 +353,84 @@ add_total_numbers_by_haul <- function(x,
 
 
 
+##' Suggest length groups with equal numbers of fish
+##'
+##' Derives cut points that split the catch into `n_groups` length groups
+##' holding about equal numbers of fish, for use as `length_cuts` in
+##' [add_total_numbers_by_haul()] and [add_total_weight_by_haul()].
+##'
+##' @param x A `datras_raw` object with numbers-at-length, from
+##'   [add_numbers_at_length()].
+##' @param n_groups Number of length groups, at least 2.
+##'
+##' @details
+##' The interior cut points lie on the length-class boundaries of
+##' `attr(x, "cm.breaks")`, at the boundary where the cumulative share of fish
+##' over all hauls is closest to `1 / n_groups`, `2 / n_groups`, and so on.
+##' The groups are therefore only as equal as the length classes allow.  When
+##' the length distribution is too concentrated to give `n_groups` distinct
+##' groups, fewer are returned with a warning.
+##'
+##' The numbers-at-length matrix sums all species in `x`, so `x` should hold
+##' one species, e.g. after `clean_datras(aphias = )`.
+##'
+##' @return A numeric vector of cut points from 0 to `Inf`, with the
+##'   attributes `shares`, the share of fish in each group (binned as in
+##'   [add_total_numbers_by_haul()]), and `labels`, e.g. `"0-20 cm"` and
+##'   `"20+ cm"`.
+##'
+##' @seealso [add_numbers_at_length()], [add_total_numbers_by_haul()]
+##'
+##' @examples
+##' x <- add_numbers_at_length(dab)
+##' cuts <- suggest_length_cuts(x, 3)
+##' cuts
+##' attr(cuts, "shares")
+##' x <- add_total_numbers_by_haul(x, length_cuts = cuts)
+##'
+##' @export
+suggest_length_cuts <- function(x, n_groups) {
+
+  .check_class_datras(x)
+  if (!is.numeric(n_groups) || length(n_groups) != 1 || n_groups < 2) {
+    stop("n_groups must be a single number of at least 2.")
+  }
+  if (!.has_numbers_at_length(x)) {
+    stop("x has no numbers-at-length; run add_numbers_at_length() first.")
+  }
+
+  N <- x[["HH"]][["N"]]
+  brk <- attr(x, "cm.breaks")
+  if (is.null(brk) || length(brk) != ncol(N) + 1) {
+    stop("attr(x, \"cm.breaks\") does not match the numbers-at-length matrix.")
+  }
+
+  f <- colSums(N, na.rm = TRUE)
+  if (sum(f) <= 0) stop("No fish at length: cannot derive length groups.")
+  cum <- cumsum(f) / sum(f)
+
+  ## One interior cut per target share, at the class boundary whose cumulative
+  ## share is closest to it
+  targets <- seq_len(n_groups - 1) / n_groups
+  idx <- vapply(targets, function(p) which.min(abs(cum - p)), integer(1))
+  ## A cut on the last boundary would leave the top group empty
+  inner <- brk[idx + 1]
+  cuts <- sort(unique(c(0, inner[inner < max(brk)], Inf)))
+  if (length(cuts) - 1 < n_groups) {
+    warning("Could not find ", n_groups, " distinct length groups; using ",
+            length(cuts) - 1, ".", call. = FALSE)
+  }
+
+  shares <- .aggregate_length_bins(matrix(f, nrow = 1), brk, cuts)[1, ]
+  attr(cuts, "shares") <- unname(shares / sum(shares))
+  lo <- cuts[-length(cuts)]
+  hi <- cuts[-1]
+  attr(cuts, "labels") <- ifelse(is.infinite(hi), paste0(lo, "+ cm"),
+                                 paste0(lo, "-", hi, " cm"))
+  cuts
+}
+
+
 ##' Get length measurement accuracy in cm
 ##'
 ##' Derives the length measurement resolution, in centimetres, from the
