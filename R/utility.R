@@ -481,6 +481,44 @@ make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL) {
 }
 
 
+## Survey-year-quarters that have hauls in HH but no records at all in HL. A
+## haul without HL records is read as an empty haul (zero catch), which is
+## right for a single haul but not for a whole survey-year-quarter: there the
+## length data are missing, e.g. test entries left in DATRAS
+## (ices-tools-prod/icesDatras#59). Works on objects read with read_datras()
+## and on the raw tables of a download, as it uses only Survey, Year and
+## Quarter. Returns NULL when there is no HL table to check against.
+.groups_without_hl <- function(x) {
+  hh <- x[["HH"]]
+  hl <- x[["HL"]]
+  if (is.null(hh) || is.null(hl) || nrow(hh) == 0) return(NULL)
+
+  key <- function(d) paste(d$Survey, d$Year, d$Quarter, sep = ":")
+  k <- key(hh)
+  miss <- !k %in% key(hl)
+  if (!any(miss)) {
+    return(data.frame(Survey = character(0), Year = integer(0),
+                      Quarter = integer(0), n_hauls = integer(0)))
+  }
+
+  out <- unique(data.frame(Survey = as.character(hh$Survey[miss]),
+                           Year = as.integer(as.character(hh$Year[miss])),
+                           Quarter = as.integer(as.character(hh$Quarter[miss])),
+                           stringsAsFactors = FALSE))
+  out$n_hauls <- as.integer(table(k[miss])[paste(out$Survey, out$Year, out$Quarter, sep = ":")])
+  out <- out[order(out$Survey, out$Year, out$Quarter), , drop = FALSE]
+  rownames(out) <- NULL
+  out
+}
+
+
+## One line per survey-year-quarter for messages and warnings.
+.format_groups_without_hl <- function(g) {
+  paste0("  ", g$Survey, " ", g$Year, " Q", g$Quarter, " (", g$n_hauls,
+         ifelse(g$n_hauls == 1, " haul", " hauls"), ")", collapse = "\n")
+}
+
+
 .check_class_datras <- function(x, strict = FALSE) {
   if (strict) {
     stopifnot(inherits(x, "datras_raw"))

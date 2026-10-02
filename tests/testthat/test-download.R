@@ -151,3 +151,32 @@ test_that("the Download API and the web service give the same data", {
   expect_false(anyNA(man$payload_hash))
   expect_false(anyNA(extraction(a)$date_of_calculation))
 })
+
+
+test_that("download_datras warns about survey-years without length data", {
+
+  skip_on_cran()
+  skip_if_offline("datras.ices.dk")
+
+  d <- file.path(tempdir(), "datrasextra-nohl-test")
+  unlink(d, recursive = TRUE)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+
+  ## NS-IDPS 2012 Q1 holds a single test haul without HL records
+  ## (ices-tools-prod/icesDatras#59). Skip if ICES has removed it. 2013 is
+  ## included so that the object has an HL table to check against.
+  x <- NULL
+  w <- testthat::capture_warnings(
+    x <- suppressMessages(download_datras(d, "NS-IDPS", 2012:2013, min_file_size = 0))
+  )
+  skip_if(nrow(x[["HH"]]) == 0 || any(x[["HL"]]$Year == "2012"),
+          "NS-IDPS 2012 no longer lacks length data")
+
+  expect_true(any(grepl("NS-IDPS 2012 Q1", w)))
+  expect_true(file.exists(file.path(d, "NS-IDPS", "NS-IDPS_2012.zip")))
+
+  out <- clean_datras(x, correct_species = FALSE, verbose = FALSE,
+                      drop_without_hl = TRUE)
+  expect_false(any(out[["HH"]]$Year == "2012"))
+  expect_true(any(out[["HH"]]$Year == "2013"))
+})

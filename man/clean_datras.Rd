@@ -14,7 +14,8 @@ clean_datras(
   correct_species = TRUE,
   do_fishglob = FALSE,
   verbose = TRUE,
-  explain_codes = FALSE
+  explain_codes = FALSE,
+  drop_without_hl = FALSE
 )
 }
 \arguments{
@@ -46,6 +47,10 @@ and \code{StdSpecRecCode} category counts and the number of hauls with missing
 \item{explain_codes}{Logical. If \code{TRUE}, include a description of each
 \code{HaulVal}, \code{StdSpecRecCode}, and \code{BySpecRecCode} code in the printed
 summary. Default: \code{FALSE}. Only used when \code{verbose = TRUE}.}
+
+\item{drop_without_hl}{Logical. If \code{TRUE}, remove survey-year-quarters that
+have hauls but no length data (\code{HL}) at all. Default: \code{FALSE}, which only
+reports them when \code{verbose = TRUE}. See Details.}
 }
 \value{
 A cleaned \code{datras_raw} object.
@@ -74,6 +79,22 @@ Note that this requires the R package mgcv to be installed.
 
 Optional filtering by \code{aphias}, \code{years}, \code{quarters}, and \code{gears} is applied
 after cleaning.
+
+A haul without records in \code{HL} is treated as an empty haul (zero catch) by
+later steps such as \code{\link[=add_numbers_at_length]{add_numbers_at_length()}}. That is correct for a single
+haul, but when a whole survey-year-quarter has hauls and no \code{HL} records, its
+length data are missing rather than zero. DATRAS holds a few such cases, for
+example test entries (see
+\url{https://github.com/ices-tools-prod/icesDatras/issues/59}), and they would
+enter an analysis as hauls without any catch. \code{clean_datras()} checks for
+them before any other step and lists them; \code{drop_without_hl = TRUE} removes
+them together with their \code{CA} records. The check needs the complete \code{HL}
+table: it is skipped when there is no \code{HL} table, either because it was
+dropped (e.g. \code{read_datras(drop_hl = TRUE)}) or because none of the data
+read has length records. When \code{HL} has already been subset to some species, a
+survey-year-quarter where none of them was caught looks the same as one
+without length data. Use the \code{aphias} argument, which is applied after the
+check, to select species instead.
 }
 \examples{
 \dontrun{

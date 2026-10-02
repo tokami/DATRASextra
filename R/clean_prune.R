@@ -32,6 +32,9 @@
 ##' @param explain_codes Logical. If `TRUE`, include a description of each
 ##'   `HaulVal`, `StdSpecRecCode`, and `BySpecRecCode` code in the printed
 ##'   summary. Default: `FALSE`. Only used when `verbose = TRUE`.
+##' @param drop_without_hl Logical. If `TRUE`, remove survey-year-quarters that
+##'   have hauls but no length data (`HL`) at all. Default: `FALSE`, which only
+##'   reports them when `verbose = TRUE`. See Details.
 ##'
 ##' @details
 ##' For standard DATRAS data (`do_fishglob = FALSE`), the following filters are
@@ -47,6 +50,22 @@
 ##'
 ##' Optional filtering by `aphias`, `years`, `quarters`, and `gears` is applied
 ##' after cleaning.
+##'
+##' A haul without records in `HL` is treated as an empty haul (zero catch) by
+##' later steps such as [add_numbers_at_length()]. That is correct for a single
+##' haul, but when a whole survey-year-quarter has hauls and no `HL` records, its
+##' length data are missing rather than zero. DATRAS holds a few such cases, for
+##' example test entries (see
+##' <https://github.com/ices-tools-prod/icesDatras/issues/59>), and they would
+##' enter an analysis as hauls without any catch. `clean_datras()` checks for
+##' them before any other step and lists them; `drop_without_hl = TRUE` removes
+##' them together with their `CA` records. The check needs the complete `HL`
+##' table: it is skipped when there is no `HL` table, either because it was
+##' dropped (e.g. `read_datras(drop_hl = TRUE)`) or because none of the data
+##' read has length records. When `HL` has already been subset to some species, a
+##' survey-year-quarter where none of them was caught looks the same as one
+##' without length data. Use the `aphias` argument, which is applied after the
+##' check, to select species instead.
 ##'
 ##' @return A cleaned `datras_raw` object.
 ##'
@@ -74,9 +93,30 @@ clean_datras <- function(x,
                          correct_species = TRUE,
                          do_fishglob = FALSE,
                          verbose = TRUE,
-                         explain_codes = FALSE) {
+                         explain_codes = FALSE,
+                         drop_without_hl = FALSE) {
 
   .check_class_datras(x)
+
+  ## Survey-year-quarters without length data ------------
+  ## Checked first, on the complete HL table: the species filter below would
+  ## make survey-years where a species was not caught look the same.
+  no_hl <- .groups_without_hl(x)
+  if (!is.null(no_hl) && nrow(no_hl) > 0) {
+    if (isTRUE(drop_without_hl)) {
+      drop_keys <- paste(no_hl$Survey, no_hl$Year, no_hl$Quarter, sep = ":")
+      x <- subset(x, !paste(Survey, Year, Quarter, sep = ":") %in% drop_keys)
+      if (verbose) {
+        message("Removed survey-year-quarters that have hauls but no length data (HL):\n",
+                .format_groups_without_hl(no_hl), "\n")
+      }
+    } else if (verbose) {
+      message("These survey-year-quarters have hauls but no length data (HL), ",
+              "so their hauls count as hauls with zero catch:\n",
+              .format_groups_without_hl(no_hl),
+              "\nUse drop_without_hl = TRUE to remove them.\n")
+    }
+  }
 
   ## Verbose summary before cleaning ----------
   if (verbose && !do_fishglob) {

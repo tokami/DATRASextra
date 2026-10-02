@@ -141,6 +141,13 @@ Either set \code{return_data = FALSE} and read the archive in pieces afterwards,
 or pass the memory-reducing arguments of \code{\link[=read_datras]{read_datras()}} through \code{...}, for
 example \code{prune = TRUE} and \code{drop_ca = TRUE}.
 
+Survey-year-quarters that have hauls but no length data (\code{HL}) at all are
+listed in a warning. Their hauls would otherwise be read as empty hauls
+with zero catch; DATRAS holds a few such cases, for example test entries
+(see \url{https://github.com/ices-tools-prod/icesDatras/issues/59}). The files
+are still written as delivered; remove the cases from an analysis with
+\code{clean_datras(drop_without_hl = TRUE)}. The check needs \code{download_hl = TRUE} and is not made with \code{method = "php"}.
+
 No manifest entries are written when \code{method = "php"}, because
 \code{DATRAS::downloadExchange()} writes the files through an external script and
 reports nothing about what it retrieved. Run \code{\link[=write_manifest]{write_manifest()}} on the

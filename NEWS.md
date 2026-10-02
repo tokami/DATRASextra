@@ -34,6 +34,20 @@
   would otherwise move `DateofCalculation` into the wrong column
   (ices-tools-prod/icesDatras#63).
 
+* Survey-year-quarters that have hauls but no length data (`HL`) at all are
+  now reported. Their hauls would otherwise be treated as empty hauls with zero
+  catch, while their length data are missing. DATRAS holds a few such cases,
+  for example test entries (ices-tools-prod/icesDatras#59; NS-IDPS 2012
+  quarter 1 has a single test haul).
+
+  `download_datras()` lists them in a warning and still writes the files as
+  delivered. `clean_datras()` lists them in a message, and removes them with
+  their `CA` records when the new argument `drop_without_hl = TRUE` is set
+  (default `FALSE`). The check runs before `clean_datras()` filters species,
+  and needs the complete `HL` table: it is skipped when there is no `HL`
+  table, and data whose `HL` was subset to some species beforehand cannot be
+  checked reliably.
+
 ## Breaking changes
 
 * `read_datras()` returns empty fields in exchange files as `NA` instead of an
@@ -45,6 +59,10 @@
   `is.na()` instead.
 
 ## Bug fixes
+
+* `read_datras()` failed with "must have 'max' > 'min'" when every zip file
+  was smaller than `min_file_size`. It now stops with an error that names the
+  cause.
 
 * `write_datras()` reported "Created zip file" even when no file was written.
   `utils::zip()` calls an external `zip` program, which is often missing on

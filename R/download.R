@@ -106,6 +106,14 @@
 ##' or pass the memory-reducing arguments of [read_datras()] through `...`, for
 ##' example `prune = TRUE` and `drop_ca = TRUE`.
 ##'
+##' Survey-year-quarters that have hauls but no length data (`HL`) at all are
+##' listed in a warning. Their hauls would otherwise be read as empty hauls
+##' with zero catch; DATRAS holds a few such cases, for example test entries
+##' (see <https://github.com/ices-tools-prod/icesDatras/issues/59>). The files
+##' are still written as delivered; remove the cases from an analysis with
+##' `clean_datras(drop_without_hl = TRUE)`. The check needs `download_hl =
+##' TRUE` and is not made with `method = "php"`.
+##'
 ##' No manifest entries are written when `method = "php"`, because
 ##' `DATRAS::downloadExchange()` writes the files through an external script and
 ##' reports nothing about what it retrieved. Run [write_manifest()] on the
@@ -202,6 +210,9 @@ download_datras <- function(path = NULL,
   ## manifest once all downloads have finished.
   ext_rows <- list()
 
+  ## Survey-year-quarters with hauls but no length data, reported at the end
+  no_hl <- list()
+
   ## Download data for each survey
   for (s in seq_along(surveys)) {
     survey <- surveys[s]
@@ -229,6 +240,7 @@ download_datras <- function(path = NULL,
         tabs <- list(HH = .datras_download_api("HH", survey, chunk))
         if (download_hl) tabs$HL <- .datras_download_api("HL", survey, chunk)
         if (download_ca) tabs$CA <- .datras_download_api("CA", survey, chunk)
+        no_hl[[length(no_hl) + 1L]] <- .groups_without_hl(tabs)
 
         for (year in chunk) {
           x <- lapply(tabs, function(d) d[d$Year == year, , drop = FALSE])
@@ -272,6 +284,7 @@ download_datras <- function(path = NULL,
                                                 download.ca = download_ca)
         datras_raw <- .add_class_datras(datras_raw)
         datras_clean <- .remove_extra_variables(datras_raw)
+        no_hl[[length(no_hl) + 1L]] <- .groups_without_hl(datras_raw)
         zp <- write_datras(datras_clean, zip_path)
 
         ext_rows[[length(ext_rows) + 1L]] <- .extraction_record(
@@ -303,6 +316,17 @@ download_datras <- function(path = NULL,
       }
 
     }
+  }
+
+  ## The files are written as delivered; this only reports the cases.
+  no_hl <- do.call(rbind, no_hl)
+  if (!is.null(no_hl) && nrow(no_hl) > 0) {
+    warning("These survey-year-quarters have hauls but no length data (HL), ",
+            "so their hauls would be read as empty hauls with zero catch:\n",
+            .format_groups_without_hl(no_hl),
+            "\nThey may be test entries left in DATRAS. Remove them with ",
+            "clean_datras(drop_without_hl = TRUE), and consider reporting them ",
+            "to datrasadministration@ices.dk.", call. = FALSE)
   }
 
   ## Record the extraction in the archive manifest. The php route writes files

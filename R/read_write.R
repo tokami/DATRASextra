@@ -192,6 +192,10 @@ read_datras <- function(path,
                           paste(path[ind], collapse = "\n")))
       }
       path <- path[file.size(path) > min_file_size]
+      if (length(path) == 0) {
+        stop("All zip files are smaller than min_file_size (", min_file_size,
+             " bytes). Lower 'min_file_size' to read them.")
+      }
 
       np <- length(path)
       use_parallel <- ncores > 1
