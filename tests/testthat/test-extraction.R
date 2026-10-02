@@ -122,8 +122,9 @@ test_that("payload checksums are stable across writes but zip checksums are not"
 
   x <- .remove_extra_variables(subset(mini, Survey == "EVHOE"))
 
+  ## zip::zip() stores the modification time to 2 seconds, as zip files do
   z1 <- suppressMessages(write_datras(x, file.path(d, "a.zip")))
-  Sys.sleep(1.1)
+  Sys.sleep(2.1)
   z2 <- suppressMessages(write_datras(x, file.path(d, "b.zip")))
 
   ## Identical data must give an identical payload hash ...

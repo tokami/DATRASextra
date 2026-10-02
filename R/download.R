@@ -12,10 +12,12 @@
 ##' `icesDatras::getSurveyList()` are used. If `years` is `NULL`, all available
 ##' years for each selected survey are downloaded.
 ##'
-##' By default, data are downloaded using `DATRAS::getDatrasExchange()`, cleaned
-##' to remove extra variables, and written to disk with [write_datras()].
-##' Alternatively, the legacy PHP-based download route from
-##' `DATRAS::downloadExchange()` can be used by setting `use_php = TRUE`.
+##' By default (`method = "api"`), data are downloaded from the ICES DATRAS
+##' Download API, the service behind `icesDatras::getDatrasUnaggregated()`,
+##' and written to disk with [write_datras()]. The previous route,
+##' `DATRAS::getDatrasExchange()` on the DATRAS web service, is available as
+##' `method = "webservice"`, and the legacy PHP-based route from
+##' `DATRAS::downloadExchange()` as `method = "php"`.
 ##'
 ##' @param path Character string giving the directory where downloaded files
 ##'   should be stored. Survey-specific subdirectories are created within this
@@ -29,14 +31,20 @@
 ##'   already exist in `path` are skipped. Set to `TRUE` to re-download and
 ##'   overwrite existing files.
 ##' @param download_hl Logical. If `TRUE` (default), length-frequency data are
-##'   also downloaded where available. This option is only used when `use_php =
-##'   FALSE`.
+##'   also downloaded where available. This option is not used when `method =
+##'   "php"`.
 ##' @param download_ca Logical. If `TRUE` (default), age-length keys and age
-##'   data are also downloaded where available. This option is only used when
-##'   `use_php = FALSE`.
-##' @param use_php Logical. If `FALSE` (default), data are downloaded via
-##'   `DATRAS::getDatrasExchange()`. If `TRUE`, the legacy
-##'   `DATRAS::downloadExchange()` method is used.
+##'   data are also downloaded where available. This option is not used when
+##'   `method = "php"`.
+##' @param method Character string naming the download route: `"api"`
+##'   (default) for the ICES DATRAS Download API, `"webservice"` for
+##'   `DATRAS::getDatrasExchange()`, or `"php"` for the legacy
+##'   `DATRAS::downloadExchange()`. See Details.
+##' @param use_php Logical. Kept for backward compatibility: `use_php = TRUE` is
+##'   the same as `method = "php"`. Default is `FALSE`.
+##' @param years_per_request Integer. With `method = "api"`, the maximum number
+##'   of years fetched in one request per record type. Larger values mean fewer
+##'   requests but more memory for large surveys. Default is 10.
 ##' @param include_flagged Logical. If `FALSE` (default), known test surveys are
 ##'   skipped when the survey list is taken from the server. Set to `TRUE` to
 ##'   download them anyway.
@@ -64,7 +72,19 @@
 ##'
 ##' @details
 ##' Files are saved as zipped exchange files named
-##' `"<survey>_<year>.zip"` inside survey-specific subfolders.
+##' `"<survey>_<year>.zip"` inside survey-specific subfolders, whichever
+##' `method` is used.
+##'
+##' `method = "api"` is considerably faster than `method = "webservice"`. It
+##' fetches several years and all quarters in one request per record type
+##' (`HH`, `HL`, `CA`) and receives a zipped CSV file, where the web service
+##' needs one XML request per record type, year and quarter plus several
+##' availability checks. The API delivers the new ICES field names; they are
+##' mapped back to the exchange names so that the files are the same in layout
+##' whichever route wrote them. Values are written as delivered by ICES, read as
+##' text so that codes such as ICES rectangle `"37E9"` are kept exactly.
+##' Missing values (`-9`) are written as empty fields, as with `method =
+##' "webservice"`, so that both routes give the same haul identifiers.
 ##'
 ##' The following surveys are treated as test surveys and are skipped unless
 ##' `include_flagged = TRUE`: `"Test-DATRAS"` and `"NS-IBTS_UNIFtest"`. The
@@ -86,7 +106,7 @@
 ##' or pass the memory-reducing arguments of [read_datras()] through `...`, for
 ##' example `prune = TRUE` and `drop_ca = TRUE`.
 ##'
-##' No manifest entries are written when `use_php = TRUE`, because
+##' No manifest entries are written when `method = "php"`, because
 ##' `DATRAS::downloadExchange()` writes the files through an external script and
 ##' reports nothing about what it retrieved. Run [write_manifest()] on the
 ##' directory afterwards to describe such an archive.
@@ -126,13 +146,18 @@ download_datras <- function(path = NULL,
                             overwrite = FALSE,
                             download_hl = TRUE,
                             download_ca = TRUE,
+                            method = c("api", "webservice", "php"),
                             use_php = FALSE,
+                            years_per_request = 10,
                             include_flagged = FALSE,
                             return_data = TRUE,
                             strict = TRUE,
                             verbose = TRUE,
                             timeout = 10,
                             ...) {
+
+  method <- match.arg(method)
+  if (isTRUE(use_php)) method <- "php"
 
   dir0 <- getwd()
   on.exit(setwd(dir0), add = TRUE)
@@ -191,8 +216,42 @@ download_datras <- function(path = NULL,
     ## of whichever survey happened to be downloaded last.
     survey_years <- .get_survey_year_list(survey, path, years, timeout = timeout)
 
-    ## if (.Platform$OS.type == "windows") {
-    if (!use_php) {
+    if (method == "api") {
+
+      ## Years still to fetch, in contiguous runs of at most years_per_request
+      ## years, so that each run is one request per record type.
+      todo <- survey_years[overwrite | !file.exists(
+        file.path(path, survey, paste0(survey, "_", survey_years, ".zip")))]
+
+      for (chunk in .year_chunks(todo, years_per_request)) {
+        if (verbose) message("Downloading ", survey, " ", .year_range(chunk))
+        extracted_at <- Sys.time()
+        tabs <- list(HH = .datras_download_api("HH", survey, chunk))
+        if (download_hl) tabs$HL <- .datras_download_api("HL", survey, chunk)
+        if (download_ca) tabs$CA <- .datras_download_api("CA", survey, chunk)
+
+        for (year in chunk) {
+          x <- lapply(tabs, function(d) d[d$Year == year, , drop = FALSE])
+          if (nrow(x$HH) == 0) next
+          x <- .remove_extra_variables(.add_class_datras(x))
+
+          zip_path <- file.path(path, survey, paste0(survey, "_", year, ".zip"))
+          zp <- write_datras(x, zip_path)
+
+          ext_rows[[length(ext_rows) + 1L]] <- .extraction_record(
+            x,
+            extracted = extracted_at,
+            source = "download_api",
+            endpoint = .datras_download_endpoint(),
+            file = file.path(survey, basename(zip_path)),
+            payload_hash = attr(zp, "payload_hash"),
+            zip_hash = attr(zp, "zip_hash"),
+            algo = attr(zp, "algo")
+          )
+        }
+      }
+
+    } else if (method == "webservice") {
 
       for (y in seq_along(survey_years)) {
         year <- survey_years[y]
@@ -229,7 +288,7 @@ download_datras <- function(path = NULL,
 
     } else {
 
-      if ((!download_hl || !download_ca) && verbose) message("Note that this functionality is not yet implemented, php always downloads HL and CA. Consider setting use_php = FALSE.")
+      if ((!download_hl || !download_ca) && verbose) message("Note that this functionality is not yet implemented, php always downloads HL and CA. Consider using method = \"api\".")
 
       if (!overwrite) {
         for (y in seq_along(survey_years)) {
@@ -352,6 +411,172 @@ download_datras <- function(path = NULL,
   m <- gregexpr(paste0("(?<=<", tag, ">)[^<]+"), txt, perl = TRUE)
   vals <- trimws(regmatches(txt, m)[[1]])
   vals[nzchar(vals)]
+}
+
+
+## Download one record type for a survey and a contiguous run of years from the
+## ICES DATRAS Download API, the service behind
+## icesDatras::getDatrasUnaggregated(), and return it with exchange names.
+## The CSV is read as text: type guessing would turn ICES rectangles such as
+## "37E9" into numbers and drop leading zeros, and icesDatras' own typing
+## truncates the HL numbers at length to integers.
+.datras_download_api <- function(recordtype, survey, years, quarters = "1:4") {
+  addr <- paste0(.datras_download_endpoint(),
+                 "?recordtype=", recordtype,
+                 "&survey=", URLencode(survey, reserved = TRUE),
+                 "&year=", .year_range(years, sep = ":"),
+                 "&quarter=", quarters)
+
+  zipfile <- tempfile(fileext = ".zip")
+  exdir <- tempfile("datras_api_")
+  on.exit(unlink(c(zipfile, exdir), recursive = TRUE), add = TRUE)
+
+  ## Large HL files can take longer than R's default 60 second timeout
+  op <- options(timeout = max(3600, getOption("timeout")))
+  on.exit(options(op), add = TRUE)
+
+  ok <- tryCatch(utils::download.file(addr, zipfile, mode = "wb", quiet = TRUE) == 0,
+                 error = function(e) FALSE, warning = function(w) FALSE)
+  if (!ok || !file.exists(zipfile)) {
+    stop("Could not download ", recordtype, " data for ", survey, " ",
+         .year_range(years), " from the DATRAS Download API:\n", addr)
+  }
+
+  csv <- tryCatch(utils::unzip(zipfile, exdir = exdir), error = function(e) character(0))
+  csv <- csv[basename(csv) == "DATRASDataTable.csv"]
+  if (length(csv) == 0) {
+    stop("The DATRAS Download API returned no data file for ", recordtype, " ",
+         survey, " ", .year_range(years), ":\n", addr)
+  }
+
+  .datras_api_to_exchange(.read_download_api_csv(csv[1]), recordtype)
+}
+
+
+## Read a Download API CSV file with every column as text. The header is read
+## separately because the HH header lists EDOM and ReasonHaulDisruption while
+## the data rows do not hold them; reading with the header as is would shift
+## DateofCalculation into EDOM. Any other mismatch is an error rather than a
+## silent shift of columns.
+.read_download_api_csv <- function(file) {
+
+  ## The file starts with a byte order mark
+  con <- file(file, encoding = "UTF-8-BOM")
+  header <- trimws(strsplit(readLines(con, n = 1, warn = FALSE), ",", fixed = TRUE)[[1]])
+  close(con)
+
+  empty <- as.data.frame(stats::setNames(rep(list(character(0)), length(header)), header),
+                         check.names = FALSE, stringsAsFactors = FALSE)
+  d <- tryCatch(
+    utils::read.table(file, header = FALSE, skip = 1, sep = ",", quote = "\"",
+                      colClasses = "character", na.strings = "",
+                      comment.char = "", fileEncoding = "UTF-8-BOM"),
+    error = function(e) {
+      if (grepl("no lines available", conditionMessage(e))) return(empty)
+      stop(e)
+    })
+  if (nrow(d) == 0) return(empty)
+
+  if (ncol(d) != length(header)) {
+    absent <- intersect(c("EDOM", "ReasonHaulDisruption"), header)
+    if (length(header) - ncol(d) != length(absent)) {
+      stop("The DATRAS Download API file has ", length(header),
+           " columns in its header but ", ncol(d), " in its rows: ", file)
+    }
+    header <- setdiff(header, absent)
+  }
+  names(d) <- header
+  d
+}
+
+
+.datras_download_endpoint <- function() {
+  "https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx"
+}
+
+
+## Rename the fields of the Download API to the DATRAS exchange names and blank
+## the -9 codes for missing values. The map was built from
+## icesDatras::getDatrasFieldList(), with three corrections: the
+## list gives "-" as the old name of Survey, CA uses AphiaID rather than
+## ValidAphiaID, and its count column already arrives as CANoAtLngt. Fields
+## without an exchange name (e.g. EDOM, ReasonHaulDisruption) are kept here and
+## dropped later by .remove_extra_variables().
+.datras_api_to_exchange <- function(d, recordtype) {
+  common <- c(
+    RecordHeader = "RecordType", Platform = "Ship", SweepLength = "SweepLngt",
+    GearExceptions = "GearEx", StationName = "StNo", HaulNumber = "HaulNo"
+  )
+  map <- switch(recordtype,
+    HH = c(common,
+      StartTime = "TimeShot", HaulDuration = "HaulDur",
+      ShootLatitude = "ShootLat", ShootLongitude = "ShootLong",
+      HaulLatitude = "HaulLat", HaulLongitude = "HaulLong",
+      StatisticalRectangle = "StatRec", BottomDepth = "Depth",
+      HaulValidity = "HaulVal", HydrographicStationID = "HydroStNo",
+      StandardSpeciesCode = "StdSpecRecCode", BycatchSpeciesCode = "BySpecRecCode",
+      NetOpening = "Netopening", WarpLength = "Warplngt",
+      WarpDiameter = "Warpdia", WarpDensity = "WarpDen",
+      DoorWeight = "DoorWgt", KiteArea = "KiteDim",
+      GroundRopeWeight = "WgtGroundRope", TowDirection = "TowDir",
+      SpeedGround = "GroundSpeed",
+      SurfaceCurrentDirection = "SurCurDir", SurfaceCurrentSpeed = "SurCurSpeed",
+      BottomCurrentDirection = "BotCurDir", BottomCurrentSpeed = "BotCurSpeed",
+      WindDirection = "WindDir", SwellDirection = "SwellDir",
+      SurfaceTemperature = "SurTemp", BottomTemperature = "BotTemp",
+      SurfaceSalinity = "SurSal", BottomSalinity = "BotSal",
+      ThermoClineDepth = "ThClineDepth", PelagicSamplingType = "PelSampType"),
+    HL = c(common,
+      SpeciesCodeType = "SpecCodeType", SpeciesCode = "SpecCode",
+      SpeciesValidity = "SpecVal", SpeciesSex = "Sex",
+      TotalNumber = "TotalNo", SpeciesCategory = "CatIdentifier",
+      SubsampledNumber = "NoMeas", SubsamplingFactor = "SubFactor",
+      SubsampleWeight = "SubWgt", SpeciesCategoryWeight = "CatCatchWgt",
+      LengthCode = "LngtCode", LengthClass = "LngtClas",
+      NumberAtLength = "HLNoAtLngt", DevelopmentStage = "DevStage",
+      LengthType = "LenMeasType", ValidAphiaID = "Valid_Aphia"),
+    CA = c(common,
+      SpeciesCodeType = "SpecCodeType", SpeciesCode = "SpecCode",
+      LengthCode = "LngtCode", LengthClass = "LngtClas",
+      IndividualSex = "Sex", IndividualMaturity = "Maturity",
+      AgePlusGroup = "PlusGr", IndividualAge = "Age",
+      CANoAtLngt = "NoAtALK", NumberAtLength = "NoAtALK",
+      IndividualWeight = "IndWgt", GeneticSamplingFlag = "GenSamp",
+      StomachSamplingFlag = "StomSamp", AgePreparationMethod = "AgePrepMet",
+      OtolithGrading = "OtGrading", ParasiteSamplingFlag = "ParSamp",
+      AphiaID = "Valid_Aphia", ValidAphiaID = "Valid_Aphia"),
+    stop("recordtype must be one of 'HH', 'HL' or 'CA'")
+  )
+  i <- match(names(d), names(map))
+  names(d)[!is.na(i)] <- map[i[!is.na(i)]]
+
+  ## Write missing values as empty fields, as the web service route does after
+  ## DATRAS::minus9toNA(). Kept as -9, DATRAS would read them as NA, and a
+  ## missing StNo would then give haul ids such as "BTS:2022:1:GB:74E9:BT4P:NA:5"
+  ## instead of the "...:BT4P::5" of archives written by the web service route.
+  ## The codes are those DATRAS reads as NA (na.strings of DATRAS:::readICES).
+  d[] <- lapply(d, function(v) {
+    v[v %in% c("-9", "-9.0", "-9.00", "-9.0000")] <- NA_character_
+    v
+  })
+  d
+}
+
+
+## Split years into contiguous runs of at most `size` years.
+.year_chunks <- function(years, size = 10) {
+  years <- sort(unique(as.integer(years)))
+  if (length(years) == 0) return(list())
+  run <- cumsum(c(1, diff(years) != 1))
+  out <- lapply(split(years, run), function(y) split(y, ceiling(seq_along(y) / size)))
+  unname(unlist(out, recursive = FALSE))
+}
+
+
+## "2015-2022" for messages, "2015:2022" for the Download API.
+.year_range <- function(years, sep = "-") {
+  if (length(years) == 1) return(as.character(years))
+  paste0(min(years), sep, max(years))
 }
 
 

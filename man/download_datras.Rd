@@ -11,7 +11,9 @@ download_datras(
   overwrite = FALSE,
   download_hl = TRUE,
   download_ca = TRUE,
+  method = c("api", "webservice", "php"),
   use_php = FALSE,
+  years_per_request = 10,
   include_flagged = FALSE,
   return_data = TRUE,
   strict = TRUE,
@@ -37,15 +39,23 @@ already exist in \code{path} are skipped. Set to \code{TRUE} to re-download and
 overwrite existing files.}
 
 \item{download_hl}{Logical. If \code{TRUE} (default), length-frequency data are
-also downloaded where available. This option is only used when \code{use_php = FALSE}.}
+also downloaded where available. This option is not used when \code{method = "php"}.}
 
 \item{download_ca}{Logical. If \code{TRUE} (default), age-length keys and age
-data are also downloaded where available. This option is only used when
-\code{use_php = FALSE}.}
+data are also downloaded where available. This option is not used when
+\code{method = "php"}.}
 
-\item{use_php}{Logical. If \code{FALSE} (default), data are downloaded via
-\code{DATRAS::getDatrasExchange()}. If \code{TRUE}, the legacy
-\code{DATRAS::downloadExchange()} method is used.}
+\item{method}{Character string naming the download route: \code{"api"}
+(default) for the ICES DATRAS Download API, \code{"webservice"} for
+\code{DATRAS::getDatrasExchange()}, or \code{"php"} for the legacy
+\code{DATRAS::downloadExchange()}. See Details.}
+
+\item{use_php}{Logical. Kept for backward compatibility: \code{use_php = TRUE} is
+the same as \code{method = "php"}. Default is \code{FALSE}.}
+
+\item{years_per_request}{Integer. With \code{method = "api"}, the maximum number
+of years fetched in one request per record type. Larger values mean fewer
+requests but more memory for large surveys. Default is 10.}
 
 \item{include_flagged}{Logical. If \code{FALSE} (default), known test surveys are
 skipped when the survey list is taken from the server. Set to \code{TRUE} to
@@ -90,13 +100,26 @@ If \code{surveys} is \code{NULL}, all available surveys returned by
 \code{icesDatras::getSurveyList()} are used. If \code{years} is \code{NULL}, all available
 years for each selected survey are downloaded.
 
-By default, data are downloaded using \code{DATRAS::getDatrasExchange()}, cleaned
-to remove extra variables, and written to disk with \code{\link[=write_datras]{write_datras()}}.
-Alternatively, the legacy PHP-based download route from
-\code{DATRAS::downloadExchange()} can be used by setting \code{use_php = TRUE}.
+By default (\code{method = "api"}), data are downloaded from the ICES DATRAS
+Download API, the service behind \code{icesDatras::getDatrasUnaggregated()},
+and written to disk with \code{\link[=write_datras]{write_datras()}}. The previous route,
+\code{DATRAS::getDatrasExchange()} on the DATRAS web service, is available as
+\code{method = "webservice"}, and the legacy PHP-based route from
+\code{DATRAS::downloadExchange()} as \code{method = "php"}.
 
 Files are saved as zipped exchange files named
-\code{"<survey>_<year>.zip"} inside survey-specific subfolders.
+\code{"<survey>_<year>.zip"} inside survey-specific subfolders, whichever
+\code{method} is used.
+
+\code{method = "api"} is considerably faster than \code{method = "webservice"}. It
+fetches several years and all quarters in one request per record type
+(\code{HH}, \code{HL}, \code{CA}) and receives a zipped CSV file, where the web service
+needs one XML request per record type, year and quarter plus several
+availability checks. The API delivers the new ICES field names; they are
+mapped back to the exchange names so that the files are the same in layout
+whichever route wrote them. Values are written as delivered by ICES, read as
+text so that codes such as ICES rectangle \code{"37E9"} are kept exactly.
+Missing values (\code{-9}) are written as empty fields, as with \code{method = "webservice"}, so that both routes give the same haul identifiers.
 
 The following surveys are treated as test surveys and are skipped unless
 \code{include_flagged = TRUE}: \code{"Test-DATRAS"} and \code{"NS-IBTS_UNIFtest"}. The
@@ -118,7 +141,7 @@ Either set \code{return_data = FALSE} and read the archive in pieces afterwards,
 or pass the memory-reducing arguments of \code{\link[=read_datras]{read_datras()}} through \code{...}, for
 example \code{prune = TRUE} and \code{drop_ca = TRUE}.
 
-No manifest entries are written when \code{use_php = TRUE}, because
+No manifest entries are written when \code{method = "php"}, because
 \code{DATRAS::downloadExchange()} writes the files through an external script and
 reports nothing about what it retrieved. Run \code{\link[=write_manifest]{write_manifest()}} on the
 directory afterwards to describe such an archive.

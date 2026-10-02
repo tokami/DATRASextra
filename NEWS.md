@@ -1,3 +1,60 @@
+# DATRASextra 0.5.1
+
+## New features
+
+* `download_datras()` downloads from the ICES DATRAS Download API by default,
+  the service behind `icesDatras::getDatrasUnaggregated()`. It fetches several
+  years and all quarters in one request per record type and receives a zipped
+  CSV file, where the DATRAS web service needs one XML request per record type,
+  year and quarter plus availability checks for each year. Downloading and
+  reading EVHOE 2015-2022 took 28 seconds, against 94 seconds through the web
+  service.
+
+  The archive is the same as before: one `<survey>_<year>.zip` exchange file
+  per year, with the same columns, entries in `DATRAS_manifest.csv` (with
+  `source = "download_api"`) and the same haul identifiers. The new field names
+  of the API are mapped back to the exchange names. Read back with
+  `read_datras()`, EVHOE 2015-2022 and BTS 2022 gave the same records from both
+  routes.
+
+  The new `method` argument chooses the route: `"api"` (default),
+  `"webservice"` for the previous `DATRAS::getDatrasExchange()` route, or
+  `"php"` for `DATRAS::downloadExchange()`. `use_php = TRUE` still works and
+  is the same as `method = "php"`. The new `years_per_request` argument
+  (default 10) limits how many years are fetched in one request, to bound
+  memory for large surveys.
+
+  The API files are read by DATRASextra itself rather than through
+  `icesDatras::getDatrasUnaggregated()`, which currently changes some values
+  while parsing. It truncates HL numbers at length to integers
+  (ices-tools-prod/icesDatras#65) and reads ICES rectangles such as `"13E1"`
+  as numbers when all rectangles of a file have that form. DATRASextra reads
+  every column as text. It also corrects for HH files whose header lists two
+  fields (`EDOM`, `ReasonHaulDisruption`) that the rows do not contain, which
+  would otherwise move `DateofCalculation` into the wrong column
+  (ices-tools-prod/icesDatras#63).
+
+## Breaking changes
+
+* `read_datras()` returns empty fields in exchange files as `NA` instead of an
+  empty string or an empty factor level (`""`). Archives written by the web
+  service route store missing values as empty fields, so these columns now
+  read the same as from files that use the `-9` code. `haul.id` is not
+  changed, so a haul without a station number keeps an identifier such as
+  `"BTS:2022:1:GB:74E9:BT4P::5"`. Code that tests for `""` should test with
+  `is.na()` instead.
+
+## Bug fixes
+
+* `write_datras()` reported "Created zip file" even when no file was written.
+  `utils::zip()` calls an external `zip` program, which is often missing on
+  Windows unless Rtools is installed, and then fails with only a warning. The
+  zip archive is now written with the `zip` package, which needs no external
+  program, and `write_datras()` stops with an error if the file does not
+  exist afterwards. This made `download_datras()` fail on such machines with
+  errors that did not point to the cause. `zip` is a new dependency.
+
+
 # DATRASextra 0.5.0
 
 ## New features

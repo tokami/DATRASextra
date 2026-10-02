@@ -28,7 +28,8 @@
 ##' \itemize{
 ##'   \item identification: `survey`, `year`, `quarter`, `file`,
 ##'   \item extraction: `extracted` (when the data were retrieved), `source`
-##'     (`"api"`, `"php"` or `"file"`) and `endpoint`,
+##'     (`"download_api"` for the DATRAS Download API, `"api"` for the DATRAS
+##'     web service, `"php"` or `"file"`) and `endpoint`,
 ##'   \item verification and software: `payload_hash`, `zip_hash`, `algo`,
 ##'     `read`, `datrasextra`, `datras`, `icesdatras` and `r_version`.
 ##' }

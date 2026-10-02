@@ -102,6 +102,11 @@
 ##' every time an archive is read. [download_datras()] therefore takes the same
 ##' `strict` argument and passes it on when it returns the downloaded data.
 ##'
+##' Empty fields in the exchange files are returned as `NA`, like the `-9`
+##' code for missing values, rather than as an empty string or an empty factor
+##' level. `haul.id` is left as built by DATRAS, so a haul without a station
+##' number keeps an identifier such as `"BTS:2022:1:GB:74E9:BT4P::5"`.
+##'
 ##' @return A combined DATRAS survey object with classes `datras_raw` and
 ##'   `DATRASraw`, carrying an extraction record retrievable with
 ##'   [extraction()].
@@ -318,7 +323,7 @@ read_datras <- function(path,
 
   }
 
-  surv0 <- .add_class_datras(surv0)
+  surv0 <- .empty_to_na(.add_class_datras(surv0))
 
   ## Describe where the data came from. The survey, year, quarter and ICES
   ## calculation date come from the data themselves and are therefore always
@@ -424,6 +429,30 @@ write_datras <- function(x,
 
 
 ## Internal functions -----------------------------------------------------
+
+
+## Empty strings in the exchange files mean "missing", as -9 does, but DATRAS
+## reads them as "" (an empty factor level). Turn them into NA in every column
+## except haul.id, whose format was fixed when the haul ids were built and is
+## used to match the tables.
+.empty_to_na <- function(x) {
+  for (tab in intersect(c("HH", "HL", "CA"), names(x))) {
+    d <- x[[tab]]
+    if (is.null(d)) next
+    for (k in setdiff(names(d), "haul.id")) {
+      v <- d[[k]]
+      if (is.factor(v)) {
+        lv <- levels(v)
+        if (any(!nzchar(trimws(lv)))) d[[k]] <- factor(v, levels = lv[nzchar(trimws(lv))])
+      } else if (is.character(v)) {
+        v[!is.na(v) & !nzchar(trimws(v))] <- NA_character_
+        d[[k]] <- v
+      }
+    }
+    x[[tab]] <- d
+  }
+  x
+}
 
 
 .remove_duplicated_haul_id <- function(args, verbose = TRUE) {

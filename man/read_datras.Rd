@@ -132,6 +132,11 @@ with \code{sum(is.na(x[["CA"]]$haul.id))}. The matching is not stored in the
 exchange files, which hold the data as delivered by ICES, so it is redone
 every time an archive is read. \code{\link[=download_datras]{download_datras()}} therefore takes the same
 \code{strict} argument and passes it on when it returns the downloaded data.
+
+Empty fields in the exchange files are returned as \code{NA}, like the \code{-9}
+code for missing values, rather than as an empty string or an empty factor
+level. \code{haul.id} is left as built by DATRAS, so a haul without a station
+number keeps an identifier such as \code{"BTS:2022:1:GB:74E9:BT4P::5"}.
 }
 \examples{
 \dontrun{

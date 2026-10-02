@@ -38,7 +38,8 @@ The remaining columns fall into three groups:
 \itemize{
 \item identification: \code{survey}, \code{year}, \code{quarter}, \code{file},
 \item extraction: \code{extracted} (when the data were retrieved), \code{source}
-(\code{"api"}, \code{"php"} or \code{"file"}) and \code{endpoint},
+(\code{"download_api"} for the DATRAS Download API, \code{"api"} for the DATRAS
+web service, \code{"php"} or \code{"file"}) and \code{endpoint},
 \item verification and software: \code{payload_hash}, \code{zip_hash}, \code{algo},
 \code{read}, \code{datrasextra}, \code{datras}, \code{icesdatras} and \code{r_version}.
 }
