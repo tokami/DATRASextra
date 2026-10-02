@@ -48,10 +48,29 @@
   table, and data whose `HL` was subset to some species beforehand cannot be
   checked reliably.
 
+* `as_table()` exports the length and individual data as well as the hauls,
+  with the new argument `table`:
+  - `table = "HL"` gives the raised numbers at length (`Count`) by haul,
+    species and length class, summed over sex and catch category. By
+    default (`zeros = TRUE`) it adds a row with `Count = 0` for every haul and
+    species without a record, so that averages over hauls include the hauls
+    where a species was not caught. `hl_by` changes the grouping, e.g. to keep
+    sexes apart, and `type = "wide"` gives one row per haul and species with
+    one column per length class.
+  - `table = "CA"` gives one row per individual record. Records not matched
+    to a haul are kept and reported instead of being dropped.
+
+  Both carry the haul variables selected with `vars`, `add_vars` and
+  `remove_vars`. Columns present in both tables are taken once, from `HH`.
+  `table = "HH"`, the default, is unchanged. The numbers in `table = "HL"`
+  are not rounded, whereas `add_numbers_at_length()` rounds each length class
+  to whole fish, so their sum over a haul can differ slightly from `HaulN`.
+
 * New `as_tibble()` method for `datras_raw` objects, so that
   `tibble::as_tibble(x)` and `x |> as_tibble()` return the table of
-  `as_table()` as a tibble. It takes the same arguments as `as_table()`. The
-  method is registered only when tibble is installed, which is not required.
+  `as_table()` as a tibble. It takes the same arguments as `as_table()`,
+  including `table`. The method is registered only when tibble is installed,
+  which is not required.
 
 ## Breaking changes
 

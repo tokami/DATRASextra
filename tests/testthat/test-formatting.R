@@ -215,3 +215,134 @@ testthat::test_that("as_tibble passes other arguments to tibble", {
                            .name_repair = toupper)
   testthat::expect_equal(names(out), c("HAUL.ID", "SURVEY", "YEAR"))
 })
+
+
+## as_table(table = "HL") ------------------------------------------------------
+
+testthat::test_that("HL table keeps the raised numbers of every haul", {
+  out <- as_table(mini, table = "HL", vars = "Year")
+  raw <- tapply(mini[["HL"]]$Count, as.character(mini[["HL"]]$haul.id), sum, na.rm = TRUE)
+  tab <- tapply(out$Count, as.character(out$haul.id), sum, na.rm = TRUE)
+  testthat::expect_equal(as.numeric(tab[names(raw)]), as.numeric(raw))
+})
+
+testthat::test_that("HL table agrees with HaulN once rounded as DATRAS does", {
+  x <- suppressWarnings(add_total_numbers_by_haul(add_numbers_at_length(dab)))
+  out <- as_table(dab, table = "HL", vars = "Year", zeros = FALSE)
+  out$bin <- cut(out$LngtCm, attr(x, "cm.breaks"), right = FALSE)
+  b <- stats::aggregate(Count ~ haul.id + bin, data = out, FUN = sum)
+  s <- tapply(round(b$Count), as.character(b$haul.id), sum)
+  s <- s[as.character(x[["HH"]]$haul.id)]
+  s[is.na(s)] <- 0
+  testthat::expect_equal(as.numeric(s), as.numeric(x[["HH"]]$HaulN))
+})
+
+testthat::test_that("zeros = TRUE gives every haul x species", {
+  out <- as_table(mini, table = "HL", vars = "Year")
+  n_sp <- length(unique(mini[["HL"]]$Valid_Aphia))
+  pairs <- unique(paste(out$haul.id, out$Valid_Aphia))
+  testthat::expect_equal(length(pairs), nrow(mini[["HH"]]) * n_sp)
+
+  ## The added rows are zeros with no length and a species name
+  no <- as_table(mini, table = "HL", vars = "Year", zeros = FALSE)
+  added <- nrow(out) - nrow(no)
+  testthat::expect_gt(added, 0)
+  testthat::expect_equal(sum(out$Count == 0 & is.na(out$LngtCm), na.rm = TRUE),
+                         added + sum(no$Count == 0 & is.na(no$LngtCm), na.rm = TRUE))
+  testthat::expect_false(anyNA(out$Species))
+  testthat::expect_equal(sum(out$Count, na.rm = TRUE), sum(no$Count, na.rm = TRUE))
+})
+
+testthat::test_that("records without a length keep NA counts, not zero", {
+  na_rows <- is.na(mini[["HL"]]$LngtCm) & is.na(mini[["HL"]]$Count)
+  testthat::skip_if(!any(na_rows), "mini has no records without length")
+  out <- as_table(mini, table = "HL", vars = "Year", zeros = FALSE)
+  testthat::expect_true(any(is.na(out$LngtCm) & is.na(out$Count)))
+})
+
+testthat::test_that("hl_by can keep sexes apart without changing totals", {
+  a <- as_table(mini, table = "HL", vars = "Year")
+  b <- as_table(mini, table = "HL", vars = "Year",
+                hl_by = c("Valid_Aphia", "Sex", "LngtCm"))
+  testthat::expect_true("Sex" %in% names(b))
+  testthat::expect_gte(nrow(b), nrow(a))
+  testthat::expect_equal(sum(b$Count, na.rm = TRUE), sum(a$Count, na.rm = TRUE))
+})
+
+testthat::test_that("HL rows follow the haul order of HH", {
+  out <- as_table(dab, table = "HL", vars = "Year")
+  pos <- match(as.character(out$haul.id), as.character(dab[["HH"]]$haul.id))
+  testthat::expect_false(is.unsorted(pos))
+})
+
+testthat::test_that("wide HL table has one row per haul x species and the same totals", {
+  long <- as_table(mini, table = "HL", vars = "Year")
+  wide <- as_table(mini, table = "HL", vars = "Year", type = "wide")
+  cnt <- grep("^Count_", names(wide), value = TRUE)
+
+  testthat::expect_equal(nrow(wide), length(unique(paste(long$haul.id, long$Valid_Aphia))))
+  testthat::expect_equal(sum(wide[cnt], na.rm = TRUE), sum(long$Count, na.rm = TRUE))
+  testthat::expect_false("LngtCm" %in% names(wide))
+
+  ## A haul x species without records is a row of zeros
+  zero <- long$Count == 0 & is.na(long$LngtCm)
+  k <- paste(long$haul.id, long$Valid_Aphia)[which(zero)[1]]
+  r <- wide[paste(wide$haul.id, wide$Valid_Aphia) == k, cnt]
+  testthat::expect_true(all(r == 0))
+})
+
+testthat::test_that("HL table errors and warnings", {
+  x <- dab
+  x[["HL"]] <- NULL
+  testthat::expect_error(as_table(x, table = "HL"), "no HL table")
+  testthat::expect_error(as_table(dab, table = "HL", hl_by = "LngtCm"), "Valid_Aphia")
+  testthat::expect_error(as_table(dab, table = "HL", type = "wide", hl_by = "Valid_Aphia"),
+                         "LngtCm")
+
+  ## Matrix columns of HH are not attached; haul totals are not auto-added
+  testthat::expect_warning(out <- as_table(dab_cut, table = "HL", add_vars = "HaulN"),
+                           "Matrix columns")
+  testthat::expect_false("HaulN" %in% names(out))
+  out <- as_table(dab_tot, table = "HL")
+  testthat::expect_false("HaulN" %in% names(out))
+})
+
+
+## as_table(table = "CA") ------------------------------------------------------
+
+testthat::test_that("CA table has one row per record with HH variables", {
+  out <- as_table(dab, table = "CA", vars = c("Year", "lon", "lat"))
+  testthat::expect_equal(nrow(out), nrow(dab[["CA"]]))
+  testthat::expect_true(all(c("haul.id", "Year", "lon", "lat", "Age", "IndWgt") %in% names(out)))
+  testthat::expect_equal(sum(names(out) == "Year"), 1)
+  i <- match(as.character(out$haul.id), as.character(dab[["HH"]]$haul.id))
+  testthat::expect_equal(out$lon, dab[["HH"]]$lon[i])
+})
+
+testthat::test_that("unmatched CA records are kept and reported", {
+  x <- dab
+  ca <- x[["CA"]]
+  ca$haul.id[1:3] <- NA
+  x[["CA"]] <- ca
+
+  testthat::expect_message(out <- as_table(x, table = "CA", vars = c("Year", "lon")),
+                           "3 CA record")
+  testthat::expect_equal(nrow(out), nrow(ca))
+  testthat::expect_true(all(is.na(out$lon[1:3])))
+  testthat::expect_equal(as.character(out$Year[1:3]), as.character(ca$Year[1:3]))
+})
+
+testthat::test_that("CA table errors and warnings", {
+  testthat::expect_error(as_table(dab, table = "CA", type = "wide"), "not available")
+  testthat::expect_warning(as_table(dab, table = "CA", ca_vars = c("Age", "foo")), "foo")
+  x <- dab
+  x[["CA"]] <- NULL
+  testthat::expect_error(as_table(x, table = "CA"), "no CA table")
+})
+
+testthat::test_that("as_tibble passes table on", {
+  testthat::skip_if_not_installed("tibble")
+  out <- tibble::as_tibble(dab, table = "HL", vars = "Year")
+  testthat::expect_s3_class(out, "tbl_df")
+  testthat::expect_equal(as.data.frame(out), as_table(dab, table = "HL", vars = "Year"))
+})

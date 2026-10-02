@@ -10,7 +10,11 @@
   vars = .default_hh_vars,
   add_vars = NULL,
   remove_vars = NULL,
-  type = "long"
+  type = "long",
+  table = c("HH", "HL", "CA"),
+  hl_by = c("Valid_Aphia", "LngtCm"),
+  zeros = TRUE,
+  ca_vars = .default_ca_vars
 )
 }
 \arguments{
@@ -31,16 +35,32 @@ append to \code{vars}. Applied after \code{remove_vars}.}
 Applied before \code{add_vars}.}
 
 \item{type}{Character string specifying the output format: \code{"long"}
-(default) or \code{"wide"}.}
+(default) or \code{"wide"}. See Details for what each means per \code{table}.}
+
+\item{table}{Character string naming the table to export: \code{"HH"} (default)
+for one row per haul, \code{"HL"} for numbers at length by haul and species,
+or \code{"CA"} for one row per individual record.}
+
+\item{hl_by}{Character vector of \code{HL} columns that define a row for \code{table = "HL"}, in addition to the haul. Default \code{c("Valid_Aphia", "LngtCm")}:
+species x length class, summed over sex and catch category. Add \code{"Sex"} to
+keep sexes apart. Must contain \code{"Valid_Aphia"}.}
+
+\item{zeros}{Logical. For \code{table = "HL"}: if \code{TRUE} (default), add a row
+with \code{Count = 0} for every haul in \code{HH} and species in \code{HL} without a
+record, so that averages over hauls include the hauls where a species was
+not caught.}
+
+\item{ca_vars}{Character vector of \code{CA} columns to include for \code{table = "CA"}. Columns not found are omitted with a warning.}
 }
 \value{
-A tibble with one row per haul, or per haul x length group for
-\code{type = "long"} when matrix columns are present. See \code{\link[=as_table]{as_table()}}.
+A tibble. See \code{\link[=as_table]{as_table()}} for the rows and columns of each
+\code{table} and \code{type}.
 }
 \description{
 Method for \code{\link[tibble:as_tibble]{tibble::as_tibble()}}: the same table as \code{\link[=as_table]{as_table()}}, returned
 as a tibble, so that \code{as_tibble(x)} and \code{x |> as_tibble()} work in tidyverse
-workflows. Only \code{HH} (haul-level) variables are used, as in \code{\link[=as_table]{as_table()}}.
+workflows. All arguments of \code{\link[=as_table]{as_table()}} are available, including \code{table}
+for the length (\code{HL}) and individual (\code{CA}) data.
 }
 \details{
 The method is registered when the tibble package is installed; tibble is
@@ -53,6 +73,7 @@ if (requireNamespace("tibble", quietly = TRUE)) {
 
   tibble::as_tibble(dab)
   tibble::as_tibble(dab, type = "wide", add_vars = "Depth")
+  tibble::as_tibble(dab, table = "HL", vars = c("Year", "lon", "lat"))
 }
 
 }

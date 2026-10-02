@@ -9,7 +9,11 @@ as_table(
   vars = .default_hh_vars,
   add_vars = NULL,
   remove_vars = NULL,
-  type = "long"
+  type = "long",
+  table = c("HH", "HL", "CA"),
+  hl_by = c("Valid_Aphia", "LngtCm"),
+  zeros = TRUE,
+  ca_vars = .default_ca_vars
 )
 }
 \arguments{
@@ -27,20 +31,42 @@ append to \code{vars}. Applied after \code{remove_vars}.}
 Applied before \code{add_vars}.}
 
 \item{type}{Character string specifying the output format: \code{"long"}
-(default) or \code{"wide"}.}
+(default) or \code{"wide"}. See Details for what each means per \code{table}.}
+
+\item{table}{Character string naming the table to export: \code{"HH"} (default)
+for one row per haul, \code{"HL"} for numbers at length by haul and species,
+or \code{"CA"} for one row per individual record.}
+
+\item{hl_by}{Character vector of \code{HL} columns that define a row for \code{table = "HL"}, in addition to the haul. Default \code{c("Valid_Aphia", "LngtCm")}:
+species x length class, summed over sex and catch category. Add \code{"Sex"} to
+keep sexes apart. Must contain \code{"Valid_Aphia"}.}
+
+\item{zeros}{Logical. For \code{table = "HL"}: if \code{TRUE} (default), add a row
+with \code{Count = 0} for every haul in \code{HH} and species in \code{HL} without a
+record, so that averages over hauls include the hauls where a species was
+not caught.}
+
+\item{ca_vars}{Character vector of \code{CA} columns to include for \code{table = "CA"}. Columns not found are omitted with a warning.}
 }
 \value{
 A data frame in the requested format.
 }
 \description{
-Convert a \code{datras_raw} / \code{DATRASraw} object to either long or wide tabular
-format using haul-level (\code{HH}) variables only.
+Convert a \code{datras_raw} / \code{DATRASraw} object to a single data frame in long
+or wide format: the hauls (\code{HH}), the numbers at length by species (\code{HL}), or
+the individual biological records (\code{CA}), each with the selected haul-level
+variables attached.
 }
 \details{
-This is a convenience wrapper around \code{\link[=as_long_format]{as_long_format()}} and
-\code{\link[=as_wide_format]{as_wide_format()}}.
+For \code{table = "HH"} this is a convenience wrapper around \code{\link[=as_long_format]{as_long_format()}}
+and \code{\link[=as_wide_format]{as_wide_format()}}.
 
-Both functions only use columns from the \code{HH} table. In addition to
+\code{vars}, \code{add_vars} and \code{remove_vars} always select \code{HH} variables; for
+\code{table = "HL"} and \code{"CA"} they are attached to each row by \code{haul.id}. Columns
+that exist in both tables (e.g. \code{Survey}, \code{Year}, \code{Quarter}) are taken once,
+from \code{HH}.
+
+\strong{\code{table = "HH"}.} In addition to
 explicitly requested \code{vars}, \code{HaulN}, \code{HaulWgt}, and \code{SweptArea} are
 always appended when present in \code{HH} (e.g. after calling
 \code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}}, \code{\link[=add_total_weight_by_haul]{add_total_weight_by_haul()}}, or
@@ -57,6 +83,41 @@ All matrix columns must share the same bin structure.
 \item \code{type = "wide"}: matrix columns are expanded to one column per
 length bin, named \verb{<variable>_<bin>} (e.g. \verb{HaulN_(0-20]}).
 }
+
+\strong{\code{table = "HL"}.} \code{Count} is the raised number per haul computed by
+DATRAS when the data are read (\code{HLNoAtLngt} times the sub-sampling factor,
+and for \code{DataType = "C"} times \code{HaulDur / 60}), summed within each \code{hl_by}
+group. The numbers are not rounded. \code{\link[=add_numbers_at_length]{add_numbers_at_length()}} (via
+\code{DATRAS::addSpectrum()}) rounds each length class to whole fish, so the
+\code{HaulN} of \code{\link[=add_total_numbers_by_haul]{add_total_numbers_by_haul()}} can differ slightly from the sum
+of \code{Count} over a haul. Records without a length (\code{LngtCm} NA, e.g.
+catch-only records) are kept as rows with \code{LngtCm = NA}; their \code{Count} is NA
+when no raised number is available, as the numbers are unknown rather than
+zero. With \code{zeros = TRUE} the zero rows have \code{NA} in the other \code{hl_by}
+columns, and the table has a row for every haul x species, which can be
+large for many hauls and species: select species first, e.g. with
+\code{clean_datras(aphias = )}.
+\itemize{
+\item \code{type = "long"}: one row per haul x \code{hl_by} group.
+\item \code{type = "wide"}: one row per haul x species (x any other \code{hl_by}
+columns), with one column per length class named \verb{Count_<LngtCm>}
+(e.g. \code{Count_25.5}) and 0 where no fish of that length was recorded.
+Records without a length go to a column \code{Count_NA}.
+}
+For a single species, the full haul x length grid is also available as
+\code{as_table(x, add_vars = "N")} after \code{\link[=add_numbers_at_length]{add_numbers_at_length()}}, with the
+numbers rounded as described above.
+
+\strong{\code{table = "CA"}.} One row per \code{CA} record. Records that could not be
+matched to a haul (\code{haul.id} NA, see \code{strict} in \code{\link[=read_datras]{read_datras()}}) are kept,
+with the \code{HH} variables taken from the record where it has them and \code{NA}
+otherwise, and their number is reported in a message. \code{type = "wide"} is
+not available.
+
+For \code{table = "HL"} and \code{"CA"}, matrix columns of \code{HH} (\code{N}, or \code{HaulN} and
+\code{HaulWgt} with \code{length_cuts}) are omitted with a warning, and \code{HaulN},
+\code{HaulWgt} and \code{SweptArea} are only included when requested in \code{vars} or
+\code{add_vars}: a haul total repeated on every row is easily counted twice.
 }
 \examples{
 dab <- add_numbers_at_length(dab)
@@ -70,6 +131,15 @@ tab_wide <- as_table(dab, type = "wide")
 
 ## Adjust the default column set
 tab <- as_table(dab, add_vars = "Depth", remove_vars = "Ship")
+
+## Numbers at length by haul and species, including zero catches
+tab_hl <- as_table(dab, table = "HL", vars = c("Survey", "Year", "lon", "lat"))
+
+## One row per haul and species, one column per length class
+tab_hl_wide <- as_table(dab, table = "HL", type = "wide")
+
+## Individual records with the haul position
+tab_ca <- as_table(dab, table = "CA", vars = c("Year", "lon", "lat"))
 
 }
 \seealso{
