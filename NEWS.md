@@ -138,6 +138,18 @@
 
 ## Bug fixes
 
+* `read_datras()` no longer drops a whole exchange file because of an exact
+  duplicate HH record. Such duplicates (e.g. in NS-IBTS 1991 as served by ICES)
+  made `DATRAS::readICES()` stop with "Duplicated rows found in HH data", so
+  the year was skipped with only "Error with: <file>". Identical HH lines are
+  now removed before reading and reported. When a file still cannot be read,
+  the message gives the reason.
+
+  All inputs (a folder with or without `surveys`/`years`, or zip files) now
+  go through the same reader, so `recursive`, `min_file_size` and the
+  duplicated haul id check apply to all of them, and one unreadable file no
+  longer stops the others from being read.
+
 * `read_datras()` failed with "must have 'max' > 'min'" when every zip file
   was smaller than `min_file_size`. It now stops with an error that names the
   cause.

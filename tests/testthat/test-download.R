@@ -180,3 +180,52 @@ test_that("download_datras warns about survey-years without length data", {
   expect_false(any(out[["HH"]]$Year == "2012"))
   expect_true(any(out[["HH"]]$Year == "2013"))
 })
+
+
+test_that("read_datras drops exact duplicate HH rows instead of the whole file", {
+
+  skip_on_cran()
+
+  d <- file.path(tempdir(), "datrasextra-duphh-test")
+  unlink(d, recursive = TRUE)
+  dir.create(file.path(d, "csv"), showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+
+  x <- subset(mini, Survey == "BTS" & Year == "2020")
+  zf <- file.path(d, "BTS_2020.zip")
+  suppressMessages(write_datras(.remove_extra_variables(x), zf))
+
+  ## Repeat the first HH record, as in the NS-IBTS 1991 file served by ICES
+  csv <- utils::unzip(zf, exdir = file.path(d, "csv"))[1]
+  lines <- readLines(csv)
+  first_hh <- grep('^"?HH"?,', lines)[1]
+  writeLines(append(lines, lines[first_hh], after = first_hh), csv)
+  unlink(zf)
+  zip::zip(zf, csv, mode = "cherry-pick")
+
+  expect_message(y <- read_datras(zf, min_file_size = 0),
+                 "1 duplicated HH row\\(s\\) removed")
+  expect_setequal(as.character(y$HH$haul.id), as.character(x$HH$haul.id))
+  expect_equal(nrow(y$HL), nrow(x$HL))
+})
+
+
+test_that("read_datras reports why a file could not be read", {
+
+  skip_on_cran()
+
+  d <- file.path(tempdir(), "datrasextra-badzip-test")
+  unlink(d, recursive = TRUE)
+  dir.create(d, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+
+  x <- subset(mini, Survey == "BTS" & Year == "2020")
+  good <- file.path(d, "BTS_2020.zip")
+  suppressMessages(write_datras(.remove_extra_variables(x), good))
+  bad <- file.path(d, "BTS_2021.zip")
+  writeLines("not a zip file", bad)
+
+  expect_message(y <- suppressWarnings(read_datras(c(good, bad), min_file_size = 0)),
+                 "Could not read .*BTS_2021\\.zip")
+  expect_setequal(as.character(y$HH$haul.id), as.character(x$HH$haul.id))
+})

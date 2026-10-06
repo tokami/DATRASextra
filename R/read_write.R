@@ -166,164 +166,153 @@ read_datras <- function(path,
 
   if (any(dir.exists(path))) {
 
-    if (!is.null(years) || !is.null(surveys)) {
+    path <- dir(path0,
+                full.names = TRUE,
+                recursive = recursive)
+    path <- path[grep("\\.zip$", path)]
+    if (length(path) == 0) stop("No zip files found in the specified path. Did you specify the correct path? Consider setting recursive = TRUE and run again.")
 
-      path <- dir(path0,
-                  full.names = TRUE,
-                  recursive = recursive)
-      path <- path[grep("\\.zip$", path)]
-      if (length(path) == 0) stop("No zip files found in the specified path. Did you specify the correct path? Consider setting recursive = TRUE and run again.")
+    if (!is.null(surveys)) {
+      path <- path[basename(dirname(path)) %in% surveys]
+      if (length(path) == 0) stop("No zip files found matching the specified surveys.")
+    }
 
-      if (!is.null(surveys)) {
-        path <- path[basename(dirname(path)) %in% surveys]
-        if (length(path) == 0) stop("No zip files found matching the specified surveys.")
-      }
-
-      if (!is.null(years)) {
-        path <- path[sort(unlist(lapply(years,
-                                        function(x)
-                                          grep(as.character(x), path))))]
-        if (length(path) == 0) stop("No zip files found matching the specified years.")
-      }
-
-      ind <- which(file.size(path) <= min_file_size)
-      if (length(ind) > 0 && verbose) {
-        writeLines(paste0("These files are suspiciously small, are you sure that they were downloaded correctly? They will be removed from the list as they likely give errors. Please check the files or change the 'min_file_size' argument!\n",
-                          paste(path[ind], collapse = "\n")))
-      }
-      path <- path[file.size(path) > min_file_size]
-      if (length(path) == 0) {
-        stop("All zip files are smaller than min_file_size (", min_file_size,
-             " bytes). Lower 'min_file_size' to read them.")
-      }
-
-      np <- length(path)
-      use_parallel <- ncores > 1
-      if (verbose && np > 100) {
-        message(
-          "You are about to load ", np, " zip files. This may take several ",
-          "minutes and could crash the R session if memory is insufficient.\n",
-          "Consider reducing memory use with one or more of:\n",
-          "  prune = TRUE     -- drop non-essential columns in all tables\n",
-          "  drop_ca = TRUE   -- omit the CA (biological sampling) table\n",
-          "  drop_hl = TRUE   -- omit the HL (length-frequency) table\n",
-          "  surveys = ...    -- load only the surveys you need\n",
-          "  years   = ...    -- load only the years you need\n",
-          "  ncores  = 1     -- if using ncores > 1, try ncores = 1: the\n",
-          "                     sequential path combines files incrementally\n",
-          "                     and uses less peak memory than parallel loading\n",
-          "You can also load the data in parts and combine them with c()."
-        )
-      }
-      if (verbose) {
-        if (use_parallel) {
-          message("Reading in ", np, " zip files using ", ncores, " cores...")
-        } else {
-          message("Reading in zip files...")
-        }
-      }
-
-      ## Each call gets its own temp subdirectory so parallel workers do not
-      ## overwrite each other's extracted CSV (all zips contain "DATRAS.csv").
-      ## Pruning and table dropping happen inside the reader so that every
-      ## worker (sequential or parallel) returns an already-reduced object,
-      ## minimising the data held in memory or serialised back from workers.
-      .reader <- function(p) {
-        tryCatch({
-          td <- tempfile(pattern = "datras_")
-          dir.create(td, showWarnings = FALSE)
-          on.exit(unlink(td, recursive = TRUE), add = TRUE)
-          csvfile <- unzip(p, exdir = td)[1]
-          invisible(capture.output(
-            res <- DATRAS::readICES(csvfile, strict = strict)
-          ))
-          if (isTRUE(prune))   res <- prune_datras(res)
-          if (isTRUE(drop_hl)) res["HL"] <- list(NULL)
-          if (isTRUE(drop_ca)) res["CA"] <- list(NULL)
-          res
-        }, error = function(err) NULL)
-      }
-
-      if (use_parallel) {
-        if (.Platform$OS.type == "windows") {
-          cl <- parallel::makeCluster(ncores, type = "PSOCK")
-          on.exit(parallel::stopCluster(cl), add = TRUE)
-          ## Load DATRASextra on each worker so prune_datras() is available.
-          parallel::clusterEvalQ(cl, library(DATRASextra))
-          parallel::clusterExport(cl, ".reader", envir = environment())
-          tmp <- parallel::parLapply(cl, path, .reader)
-        } else {
-          tmp <- parallel::mclapply(path, .reader, mc.cores = ncores)
-        }
-
-        idx <- which(sapply(tmp, is.null))
-        if (length(idx) > 0) {
-          if (verbose) message("One or more loaded files are NULL. Removing these. Check your files!")
-          tmp <- tmp[-idx]
-        }
-
-        tmp <- .remove_duplicated_haul_id(tmp, verbose = verbose)
-
-        if (verbose) message("Combining files")
-        surv0 <- do.call(c.datras_raw, tmp)
-
-      } else {
-
-        ## Incremental combine: reduce and merge one file at a time so that no
-        ## more than ~2 objects are live in memory simultaneously.
-        if (verbose) pb <- txtProgressBar(min = 0, max = np, style = 3)
-        seen_ids <- character(0)
-        surv0 <- NULL
-        for (i in seq_len(np)) {
-          xi <- .reader(path[i])
-          if (is.null(xi)) {
-            if (verbose) message("\nError with: ", path[i])
-          } else {
-            new_ids <- as.character(xi[["HH"]][["haul.id"]])
-            dup <- new_ids[new_ids %in% seen_ids]
-            if (length(dup) > 0) {
-              if (verbose) {
-                survey_nm <- unique(xi[["HH"]][["Survey"]])[1]
-                message("\nDuplicated haul IDs (", survey_nm, ") removed: ",
-                        paste(dup, collapse = ", "),
-                        "\nPlease check your files!")
-              }
-              xi <- subset(xi, !haul.id %in% dup)
-            }
-            seen_ids <- c(seen_ids, setdiff(new_ids, dup))
-            xi <- .add_class_datras(xi)
-            surv0 <- if (is.null(surv0)) xi else c(surv0, xi)
-            rm(xi)
-          }
-          if (verbose) setTxtProgressBar(pb, i)
-        }
-        if (verbose) close(pb)
-        if (is.null(surv0)) stop("No valid files could be read.")
-
-      }
-
-    } else {
-
-      ## TODO what if the path includes R files and and can it be the mother folder with the surveys as children?
-
-      invisible(capture.output({
-        surv0 <- DATRAS::readExchangeDir(path,
-                                         pattern = ".zip",
-                                         strict = strict)
-      }))
+    if (!is.null(years)) {
+      path <- path[sort(unlist(lapply(years,
+                                      function(x)
+                                        grep(as.character(x), path))))]
+      if (length(path) == 0) stop("No zip files found matching the specified years.")
     }
 
   } else if (any(file.exists(path))) {
 
     path <- path[grep("\\.zip$", path)]
-    invisible(capture.output({
-      surv0 <- DATRAS::readExchange(path, strict = strict)
-    }))
+    if (length(path) == 0) stop("No zip files found under path: ",
+                                paste(path0, collapse = ", "))
 
   } else {
 
     stop(paste0("Cannot find a file or folder under path: ",
                 paste(path, collapse = ", ")))
+
+  }
+
+  ind <- which(file.size(path) <= min_file_size)
+  if (length(ind) > 0 && verbose) {
+    writeLines(paste0("These files are suspiciously small, are you sure that they were downloaded correctly? They will be removed from the list as they likely give errors. Please check the files or change the 'min_file_size' argument!\n",
+                      paste(path[ind], collapse = "\n")))
+  }
+  path <- path[file.size(path) > min_file_size]
+  if (length(path) == 0) {
+    stop("All zip files are smaller than min_file_size (", min_file_size,
+         " bytes). Lower 'min_file_size' to read them.")
+  }
+
+  np <- length(path)
+  use_parallel <- ncores > 1
+  if (verbose && np > 100) {
+    message(
+      "You are about to load ", np, " zip files. This may take several ",
+      "minutes and could crash the R session if memory is insufficient.\n",
+      "Consider reducing memory use with one or more of:\n",
+      "  prune = TRUE     -- drop non-essential columns in all tables\n",
+      "  drop_ca = TRUE   -- omit the CA (biological sampling) table\n",
+      "  drop_hl = TRUE   -- omit the HL (length-frequency) table\n",
+      "  surveys = ...    -- load only the surveys you need\n",
+      "  years   = ...    -- load only the years you need\n",
+      "  ncores  = 1     -- if using ncores > 1, try ncores = 1: the\n",
+      "                     sequential path combines files incrementally\n",
+      "                     and uses less peak memory than parallel loading\n",
+      "You can also load the data in parts and combine them with c()."
+    )
+  }
+  if (verbose) {
+    if (use_parallel) {
+      message("Reading in ", np, " zip files using ", ncores, " cores...")
+    } else {
+      message("Reading in zip files...")
+    }
+  }
+
+  ## Each call gets its own temp subdirectory so parallel workers do not
+  ## overwrite each other's extracted CSV (all zips contain "DATRAS.csv").
+  ## Pruning and table dropping happen inside the reader so that every
+  ## worker (sequential or parallel) returns an already-reduced object,
+  ## minimising the data held in memory or serialised back from workers.
+  .reader <- function(p) {
+    tryCatch({
+      td <- tempfile(pattern = "datras_")
+      dir.create(td, showWarnings = FALSE)
+      on.exit(unlink(td, recursive = TRUE), add = TRUE)
+      csvfile <- unzip(p, exdir = td)[1]
+      .drop_duplicated_hh_rows(csvfile, file = p, verbose = verbose)
+      invisible(capture.output(
+        res <- DATRAS::readICES(csvfile, strict = strict)
+      ))
+      if (isTRUE(prune))   res <- prune_datras(res)
+      if (isTRUE(drop_hl)) res["HL"] <- list(NULL)
+      if (isTRUE(drop_ca)) res["CA"] <- list(NULL)
+      res
+    }, error = function(err) {
+      if (verbose) message("\nCould not read ", p, ": ", conditionMessage(err))
+      NULL
+    })
+  }
+
+  if (use_parallel) {
+    if (.Platform$OS.type == "windows") {
+      cl <- parallel::makeCluster(ncores, type = "PSOCK")
+      on.exit(parallel::stopCluster(cl), add = TRUE)
+      ## Load DATRASextra on each worker so prune_datras() is available.
+      parallel::clusterEvalQ(cl, library(DATRASextra))
+      parallel::clusterExport(cl, ".reader", envir = environment())
+      tmp <- parallel::parLapply(cl, path, .reader)
+    } else {
+      tmp <- parallel::mclapply(path, .reader, mc.cores = ncores)
+    }
+
+    idx <- which(sapply(tmp, is.null))
+    if (length(idx) > 0) {
+      if (verbose) message("One or more loaded files are NULL. Removing these. Check your files!")
+      tmp <- tmp[-idx]
+    }
+    if (length(tmp) == 0) stop("No valid files could be read.")
+
+    tmp <- .remove_duplicated_haul_id(tmp, verbose = verbose)
+
+    if (verbose) message("Combining files")
+    surv0 <- do.call(c.datras_raw, tmp)
+
+  } else {
+
+    ## Incremental combine: reduce and merge one file at a time so that no
+    ## more than ~2 objects are live in memory simultaneously.
+    if (verbose) pb <- txtProgressBar(min = 0, max = np, style = 3)
+    seen_ids <- character(0)
+    surv0 <- NULL
+    for (i in seq_len(np)) {
+      xi <- .reader(path[i])
+      if (!is.null(xi)) {
+        new_ids <- as.character(xi[["HH"]][["haul.id"]])
+        dup <- new_ids[new_ids %in% seen_ids]
+        if (length(dup) > 0) {
+          if (verbose) {
+            survey_nm <- unique(xi[["HH"]][["Survey"]])[1]
+            message("\nDuplicated haul IDs (", survey_nm, ") removed: ",
+                    paste(dup, collapse = ", "),
+                    "\nPlease check your files!")
+          }
+          xi <- subset(xi, !haul.id %in% dup)
+        }
+        seen_ids <- c(seen_ids, setdiff(new_ids, dup))
+        xi <- .add_class_datras(xi)
+        surv0 <- if (is.null(surv0)) xi else c(surv0, xi)
+        rm(xi)
+      }
+      if (verbose) setTxtProgressBar(pb, i)
+    }
+    if (verbose) close(pb)
+    if (is.null(surv0)) stop("No valid files could be read.")
 
   }
 
@@ -456,6 +445,25 @@ write_datras <- function(x,
     x[[tab]] <- d
   }
   x
+}
+
+
+## DATRAS::readICES() stops on duplicated HH rows ("data file is corrupt"),
+## which drops the whole file. Some files served by ICES contain exact
+## duplicates of an HH record (e.g. NS-IBTS 1991), so remove identical HH
+## lines from the extracted CSV before reading and report them. HH records
+## that share a haul but differ in any field are left for DATRAS to reject.
+.drop_duplicated_hh_rows <- function(csvfile, file = csvfile, verbose = TRUE) {
+  lines <- readLines(csvfile, warn = FALSE)
+  is_hh <- grepl('^"?HH"?,', lines)
+  dup <- is_hh & duplicated(lines)
+  if (!any(dup)) return(invisible(0L))
+  if (verbose) {
+    message("\n", sum(dup), " duplicated HH row(s) removed from ", file, ":\n",
+            paste(unique(lines[dup]), collapse = "\n"))
+  }
+  writeLines(lines[!dup], csvfile)
+  invisible(sum(dup))
 }
 
 
