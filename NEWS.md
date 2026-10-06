@@ -120,6 +120,13 @@
 
 ## Breaking changes
 
+* `read_datras()` now defaults to `min_file_size = 0`, so only empty files are
+  skipped; it was `1e4` bytes. Small archives, such as a survey year with few
+  hauls or a subset written with `write_datras()`, were dropped without being
+  read. Files that cannot be read are now skipped with the reason (see Bug
+  fixes), so the size filter is no longer needed to protect the read. Skipped
+  files are reported with `message()`, which `verbose = FALSE` silences.
+
 * The two example data sets `mini` and `mini_fishglob` are merged into one,
   `mini`, which now holds the former `mini_fishglob`: the same four surveys
   (NS-IBTS, BITS, BTS, EVHOE) and five species as before, but for 2015-2020

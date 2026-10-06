@@ -13,9 +13,8 @@
 ##'   \item optionally only files matching selected years.
 ##' }
 ##'
-##' Small zip files can be excluded using `min_file_size`, as unusually small
-##' files are often incomplete or corrupted and may fail in the underlying
-##' DATRAS reader functions.
+##' Empty zip files are skipped. A file that cannot be read is skipped with a
+##' message giving the reason, and the remaining files are still read.
 ##'
 ##' @param path A character vector of file or directory paths. Each element can
 ##'   point either to an individual DATRAS `.zip` exchange file or to a directory
@@ -31,9 +30,9 @@
 ##'   read.
 ##' @param recursive logical. Should the listing recurse into directories?
 ##'   (Default: `TRUE`).
-##' @param min_file_size Minimum file size in bytes. Files smaller than this
-##'   threshold are excluded because they are likely incomplete or invalid and
-##'   may cause errors when being read. Defaults to `1e4`.
+##' @param min_file_size Minimum file size in bytes. Files of this size or
+##'   smaller are skipped and reported. Defaults to `0`, which skips only empty
+##'   files; raise it to exclude small archives without trying to read them.
 ##' @param prune Logical. If `TRUE`, only core columns are retained using
 ##'   [prune_datras()] before combining files. This can substantially reduce
 ##'   memory use when reading many files.
@@ -56,10 +55,6 @@
 ##'   [parallel::mclapply()] and are only effective on non-Windows systems.
 ##'
 ##' @details
-##' DATRAS zip archives are typically much larger than a few kilobytes, so very
-##' small files are often suspicious and may represent failed downloads or
-##' damaged archives.
-##'
 ##' Reading a large number of DATRAS files into R can require substantial memory,
 ##' especially when combining multiple surveys or many years. The following
 ##' options can substantially reduce peak memory use:
@@ -154,7 +149,7 @@ read_datras <- function(path,
                         surveys = NULL,
                         years = NULL,
                         recursive = TRUE,
-                        min_file_size = 1e4,
+                        min_file_size = 0,
                         prune = FALSE,
                         drop_hl = FALSE,
                         drop_ca = FALSE,
@@ -199,13 +194,17 @@ read_datras <- function(path,
 
   ind <- which(file.size(path) <= min_file_size)
   if (length(ind) > 0 && verbose) {
-    writeLines(paste0("These files are suspiciously small, are you sure that they were downloaded correctly? They will be removed from the list as they likely give errors. Please check the files or change the 'min_file_size' argument!\n",
-                      paste(path[ind], collapse = "\n")))
+    message("Skipping ", length(ind), " file(s) of ", min_file_size,
+            " bytes or less (see 'min_file_size'):\n",
+            paste(path[ind], collapse = "\n"))
   }
   path <- path[file.size(path) > min_file_size]
   if (length(path) == 0) {
-    stop("All zip files are smaller than min_file_size (", min_file_size,
-         " bytes). Lower 'min_file_size' to read them.")
+    if (min_file_size > 0) {
+      stop("All zip files are ", min_file_size, " bytes or smaller. ",
+           "Lower 'min_file_size' to read them.")
+    }
+    stop("All zip files are empty.")
   }
 
   np <- length(path)

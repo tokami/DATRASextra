@@ -185,10 +185,12 @@ that the missing-value sentinel is converted on the way in. It then verifies
 that the number of data rows plus header lines equals the number of lines in the
 file, and aborts with `"csv file appears to be corrupt"` if it does not.
 
-`read_datras()` adds a guard of its own: files smaller than `min_file_size`
-(default `1e4` bytes) are reported and excluded, because a truncated or empty
-download would otherwise raise a confusing parse error. A year in which a survey
-was not conducted typically produces such an empty file.
+`read_datras()` reads each file separately. A file that cannot be read, for
+example a truncated download, is skipped with a message giving the reason, and
+the remaining files are still read. Exact duplicates of an HH record, which
+make `DATRAS::readICES()` reject the whole file, are removed and reported
+first. Empty files are skipped; `min_file_size` (default `0` bytes) raises
+that threshold. `download_datras()` writes no file for a year without hauls.
 
 ## Matching biological records to hauls: the `strict` argument
 
@@ -1081,7 +1083,7 @@ the data.
 | Stage             | Automatic steps                                                                                    | Under your control                                                                                                                           |
 |-------------------|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | Download          | code renaming, `-9` to `NA`, strict haul matching, exchange archiving                              | `surveys`, `years`, `download_hl`, `download_ca`, `include_flagged`, `overwrite`, `timeout`                                                  |
-| Read              | corrupt-file check, small-file exclusion, duplicate haul removal, type-safe combining              | `strict`, `min_file_size`, `prune`, `drop_hl`, `drop_ca`, `surveys`, `years`, `ncores`                                                       |
+| Read              | corrupt-file check, empty-file exclusion, duplicate haul removal, type-safe combining              | `strict`, `min_file_size`, `prune`, `drop_hl`, `drop_ca`, `surveys`, `years`, `ncores`                                                       |
 | Derived variables | `haul.id`, `LngtCm`, `Species`, `Count`, `lon`/`lat`, `abstime`, `Roundfish`, zero-catch treatment | length binning via `cm_breaks` / `by`                                                                                                        |
 | Cleaning          | `HaulVal` and `StdSpecRecCode` filters                                                             | `verbose`, `explain_codes`, `impute_missing_depth`, `correct_species`, `aphias`, `years`, `quarters`, `gears`, `do_fishglob`                 |
 | Checks            | none by default                                                                                    | `check_outliers()` (`strict`, `pct`, `pct_*`, `vars`, `action`, `remove_extremes`), `check_lengths()`, `check_weights()`, `add_swept_area()` |

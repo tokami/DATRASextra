@@ -167,7 +167,7 @@ test_that("download_datras warns about survey-years without length data", {
   ## included so that the object has an HL table to check against.
   x <- NULL
   w <- testthat::capture_warnings(
-    x <- suppressMessages(download_datras(d, "NS-IDPS", 2012:2013, min_file_size = 0))
+    x <- suppressMessages(download_datras(d, "NS-IDPS", 2012:2013))
   )
   skip_if(nrow(x[["HH"]]) == 0 || any(x[["HL"]]$Year == "2012"),
           "NS-IDPS 2012 no longer lacks length data")
@@ -203,7 +203,7 @@ test_that("read_datras drops exact duplicate HH rows instead of the whole file",
   unlink(zf)
   zip::zip(zf, csv, mode = "cherry-pick")
 
-  expect_message(y <- read_datras(zf, min_file_size = 0),
+  expect_message(y <- read_datras(zf),
                  "1 duplicated HH row\\(s\\) removed")
   expect_setequal(as.character(y$HH$haul.id), as.character(x$HH$haul.id))
   expect_equal(nrow(y$HL), nrow(x$HL))
@@ -225,7 +225,32 @@ test_that("read_datras reports why a file could not be read", {
   bad <- file.path(d, "BTS_2021.zip")
   writeLines("not a zip file", bad)
 
-  expect_message(y <- suppressWarnings(read_datras(c(good, bad), min_file_size = 0)),
+  expect_message(y <- suppressWarnings(read_datras(c(good, bad))),
                  "Could not read .*BTS_2021\\.zip")
   expect_setequal(as.character(y$HH$haul.id), as.character(x$HH$haul.id))
+})
+
+
+test_that("read_datras skips only empty files by default", {
+
+  skip_on_cran()
+
+  d <- file.path(tempdir(), "datrasextra-minsize-test")
+  unlink(d, recursive = TRUE)
+  dir.create(d, showWarnings = FALSE, recursive = TRUE)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+
+  x <- subset(mini, Survey == "BTS" & Year == "2020")
+  good <- file.path(d, "BTS_2020.zip")
+  suppressMessages(write_datras(.remove_extra_variables(x), good))
+  empty <- file.path(d, "BTS_2021.zip")
+  file.create(empty)
+
+  expect_message(y <- read_datras(d), "Skipping 1 file.*BTS_2021\\.zip")
+  expect_setequal(as.character(y$HH$haul.id), as.character(x$HH$haul.id))
+
+  expect_silent(read_datras(d, verbose = FALSE))
+  expect_error(suppressMessages(read_datras(d, min_file_size = file.size(good))),
+               "Lower 'min_file_size'")
+  expect_error(suppressMessages(read_datras(empty)), "All zip files are empty")
 })

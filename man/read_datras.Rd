@@ -9,7 +9,7 @@ read_datras(
   surveys = NULL,
   years = NULL,
   recursive = TRUE,
-  min_file_size = 10000,
+  min_file_size = 0,
   prune = FALSE,
   drop_hl = FALSE,
   drop_ca = FALSE,
@@ -37,9 +37,9 @@ read.}
 \item{recursive}{logical. Should the listing recurse into directories?
 (Default: \code{TRUE}).}
 
-\item{min_file_size}{Minimum file size in bytes. Files smaller than this
-threshold are excluded because they are likely incomplete or invalid and
-may cause errors when being read. Defaults to \code{1e4}.}
+\item{min_file_size}{Minimum file size in bytes. Files of this size or
+smaller are skipped and reported. Defaults to \code{0}, which skips only empty
+files; raise it to exclude small archives without trying to read them.}
 
 \item{prune}{Logical. If \code{TRUE}, only core columns are retained using
 \code{\link[=prune_datras]{prune_datras()}} before combining files. This can substantially reduce
@@ -84,13 +84,8 @@ The function can read:
 \item optionally only files matching selected years.
 }
 
-Small zip files can be excluded using \code{min_file_size}, as unusually small
-files are often incomplete or corrupted and may fail in the underlying
-DATRAS reader functions.
-
-DATRAS zip archives are typically much larger than a few kilobytes, so very
-small files are often suspicious and may represent failed downloads or
-damaged archives.
+Empty zip files are skipped. A file that cannot be read is skipped with a
+message giving the reason, and the remaining files are still read.
 
 Reading a large number of DATRAS files into R can require substantial memory,
 especially when combining multiple surveys or many years. The following
