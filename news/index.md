@@ -1,5 +1,218 @@
 # Changelog
 
+## DATRASextra 0.5.2
+
+### New features
+
+- [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+  downloads from the ICES DATRAS Download API by default, the service
+  behind `icesDatras::getDatrasUnaggregated()`. It fetches several years
+  and all quarters in one request per record type and receives a zipped
+  CSV file, where the DATRAS web service needs one XML request per
+  record type, year and quarter plus availability checks for each year.
+  Downloading and reading EVHOE 2015-2022 took 28 seconds, against 94
+  seconds through the web service.
+
+  The archive is the same as before: one `<survey>_<year>.zip` exchange
+  file per year, with the same columns, entries in `DATRAS_manifest.csv`
+  (with `source = "download_api"`) and the same haul identifiers. The
+  new field names of the API are mapped back to the exchange names. Read
+  back with
+  [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md),
+  EVHOE 2015-2022 and BTS 2022 gave the same records from both routes.
+
+  The new `method` argument chooses the route: `"api"` (default),
+  `"webservice"` for the previous
+  [`DATRAS::getDatrasExchange()`](https://rdrr.io/pkg/DATRAS/man/getDatrasExchange.html)
+  route, or `"php"` for
+  [`DATRAS::downloadExchange()`](https://rdrr.io/pkg/DATRAS/man/downloadExchange.html).
+  `use_php = TRUE` still works and is the same as `method = "php"`. The
+  new `years_per_request` argument (default 10) limits how many years
+  are fetched in one request, to bound memory for large surveys.
+
+  The API files are read by DATRASextra itself rather than through
+  `icesDatras::getDatrasUnaggregated()`, which currently changes some
+  values while parsing. It truncates HL numbers at length to integers
+  (ices-tools-prod/icesDatras#65) and reads ICES rectangles such as
+  `"13E1"` as numbers when all rectangles of a file have that form.
+  DATRASextra reads every column as text. It also corrects for HH files
+  whose header lists two fields (`EDOM`, `ReasonHaulDisruption`) that
+  the rows do not contain, which would otherwise move
+  `DateofCalculation` into the wrong column
+  (ices-tools-prod/icesDatras#63).
+
+- Survey-year-quarters that have hauls but no length data (`HL`) at all
+  are now reported. Their hauls would otherwise be treated as empty
+  hauls with zero catch, while their length data are missing. DATRAS
+  holds a few such cases, for example test entries
+  (ices-tools-prod/icesDatras#59; NS-IDPS 2012 quarter 1 has a single
+  test haul).
+
+  [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+  lists them in a warning and still writes the files as delivered.
+  [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md)
+  lists them in a message, and removes them with their `CA` records when
+  the new argument `drop_without_hl = TRUE` is set (default `FALSE`).
+  The check runs before
+  [`clean_datras()`](https://tokami.github.io/DATRASextra/reference/clean_datras.md)
+  filters species, and needs the complete `HL` table: it is skipped when
+  there is no `HL` table, and data whose `HL` was subset to some species
+  beforehand cannot be checked reliably.
+
+- [`as_table()`](https://tokami.github.io/DATRASextra/reference/as_table.md)
+  exports the length and individual data as well as the hauls, with the
+  new argument `table`:
+
+  - `table = "HL"` gives the raised numbers at length (`Count`) by haul,
+    species and length class, summed over sex and catch category. By
+    default (`zeros = TRUE`) it adds a row with `Count = 0` for every
+    haul and species without a record, so that averages over hauls
+    include the hauls where a species was not caught. `hl_by` changes
+    the grouping, e.g. to keep sexes apart, and `type = "wide"` gives
+    one row per haul and species with one column per length class.
+  - `table = "CA"` gives one row per individual record. Records not
+    matched to a haul are kept and reported instead of being dropped.
+
+  Both carry the haul variables selected with `vars`, `add_vars` and
+  `remove_vars`. Columns present in both tables are taken once, from
+  `HH`. `table = "HH"`, the default, is unchanged. The numbers in
+  `table = "HL"` are not rounded, whereas
+  [`add_numbers_at_length()`](https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.md)
+  rounds each length class to whole fish, so their sum over a haul can
+  differ slightly from `HaulN`.
+
+- New
+  [`as_tibble()`](https://tibble.tidyverse.org/reference/as_tibble.html)
+  method for `datras_raw` objects, so that `tibble::as_tibble(x)` and
+  `x |> as_tibble()` return the table of
+  [`as_table()`](https://tokami.github.io/DATRASextra/reference/as_table.md)
+  as a tibble. It takes the same arguments as
+  [`as_table()`](https://tokami.github.io/DATRASextra/reference/as_table.md),
+  including `table`. The method is registered only when tibble is
+  installed, which is not required.
+
+- [`make_survey_grid()`](https://tokami.github.io/DATRASextra/reference/make_survey_grid.md)
+  gains `fill_gaps`, which closes holes and bays in the grid footprint
+  narrower than about `2 * fill_gaps`, while the outer edge stays at
+  `max_dist` from the outermost hauls. With `max_dist` alone, hauls
+  farther apart than `2 * max_dist` leave holes inside the survey area.
+  The grid is unchanged when `fill_gaps` is not used.
+
+  This and the following four functions come from the FishMap project,
+  where the same steps were repeated in several scripts. Rebuilt with
+  them, the prediction grid of the FishMap cod model (quarters 1, 3
+  and 4) kept all but 4 of the 20,483 nodes of the original, which was
+  built with polygon buffers, and added 0.7-1 %; the per-year support
+  agreed for 99.4-99.6 % of the nodes.
+
+- New
+  [`add_grid_support()`](https://tokami.github.io/DATRASextra/reference/add_grid_support.md)
+  flags where the survey sampled each year. It adds `supported`, whether
+  the hauls of a year and its neighbouring years cover a grid node, and
+  `coverage`, the share of years in which a node is covered. Predictions
+  in unsupported nodes are extrapolations.
+
+- New
+  [`add_bathymetry()`](https://tokami.github.io/DATRASextra/reference/add_bathymetry.md)
+  adds the depth from NOAA’s ETOPO bathymetry, via the `marmap` package,
+  to a grid or to `HH`. The download can be kept and reused, and
+  `depth_range` flags positions within the depths the survey fishes.
+
+- New
+  [`add_xy()`](https://tokami.github.io/DATRASextra/reference/add_xy.md)
+  adds projected coordinates (by default EPSG:3035 in km) to `HH` or a
+  data frame, and with `inverse = TRUE` longitude and latitude to a
+  projected grid.
+
+- New
+  [`suggest_length_cuts()`](https://tokami.github.io/DATRASextra/reference/suggest_length_cuts.md)
+  derives length groups with about equal numbers of fish, for
+  `length_cuts` in
+  [`add_total_numbers_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_numbers_by_haul.md),
+  with the realised share of fish and a label for each group.
+
+- The article on building a spatiotemporal prediction grid covers
+  projected coordinates, gap filling, support per year and depth.
+
+- The package is much smaller: the source package went from 11.6 MB to
+  3.4 MB, below the 5 MB that CRAN expects. The gear spread models used
+  by `add_swept_area(method = "fishglob")` no longer carry the
+  residuals, fitted values and model frames of the hauls they were
+  fitted to. This takes them from 59 MB in memory, loaded with the
+  package every time, to 0.3 MB; their predictions are unchanged. The
+  example data are compressed with xz.
+
+  “Data processing and quality control” is now an article on the package
+  website
+  (<https://tokami.github.io/DATRASextra/articles/data-processing-and-qc.html>)
+  instead of a vignette, so it is no longer available with
+  [`vignette()`](https://rdrr.io/r/utils/vignette.html). The maps in the
+  tutorial vignette are lighter, using
+  [`plot_datras_overview()`](https://tokami.github.io/DATRASextra/reference/plot_datras_overview.md).
+
+### Breaking changes
+
+- [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
+  now defaults to `min_file_size = 0`, so only empty files are skipped;
+  it was `1e4` bytes. Small archives, such as a survey year with few
+  hauls or a subset written with
+  [`write_datras()`](https://tokami.github.io/DATRASextra/reference/write_datras.md),
+  were dropped without being read. Files that cannot be read are now
+  skipped with the reason (see Bug fixes), so the size filter is no
+  longer needed to protect the read. Skipped files are reported with
+  [`message()`](https://rdrr.io/r/base/message.html), which
+  `verbose = FALSE` silences.
+
+- The two example data sets `mini` and `mini_fishglob` are merged into
+  one, `mini`, which now holds the former `mini_fishglob`: the same four
+  surveys (NS-IBTS, BITS, BTS, EVHOE) and five species as before, but
+  for 2015-2020 and all quarters instead of 2022-2023 (13,080 hauls
+  instead of 3,939). These years overlap with the public FishGlob data,
+  which the FishGlob article needs. `mini_fishglob` is removed; use
+  `mini` instead. Code that relied on the years 2022-2023 in `mini`
+  needs to use 2015-2020.
+
+- [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
+  returns empty fields in exchange files as `NA` instead of an empty
+  string or an empty factor level (`""`). Archives written by the web
+  service route store missing values as empty fields, so these columns
+  now read the same as from files that use the `-9` code. `haul.id` is
+  not changed, so a haul without a station number keeps an identifier
+  such as `"BTS:2022:1:GB:74E9:BT4P::5"`. Code that tests for `""`
+  should test with [`is.na()`](https://rdrr.io/r/base/NA.html) instead.
+
+### Bug fixes
+
+- [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
+  no longer drops a whole exchange file because of an exact duplicate HH
+  record. Such duplicates (e.g. in NS-IBTS 1991 as served by ICES) made
+  [`DATRAS::readICES()`](https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html)
+  stop with “Duplicated rows found in HH data”, so the year was skipped
+  with only “Error with: ”. Identical HH lines are now removed before
+  reading and reported. When a file still cannot be read, the message
+  gives the reason.
+
+  All inputs (a folder with or without `surveys`/`years`, or zip files)
+  now go through the same reader, so `recursive`, `min_file_size` and
+  the duplicated haul id check apply to all of them, and one unreadable
+  file no longer stops the others from being read.
+
+- [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
+  failed with “must have ‘max’ \> ‘min’” when every zip file was smaller
+  than `min_file_size`. It now stops with an error that names the cause.
+
+- [`write_datras()`](https://tokami.github.io/DATRASextra/reference/write_datras.md)
+  reported “Created zip file” even when no file was written.
+  [`utils::zip()`](https://rdrr.io/r/utils/zip.html) calls an external
+  `zip` program, which is often missing on Windows unless Rtools is
+  installed, and then fails with only a warning. The zip archive is now
+  written with the `zip` package, which needs no external program, and
+  [`write_datras()`](https://tokami.github.io/DATRASextra/reference/write_datras.md)
+  stops with an error if the file does not exist afterwards. This made
+  [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+  fail on such machines with errors that did not point to the cause.
+  `zip` is a new dependency.
+
 ## DATRASextra 0.5.0
 
 ### New features
@@ -67,15 +280,13 @@
     `DATRASextra:::.write_reference_registry()` after rebuilding any
     table in `data-raw/`, and a test fails if the two drift apart.
 
-- The vignette
-  [`vignette("data-processing-and-qc")`](https://tokami.github.io/DATRASextra/articles/data-processing-and-qc.md)
-  gains a section on recording and verifying an extraction, and on the
-  age of the bundled reference tables.
+- The vignette `vignette("data-processing-and-qc")` gains a section on
+  recording and verifying an extraction, and on the age of the bundled
+  reference tables.
 
-- New vignette
-  [`vignette("data-processing-and-qc")`](https://tokami.github.io/DATRASextra/articles/data-processing-and-qc.md)
-  documenting every processing and quality-control step from download to
-  analysis-ready object. It covers what
+- New vignette `vignette("data-processing-and-qc")` documenting every
+  processing and quality-control step from download to analysis-ready
+  object. It covers what
   [`DATRAS::getDatrasExchange()`](https://rdrr.io/pkg/DATRAS/man/getDatrasExchange.html)
   and
   [`DATRAS::readICES()`](https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html)
@@ -103,6 +314,15 @@
   has no effect on the files written to disk, which hold the exchange
   data as delivered by ICES.
 
+- [`plot_datras_overview()`](https://tokami.github.io/DATRASextra/reference/plot_datras_overview.md)
+  gains `subset`, a filter applied to the haul table before anything is
+  plotted. It takes an unquoted expression evaluated within the data, as
+  in [`subset()`](https://rdrr.io/r/base/subset.html), for example
+  `plot_datras_overview(subset = Survey %in% c("DYFS", "SNS"), by_survey = TRUE)`
+  to plot two surveys from the bundled overview instead of all of them.
+  A character string or a logical vector are also accepted for filters
+  built programmatically.
+
 ### Bug fixes
 
 - [`reference_tables()`](https://tokami.github.io/DATRASextra/reference/reference_tables.md)
@@ -111,6 +331,12 @@
   skip `#` comment lines in R 4.6.0, so the comment header of
   `inst/reference_tables.dcf` made the parser fail and the registry read
   back empty. The header is now stripped before parsing.
+
+- `plot_datras_overview(years = ...)` matched nothing when `Year` was
+  stored as a character string, which is the case for the bundled
+  `survey_info_full_raw` used when `x = NULL`. Years are now compared as
+  character, so numeric `years` work for both character and integer
+  columns.
 
 - [`reference_tables()`](https://tokami.github.io/DATRASextra/reference/reference_tables.md)
   reported every bundled table as `"changed"` whenever it ran under an R

@@ -26,8 +26,8 @@ Invisibly returns the path to the created zip file, carrying the
 attributes `payload_hash`, `zip_hash` and `algo`. The payload hash is
 taken over the exchange file inside the archive and is therefore
 identical whenever the data are identical; the archive hash is not,
-because [`utils::zip()`](https://rdrr.io/r/utils/zip.html) stores the
-modification time of the file it compresses. This is why
+because [`zip::zip()`](https://r-lib.github.io/zip/reference/zip.html)
+stores the modification time of the file it compresses. This is why
 [`write_manifest()`](https://tokami.github.io/DATRASextra/reference/write_manifest.md)
 records the payload hash.
 
@@ -38,7 +38,8 @@ The function writes the available DATRAS components in the order `HH`,
 header line, followed by the corresponding data rows.
 
 The exchange file is first written to a temporary CSV file and then
-zipped using [`utils::zip()`](https://rdrr.io/r/utils/zip.html). If
+zipped using
+[`zip::zip()`](https://r-lib.github.io/zip/reference/zip.html). If
 `zip_file` already exists, it is overwritten.
 
 Empty or missing components among `HH`, `HL`, and `CA` are skipped.

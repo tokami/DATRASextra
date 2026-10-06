@@ -2,6 +2,12 @@
 
 ## All functions
 
+- [`add_bathymetry()`](https://tokami.github.io/DATRASextra/reference/add_bathymetry.md)
+  : Add depth from NOAA bathymetry
+
+- [`add_grid_support()`](https://tokami.github.io/DATRASextra/reference/add_grid_support.md)
+  : Flag grid nodes covered by the hauls of each year
+
 - [`add_ices_areas()`](https://tokami.github.io/DATRASextra/reference/add_ices_areas.md)
   :
 
@@ -39,6 +45,9 @@
 
   Add weight-at-length estimates to a `datras_raw` object
 
+- [`add_xy()`](https://tokami.github.io/DATRASextra/reference/add_xy.md)
+  : Add projected coordinates
+
 - [`as_fishglob()`](https://tokami.github.io/DATRASextra/reference/as_fishglob.md)
   :
 
@@ -53,6 +62,11 @@
   :
 
   Format a `datras_raw` object as a table
+
+- [`as_tibble(`*`<datras_raw>`*`)`](https://tokami.github.io/DATRASextra/reference/as_tibble.datras_raw.md)
+  :
+
+  Convert a `datras_raw` object to a tibble
 
 - [`as_wide_format()`](https://tokami.github.io/DATRASextra/reference/as_wide_format.md)
   :
@@ -142,9 +156,6 @@
 - [`mini`](https://tokami.github.io/DATRASextra/reference/mini.md) :
   Mini DATRAS survey data (example dataset)
 
-- [`mini_fishglob`](https://tokami.github.io/DATRASextra/reference/mini_fishglob.md)
-  : Mini DATRAS survey data for fishglob comparison (example dataset)
-
 - [`plot_datras_overview()`](https://tokami.github.io/DATRASextra/reference/plot_datras_overview.md)
   : Unified DATRAS overview plotting
 
@@ -184,6 +195,9 @@
 
 - [`species_info`](https://tokami.github.io/DATRASextra/reference/species_info.md)
   : Species information lookup table
+
+- [`suggest_length_cuts()`](https://tokami.github.io/DATRASextra/reference/suggest_length_cuts.md)
+  : Suggest length groups with equal numbers of fish
 
 - [`survey_info`](https://tokami.github.io/DATRASextra/reference/survey_info.md)
   : Survey information table

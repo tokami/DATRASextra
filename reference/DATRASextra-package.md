@@ -1,12 +1,17 @@
 # DATRASextra package
 
-DATRASextra is an R package for working with ICES DATRAS survey data,
-with tools for downloading, processing, checking, summarising, and
-visualising bottom-trawl survey data. The package extends the
-functionality of DATRAS with additional data workflows, quality checks,
-derived variables and indicators, plotting tools, and analysis-ready
-outputs. It is intended to support reproducible research, stock
-assessment, and survey-based analyses in fisheries science.
+Tools to download, read, clean, check, summarise and visualise
+bottom-trawl survey data from the ICES Database of Trawl Surveys
+(DATRAS, <https://datras.ices.dk>). Downloads are archived as exchange
+files with a manifest, so that an extraction can be verified and
+reproduced, and are read into one object with derived variables such as
+haul identifiers, lengths in centimetres and raised numbers at length.
+Further functions add swept area, numbers and weight at length, ICES
+areas and depth, flag implausible values, compute stratified abundance
+indices and spatial indicators, build prediction grids for spatial
+models, and export tidy tables, including the format of the FishGlob
+database. The reader and the data class are adapted from the 'DATRAS'
+package by Kasper Kristensen and Casper W. Berg.
 
 ## See also
 

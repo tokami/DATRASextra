@@ -45,7 +45,7 @@ Two principles guide the design:
 | 7\. Extraction record | [`extraction()`](https://tokami.github.io/DATRASextra/reference/extraction.md), [`write_manifest()`](https://tokami.github.io/DATRASextra/reference/write_manifest.md), [`verify_extraction()`](https://tokami.github.io/DATRASextra/reference/verify_extraction.md) | Record where the data came from and detect upstream revisions | automatic record, opt-in verification |
 
 Throughout we use the bundled example data set `mini`: four surveys,
-seven gears, five species, 2022-2023. Unlike the `dab` example, `mini`
+nine gears, five species, 2015-2020. Unlike the `dab` example, `mini`
 has not been pre-cleaned, so every filter described below actually does
 something.
 
@@ -54,20 +54,20 @@ something.
 mini
 #> Object of class 'datras_raw'
 #> ===========================
-#> Number of hauls: 3939 
+#> Number of hauls: 13080 
 #> Number of species: 5 
 #> Number of surveys: 4 [BITS, BTS, EVHOE, NS-IBTS]
 #> Number of gears: 9 
-#> Number of countries: 13 
-#> Years: 2022 - 2023 
-#> Quarters: 1 3 4 
-#> Longitude range: -10.96 - 21.65 deg
-#> Latitude range: 43.69 - 61.59 deg
-#> Depth range: 5 - 499 m
-#> Haul duration: 0 - 62 minutes
-#> Valid hauls: 3756 (183 invalid)
-#> Hauls with catch: 1681 (zero catch: 2258)
-#> Extraction: 14 source(s), extracted 2026-09-15, ICES calculation 2023-03-22 to 2026-06-25
+#> Number of countries: 14 
+#> Years: 2015 - 2020 
+#> Quarters: 1 2 3 4 
+#> Longitude range: -11.28 - 22.2 deg
+#> Latitude range: 43.69 - 61.78 deg
+#> Depth range: 5 - 518 m
+#> Haul duration: 0 - 1470 minutes
+#> Valid hauls: 12520 (560 invalid)
+#> Hauls with catch: 6138 (zero catch: 6942)
+#> Extraction: 43 source(s), extracted 2026-09-15, ICES calculation 2016-04-16 to 2026-06-25
 ```
 
 ## Stage 1: Download
@@ -186,10 +186,15 @@ the file, and aborts with `"csv file appears to be corrupt"` if it does
 not.
 
 [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
-adds a guard of its own: files smaller than `min_file_size` (default
-`1e4` bytes) are reported and excluded, because a truncated or empty
-download would otherwise raise a confusing parse error. A year in which
-a survey was not conducted typically produces such an empty file.
+reads each file separately. A file that cannot be read, for example a
+truncated download, is skipped with a message giving the reason, and the
+remaining files are still read. Exact duplicates of an HH record, which
+make
+[`DATRAS::readICES()`](https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html)
+reject the whole file, are removed and reported first. Empty files are
+skipped; `min_file_size` (default `0` bytes) raises that threshold.
+[`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
+writes no file for a year without hauls.
 
 ### Matching biological records to hauls: the `strict` argument
 
@@ -254,8 +259,8 @@ This is the key that links `HH`, `HL` and `CA`.
 ``` r
 
 head(levels(mini[["HH"]]$haul.id), 3)
-#> [1] "BITS:2022:1:DE:06SL:TVS:22002:1"  "BITS:2022:1:DE:06SL:TVS:22008:15"
-#> [3] "BITS:2022:1:DE:06SL:TVS:22044:2"
+#> [1] "BITS:2015:1:DE:06SL:TVS:22002:1" "BITS:2015:1:DE:06SL:TVS:22004:7"
+#> [3] "BITS:2015:1:DE:06SL:TVS:22005:4"
 ```
 
 ### Length in centimetres
@@ -285,8 +290,8 @@ second says how wide the length class is. They are not interchangeable.
 ## Which length codes occur, and what resolution do they imply
 table(mini[["HL"]]$LngtCode, useNA = "ifany")
 #> 
-#>           .     0     1 
-#>    82  9736  1505 12681
+#>     .     0     1       
+#> 39669   557 44270    62
 ```
 
 ``` r
@@ -320,7 +325,7 @@ WoRMS codes, so both paths can occur in a single combined object.
 table(mini[["HL"]]$SpecCodeType, useNA = "ifany")
 #> 
 #>     W 
-#> 24004
+#> 84558
 ```
 
 ### Raised catch numbers
@@ -344,8 +349,8 @@ A combined object frequently mixes reporting conventions:
 
 table(mini[["HH"]]$DataType, useNA = "ifany")
 #> 
-#>    C    R    P 
-#>  978 2716  245
+#>         C    R    P 
+#>    7 3587 8942  544
 ```
 
 Anything computed from `Count` therefore already accounts for
@@ -383,20 +388,20 @@ The split is reported by [`print()`](https://rdrr.io/r/base/print.html):
 mini
 #> Object of class 'datras_raw'
 #> ===========================
-#> Number of hauls: 3939 
+#> Number of hauls: 13080 
 #> Number of species: 5 
 #> Number of surveys: 4 [BITS, BTS, EVHOE, NS-IBTS]
 #> Number of gears: 9 
-#> Number of countries: 13 
-#> Years: 2022 - 2023 
-#> Quarters: 1 3 4 
-#> Longitude range: -10.96 - 21.65 deg
-#> Latitude range: 43.69 - 61.59 deg
-#> Depth range: 5 - 499 m
-#> Haul duration: 0 - 62 minutes
-#> Valid hauls: 3756 (183 invalid)
-#> Hauls with catch: 1681 (zero catch: 2258)
-#> Extraction: 14 source(s), extracted 2026-09-15, ICES calculation 2023-03-22 to 2026-06-25
+#> Number of countries: 14 
+#> Years: 2015 - 2020 
+#> Quarters: 1 2 3 4 
+#> Longitude range: -11.28 - 22.2 deg
+#> Latitude range: 43.69 - 61.78 deg
+#> Depth range: 5 - 518 m
+#> Haul duration: 0 - 1470 minutes
+#> Valid hauls: 12520 (560 invalid)
+#> Hauls with catch: 6138 (zero catch: 6942)
+#> Extraction: 43 source(s), extracted 2026-09-15, ICES calculation 2016-04-16 to 2026-06-25
 ```
 
 ### The ICES calculation date
@@ -411,17 +416,29 @@ It is discussed in *Recording and verifying the extraction* below.
 
 with(mini[["HH"]], table(Survey, DateofCalculation))
 #>          DateofCalculation
-#> Survey    20230322 20230425 20231207 20240301 20240326 20240409 20240507
-#>   BITS           0        0        0        0      308        0        0
-#>   BTS          312        0      133      199        0        0        0
-#>   EVHOE          0      125        0        0        0        0      143
-#>   NS-IBTS        0        0        0        0        0      348        0
+#> Survey    20160416 20170316 20180423 20180507 20190305 20190307 20200219
+#>   BITS           0        0        0        0        0        0        0
+#>   BTS            0        0        0        0        0        0        0
+#>   EVHOE        150        0       26      161      155        0      151
+#>   NS-IBTS        0      369        0        0        0       10        0
 #>          DateofCalculation
-#> Survey    20240806 20240814 20250118 20250212 20250404 20260625
-#>   BITS         322      343      333        0        0        0
-#>   BTS            0        0        0      444        0        0
-#>   EVHOE          0        0        0        0        0        0
-#>   NS-IBTS        0        0        0        0      355      574
+#> Survey    20200408 20200525 20210222 20210304 20210428 20211029 20211209
+#>   BITS         296        0        0        0      333        0        0
+#>   BTS            0     1339        0      162        0        0     1301
+#>   EVHOE          0        0      156        0        0        0        0
+#>   NS-IBTS        0        0        0        0        0      349        0
+#>          DateofCalculation
+#> Survey    20220125 20220407 20220408 20220411 20220427 20230322 20240712
+#>   BITS           0      318        0        0      297        0      311
+#>   BTS            0        0        0     1400        0        0        0
+#>   EVHOE          0        0        0        0        0        0        0
+#>   NS-IBTS      722        0      362        0        0      390        0
+#>          DateofCalculation
+#> Survey    20240809 20240814 20240815 20260317 20260625
+#>   BITS         302      625      619      542        0
+#>   BTS            0        0        0        0        0
+#>   EVHOE          0        0        0        0        0
+#>   NS-IBTS        0        0        0        0     2234
 ```
 
 ### Type coercions to be aware of
@@ -446,39 +463,40 @@ default) it prints a full account of the data *before* filtering, and
 ``` r
 
 surv <- clean_datras(mini, explain_codes = TRUE)
-#> HaulVal (3939 hauls before cleaning):
-#> Code     n  Description                                              
-#>    A    16  Additional valid stations not used for index calculations
-#>    I    75  Invalid haul                                             
-#>    N    92  No oxygen (BITS only)                                    
-#>    V  3756  Valid haul
+#> HaulVal (13080 hauls before cleaning):
+#> Code      n  Description                                              
+#>    A     60  Additional valid stations not used for index calculations
+#>    I    281  Invalid haul                                             
+#>    N    219  No oxygen (BITS only)                                    
+#>    V  12520  Valid haul
 #> 
 #> StdSpecRecCode:
-#> Code     n  Description                         
-#>    0    10  No standard species recorded        
-#>    1  3917  All standard species recorded       
-#>    4    12  Individual standard species recorded
+#> Code      n  Description                         
+#>    0     39  No standard species recorded        
+#>    1  13021  All standard species recorded       
+#>    3     10  Roundfish standard species recorded 
+#>    4     10  Individual standard species recorded
 #> 
 #> BySpecRecCode:
-#> Code     n  Description                 
-#>    0    22  No bycatch species recorded 
-#>    1  3917  All bycatch species recorded
+#> Code      n  Description                 
+#>    0    170  No bycatch species recorded 
+#>    1  12910  All bycatch species recorded
 #> 
 #> Hauls with missing lon: 0
 #> Hauls with missing lat: 0
 #> Hauls with missing Year: 0
-#> Hauls with missing Depth: 3
+#> Hauls with missing Depth: 67
 #> Hauls with missing HaulDur: 0
-#> Hauls with missing Distance: 101
-#> Hauls with missing GroundSpeed: 830
-#> Hauls with missing WingSpread: 2319
-#> Hauls with missing DoorSpread: 1593
+#> Hauls with missing Distance: 745
+#> Hauls with missing GroundSpeed: 2501
+#> Hauls with missing WingSpread: 8889
+#> Hauls with missing DoorSpread: 5515
 #> 
-#> Hauls removed by HaulVal filter: 91
-#> Hauls removed by StdSpecRecCode filter: 12
-#> Hauls remaining: 3836
+#> Hauls removed by HaulVal filter: 341
+#> Hauls removed by StdSpecRecCode filter: 14
+#> Hauls remaining: 12725
 #> 
-#> Note: 92 retained haul(s) have HaulVal = "N" (no oxygen, BITS only) and may have unusually short HaulDur.
+#> Note: 219 retained haul(s) have HaulVal = "N" (no oxygen, BITS only) and may have unusually short HaulDur.
 ```
 
 The report has three parts: the distribution of the three recording
@@ -538,7 +556,7 @@ surv_dep <- clean_datras(mini, impute_missing_depth = TRUE, verbose = FALSE)
 c(before = sum(is.na(mini[["HH"]]$Depth)),
   after = sum(is.na(surv_dep[["HH"]]$Depth)))
 #> before  after 
-#>      3      0
+#>     67      0
 ```
 
 The imputed values replace `NA` in place, and there is no flag
@@ -549,8 +567,40 @@ affected haul identifiers before cleaning:
 
 imputed_ids <- as.character(mini[["HH"]]$haul.id[is.na(mini[["HH"]]$Depth)])
 imputed_ids
-#> [1] "BITS:2022:1:DK:26HF:TVS:85:43" "BTS:2023:3:BE:11BU:BT4A:98:51"
-#> [3] "BTS:2023:3:BE:11BU:BT4A:83:52"
+#>  [1] "BTS:2015:3:DE:06SL:BT7:640:6"       "BTS:2018:3:NL:64T2:BT8:33F428:128" 
+#>  [3] "BTS:2019:3:DE:06SL:BT7:655:1"       "BTS:2019:3:DE:06SL:BT7:656:2"      
+#>  [5] "BTS:2019:3:DE:06SL:BT7:657:3"       "BTS:2019:3:DE:06SL:BT7:658:4"      
+#>  [7] "BTS:2019:3:DE:06SL:BT7:659:5"       "BTS:2019:3:DE:06SL:BT7:660:6"      
+#>  [9] "BTS:2019:3:DE:06SL:BT7:671:17"      "BTS:2019:3:DE:06SL:BT7:672:18"     
+#> [11] "BTS:2019:3:DE:06SL:BT7:673:19"      "BTS:2019:3:DE:06SL:BT7:674:20"     
+#> [13] "BTS:2019:3:DE:06SL:BT7:675:21"      "BTS:2019:3:DE:06SL:BT7:676:22"     
+#> [15] "BTS:2019:3:DE:06SL:BT7:677:23"      "BTS:2019:3:DE:06SL:BT7:678:24"     
+#> [17] "BTS:2019:3:DE:06SL:BT7:679:25"      "BTS:2019:3:DE:06SL:BT7:680:26"     
+#> [19] "BTS:2019:3:DE:06SL:BT7:681:27"      "BTS:2019:3:DE:06SL:BT7:682:28"     
+#> [21] "BTS:2019:3:DE:06SL:BT7:683:29"      "BTS:2019:3:DE:06SL:BT7:684:30"     
+#> [23] "BTS:2019:3:DE:06SL:BT7:685:31"      "BTS:2019:3:DE:06SL:BT7:686:32"     
+#> [25] "BTS:2019:3:DE:06SL:BT7:687:33"      "BTS:2019:3:DE:06SL:BT7:688:34"     
+#> [27] "BTS:2019:3:DE:06SL:BT7:689:35"      "BTS:2019:3:DE:06SL:BT7:690:36"     
+#> [29] "BTS:2019:3:DE:06SL:BT7:691:37"      "BTS:2019:3:DE:06SL:BT7:692:38"     
+#> [31] "BTS:2019:3:DE:06SL:BT7:693:39"      "BTS:2019:3:DE:06SL:BT7:694:40"     
+#> [33] "BTS:2019:3:DE:06SL:BT7:695:41"      "BTS:2019:3:DE:06SL:BT7:696:42"     
+#> [35] "BTS:2019:3:DE:06SL:BT7:697:43"      "BTS:2019:3:DE:06SL:BT7:698:44"     
+#> [37] "BTS:2019:3:DE:06SL:BT7:699:45"      "BTS:2019:3:DE:06SL:BT7:700:46"     
+#> [39] "BTS:2019:3:DE:06SL:BT7:701:47"      "BTS:2019:3:DE:06SL:BT7:702:48"     
+#> [41] "BTS:2019:3:DE:06SL:BT7:703:49"      "BTS:2019:3:DE:06SL:BT7:704:50"     
+#> [43] "BTS:2019:3:DE:06SL:BT7:705:51"      "BTS:2019:3:DE:06SL:BT7:706:52"     
+#> [45] "BTS:2019:3:DE:06SL:BT7:707:53"      "BTS:2019:3:DE:06SL:BT7:708:54"     
+#> [47] "BTS:2019:3:DE:06SL:BT7:709:55"      "BTS:2019:3:DE:06SL:BT7:710:56"     
+#> [49] "BTS:2019:3:DE:06SL:BT7:711:57"      "BTS:2019:3:DE:06SL:BT7:712:58"     
+#> [51] "BTS:2019:3:DE:06SL:BT7:713:59"      "BTS:2019:3:DE:06SL:BT7:714:60"     
+#> [53] "BTS:2019:3:DE:06SL:BT7:715:61"      "BTS:2019:3:DE:06SL:BT7:716:62"     
+#> [55] "BTS:2019:3:DE:06SL:BT7:717:63"      "BTS:2019:3:DE:06SL:BT7:718:64"     
+#> [57] "BTS:2019:3:DE:06SL:BT7:719:65"      "BTS:2019:3:DE:06SL:BT7:720:66"     
+#> [59] "BTS:2019:3:DE:06SL:BT7:721:67"      "BTS:2019:3:DE:06SL:BT7:722:68"     
+#> [61] "BTS:2019:3:DE:06SL:BT7:723:69"      "BTS:2019:3:DE:06SL:BT7:724:70"     
+#> [63] "BTS:2019:3:DE:06SL:BT7:725:71"      "BTS:2019:3:DE:06SL:BT7:726:72"     
+#> [65] "BTS:2019:3:DE:06SL:BT7:727:73"      "EVHOE:2019:4:FR:35HT:GOV:X0441:1"  
+#> [67] "EVHOE:2019:4:FR:35HT:GOV:X0550:104"
 ```
 
 Spatial interpolation of depth is reasonable on a continental shelf and
@@ -581,7 +631,7 @@ The `Rank` column it adds makes the outcome visible:
 table(surv[["HL"]]$Rank, useNA = "ifany")
 #> 
 #> species 
-#>   23827
+#>   84171
 ```
 
 Set `correct_species = FALSE` to keep the original species assignments,
@@ -595,25 +645,25 @@ filters, as a convenience:
 
 ``` r
 
-surv_sub <- clean_datras(mini, years = 2023, quarters = 1,
+surv_sub <- clean_datras(mini, years = 2020, quarters = 1,
                          aphias = 127137, verbose = FALSE)
 surv_sub
 #> Object of class 'datras_raw'
 #> ===========================
-#> Number of hauls: 840 
+#> Number of hauls: 811 
 #> Number of species: 1 [Hippoglossoides platessoides (127137)]
 #> Number of surveys: 3 [BITS, BTS, NS-IBTS]
 #> Number of gears: 5 
 #> Number of countries: 11 
-#> Years: 2023 - 2023 
+#> Years: 2020 - 2020 
 #> Quarters: 1 
-#> Longitude range: -7.64 - 21.43 deg
-#> Latitude range: 48.04 - 61.59 deg
-#> Depth range: 7 - 257 m
-#> Haul duration: 0 - 34 minutes
-#> Valid hauls: 818 (22 invalid)
-#> Hauls with catch: 247 (zero catch: 593)
-#> Extraction: 3 source(s), extracted 2026-09-15, ICES calculation 2024-03-01 to 2026-06-25
+#> Longitude range: -6.62 - 21.34 deg
+#> Latitude range: 48.69 - 61.74 deg
+#> Depth range: 10 - 256 m
+#> Haul duration: 0 - 40 minutes
+#> Valid hauls: 787 (24 invalid)
+#> Hauls with catch: 254 (zero catch: 557)
+#> Extraction: 3 source(s), extracted 2026-09-15, ICES calculation 2021-03-04 to 2026-06-25
 ```
 
 ### Modifying or omitting steps
@@ -646,20 +696,20 @@ custom <- correct_species(custom)
 custom
 #> Object of class 'datras_raw'
 #> ===========================
-#> Number of hauls: 3864 
+#> Number of hauls: 12789 
 #> Number of species: 5 
 #> Number of surveys: 4 [BITS, BTS, EVHOE, NS-IBTS]
 #> Number of gears: 9 
-#> Number of countries: 13 
-#> Years: 2022 - 2023 
-#> Quarters: 1 3 4 
-#> Longitude range: -10.96 - 21.65 deg
-#> Latitude range: 43.69 - 61.59 deg
-#> Depth range: 5 - 499 m
-#> Haul duration: 0 - 43 minutes
-#> Valid hauls: 3756 (108 invalid)
-#> Hauls with catch: 1673 (zero catch: 2191)
-#> Extraction: 14 source(s), extracted 2026-09-15, ICES calculation 2023-03-22 to 2026-06-25
+#> Number of countries: 14 
+#> Years: 2015 - 2020 
+#> Quarters: 1 2 3 4 
+#> Longitude range: -11.28 - 22.2 deg
+#> Latitude range: 43.69 - 61.75 deg
+#> Depth range: 5 - 518 m
+#> Haul duration: 0 - 1470 minutes
+#> Valid hauls: 12515 (274 invalid)
+#> Hauls with catch: 6114 (zero catch: 6675)
+#> Extraction: 43 source(s), extracted 2026-09-15, ICES calculation 2016-04-16 to 2026-06-25
 ```
 
 Compare the haul count with `surv` above to see what the relaxed rule
@@ -733,19 +783,21 @@ threshold produces nonsense; the defaults compare like with like.
 ``` r
 
 surv <- check_outliers(surv, pct = TRUE)
-#> Detected 1161 flagged row(s) in 604 haul(s). (includes percentile checks)
-#>    table         var severity one
-#> 1     CA         Age  extreme  27
-#> 2     HH       Depth  extreme  84
-#> 3     HH  DoorSpread  extreme  56
-#> 4     HH     HaulDur  extreme  45
-#> 5     CA      IndWgt  extreme 149
-#> 6     CA    LngtClas  extreme 337
-#> 7     HL      LngtCm  extreme 382
-#> 8     HH  WingSpread  extreme  37
-#> 9     HH  DoorSpread  invalid   1
-#> 10    HH GroundSpeed  invalid  10
-#> 11    HH     HaulDur  invalid  33
+#> Detected 3321 flagged row(s) in 1632 haul(s). (includes percentile checks)
+#>    table                   var severity  one
+#> 1     CA                   Age  extreme  115
+#> 2     HH                 Depth  extreme  246
+#> 3     HH            DoorSpread  extreme  139
+#> 4     HH               HaulDur  extreme  117
+#> 5     CA                IndWgt  extreme  455
+#> 6     CA              LngtClas  extreme 1041
+#> 7     HL                LngtCm  extreme 1052
+#> 8     HH            WingSpread  extreme   70
+#> 9     HH            DoorSpread  invalid    7
+#> 10    HH           GroundSpeed  invalid   17
+#> 11    HH               HaulDur  invalid   54
+#> 12    HH            WingSpread  invalid    2
+#> 13    HH WingSpread,DoorSpread  invalid    6
 ```
 
 By default nothing is removed: the object comes back unchanged, with
@@ -756,7 +808,7 @@ four attributes attached.
 ## Every flagged record, one row each
 report <- attr(surv, "outlier_report")
 dim(report)
-#> [1] 1161   13
+#> [1] 3321   13
 head(report[report$severity == "invalid", c("table", "var", "value", "reason")])
 #>   table     var value                    reason
 #> 1    HH HaulDur     0 HaulDur outside 0-240 min
@@ -780,7 +832,7 @@ c(all = length(attr(surv, "outlier_hauls")),
   invalid = length(attr(surv, "outlier_hauls_invalid")),
   extreme = length(attr(surv, "outlier_hauls_extreme")))
 #>     all invalid extreme 
-#>     604      44     565
+#>    1632      79    1572
 ```
 
 Which variables drive the flags:
@@ -788,17 +840,18 @@ Which variables drive the flags:
 ``` r
 
 with(report, table(var, severity))
-#>              severity
-#> var           extreme invalid
-#>   Age              27       0
-#>   Depth            84       0
-#>   DoorSpread       56       1
-#>   GroundSpeed       0      10
-#>   HaulDur          45      33
-#>   IndWgt          149       0
-#>   LngtClas        337       0
-#>   LngtCm          382       0
-#>   WingSpread       37       0
+#>                        severity
+#> var                     extreme invalid
+#>   Age                       115       0
+#>   Depth                     246       0
+#>   DoorSpread                139       7
+#>   GroundSpeed                 0      17
+#>   HaulDur                   117      54
+#>   IndWgt                    455       0
+#>   LngtClas                 1041       0
+#>   LngtCm                   1052       0
+#>   WingSpread                 70       2
+#>   WingSpread,DoorSpread       0       6
 ```
 
 #### Acting on the results
@@ -808,7 +861,7 @@ with(report, table(var, severity))
 ## Remove only the rule-based failures; percentile flags are kept
 cleaned <- check_outliers(surv, action = "remove", verbose = FALSE)
 nrow(cleaned[["HH"]])
-#> [1] 3792
+#> [1] 12646
 ```
 
 `remove_extremes = TRUE` additionally removes the percentile-flagged
@@ -827,7 +880,7 @@ sa_check <- check_outliers(surv, vars = c("HaulDur", "Distance", "GroundSpeed",
                            pct = TRUE, pct_probs = c(0.005, 0.995),
                            verbose = FALSE)
 nrow(attr(sa_check, "outlier_report"))
-#> [1] 131
+#> [1] 260
 ```
 
 A threshold of your own is usually easier to apply to the report than to
@@ -848,12 +901,14 @@ subset(report, var == "HaulDur")[c("value", "method", "thr_lo", "thr_hi")][1:5, 
 ## Your own threshold: hauls shorter than 15 minutes
 short_ids <- unique(report$haul.id[report$var == "HaulDur" &
                                    as.numeric(report$value) < 15])
+#> Warning in unique(report$haul.id[report$var == "HaulDur" &
+#> as.numeric(report$value) < : NAs introduced by coercion
 length(short_ids)
-#> [1] 39
+#> [1] 69
 
 ## Drop them if you decide they are unusable
 nrow(subset(surv, !haul.id %in% short_ids)[["HH"]])
-#> [1] 3797
+#> [1] 12656
 ```
 
 ### `check_lengths()`
@@ -867,12 +922,12 @@ bundled `species_info` table.
 plaice <- subset(surv, Valid_Aphia == 127137)
 plaice <- check_lengths(plaice)
 #> [1] "Length statistics:"
-#>          min  mean median maxObs maxEmp  perc
-#> 99.9999%   2 14.79   14.5     59   82.6 59.37
+#>          min  mean median maxObs maxEmp perc
+#> 99.9999%   1 15.62   15.5     50   82.6 50.5
 #> [1] "Observations above:"
 #>         maxLEmp percL
-#> Numbers       0 1e+00
-#> Percent       0 8e-04
+#> Numbers       0     0
+#> Percent       0     0
 ```
 
 ![](data-processing-and-qc_files/figure-html/unnamed-chunk-27-1.png)
@@ -880,12 +935,12 @@ plaice <- check_lengths(plaice)
 ``` r
 
 attr(plaice, "length_check")$lPars
-#>          min     mean median maxObs maxEmp     perc
-#> 99.9999%   2 14.78736   14.5     59   82.6 59.37062
+#>          min     mean median maxObs maxEmp perc
+#> 99.9999%   1 15.62306   15.5     50   82.6 50.5
 attr(plaice, "length_check")$nAbove
-#>         maxLEmp        percL
-#> Numbers       0 1.0000000000
-#> Percent       0 0.0007728991
+#>         maxLEmp percL
+#> Numbers       0     0
+#> Percent       0     0
 ```
 
 `maxEmp` is the published maximum length for the species (from
@@ -906,13 +961,13 @@ Fits a log-log length-weight relationship to the individual weights in
 plaice <- add_numbers_at_length(plaice)
 plaice <- check_weights(plaice)
 #> [1] "Length statistics:"
-#>    min mean median  max
-#> 1 10.1 17.7   17.5 30.4
+#>   min  mean median  max
+#> 1 8.4 18.22   18.2 31.6
 #> [1] "Weight statistics:"
-#>   min mean median max
-#> 1   7 46.3     38 230
+#>   min  mean median max
+#> 1   4 52.16     42 245
 #> [1] "Estimated LW parameters:"
-#> [1] "a = 0.005 b = 3.109"
+#> [1] "a = 0.005 b = 3.113"
 #> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.004 b = 3.245"
 ```
@@ -924,7 +979,7 @@ plaice <- check_weights(plaice)
 rbind(fitted = attr(plaice, "weight_check")$parEst,
       lookup = attr(plaice, "weight_check")$parEmp)
 #>                  a        b
-#> fitted 0.005151637 3.108955
+#> fitted 0.005179724 3.112856
 #> lookup 0.003900000 3.244550
 ```
 
@@ -937,18 +992,18 @@ fitting:
 
 plaice2 <- check_weights(plaice, max_length = 60, max_weight = 5000)
 #> [1] "Length statistics:"
-#>    min mean median  max
-#> 1 10.1 17.7   17.5 30.4
+#>   min  mean median  max
+#> 1 8.4 18.22   18.2 31.6
 #> [1] "Weight statistics:"
-#>   min mean median max
-#> 1   7 46.3     38 230
+#>   min  mean median max
+#> 1   4 52.16     42 245
 #> [1] "Estimated LW parameters:"
-#> [1] "a = 0.005 b = 3.109"
+#> [1] "a = 0.005 b = 3.113"
 #> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.004 b = 3.245"
 attr(plaice2, "weight_check")$parEst
 #>             a        b
-#> 1 0.005151637 3.108955
+#> 1 0.005179724 3.112856
 ```
 
 ### `add_swept_area()`
@@ -961,27 +1016,27 @@ function reports what it had to invent.
 surv_sa <- add_swept_area(surv, full_report = TRUE)
 #> Swept-area missingness and imputation by survey and gear:
 #>   survey  gear n_records n_imputed prop_imputed n_NA prop_NA na_DoorSpread
-#>     BITS   TVL       751       423        0.563    0       0           410
-#>     BITS   TVS       513         0        0.000  513       1            65
-#>      BTS  BT4A       197         5        0.025    0       0           197
-#>      BTS BT4AI       198         0        0.000    0       0           198
-#>      BTS  BT4P       164         0        0.000    0       0           164
-#>      BTS  BT4S       165         0        0.000    0       0           165
-#>      BTS   BT7        78         0        0.000    0       0            78
-#>      BTS   BT8       266         0        0.000    0       0           266
-#>    EVHOE   GOV       262         0        0.000    0       0             0
-#>  NS-IBTS   GOV      1242       274        0.221    0       0             5
+#>     BITS   TVL      2105      1538        0.731    0   0.000           893
+#>     BITS   TVS      1441      1419        0.985    0   0.000           199
+#>      BTS  BT4A       693         0        0.000    0   0.000           693
+#>      BTS BT4AI       561         0        0.000    0   0.000           561
+#>      BTS  BT4P       729         0        0.000    0   0.000           729
+#>      BTS  BT4S       836         0        0.000    0   0.000           836
+#>      BTS   BT7       378         1        0.003    0   0.000           378
+#>      BTS   BT8       895         0        0.000   12   0.013           895
+#>    EVHOE   GOV       790        24        0.030    0   0.000            53
+#>  NS-IBTS   GOV      4297      1612        0.375    0   0.000           101
 #>  na_WingSpread na_Distance na_HaulDur na_GroundSpeed
-#>            420          92          0             40
-#>            513           0          0              0
-#>            197           0          0              7
-#>            198           0          0              0
-#>            164           0          0              0
-#>            165           0          0              0
-#>             78           0          0              0
-#>            266           0          0            266
-#>              0           0          0            262
-#>            272           2          0            214
+#>           1535         475          0            298
+#>           1419         210          0             76
+#>            693           0          0            226
+#>            561           0          0              0
+#>            729           0          0              0
+#>            836           0          0            108
+#>            378           0          0              0
+#>            895          12          0            895
+#>             15           0          0            487
+#>           1577          17          0            336
 ```
 
 The summary is attached as an attribute and also gives a per-haul flag:
@@ -990,23 +1045,23 @@ The summary is attached as an attribute and also gives a per-haul flag:
 
 head(attr(surv_sa, "swept_area_summary"))
 #>   survey  gear n_records n_imputed prop_imputed n_NA prop_NA na_DoorSpread
-#> 1   BITS   TVL       751       423        0.563    0       0           410
-#> 2   BITS   TVS       513         0        0.000  513       1            65
-#> 3    BTS  BT4A       197         5        0.025    0       0           197
-#> 4    BTS BT4AI       198         0        0.000    0       0           198
-#> 5    BTS  BT4P       164         0        0.000    0       0           164
-#> 6    BTS  BT4S       165         0        0.000    0       0           165
+#> 1   BITS   TVL      2105      1538        0.731    0       0           893
+#> 2   BITS   TVS      1441      1419        0.985    0       0           199
+#> 3    BTS  BT4A       693         0        0.000    0       0           693
+#> 4    BTS BT4AI       561         0        0.000    0       0           561
+#> 5    BTS  BT4P       729         0        0.000    0       0           729
+#> 6    BTS  BT4S       836         0        0.000    0       0           836
 #>   na_WingSpread na_Distance na_HaulDur na_GroundSpeed
-#> 1           420          92          0             40
-#> 2           513           0          0              0
-#> 3           197           0          0              7
-#> 4           198           0          0              0
-#> 5           164           0          0              0
-#> 6           165           0          0              0
+#> 1          1535         475          0            298
+#> 2          1419         210          0             76
+#> 3           693           0          0            226
+#> 4           561           0          0              0
+#> 5           729           0          0              0
+#> 6           836           0          0            108
 
 ## Share of hauls whose spread or distance was imputed
 mean(surv_sa[["HH"]]$SweptArea_imputed)
-#> [1] 0.1830031
+#> [1] 0.3610216
 ```
 
 Read the table by survey and gear rather than in aggregate. A gear with
@@ -1038,29 +1093,33 @@ attributes automatically:
 summary(surv)
 #> Object of class 'datras_raw'
 #> ===========================
-#> Number of hauls: 3836 
+#> Number of hauls: 12725 
 #> Number of species: 5 
 #> Number of surveys: 4 [BITS, BTS, EVHOE, NS-IBTS]
 #> Number of gears: 9 
-#> Number of countries: 12 
-#> Years: 2022 - 2023 
-#> Quarters: 1 3 4 
-#> Longitude range: -10.96 - 21.43 deg
-#> Latitude range: 43.69 - 61.59 deg
-#> Depth range: 5 - 499 m
-#> Haul duration: 0 - 43 minutes
-#> Valid hauls: 3744 (92 invalid)
-#> Hauls with catch: 1669 (zero catch: 2167)
-#> Outlier check: 604 flagged haul(s) -- see summary() for details.
-#> Extraction: 14 source(s), extracted 2026-09-15, ICES calculation 2023-03-22 to 2026-06-25
+#> Number of countries: 14 
+#> Years: 2015 - 2020 
+#> Quarters: 1 2 3 4 
+#> Longitude range: -11.28 - 22.2 deg
+#> Latitude range: 43.69 - 61.75 deg
+#> Depth range: 5 - 518 m
+#> Haul duration: 0 - 1470 minutes
+#> Valid hauls: 12506 (219 invalid)
+#> Hauls with catch: 6109 (zero catch: 6616)
+#> Outlier check: 1632 flagged haul(s) -- see summary() for details.
+#> Extraction: 43 source(s), extracted 2026-09-15, ICES calculation 2016-04-16 to 2026-06-25
 #> Number of hauls by year and quarter:
 #>       Quarter
-#> Year     1   3   4
-#>   2022 700 650 430
-#>   2023 840 777 439
+#> Year     1   2   3   4
+#>   2015 930   7 815 386
+#>   2016 933   0 840 445
+#>   2017 958   0 769 326
+#>   2018 922   0 807 446
+#>   2019 921   0 794 432
+#>   2020 811   0 729 454
 #> Haul duration:
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>    0.00   30.00   30.00   27.57   30.00   43.00 
+#>    0.00   30.00   30.00   28.48   30.00 1470.00 
 #> Species:
 #>   Amblyraja radiata (AphiaID 105865)
 #>   Trisopterus esmarkii (AphiaID 126444)
@@ -1069,35 +1128,37 @@ summary(surv)
 #>   Lepidorhombus whiffiagonis (AphiaID 127146) 
 #> ---
 #> Outlier report:
-#>   Flagged hauls: 604 (44 rule-based, 565 percentile-based)
-#>  table         var severity   n
-#>     CA         Age  extreme  27
-#>     HH       Depth  extreme  84
-#>     HH  DoorSpread  extreme  56
-#>     HH     HaulDur  extreme  45
-#>     CA      IndWgt  extreme 149
-#>     CA    LngtClas  extreme 337
-#>     HL      LngtCm  extreme 382
-#>     HH  WingSpread  extreme  37
-#>     HH  DoorSpread  invalid   1
-#>     HH GroundSpeed  invalid  10
-#>     HH     HaulDur  invalid  33
+#>   Flagged hauls: 1632 (79 rule-based, 1572 percentile-based)
+#>  table                   var severity    n
+#>     CA                   Age  extreme  115
+#>     HH                 Depth  extreme  246
+#>     HH            DoorSpread  extreme  139
+#>     HH               HaulDur  extreme  117
+#>     CA                IndWgt  extreme  455
+#>     CA              LngtClas  extreme 1041
+#>     HL                LngtCm  extreme 1052
+#>     HH            WingSpread  extreme   70
+#>     HH            DoorSpread  invalid    7
+#>     HH           GroundSpeed  invalid   17
+#>     HH               HaulDur  invalid   54
+#>     HH            WingSpread  invalid    2
+#>     HH WingSpread,DoorSpread  invalid    6
 #> ---
 #> Extraction:
-#>   survey year quarter date_of_calculation           extracted source
-#>     BITS 2022       1          2024-08-14 2026-09-15 10:47:57    api
-#>     BITS 2022       4          2024-08-06 2026-09-15 10:47:57    api
-#>     BITS 2023       1          2025-01-18 2026-09-15 10:48:23    api
-#>     BITS 2023       4          2024-03-26 2026-09-15 10:48:23    api
-#>      BTS 2022       1          2023-12-07 2026-09-15 10:47:06    api
-#>      BTS 2022       3          2023-03-22 2026-09-15 10:47:06    api
-#>      BTS 2023       1          2024-03-01 2026-09-15 10:47:21    api
-#>      BTS 2023       3          2025-02-12 2026-09-15 10:47:21    api
-#>    EVHOE 2022       4          2023-04-25 2026-09-15 10:47:42    api
-#>    EVHOE 2023       4          2024-05-07 2026-09-15 10:47:48    api
-#>  NS-IBTS 2022       1          2026-06-25 2026-09-15 10:45:54    api
-#>  NS-IBTS 2022       3          2025-04-04 2026-09-15 10:45:54    api
-#>   ... and 2 further source(s); see extraction() for the full record.
+#>  survey year quarter date_of_calculation           extracted source
+#>    BITS 2015       1          2020-04-08 2026-09-15 12:38:52    api
+#>    BITS 2015       4          2026-03-17 2026-09-15 12:38:52    api
+#>    BITS 2016       1          2024-08-09 2026-09-15 12:39:08    api
+#>    BITS 2016       4          2024-08-14 2026-09-15 12:39:08    api
+#>    BITS 2017       1          2024-08-14 2026-09-15 12:39:27    api
+#>    BITS 2017       4          2024-08-15 2026-09-15 12:39:27    api
+#>    BITS 2018       1          2021-04-28 2026-09-15 12:39:46    api
+#>    BITS 2018       4          2026-03-17 2026-09-15 12:39:46    api
+#>    BITS 2019       1          2024-08-15 2026-09-15 12:40:04    api
+#>    BITS 2019       4          2022-04-27 2026-09-15 12:40:04    api
+#>    BITS 2020       1          2022-04-07 2026-09-15 12:40:20    api
+#>    BITS 2020       4          2024-07-12 2026-09-15 12:40:20    api
+#>   ... and 31 further source(s); see extraction() for the full record.
 ```
 
 Things worth reading off this output: whether any year is missing from
@@ -1175,17 +1236,17 @@ identification artefact rather than ecology.
 ``` r
 
 surv_area <- add_ices_areas(surv)
-#> Matched 3836 of 3836 hauls to ICES areas.
+#> Matched 12700 of 12725 hauls to ICES areas (25 unmatched -> NA)
 
 ## Adds Area_Full, Area_27 and Ecoregion to HH
 head(sort(table(surv_area[["HH"]]$Area_27), decreasing = TRUE))
 #> 
-#>    4.b    4.a 3.d.25    4.c 3.d.26    7.e 
-#>    813    413    308    232    221    212
+#>    4.b    4.a 3.d.25    7.e    4.c 3.d.24 
+#>   2826   1488   1018    803    776    611
 
 ## Hauls that could not be attributed
 sum(is.na(surv_area[["HH"]]$Area_27))
-#> [1] 414
+#> [1] 1244
 ```
 
 The function reports how many hauls it matched. Hauls that cannot be
@@ -1223,20 +1284,49 @@ came from:
 
 extraction(mini)[c("survey", "year", "quarter", "date_of_calculation")]
 #>     survey year quarter date_of_calculation
-#> 1     BITS 2022       1          2024-08-14
-#> 2     BITS 2022       4          2024-08-06
-#> 3     BITS 2023       1          2025-01-18
-#> 4     BITS 2023       4          2024-03-26
-#> 5      BTS 2022       1          2023-12-07
-#> 6      BTS 2022       3          2023-03-22
-#> 7      BTS 2023       1          2024-03-01
-#> 8      BTS 2023       3          2025-02-12
-#> 9    EVHOE 2022       4          2023-04-25
-#> 10   EVHOE 2023       4          2024-05-07
-#> 11 NS-IBTS 2022       1          2026-06-25
-#> 12 NS-IBTS 2022       3          2025-04-04
-#> 13 NS-IBTS 2023       1          2026-06-25
-#> 14 NS-IBTS 2023       3          2024-04-09
+#> 1     BITS 2015       1          2020-04-08
+#> 2     BITS 2015       4          2026-03-17
+#> 3     BITS 2016       1          2024-08-09
+#> 4     BITS 2016       4          2024-08-14
+#> 5     BITS 2017       1          2024-08-14
+#> 6     BITS 2017       4          2024-08-15
+#> 7     BITS 2018       1          2021-04-28
+#> 8     BITS 2018       4          2026-03-17
+#> 9     BITS 2019       1          2024-08-15
+#> 10    BITS 2019       4          2022-04-27
+#> 11    BITS 2020       1          2022-04-07
+#> 12    BITS 2020       4          2024-07-12
+#> 13     BTS 2015       1          2020-05-25
+#> 14     BTS 2015       3          2022-04-11
+#> 15     BTS 2016       1          2020-05-25
+#> 16     BTS 2016       3          2022-04-11
+#> 17     BTS 2017       1          2020-05-25
+#> 18     BTS 2017       3          2022-04-11
+#> 19     BTS 2018       1          2020-05-25
+#> 20     BTS 2018       3          2021-12-09
+#> 21     BTS 2019       1          2020-05-25
+#> 22     BTS 2019       3          2021-12-09
+#> 23     BTS 2020       1          2021-03-04
+#> 24     BTS 2020       3          2021-12-09
+#> 25   EVHOE 2015       4          2016-04-16
+#> 26   EVHOE 2016       4          2018-05-07
+#> 27   EVHOE 2017       4          2018-04-23
+#> 28   EVHOE 2018       4          2019-03-05
+#> 29   EVHOE 2019       4          2020-02-19
+#> 30   EVHOE 2020       4          2021-02-22
+#> 31 NS-IBTS 2015       1          2026-06-25
+#> 32 NS-IBTS 2015       2          2019-03-07
+#> 33 NS-IBTS 2015       3          2017-03-16
+#> 34 NS-IBTS 2016       1          2026-06-25
+#> 35 NS-IBTS 2016       3          2023-03-22
+#> 36 NS-IBTS 2017       1          2026-06-25
+#> 37 NS-IBTS 2017       3          2021-10-29
+#> 38 NS-IBTS 2018       1          2026-06-25
+#> 39 NS-IBTS 2018       3          2022-01-25
+#> 40 NS-IBTS 2019       1          2026-06-25
+#> 41 NS-IBTS 2019       3          2022-01-25
+#> 42 NS-IBTS 2020       1          2026-06-25
+#> 43 NS-IBTS 2020       3          2022-04-08
 ```
 
 The bundled `mini` data set was created long before this information was
@@ -1245,9 +1335,10 @@ and calculation date are reconstructed from the data themselves whenever
 no explicit record is available. The same is true of any archive
 downloaded with an earlier version of the package.
 
-Reading this table is already informative. Above, NS-IBTS 2022 quarter 3
-was last recalculated well after the other blocks, so results using it
-may differ from an analysis run before that date.
+Reading this table is already informative. Above, NS-IBTS quarter 1 was
+recalculated for all six years on 2026-06-25, long after most other
+blocks, so results using it may differ from an analysis run before that
+date.
 
 ### What else is recorded
 
@@ -1270,7 +1361,7 @@ can always be traced back to the extraction it came from:
 
 nrow(extraction(check_outliers(clean_datras(mini, verbose = FALSE),
                                action = "remove", verbose = FALSE)))
-#> [1] 14
+#> [1] 43
 ```
 
 It is also reconciled with the data actually present, so subsetting
@@ -1278,11 +1369,11 @@ narrows it rather than leaving stale entries behind:
 
 ``` r
 
-extraction(subset(mini, Year == 2023 & Quarter == 1))[1:4]
+extraction(subset(mini, Year == 2020 & Quarter == 1))[1:4]
 #>    survey year quarter date_of_calculation
-#> 1    BITS 2023       1          2025-01-18
-#> 2     BTS 2023       1          2024-03-01
-#> 3 NS-IBTS 2023       1          2026-06-25
+#> 1    BITS 2020       1          2022-04-07
+#> 2     BTS 2020       1          2021-03-04
+#> 3 NS-IBTS 2020       1          2026-06-25
 ```
 
 `survey` and `extracted` are exactly the two fields the ICES citation
@@ -1411,8 +1502,12 @@ create step changes in catchability that look like population signal.
 with(surv[["HH"]], table(Year, Gear))
 #>       Gear
 #> Year   TVL TVS BT4A BT4AI BT4P BT4S BT7 BT8 GOV
-#>   2022 374 263   56    90   66   66  15 140 710
-#>   2023 377 250  141   108   98   99  63 126 794
+#>   2015 294 227   80   108  135  191  63 155 885
+#>   2016 338 249   79   107  137  188  63 159 898
+#>   2017 382 244  134   102  128  128  63 133 739
+#>   2018 376 241  134   104  116  116  63 157 868
+#>   2019 358 230  134   108  132  132  63 144 846
+#>   2020 357 250  132    32   81   81  63 147 851
 ```
 
 **Species validity codes.** `SpecVal` in `HL` marks how a species record
@@ -1425,8 +1520,8 @@ or unusable records.
 
 table(mini[["HL"]]$SpecVal, useNA = "ifany")
 #> 
-#>     0     1     4     7 
-#>   180 23765    55     4
+#>     0     1     4     6     7 
+#>   383 84170     3     1     1
 ```
 
 **Mixed reporting conventions.** Check `DataType` per survey and year,
@@ -1441,8 +1536,12 @@ years.
 with(surv[["HH"]], table(Year, DayNight))
 #>       DayNight
 #> Year      D    N
-#>   2022 1689   91
-#>   2023 2032   24
+#>   2015 2048   90
+#>   2016 2137   81
+#>   2017 1910  143
+#>   2018 2024  151
+#>   2019 1996  151
+#>   2020 1947   47
 ```
 
 **Seasonal drift.** A survey nominally in quarter 1 may drift by several
@@ -1452,11 +1551,23 @@ weeks over a time series; `timeOfYear` makes that visible.
 
 tapply(surv[["HH"]]$timeOfYear, surv[["HH"]]$Year, function(z)
   round(range(z, na.rm = TRUE), 3))
-#> $`2022`
-#> [1] 0.047 0.969
+#> $`2015`
+#> [1] 0.033 0.958
 #> 
-#> $`2023`
-#> [1] 0.058 0.961
+#> $`2016`
+#> [1] 0.033 0.944
+#> 
+#> $`2017`
+#> [1] 0.049 0.961
+#> 
+#> $`2018`
+#> [1] 0.038 0.966
+#> 
+#> $`2019`
+#> [1] 0.008 0.961
+#> 
+#> $`2020`
+#> [1] 0.025 0.958
 ```
 
 **Depth against bathymetry.** Recorded depth can be cross-checked
@@ -1546,7 +1657,7 @@ code or from the data.
 | Stage | Automatic steps | Under your control |
 |----|----|----|
 | Download | code renaming, `-9` to `NA`, strict haul matching, exchange archiving | `surveys`, `years`, `download_hl`, `download_ca`, `include_flagged`, `overwrite`, `timeout` |
-| Read | corrupt-file check, small-file exclusion, duplicate haul removal, type-safe combining | `strict`, `min_file_size`, `prune`, `drop_hl`, `drop_ca`, `surveys`, `years`, `ncores` |
+| Read | corrupt-file check, empty-file exclusion, duplicate haul removal, type-safe combining | `strict`, `min_file_size`, `prune`, `drop_hl`, `drop_ca`, `surveys`, `years`, `ncores` |
 | Derived variables | `haul.id`, `LngtCm`, `Species`, `Count`, `lon`/`lat`, `abstime`, `Roundfish`, zero-catch treatment | length binning via `cm_breaks` / `by` |
 | Cleaning | `HaulVal` and `StdSpecRecCode` filters | `verbose`, `explain_codes`, `impute_missing_depth`, `correct_species`, `aphias`, `years`, `quarters`, `gears`, `do_fishglob` |
 | Checks | none by default | [`check_outliers()`](https://tokami.github.io/DATRASextra/reference/check_outliers.md) (`strict`, `pct`, `pct_*`, `vars`, `action`, `remove_extremes`), [`check_lengths()`](https://tokami.github.io/DATRASextra/reference/check_lengths.md), [`check_weights()`](https://tokami.github.io/DATRASextra/reference/check_weights.md), [`add_swept_area()`](https://tokami.github.io/DATRASextra/reference/add_swept_area.md) |

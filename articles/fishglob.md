@@ -39,7 +39,7 @@ For illustration, this vignette uses `mini`.
 
 ``` r
 
-data("mini_fishglob", package = "DATRASextra")
+data("mini", package = "DATRASextra")
 ```
 
 an example dataset containing 6 species across 4 surveys (BITS, BTS,
@@ -70,7 +70,7 @@ library(dplyr)
 
 ``` r
 
-data(mini_fishglob)
+data(mini)
 ```
 
 ## Clean the dataset
@@ -89,7 +89,7 @@ This step ensures:
 
 ``` r
 
-dat <- clean_fishglob(mini_fishglob)
+dat <- clean_fishglob(mini)
 ```
 
 ## Reduce dataset size
@@ -147,12 +147,12 @@ datras <- as_fishglob(dat)
 
 head(datras)
 #>     survey      source timestamp                          haul_id
-#> 2     BITS DATRAS ICES   2026-09  BITS:2015:1:DE:06SL:TVS:22004:7
-#> 4     BITS DATRAS ICES   2026-09  BITS:2015:1:DE:06SL:TVS:22007:8
-#> 44    BITS DATRAS ICES   2026-09 BITS:2015:1:DE:06SL:TVS:24212:15
-#> 110   BITS DATRAS ICES   2026-09      BITS:2015:1:DK:26HI:TVS:1:1
-#> 111   BITS DATRAS ICES   2026-09    BITS:2015:1:DK:26HI:TVS:10:10
-#> 112   BITS DATRAS ICES   2026-09    BITS:2015:1:DK:26HI:TVS:10:10
+#> 2     BITS DATRAS ICES   2026-10  BITS:2015:1:DE:06SL:TVS:22004:7
+#> 4     BITS DATRAS ICES   2026-10  BITS:2015:1:DE:06SL:TVS:22007:8
+#> 44    BITS DATRAS ICES   2026-10 BITS:2015:1:DE:06SL:TVS:24212:15
+#> 110   BITS DATRAS ICES   2026-10      BITS:2015:1:DK:26HI:TVS:1:1
+#> 111   BITS DATRAS ICES   2026-10    BITS:2015:1:DK:26HI:TVS:10:10
+#> 112   BITS DATRAS ICES   2026-10    BITS:2015:1:DK:26HI:TVS:10:10
 #>             country sub_area continent stat_rec station stratum year month day
 #> 2   multi-countries     <NA>    europe     37G0    <NA>    <NA> 2015     2  25
 #> 4   multi-countries     <NA>    europe     37G1    <NA>    <NA> 2015     2  26

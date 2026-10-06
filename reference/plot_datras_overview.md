@@ -44,6 +44,7 @@ plot_datras_overview(
   legend_cex = NULL,
   grid_group_strategy = c("dominant", "mixed", "error"),
   main = NULL,
+  subset = NULL,
   years = NULL,
   asp = "auto",
   add = FALSE
@@ -213,6 +214,21 @@ plot_datras_overview(
 - main:
 
   Optional title for single-panel mode.
+
+- subset:
+
+  Optional filter applied to the haul table before anything is plotted,
+  given as an unquoted expression evaluated within the data (as in
+  [`base::subset()`](https://rdrr.io/r/base/subset.html)), e.g.
+  `subset = Survey %in% c("DYFS", "SNS")` or
+  `subset = Survey == "BITS" & Quarter == 4`. Any column of the haul
+  table can be used, including `lon`/`lat` and, with the default
+  `x = NULL`, the columns of
+  [`DATRASextra::survey_info_full_raw`](https://tokami.github.io/DATRASextra/reference/survey_info_full_raw.md)
+  (`Survey`, `Year`, `Quarter`, `Gear`, `StatRec`). A single character
+  string such as `"Survey %in% c('DYFS', 'SNS')"` or a pre-computed
+  logical vector are also accepted, which is useful when the filter is
+  built programmatically. `NA` results are treated as `FALSE`.
 
 - years:
 

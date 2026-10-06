@@ -17,6 +17,8 @@
 <url><loc>https://tokami.github.io/DATRASextra/index.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/news/index.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/DATRASextra-package.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/add_bathymetry.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/add_grid_support.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/add_ices_areas.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/add_numbers_at_length.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/add_species_info.html</loc></url>
@@ -27,9 +29,11 @@
 <url><loc>https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul_fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/add_weight_at_length.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/add_xy.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/as_fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/as_long_format.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/as_table.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/as_tibble.datras_raw.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/as_wide_format.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/calc_spatial_indicators.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/calc_stratified_index.html</loc></url>
@@ -54,7 +58,6 @@
 <url><loc>https://tokami.github.io/DATRASextra/reference/list_surveys.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/make_survey_grid.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/mini.html</loc></url>
-<url><loc>https://tokami.github.io/DATRASextra/reference/mini_fishglob.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/plot_datras_overview.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/plot_length_distribution.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/plot_spatial_indicators.html</loc></url>
@@ -67,6 +70,7 @@
 <url><loc>https://tokami.github.io/DATRASextra/reference/reference_tables.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/spawning_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/species_info.html</loc></url>
+<url><loc>https://tokami.github.io/DATRASextra/reference/suggest_length_cuts.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/survey_info.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/survey_info_full_raw.html</loc></url>
 <url><loc>https://tokami.github.io/DATRASextra/reference/verify_extraction.html</loc></url>

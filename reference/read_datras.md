@@ -12,7 +12,7 @@ read_datras(
   surveys = NULL,
   years = NULL,
   recursive = TRUE,
-  min_file_size = 10000,
+  min_file_size = 0,
   prune = FALSE,
   drop_hl = FALSE,
   drop_ca = FALSE,
@@ -51,9 +51,9 @@ read_datras(
 
 - min_file_size:
 
-  Minimum file size in bytes. Files smaller than this threshold are
-  excluded because they are likely incomplete or invalid and may cause
-  errors when being read. Defaults to `1e4`.
+  Minimum file size in bytes. Files of this size or smaller are skipped
+  and reported. Defaults to `0`, which skips only empty files; raise it
+  to exclude small archives without trying to read them.
 
 - prune:
 
@@ -112,13 +112,8 @@ The function can read:
 
 - optionally only files matching selected years.
 
-Small zip files can be excluded using `min_file_size`, as unusually
-small files are often incomplete or corrupted and may fail in the
-underlying DATRAS reader functions.
-
-DATRAS zip archives are typically much larger than a few kilobytes, so
-very small files are often suspicious and may represent failed downloads
-or damaged archives.
+Empty zip files are skipped. A file that cannot be read is skipped with
+a message giving the reason, and the remaining files are still read.
 
 Reading a large number of DATRAS files into R can require substantial
 memory, especially when combining multiple surveys or many years. The
@@ -163,6 +158,12 @@ delivered by ICES, so it is redone every time an archive is read.
 [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
 therefore takes the same `strict` argument and passes it on when it
 returns the downloaded data.
+
+Empty fields in the exchange files are returned as `NA`, like the `-9`
+code for missing values, rather than as an empty string or an empty
+factor level. `haul.id` is left as built by DATRAS, so a haul without a
+station number keeps an identifier such as
+`"BTS:2022:1:GB:74E9:BT4P::5"`.
 
 ## See also
 

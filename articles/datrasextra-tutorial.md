@@ -110,15 +110,18 @@ list_surveys()
 #> 28   Scottish West Coast Bottom Trawl Survey (up to 2010)
 ```
 
-Or visually with:
+Or visually, as the number of surveys sampling each area:
 
 ``` r
 
-## Plot available DATRAS surveys
-plot_datras_overview(by_survey = TRUE, multi_panels = TRUE)
+## Plot where DATRAS surveys sample
+plot_datras_overview(mode = "grid", metric = "count_surveys")
 ```
 
 ![](datrasextra-tutorial_files/figure-html/unnamed-chunk-4-1.png)
+
+`plot_datras_overview(by_survey = TRUE, multi_panels = TRUE)` shows one
+map per survey instead.
 
 The
 [`download_datras()`](https://tokami.github.io/DATRASextra/reference/download_datras.md)
@@ -270,12 +273,12 @@ head(attr(surv, "outlier_hauls"))
 For the example data set used here, no clearly invalid values were
 detected, so we proceed without further filtering.
 
-A quick overview of the cleaned survey data can be obtained with:
+A quick overview of the cleaned survey data, here the number of hauls
+per grid cell, can be obtained with:
 
 ``` r
 
-plot(surv)
-#> NULL
+plot_datras_overview(surv, mode = "grid", metric = "count_hauls")
 ```
 
 ![](datrasextra-tutorial_files/figure-html/unnamed-chunk-12-1.png)

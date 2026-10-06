@@ -14,7 +14,9 @@ download_datras(
   overwrite = FALSE,
   download_hl = TRUE,
   download_ca = TRUE,
+  method = c("api", "webservice", "php"),
   use_php = FALSE,
+  years_per_request = 10,
   include_flagged = FALSE,
   return_data = TRUE,
   strict = TRUE,
@@ -51,22 +53,34 @@ download_datras(
 - download_hl:
 
   Logical. If `TRUE` (default), length-frequency data are also
-  downloaded where available. This option is only used when
-  `use_php = FALSE`.
+  downloaded where available. This option is not used when
+  `method = "php"`.
 
 - download_ca:
 
   Logical. If `TRUE` (default), age-length keys and age data are also
-  downloaded where available. This option is only used when
-  `use_php = FALSE`.
+  downloaded where available. This option is not used when
+  `method = "php"`.
+
+- method:
+
+  Character string naming the download route: `"api"` (default) for the
+  ICES DATRAS Download API, `"webservice"` for
+  [`DATRAS::getDatrasExchange()`](https://rdrr.io/pkg/DATRAS/man/getDatrasExchange.html),
+  or `"php"` for the legacy
+  [`DATRAS::downloadExchange()`](https://rdrr.io/pkg/DATRAS/man/downloadExchange.html).
+  See Details.
 
 - use_php:
 
-  Logical. If `FALSE` (default), data are downloaded via
-  [`DATRAS::getDatrasExchange()`](https://rdrr.io/pkg/DATRAS/man/getDatrasExchange.html).
-  If `TRUE`, the legacy
-  [`DATRAS::downloadExchange()`](https://rdrr.io/pkg/DATRAS/man/downloadExchange.html)
-  method is used.
+  Logical. Kept for backward compatibility: `use_php = TRUE` is the same
+  as `method = "php"`. Default is `FALSE`.
+
+- years_per_request:
+
+  Integer. With `method = "api"`, the maximum number of years fetched in
+  one request per record type. Larger values mean fewer requests but
+  more memory for large surveys. Default is 10.
 
 - include_flagged:
 
@@ -128,16 +142,31 @@ If `surveys` is `NULL`, all available surveys returned by
 are used. If `years` is `NULL`, all available years for each selected
 survey are downloaded.
 
-By default, data are downloaded using
-[`DATRAS::getDatrasExchange()`](https://rdrr.io/pkg/DATRAS/man/getDatrasExchange.html),
-cleaned to remove extra variables, and written to disk with
+By default (`method = "api"`), data are downloaded from the ICES DATRAS
+Download API, the service behind `icesDatras::getDatrasUnaggregated()`,
+and written to disk with
 [`write_datras()`](https://tokami.github.io/DATRASextra/reference/write_datras.md).
-Alternatively, the legacy PHP-based download route from
+The previous route,
+[`DATRAS::getDatrasExchange()`](https://rdrr.io/pkg/DATRAS/man/getDatrasExchange.html)
+on the DATRAS web service, is available as `method = "webservice"`, and
+the legacy PHP-based route from
 [`DATRAS::downloadExchange()`](https://rdrr.io/pkg/DATRAS/man/downloadExchange.html)
-can be used by setting `use_php = TRUE`.
+as `method = "php"`.
 
 Files are saved as zipped exchange files named `"<survey>_<year>.zip"`
-inside survey-specific subfolders.
+inside survey-specific subfolders, whichever `method` is used.
+
+`method = "api"` is considerably faster than `method = "webservice"`. It
+fetches several years and all quarters in one request per record type
+(`HH`, `HL`, `CA`) and receives a zipped CSV file, where the web service
+needs one XML request per record type, year and quarter plus several
+availability checks. The API delivers the new ICES field names; they are
+mapped back to the exchange names so that the files are the same in
+layout whichever route wrote them. Values are written as delivered by
+ICES, read as text so that codes such as ICES rectangle `"37E9"` are
+kept exactly. Missing values (`-9`) are written as empty fields, as with
+`method = "webservice"`, so that both routes give the same haul
+identifiers.
 
 The following surveys are treated as test surveys and are skipped unless
 `include_flagged = TRUE`: `"Test-DATRAS"` and `"NS-IBTS_UNIFtest"`. The
@@ -162,7 +191,15 @@ afterwards, or pass the memory-reducing arguments of
 [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
 through `...`, for example `prune = TRUE` and `drop_ca = TRUE`.
 
-No manifest entries are written when `use_php = TRUE`, because
+Survey-year-quarters that have hauls but no length data (`HL`) at all
+are listed in a warning. Their hauls would otherwise be read as empty
+hauls with zero catch; DATRAS holds a few such cases, for example test
+entries (see <https://github.com/ices-tools-prod/icesDatras/issues/59>).
+The files are still written as delivered; remove the cases from an
+analysis with `clean_datras(drop_without_hl = TRUE)`. The check needs
+`download_hl = TRUE` and is not made with `method = "php"`.
+
+No manifest entries are written when `method = "php"`, because
 [`DATRAS::downloadExchange()`](https://rdrr.io/pkg/DATRAS/man/downloadExchange.html)
 writes the files through an external script and reports nothing about
 what it retrieved. Run
