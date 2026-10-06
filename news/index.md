@@ -1,6 +1,6 @@
 # Changelog
 
-## DATRASextra 0.5.2
+## DATRASextra 0.6.0
 
 ### New features
 

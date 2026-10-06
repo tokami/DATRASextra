@@ -51,9 +51,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.5.2" id="datrasextra-052">DATRASextra 0.5.2<a class="anchor" aria-label="anchor" href="#datrasextra-052"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.6.0" id="datrasextra-060">DATRASextra 0.6.0<a class="anchor" aria-label="anchor" href="#datrasextra-060"></a></h2>
 <div class="section level3">
-<h3 id="new-features-0-5-2">New features<a class="anchor" aria-label="anchor" href="#new-features-0-5-2"></a></h3>
+<h3 id="new-features-0-6-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-6-0"></a></h3>
 <ul><li>
 <p><code><a href="../reference/download_datras.html">download_datras()</a></code> downloads from the ICES DATRAS Download API by default, the service behind <code>icesDatras::getDatrasUnaggregated()</code>. It fetches several years and all quarters in one request per record type and receives a zipped CSV file, where the DATRAS web service needs one XML request per record type, year and quarter plus availability checks for each year. Downloading and reading EVHOE 2015-2022 took 28 seconds, against 94 seconds through the web service.</p>
 <p>The archive is the same as before: one <code>&lt;survey&gt;_&lt;year&gt;.zip</code> exchange file per year, with the same columns, entries in <code>DATRAS_manifest.csv</code> (with <code>source = "download_api"</code>) and the same haul identifiers. The new field names of the API are mapped back to the exchange names. Read back with <code><a href="../reference/read_datras.html">read_datras()</a></code>, EVHOE 2015-2022 and BTS 2022 gave the same records from both routes.</p>
@@ -88,13 +88,13 @@
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="breaking-changes-0-5-2">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-5-2"></a></h3>
+<h3 id="breaking-changes-0-6-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-6-0"></a></h3>
 <ul><li><p><code><a href="../reference/read_datras.html">read_datras()</a></code> now defaults to <code>min_file_size = 0</code>, so only empty files are skipped; it was <code>1e4</code> bytes. Small archives, such as a survey year with few hauls or a subset written with <code><a href="../reference/write_datras.html">write_datras()</a></code>, were dropped without being read. Files that cannot be read are now skipped with the reason (see Bug fixes), so the size filter is no longer needed to protect the read. Skipped files are reported with <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code>, which <code>verbose = FALSE</code> silences.</p></li>
 <li><p>The two example data sets <code>mini</code> and <code>mini_fishglob</code> are merged into one, <code>mini</code>, which now holds the former <code>mini_fishglob</code>: the same four surveys (NS-IBTS, BITS, BTS, EVHOE) and five species as before, but for 2015-2020 and all quarters instead of 2022-2023 (13,080 hauls instead of 3,939). These years overlap with the public FishGlob data, which the FishGlob article needs. <code>mini_fishglob</code> is removed; use <code>mini</code> instead. Code that relied on the years 2022-2023 in <code>mini</code> needs to use 2015-2020.</p></li>
 <li><p><code><a href="../reference/read_datras.html">read_datras()</a></code> returns empty fields in exchange files as <code>NA</code> instead of an empty string or an empty factor level (<code>""</code>). Archives written by the web service route store missing values as empty fields, so these columns now read the same as from files that use the <code>-9</code> code. <code>haul.id</code> is not changed, so a haul without a station number keeps an identifier such as <code>"BTS:2022:1:GB:74E9:BT4P::5"</code>. Code that tests for <code>""</code> should test with <code><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na()</a></code> instead.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-5-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-5-2"></a></h3>
+<h3 id="bug-fixes-0-6-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-6-0"></a></h3>
 <ul><li>
 <p><code><a href="../reference/read_datras.html">read_datras()</a></code> no longer drops a whole exchange file because of an exact duplicate HH record. Such duplicates (e.g. in NS-IBTS 1991 as served by ICES) made <code><a href="https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html" class="external-link">DATRAS::readICES()</a></code> stop with “Duplicated rows found in HH data”, so the year was skipped with only “Error with: <file>”. Identical HH lines are now removed before reading and reported. When a file still cannot be read, the message gives the reason.</file></p>
 <p>All inputs (a folder with or without <code>surveys</code>/<code>years</code>, or zip files) now go through the same reader, so <code>recursive</code>, <code>min_file_size</code> and the duplicated haul id check apply to all of them, and one unreadable file no longer stops the others from being read.</p>
