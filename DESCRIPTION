@@ -1,5 +1,5 @@
 Package: DATRASextra
-Title: Extra functions for DTU Aquas DATRAS R package
+Title: Download, Process and Analyse ICES DATRAS Trawl Survey Data
 Version: 0.6.0
 Date: 2026-10-06
 Authors@R:
@@ -15,13 +15,18 @@ Authors@R:
            email = "cbe@aqua.dtu.dk",
            role = "aut",
            comment = c(ORCID = "0000-0002-3812-5269")))
-Description: DATRASextra is an R package for working with ICES DATRAS survey
-    data, with tools for downloading, processing, checking, summarising, and
-    visualising bottom-trawl survey data. The package extends the functionality
-    of DATRAS with additional data workflows, quality checks, derived variables
-    and indicators, plotting tools, and analysis-ready outputs. It is intended
-    to support reproducible research, stock assessment, and survey-based
-    analyses in fisheries science.
+Description: Tools to download, read, clean, check, summarise and
+    visualise bottom-trawl survey data from the ICES Database of Trawl Surveys
+    (DATRAS, <https://datras.ices.dk>). Downloads are archived as exchange
+    files with a manifest, so that an extraction can be verified and
+    reproduced, and are read into one object with derived variables such as
+    haul identifiers, lengths in centimetres and raised numbers at length.
+    Further functions add swept area, numbers and weight at length, ICES areas
+    and depth, flag implausible values, compute stratified abundance indices
+    and spatial indicators, build prediction grids for spatial models, and
+    export tidy tables, including the format of the FishGlob database. The
+    reader and the data class are adapted from the 'DATRAS' package by Kasper
+    Kristensen and Casper W. Berg.
 Depends:
     R (>= 4.0),
     DATRAS (>= 1.01.2)
@@ -54,6 +59,7 @@ License: GPL-3
 URL: https://tokami.github.io/DATRASextra/, https://github.com/tokami/DATRASextra
 BugReports: https://github.com/tokami/DATRASextra/issues
 Encoding: UTF-8
+Language: en-GB
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
