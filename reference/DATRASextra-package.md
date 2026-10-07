@@ -10,8 +10,10 @@ Further functions add swept area, numbers and weight at length, ICES
 areas and depth, flag implausible values, compute stratified abundance
 indices and spatial indicators, build prediction grids for spatial
 models, and export tidy tables, including the format of the FishGlob
-database. The reader and the data class are adapted from the 'DATRAS'
-package by Kasper Kristensen and Casper W. Berg.
+database. Downloads use the ICES DATRAS Download API, following the
+approach of the 'icesDatras' package. The reader and the data class are
+adapted from the 'DATRAS' package by Kasper Kristensen and Casper W.
+Berg.
 
 ## See also
 
