@@ -439,8 +439,10 @@ download_datras <- function(path = NULL,
 
 
 ## Download one record type for a survey and a contiguous run of years from the
-## ICES DATRAS Download API, the service behind
-## icesDatras::getDatrasUnaggregated(), and return it with exchange names.
+## ICES DATRAS Download API and return it with exchange names.
+## Follows the approach of icesDatras::getDatrasUnaggregated() (Millar et al.,
+## ICES; GPL >= 2), reimplemented rather than copied: the HH header shift is
+## corrected (see .read_download_api_csv()) and years are requested in chunks.
 ## The CSV is read as text: type guessing would turn ICES rectangles such as
 ## "37E9" into numbers and drop leading zeros, and icesDatras' own typing
 ## truncates the HL numbers at length to integers.

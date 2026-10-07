@@ -190,9 +190,14 @@ downloading, managing, processing, and analysing DATRAS data, with an
 increasing share of functionality implemented directly within the
 package.
 
-An alternative R package for accessing DATRAS data is *icesDatras*,
-which is maintained by ICES and provides a direct interface to the
-DATRAS database.
+The download route through the ICES DATRAS Download API
+(`download_datras(method = "api")`) was modelled on the R package
+*icesDatras* (Millar et al.), which is maintained by ICES and provides a
+direct interface to the DATRAS database. The mapping from the API field names
+to the DATRAS exchange names was built from `icesDatras::getDatrasFieldList()`.
+*DATRASextra* reimplements the download rather than calling *icesDatras*, so
+that every column is read as text and the downloaded files can be archived and
+verified.
 
 For other regions, the
 [*surveyjoin*](https://github.com/DFO-NOAA-Pacific/surveyjoin) package

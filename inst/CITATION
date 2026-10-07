@@ -1,26 +1,23 @@
-year <- 2026
-vers <- meta$Version
-if (is.null(vers)) vers <- "0.4.0"
-
 bibentry(
-  bibtype  = "Article",
-  key      = "DATRASextra",
-  title    = "DATRASextra: An R package for streamlined workflows with ICES DATRAS bottom-trawl survey data",
-  author   = c(
+  bibtype = "Article",
+  key = "DATRASextra",
+  title = "DATRASextra: An R package for streamlined workflows with ICES DATRAS bottom-trawl survey data",
+  author = c(
     person(c("Tobias", "K."), "Mildenberger"),
     person("Federico", "Maioli"),
     person(c("Casper", "W."), "Berg")
   ),
-  journal  = "SoftwareX",
-  year     = year,
-  note     = "Manuscript submitted for publication",
-  url      = "https://github.com/tokami/DATRASextra",
-  header   = "To cite DATRASextra in publications, please use:",
+  journal = "SoftwareX",
+  year = 2026,
+  volume = 36,
+  pages = "103108",
+  doi = "10.1016/j.softx.2026.103108",
+  header = "To cite DATRASextra in publications, please use:",
   textVersion = paste0(
-    "Mildenberger, T. K., Maioli, F., & Berg, C. W. (", year, "). ",
+    "Mildenberger, T. K., Maioli, F., & Berg, C. W. (2026). ",
     "DATRASextra: An R package for streamlined workflows with ICES DATRAS ",
-    "bottom-trawl survey data. SoftwareX. Manuscript submitted for publication. ",
-    "https://github.com/tokami/DATRASextra"
+    "bottom-trawl survey data. SoftwareX, 36, 103108. ",
+    "https://doi.org/10.1016/j.softx.2026.103108"
   )
 )
 
