@@ -47,7 +47,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/tokami/DATRASextra/blob/v0.6.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/tokami/DATRASextra/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -101,6 +101,11 @@
 </li>
 <li><p><code><a href="../reference/read_datras.html">read_datras()</a></code> failed with “must have ‘max’ &gt; ‘min’” when every zip file was smaller than <code>min_file_size</code>. It now stops with an error that names the cause.</p></li>
 <li><p><code><a href="../reference/write_datras.html">write_datras()</a></code> reported “Created zip file” even when no file was written. <code><a href="https://rdrr.io/r/utils/zip.html" class="external-link">utils::zip()</a></code> calls an external <code>zip</code> program, which is often missing on Windows unless Rtools is installed, and then fails with only a warning. The zip archive is now written with the <code>zip</code> package, which needs no external program, and <code><a href="../reference/write_datras.html">write_datras()</a></code> stops with an error if the file does not exist afterwards. This made <code><a href="../reference/download_datras.html">download_datras()</a></code> fail on such machines with errors that did not point to the cause. <code>zip</code> is a new dependency.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-6-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-6-0"></a></h3>
+<ul><li><p><code>citation("DATRASextra")</code> now gives the published article: Mildenberger, T. K., Maioli, F., &amp; Berg, C. W. (2026). DATRASextra: An R package for streamlined workflows with ICES DATRAS bottom-trawl survey data. SoftwareX, 36, 103108. <a href="https://doi.org/10.1016/j.softx.2026.103108" class="external-link uri">https://doi.org/10.1016/j.softx.2026.103108</a>.</p></li>
+<li><p>The download route through the ICES DATRAS Download API now credits the <em>icesDatras</em> package, whose approach it follows, in the README, the package description and the code. <em>icesDatras</em> is added to <code>Suggests</code>.</p></li>
 </ul></div>
 </div>
     <div class="section level2">

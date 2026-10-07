@@ -14,18 +14,18 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/tokami/DATRASextra/blob/v0.6.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/tokami/DATRASextra/blob/main/inst/CITATION)
 
 Mildenberger, T. K., Maioli, F., & Berg, C. W. (2026). DATRASextra: An R
 package for streamlined workflows with ICES DATRAS bottom-trawl survey
-data. SoftwareX. Manuscript submitted for publication.
-https://github.com/tokami/DATRASextra
+data. SoftwareX, 36, 103108. https://doi.org/10.1016/j.softx.2026.103108
 
     @Article{DATRASextra,
       title = {DATRASextra: An R package for streamlined workflows with ICES DATRAS bottom-trawl survey data},
       author = {Tobias K. Mildenberger and Federico Maioli and Casper W. Berg},
       journal = {SoftwareX},
       year = {2026},
-      note = {Manuscript submitted for publication},
-      url = {https://github.com/tokami/DATRASextra},
+      volume = {36},
+      pages = {103108},
+      doi = {10.1016/j.softx.2026.103108},
     }

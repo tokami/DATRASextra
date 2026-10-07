@@ -213,6 +213,19 @@
   fail on such machines with errors that did not point to the cause.
   `zip` is a new dependency.
 
+### Documentation
+
+- `citation("DATRASextra")` now gives the published article:
+  Mildenberger, T. K., Maioli, F., & Berg, C. W. (2026). DATRASextra: An
+  R package for streamlined workflows with ICES DATRAS bottom-trawl
+  survey data. SoftwareX, 36, 103108.
+  <https://doi.org/10.1016/j.softx.2026.103108>.
+
+- The download route through the ICES DATRAS Download API now credits
+  the *icesDatras* package, whose approach it follows, in the README,
+  the package description and the code. *icesDatras* is added to
+  `Suggests`.
+
 ## DATRASextra 0.5.0
 
 ### New features
