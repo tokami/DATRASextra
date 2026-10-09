@@ -396,4 +396,4 @@ usethis::use_data(spread_models, internal = TRUE, overwrite = TRUE,
                   compress = "xz")
 
 ## re-run script to add ices areas to sysdata.rda
-source("make_ices_area_lookup.R")
+source("data-raw/make_ices_area_lookup.R")

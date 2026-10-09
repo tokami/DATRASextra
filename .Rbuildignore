@@ -19,3 +19,4 @@
 ^wget-log$
 ^README\.html$
 ^vignettes/.*-exported\.html$
+^Makefile$
