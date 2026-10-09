@@ -49,9 +49,14 @@ table of the input object.
 
 A linear model of the form
 \deqn{
-  \log(IndWgt) = \alpha + b \log(LngtCm)
+  \log(IndWgt) = \alpha + b \log(L)
 }
-is fitted to the filtered observations, and the corresponding length-weight
+is fitted to the filtered observations, where \eqn{L} is the mid length of
+the measuring class of each record: \code{LngtCm} (the lower limit of the class)
+plus half the class width given by \code{LngtCode} (0.05 cm for \code{"."}, 0.25 cm
+for \code{"0"}, 0.5 cm for \code{"1"}; 1 cm is assumed when \code{LngtCode} is missing).
+This matches the mid lengths of the length bins at which weights are
+predicted. The corresponding length-weight
 parameters are returned as:
 \deqn{
   a = \exp(\alpha)

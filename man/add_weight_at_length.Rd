@@ -77,7 +77,10 @@ e.g. 7.5 cm for the bin \verb{[7,8)}.
 
 When \code{lw_source = "ca"}, a linear model
 \eqn{\log(W) = \alpha + b \log(L)} is fitted to positive individual weights
-in \code{CA}, and the resulting parameters are used.
+in \code{CA}, and the resulting parameters are used. Here \eqn{L} is the mid
+length of the measuring class of each record, i.e. \code{LngtCm} (the lower
+limit of the class) plus half the class width given by \code{LngtCode}, so that
+fitted and predicted lengths are on the same scale.
 
 When \code{lw_source = "lookup"}, parameters \code{a} and \code{b} are taken from the
 built-in \code{species_info} table, matched by \code{Valid_Aphia}.

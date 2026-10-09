@@ -28,9 +28,14 @@
 ##'
 ##' A linear model of the form
 ##' \deqn{
-##'   \log(IndWgt) = \alpha + b \log(LngtCm)
+##'   \log(IndWgt) = \alpha + b \log(L)
 ##' }
-##' is fitted to the filtered observations, and the corresponding length-weight
+##' is fitted to the filtered observations, where \eqn{L} is the mid length of
+##' the measuring class of each record: `LngtCm` (the lower limit of the class)
+##' plus half the class width given by `LngtCode` (0.05 cm for `"."`, 0.25 cm
+##' for `"0"`, 0.5 cm for `"1"`; 1 cm is assumed when `LngtCode` is missing).
+##' This matches the mid lengths of the length bins at which weights are
+##' predicted. The corresponding length-weight
 ##' parameters are returned as:
 ##' \deqn{
 ##'   a = \exp(\alpha)
@@ -102,11 +107,11 @@ check_weights <- function (x,
   print("Weight statistics:")
   print(round(wPars,2))
 
-  m = lm(log(IndWgt) ~ log(LngtCm), data = x1)
+  x1$LngtMid <- .mid_length_cm(x1$LngtCm, x1$LngtCode)
+  m = lm(log(IndWgt) ~ log(LngtMid), data = x1)
   cm_breaks <- attr(x, "cm.breaks")
   mid_lengths <- cm_breaks[-length(cm_breaks)] + diff(cm_breaks) / 2
-  tmp <- x[["CA"]][1:length(mid_lengths), ]
-  tmp$LngtCm <- mid_lengths
+  tmp <- data.frame(LngtMid = mid_lengths)
   tmp$Wgt = exp(predict(m, newdata = tmp))
 
   if(plot) {
@@ -116,9 +121,9 @@ check_weights <- function (x,
     layout(matrix(c(2,0,1,3), 2, 2, byrow = TRUE),
            widths = c(4,1), heights = c(1,4), respect = TRUE)
     par(mar = c(5, 4, 0.25, 0.25))
-    plot(x1$LngtCm, x1$IndWgt,
+    plot(x1$LngtMid, x1$IndWgt,
          xlab = "Length [cm]", ylab = "Weight [g]")
-    lines(tmp$LngtCm, tmp$Wgt, lwd = 3, col = 4)
+    lines(tmp$LngtMid, tmp$Wgt, lwd = 3, col = 4)
     box(lwd = 1.5)
     par(mar = c(0.25, 4, 1, 0.25))
     xhist <- hist(x1$LngtCm, breaks = 30, plot = FALSE)
@@ -221,7 +226,10 @@ check_weights <- function (x,
 ##'
 ##' When `lw_source = "ca"`, a linear model
 ##' \eqn{\log(W) = \alpha + b \log(L)} is fitted to positive individual weights
-##' in `CA`, and the resulting parameters are used.
+##' in `CA`, and the resulting parameters are used. Here \eqn{L} is the mid
+##' length of the measuring class of each record, i.e. `LngtCm` (the lower
+##' limit of the class) plus half the class width given by `LngtCode`, so that
+##' fitted and predicted lengths are on the same scale.
 ##'
 ##' When `lw_source = "lookup"`, parameters `a` and `b` are taken from the
 ##' built-in `species_info` table, matched by `Valid_Aphia`.
@@ -685,6 +693,7 @@ add_total_weight_by_haul <- function(x,
     return(NULL)
   }
 
+  x1$LngtCm <- .mid_length_cm(x1$LngtCm, x1$LngtCode)
   m <- lm(log(IndWgt) ~ log(LngtCm), data = x1)
   cm_breaks <- attr(x, "cm.breaks")
   nl <- length(cm_breaks)

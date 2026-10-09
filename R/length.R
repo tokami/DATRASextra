@@ -469,8 +469,7 @@ suggest_length_cuts <- function(x, n_groups) {
 ##' @export
 get_accuracy_cm <- function(x) {
   ch <- as.character(x[["HL"]]$LngtCode)
-  LngtCode2cm <- c(. = 0.1, `0` = 0.5, `1` = 1, `2` = 2, `5` = 5)
-  y <- LngtCode2cm[ch]
+  y <- .lngt_code_cm[ch]
   ans <- max(y, na.rm = TRUE)
   if (length(na.omit(unique(y))) > 1)
     warning(paste("Mixed accuracies found in var[[3]]$LngtCode - worst chosen:",
@@ -484,6 +483,17 @@ get_accuracy_cm <- function(x) {
 
 
 ## Internal functions -------------------------------------------------------------
+
+## Length class width in cm by LngtCode
+.lngt_code_cm <- c(. = 0.1, `0` = 0.5, `1` = 1, `2` = 2, `5` = 5)
+
+## Mid length of the measuring class of each record. LngtCm is the lower limit
+## of the class; missing or unknown LngtCode are assumed to be 1 cm.
+.mid_length_cm <- function(lngt_cm, lngt_code) {
+  width <- unname(.lngt_code_cm[as.character(lngt_code)])
+  width[is.na(width)] <- 1
+  lngt_cm + width / 2
+}
 
 .default_cm_breaks <- function(x, by = get_accuracy_cm(x)) {
   lngt <- x[["HL"]][["LngtCm"]]

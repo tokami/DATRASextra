@@ -49,6 +49,18 @@ testthat::test_that("weight at length uses the mid length of each length class",
                          ignore_attr = TRUE)
 })
 
+testthat::test_that("CA length-weight fit uses mid lengths of the measuring classes", {
+  a <- 0.01; b <- 3
+  x <- dab_n
+  width <- c(. = 0.1, `0` = 0.5, `1` = 1)[as.character(x[["CA"]]$LngtCode)]
+  width[is.na(width)] <- 1
+  x[["CA"]]$IndWgt <- a * (x[["CA"]]$LngtCm + width / 2) ^ b
+  out_ca <- add_weight_at_length(x, lw_source = "ca")
+  out_pars <- add_weight_at_length(x, lw_pars = c(a = a, b = b))
+  testthat::expect_equal(out_ca[["HH"]][["Wgt"]], out_pars[["HH"]][["Wgt"]],
+                         tolerance = 1e-6)
+})
+
 testthat::test_that("lw_pars errors when aphia column absent and multiple species present", {
   testthat::expect_error(
     add_weight_at_length(mini_n, lw_pars = c(a = 0.00832, b = 3.09)),
