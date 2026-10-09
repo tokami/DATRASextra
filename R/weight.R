@@ -103,9 +103,10 @@ check_weights <- function (x,
   print(round(wPars,2))
 
   m = lm(log(IndWgt) ~ log(LngtCm), data = x1)
-  cm_breaks = attr(x, "cm.breaks")[-1] - 0.5
-  tmp = x[["CA"]][1:length(cm_breaks), ]
-  tmp$LngtCm = cm_breaks
+  cm_breaks <- attr(x, "cm.breaks")
+  mid_lengths <- cm_breaks[-length(cm_breaks)] + diff(cm_breaks) / 2
+  tmp <- x[["CA"]][1:length(mid_lengths), ]
+  tmp$LngtCm <- mid_lengths
   tmp$Wgt = exp(predict(m, newdata = tmp))
 
   if(plot) {
@@ -186,12 +187,11 @@ check_weights <- function (x,
 ##' @param max_weight Optional numeric value giving the maximum individual
 ##'   weight in grams to retain when fitting the length-weight relationship.
 ##'   Observations above this value are excluded.
-##' @param plus_group Logical. If `TRUE` the midlength for the weight
-##'   calculation of the last length bin is not using the upper limit of this
-##'   length bin, which might be `Inf` or arbitrarily high and result in an
-##'   unrealistically high weight for that length bin. Instead the lower limit
-##'   plus half of the size of the second last length bin is used to define the
-##'   mid length of the largest length bin.
+##' @param plus_group Logical. If `TRUE` the mid length of the last length bin
+##'   is not taken halfway to its upper limit, which might be `Inf` or
+##'   arbitrarily high and result in an unrealistically high weight for that
+##'   length bin. Instead the lower limit plus half of the size of the second
+##'   last length bin is used. This is also done when the upper limit is `Inf`.
 ##' @param lw_source Character string specifying the fallback source of
 ##'   length-weight parameters when `lw_pars` is `NULL` or does not cover a
 ##'   species. One of `"lookup"` (default, uses `species_info`) or `"ca"`
@@ -216,7 +216,8 @@ check_weights <- function (x,
 ##'
 ##' @details
 ##' Weight at length is calculated as \eqn{W = a \times L^b}, where \eqn{L} is
-##' the mid-length of each length bin defined by `attr(x, "cm.breaks")`.
+##' the mid-length of each length bin defined by `attr(x, "cm.breaks")`,
+##' e.g. 7.5 cm for the bin `[7,8)`.
 ##'
 ##' When `lw_source = "ca"`, a linear model
 ##' \eqn{\log(W) = \alpha + b \log(L)} is fitted to positive individual weights
@@ -348,7 +349,7 @@ add_weight_at_length <- function(x,
     } else if (lw_source == "lookup") {
 
       Wgt <- withCallingHandlers(
-        .get_wgt_one_lookup(x, aphia[i], n_aphia, verbose),
+        .get_wgt_one_lookup(x, aphia[i], n_aphia, plus_group, verbose),
         warning = function(w) {
           warn_msgs <<- c(warn_msgs, conditionMessage(w))
           invokeRestart("muffleWarning")
@@ -369,7 +370,7 @@ add_weight_at_length <- function(x,
       if (is.null(Wgt) && isTRUE(lookup_as_backup)) {
         if (isTRUE(verbose)) message("Using lookup info in species_info table.")
         Wgt <- withCallingHandlers(
-          .get_wgt_one_lookup(x, aphia[i], n_aphia, verbose),
+          .get_wgt_one_lookup(x, aphia[i], n_aphia, plus_group, verbose),
           warning = function(w) {
             warn_msgs <<- c(warn_msgs, conditionMessage(w))
             invokeRestart("muffleWarning")
@@ -569,7 +570,7 @@ add_total_weight_by_haul <- function(x,
   cm_breaks <- attr(x, "cm.breaks")
   nl <- length(cm_breaks)
   dls <- diff(cm_breaks)
-  mid_lengths <- cm_breaks[-1] + dls / 2
+  mid_lengths <- cm_breaks[-nl] + dls / 2
   nml <- length(mid_lengths)
 
   if (is.infinite(cm_breaks[nl]) || isTRUE(plus_group)) {
@@ -595,7 +596,7 @@ add_total_weight_by_haul <- function(x,
 
 
 .get_wgt_one_lookup <- function(x, aphia, n_aphia,
-                                   verbose = TRUE) {
+                                plus_group = FALSE, verbose = TRUE) {
 
   xsub <- subset(x, Valid_Aphia == aphia)
 
@@ -638,11 +639,14 @@ add_total_weight_by_haul <- function(x,
   cm_breaks = attr(x, "cm.breaks")
   nl <- length(cm_breaks)
   dls <- diff(cm_breaks)
-  mid_lengths <- cm_breaks[-1] + dls / 2
-  tmp <- x[["CA"]][1:length(mid_lengths), ]
-  tmp$LngtCm <- mid_lengths
-  tmp$Wgt <- a * tmp$LngtCm ^ b
-  LW <- tmp$Wgt
+  mid_lengths <- cm_breaks[-nl] + dls / 2
+  nml <- length(mid_lengths)
+
+  if (is.infinite(cm_breaks[nl]) || isTRUE(plus_group)) {
+    mid_lengths[nml] <- cm_breaks[nl - 1] + dls[nml - 1] / 2
+  }
+
+  LW <- a * mid_lengths ^ b
 
   if (n_aphia > 1) {
     xsub <- add_numbers_at_length(xsub,
@@ -685,13 +689,13 @@ add_total_weight_by_haul <- function(x,
   cm_breaks <- attr(x, "cm.breaks")
   nl <- length(cm_breaks)
   dls <- diff(cm_breaks)
-  mid_lengths <- cm_breaks[-1] + dls / 2
+  mid_lengths <- cm_breaks[-nl] + dls / 2
   nml <- length(mid_lengths)
 
   if (is.infinite(cm_breaks[nl]) || isTRUE(plus_group)) {
     mid_lengths[nml] <- cm_breaks[nl-1] + dls[nml-1] / 2
   } else if (cm_breaks[nl] > 1.2 * max(x[["CA"]]$LngtCm, na.rm = TRUE)) {
-    warning("The upper limit of the largest length bin is more than 20% larger than the largest length measurement in CA. The weight calculation based on the mid length uses this large upper limit, which might result in unrealistically high weights. Is the largest length bin a plus group? Then consider, setting plus_group = TRUE.")
+    warning("The upper limit of the largest length bin is more than 20% larger than the largest length measurement in CA. The weight calculation uses the mid length of this wide bin, which might result in unrealistically high weights. Is the largest length bin a plus group? Then consider, setting plus_group = TRUE.")
   }
 
 

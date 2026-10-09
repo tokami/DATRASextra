@@ -35,6 +35,20 @@ testthat::test_that("lw_pars produces same result as manual a*L^b calculation", 
                          out_lookup[["HH"]][["Wgt"]])
 })
 
+testthat::test_that("weight at length uses the mid length of each length class", {
+  a <- 0.01; b <- 3
+  out <- add_weight_at_length(dab_n, lw_pars = c(a = a, b = b))
+  cm_breaks <- attr(out, "cm.breaks")
+  nl <- length(cm_breaks)
+  mid_lengths <- cm_breaks[-nl] + diff(cm_breaks) / 2
+  ## [7,8) is weighed at 7.5 cm, not 8.5 cm
+  j <- which(cm_breaks[-nl] == 7)
+  testthat::expect_equal(mid_lengths[j], 7.5)
+  expected <- round(sweep(out[["HH"]]$N, 2, a * mid_lengths ^ b, "*"), 3)
+  testthat::expect_equal(unclass(out[["HH"]][["Wgt"]]), unclass(expected),
+                         ignore_attr = TRUE)
+})
+
 testthat::test_that("lw_pars errors when aphia column absent and multiple species present", {
   testthat::expect_error(
     add_weight_at_length(mini_n, lw_pars = c(a = 0.00832, b = 3.09)),

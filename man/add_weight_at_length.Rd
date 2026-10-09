@@ -26,12 +26,11 @@ Observations above this value are excluded.}
 weight in grams to retain when fitting the length-weight relationship.
 Observations above this value are excluded.}
 
-\item{plus_group}{Logical. If \code{TRUE} the midlength for the weight
-calculation of the last length bin is not using the upper limit of this
-length bin, which might be \code{Inf} or arbitrarily high and result in an
-unrealistically high weight for that length bin. Instead the lower limit
-plus half of the size of the second last length bin is used to define the
-mid length of the largest length bin.}
+\item{plus_group}{Logical. If \code{TRUE} the mid length of the last length bin
+is not taken halfway to its upper limit, which might be \code{Inf} or
+arbitrarily high and result in an unrealistically high weight for that
+length bin. Instead the lower limit plus half of the size of the second
+last length bin is used. This is also done when the upper limit is \code{Inf}.}
 
 \item{lw_source}{Character string specifying the fallback source of
 length-weight parameters when \code{lw_pars} is \code{NULL} or does not cover a
@@ -73,7 +72,8 @@ The function derives weight-at-length from custom parameters supplied via
 over \code{lw_source} for the covered species.
 
 Weight at length is calculated as \eqn{W = a \times L^b}, where \eqn{L} is
-the mid-length of each length bin defined by \code{attr(x, "cm.breaks")}.
+the mid-length of each length bin defined by \code{attr(x, "cm.breaks")},
+e.g. 7.5 cm for the bin \verb{[7,8)}.
 
 When \code{lw_source = "ca"}, a linear model
 \eqn{\log(W) = \alpha + b \log(L)} is fitted to positive individual weights
