@@ -38,12 +38,11 @@ add_weight_at_length(
 
 - plus_group:
 
-  Logical. If `TRUE` the midlength for the weight calculation of the
-  last length bin is not using the upper limit of this length bin, which
-  might be `Inf` or arbitrarily high and result in an unrealistically
-  high weight for that length bin. Instead the lower limit plus half of
-  the size of the second last length bin is used to define the mid
-  length of the largest length bin.
+  Logical. If `TRUE` the mid length of the last length bin is not taken
+  halfway to its upper limit, which might be `Inf` or arbitrarily high
+  and result in an unrealistically high weight for that length bin.
+  Instead the lower limit plus half of the size of the second last
+  length bin is used. This is also done when the upper limit is `Inf`.
 
 - lw_source:
 
@@ -92,11 +91,15 @@ via `lw_pars`, from a log-log model fitted to the `CA` table
 over `lw_source` for the covered species.
 
 Weight at length is calculated as \\W = a \times L^b\\, where \\L\\ is
-the mid-length of each length bin defined by `attr(x, "cm.breaks")`.
+the mid-length of each length bin defined by `attr(x, "cm.breaks")`,
+e.g. 7.5 cm for the bin `[7,8)`.
 
 When `lw_source = "ca"`, a linear model \\\log(W) = \alpha + b \log(L)\\
 is fitted to positive individual weights in `CA`, and the resulting
-parameters are used.
+parameters are used. Here \\L\\ is the mid length of the measuring class
+of each record, i.e. `LngtCm` (the lower limit of the class) plus half
+the class width given by `LngtCode`, so that fitted and predicted
+lengths are on the same scale.
 
 When `lw_source = "lookup"`, parameters `a` and `b` are taken from the
 built-in `species_info` table, matched by `Valid_Aphia`.

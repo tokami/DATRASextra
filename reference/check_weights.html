@@ -15,7 +15,7 @@ datras_raw / DATRASraw object."><meta property="og:image" content="https://tokam
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,9 +110,14 @@ plots the observed data together with the fitted curve.</p>
 table of the input object.</p>
 <p>A linear model of the form
 $$
-  \log(IndWgt) = \alpha + b \log(LngtCm)
+  \log(IndWgt) = \alpha + b \log(L)
 $$
-is fitted to the filtered observations, and the corresponding length-weight
+is fitted to the filtered observations, where \(L\) is the mid length of
+the measuring class of each record: <code>LngtCm</code> (the lower limit of the class)
+plus half the class width given by <code>LngtCode</code> (0.05 cm for <code>"."</code>, 0.25 cm
+for <code>"0"</code>, 0.5 cm for <code>"1"</code>; 1 cm is assumed when <code>LngtCode</code> is missing).
+This matches the mid lengths of the length bins at which weights are
+predicted. The corresponding length-weight
 parameters are returned as:
 $$
   a = \exp(\alpha)
@@ -146,12 +151,12 @@ $$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 86.25     66 559</span>
 <span class="r-plt img"><img src="check_weights-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Estimated LW parameters:"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.013 b = 2.904"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.009 b = 3.027"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Lookup LW parameters in the species_info table:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.007 b = 3.119"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dab</span>, <span class="st">"weight_check"</span><span class="op">)</span><span class="op">$</span><span class="va">parEst</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            a        b</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.01344814 2.904176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.00896146 3.026681</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Restrict to plausible values</span></span></span>
 <span class="r-in"><span><span class="va">dab</span> <span class="op">&lt;-</span> <span class="fu">check_weights</span><span class="op">(</span><span class="va">dab</span>, max_length <span class="op">=</span> <span class="fl">100</span>, max_weight <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span></span>
@@ -162,7 +167,7 @@ $$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   min  mean median max</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 86.25     66 559</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Estimated LW parameters:"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.013 b = 2.904"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.009 b = 3.027"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Lookup LW parameters in the species_info table:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a = 0.007 b = 3.119"</span>
 <span class="r-in"><span></span></span>

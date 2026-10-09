@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -210,7 +210,7 @@ every filter described below actually does something.</p>
 <code class="sourceCode R"><span><span class="va">mini</span></span>
 <span><span class="co">#&gt; Object of class 'datras_raw'</span></span>
 <span><span class="co">#&gt; ===========================</span></span>
-<span><span class="co">#&gt; Number of hauls: 13080 </span></span>
+<span><span class="co">#&gt; Number of hauls: 13074 </span></span>
 <span><span class="co">#&gt; Number of species: 5 </span></span>
 <span><span class="co">#&gt; Number of surveys: 4 [BITS, BTS, EVHOE, NS-IBTS]</span></span>
 <span><span class="co">#&gt; Number of gears: 9 </span></span>
@@ -221,9 +221,9 @@ every filter described below actually does something.</p>
 <span><span class="co">#&gt; Latitude range: 43.69 - 61.78 deg</span></span>
 <span><span class="co">#&gt; Depth range: 5 - 518 m</span></span>
 <span><span class="co">#&gt; Haul duration: 0 - 1470 minutes</span></span>
-<span><span class="co">#&gt; Valid hauls: 12520 (560 invalid)</span></span>
-<span><span class="co">#&gt; Hauls with catch: 6138 (zero catch: 6942)</span></span>
-<span><span class="co">#&gt; Extraction: 43 source(s), extracted 2026-09-15, ICES calculation 2016-04-16 to 2026-06-25</span></span></code></pre></div>
+<span><span class="co">#&gt; Valid hauls: 12520 (554 invalid)</span></span>
+<span><span class="co">#&gt; Hauls with catch: 6134 (zero catch: 6940)</span></span>
+<span><span class="co">#&gt; Extraction: 43 source(s), extracted 2026-10-09, ICES calculation 2016-04-16 to 2024-08-15</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="stage-1-download">Stage 1: Download<a class="anchor" aria-label="anchor" href="#stage-1-download"></a>
@@ -476,8 +476,8 @@ is. They are not interchangeable.</p>
 <code class="sourceCode R"><span><span class="co">## Which length codes occur, and what resolution do they imply</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mini</span><span class="op">[[</span><span class="st">"HL"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">LngtCode</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     .     0     1       </span></span>
-<span><span class="co">#&gt; 39669   557 44270    62</span></span></code></pre></div>
+<span><span class="co">#&gt;     .     0     1  &lt;NA&gt; </span></span>
+<span><span class="co">#&gt; 39656   557 44270    62</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## The coarsest resolution present is used for automatic length binning</span></span>
 <span><span class="fu"><a href="../reference/get_accuracy_cm.html">get_accuracy_cm</a></span><span class="op">(</span><span class="va">mini</span><span class="op">)</span></span>
@@ -505,7 +505,7 @@ paths can occur in a single combined object.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mini</span><span class="op">[[</span><span class="st">"HL"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">SpecCodeType</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     W </span></span>
-<span><span class="co">#&gt; 84558</span></span></code></pre></div>
+<span><span class="co">#&gt; 84545</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="raised-catch-numbers">Raised catch numbers<a class="anchor" aria-label="anchor" href="#raised-catch-numbers"></a>
@@ -528,8 +528,8 @@ reported.</li>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mini</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DataType</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;         C    R    P </span></span>
-<span><span class="co">#&gt;    7 3587 8942  544</span></span></code></pre></div>
+<span><span class="co">#&gt;    C    R    P &lt;NA&gt; </span></span>
+<span><span class="co">#&gt; 3587 9177  303    7</span></span></code></pre></div>
 <p>Anything computed from <code>Count</code> therefore already accounts
 for sub-sampling and per-hour reporting. Recomputing from
 <code>HLNoAtLngt</code> without applying both corrections is a common
@@ -572,7 +572,7 @@ for a data-handling reason is indistinguishable from a genuine zero.</p>
 <code class="sourceCode R"><span><span class="va">mini</span></span>
 <span><span class="co">#&gt; Object of class 'datras_raw'</span></span>
 <span><span class="co">#&gt; ===========================</span></span>
-<span><span class="co">#&gt; Number of hauls: 13080 </span></span>
+<span><span class="co">#&gt; Number of hauls: 13074 </span></span>
 <span><span class="co">#&gt; Number of species: 5 </span></span>
 <span><span class="co">#&gt; Number of surveys: 4 [BITS, BTS, EVHOE, NS-IBTS]</span></span>
 <span><span class="co">#&gt; Number of gears: 9 </span></span>
@@ -583,9 +583,9 @@ for a data-handling reason is indistinguishable from a genuine zero.</p>
 <span><span class="co">#&gt; Latitude range: 43.69 - 61.78 deg</span></span>
 <span><span class="co">#&gt; Depth range: 5 - 518 m</span></span>
 <span><span class="co">#&gt; Haul duration: 0 - 1470 minutes</span></span>
-<span><span class="co">#&gt; Valid hauls: 12520 (560 invalid)</span></span>
-<span><span class="co">#&gt; Hauls with catch: 6138 (zero catch: 6942)</span></span>
-<span><span class="co">#&gt; Extraction: 43 source(s), extracted 2026-09-15, ICES calculation 2016-04-16 to 2026-06-25</span></span></code></pre></div>
+<span><span class="co">#&gt; Valid hauls: 12520 (554 invalid)</span></span>
+<span><span class="co">#&gt; Hauls with catch: 6134 (zero catch: 6940)</span></span>
+<span><span class="co">#&gt; Extraction: 43 source(s), extracted 2026-10-09, ICES calculation 2016-04-16 to 2024-08-15</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="the-ices-calculation-date">The ICES calculation date<a class="anchor" aria-label="anchor" href="#the-ices-calculation-date"></a>
@@ -599,29 +599,35 @@ extraction</em> below.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">mini</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">Survey</span>, <span class="va">DateofCalculation</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          DateofCalculation</span></span>
-<span><span class="co">#&gt; Survey    20160416 20170316 20180423 20180507 20190305 20190307 20200219</span></span>
+<span><span class="co">#&gt; Survey    20160416 20170316 20170914 20180423 20180507 20190305 20190307</span></span>
 <span><span class="co">#&gt;   BITS           0        0        0        0        0        0        0</span></span>
 <span><span class="co">#&gt;   BTS            0        0        0        0        0        0        0</span></span>
-<span><span class="co">#&gt;   EVHOE        150        0       26      161      155        0      151</span></span>
-<span><span class="co">#&gt;   NS-IBTS        0      369        0        0        0       10        0</span></span>
+<span><span class="co">#&gt;   EVHOE        150        0        0       26      161      155        0</span></span>
+<span><span class="co">#&gt;   NS-IBTS        0      369      374        0        0        0       10</span></span>
 <span><span class="co">#&gt;          DateofCalculation</span></span>
-<span><span class="co">#&gt; Survey    20200408 20200525 20210222 20210304 20210428 20211029 20211209</span></span>
-<span><span class="co">#&gt;   BITS         296        0        0        0      333        0        0</span></span>
-<span><span class="co">#&gt;   BTS            0     1339        0      162        0        0     1301</span></span>
-<span><span class="co">#&gt;   EVHOE          0        0      156        0        0        0        0</span></span>
-<span><span class="co">#&gt;   NS-IBTS        0        0        0        0        0      349        0</span></span>
+<span><span class="co">#&gt; Survey    20200219 20200408 20200525 20210222 20210304 20210428 20210607</span></span>
+<span><span class="co">#&gt;   BITS           0      296        0        0        0      333        0</span></span>
+<span><span class="co">#&gt;   BTS            0        0     1339        0      162        0        0</span></span>
+<span><span class="co">#&gt;   EVHOE        151        0        0      156        0        0        0</span></span>
+<span><span class="co">#&gt;   NS-IBTS        0        0        0        0        0        0      387</span></span>
 <span><span class="co">#&gt;          DateofCalculation</span></span>
-<span><span class="co">#&gt; Survey    20220125 20220407 20220408 20220411 20220427 20230322 20240712</span></span>
-<span><span class="co">#&gt;   BITS           0      318        0        0      297        0      311</span></span>
-<span><span class="co">#&gt;   BTS            0        0        0     1400        0        0        0</span></span>
+<span><span class="co">#&gt; Survey    20211004 20211029 20211209 20220125 20220407 20220408 20220411</span></span>
+<span><span class="co">#&gt;   BITS           0        0        0        0      318        0        0</span></span>
+<span><span class="co">#&gt;   BTS            0        0     1301        0        0        0     1400</span></span>
 <span><span class="co">#&gt;   EVHOE          0        0        0        0        0        0        0</span></span>
-<span><span class="co">#&gt;   NS-IBTS      722        0      362        0        0      390        0</span></span>
+<span><span class="co">#&gt;   NS-IBTS      362      349        0     1070        0      362        0</span></span>
 <span><span class="co">#&gt;          DateofCalculation</span></span>
-<span><span class="co">#&gt; Survey    20240809 20240814 20240815 20260317 20260625</span></span>
-<span><span class="co">#&gt;   BITS         302      625      619      542        0</span></span>
-<span><span class="co">#&gt;   BTS            0        0        0        0        0</span></span>
-<span><span class="co">#&gt;   EVHOE          0        0        0        0        0</span></span>
-<span><span class="co">#&gt;   NS-IBTS        0        0        0        0     2234</span></span></code></pre></div>
+<span><span class="co">#&gt; Survey    20220422 20220427 20220712 20230322 20240712 20240809 20240814</span></span>
+<span><span class="co">#&gt;   BITS         242      297        0        0      311      302      625</span></span>
+<span><span class="co">#&gt;   BTS            0        0        0        0        0        0        0</span></span>
+<span><span class="co">#&gt;   EVHOE          0        0        0        0        0        0        0</span></span>
+<span><span class="co">#&gt;   NS-IBTS        0        0      372      775        0        0        0</span></span>
+<span><span class="co">#&gt;          DateofCalculation</span></span>
+<span><span class="co">#&gt; Survey    20240815</span></span>
+<span><span class="co">#&gt;   BITS         919</span></span>
+<span><span class="co">#&gt;   BTS            0</span></span>
+<span><span class="co">#&gt;   EVHOE          0</span></span>
+<span><span class="co">#&gt;   NS-IBTS        0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="type-coercions-to-be-aware-of">Type coercions to be aware of<a class="anchor" aria-label="anchor" href="#type-coercions-to-be-aware-of"></a>
@@ -652,36 +658,36 @@ account of the data <em>before</em> filtering, and
 <code>explain_codes = TRUE</code> adds the meaning of each code.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/clean_datras.html">clean_datras</a></span><span class="op">(</span><span class="va">mini</span>, explain_codes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; HaulVal (13080 hauls before cleaning):</span></span>
+<span><span class="co">#&gt; HaulVal (13074 hauls before cleaning):</span></span>
 <span><span class="co">#&gt; Code      n  Description                                              </span></span>
 <span><span class="co">#&gt;    A     60  Additional valid stations not used for index calculations</span></span>
-<span><span class="co">#&gt;    I    281  Invalid haul                                             </span></span>
+<span><span class="co">#&gt;    I    275  Invalid haul                                             </span></span>
 <span><span class="co">#&gt;    N    219  No oxygen (BITS only)                                    </span></span>
 <span><span class="co">#&gt;    V  12520  Valid haul</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; StdSpecRecCode:</span></span>
 <span><span class="co">#&gt; Code      n  Description                         </span></span>
 <span><span class="co">#&gt;    0     39  No standard species recorded        </span></span>
-<span><span class="co">#&gt;    1  13021  All standard species recorded       </span></span>
+<span><span class="co">#&gt;    1  13015  All standard species recorded       </span></span>
 <span><span class="co">#&gt;    3     10  Roundfish standard species recorded </span></span>
 <span><span class="co">#&gt;    4     10  Individual standard species recorded</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; BySpecRecCode:</span></span>
 <span><span class="co">#&gt; Code      n  Description                 </span></span>
 <span><span class="co">#&gt;    0    170  No bycatch species recorded </span></span>
-<span><span class="co">#&gt;    1  12910  All bycatch species recorded</span></span>
+<span><span class="co">#&gt;    1  12904  All bycatch species recorded</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Hauls with missing lon: 0</span></span>
 <span><span class="co">#&gt; Hauls with missing lat: 0</span></span>
 <span><span class="co">#&gt; Hauls with missing Year: 0</span></span>
 <span><span class="co">#&gt; Hauls with missing Depth: 67</span></span>
 <span><span class="co">#&gt; Hauls with missing HaulDur: 0</span></span>
-<span><span class="co">#&gt; Hauls with missing Distance: 745</span></span>
+<span><span class="co">#&gt; Hauls with missing Distance: 739</span></span>
 <span><span class="co">#&gt; Hauls with missing GroundSpeed: 2501</span></span>
 <span><span class="co">#&gt; Hauls with missing WingSpread: 8889</span></span>
 <span><span class="co">#&gt; Hauls with missing DoorSpread: 5515</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Hauls removed by HaulVal filter: 341</span></span>
+<span><span class="co">#&gt; Hauls removed by HaulVal filter: 335</span></span>
 <span><span class="co">#&gt; Hauls removed by StdSpecRecCode filter: 14</span></span>
 <span><span class="co">#&gt; Hauls remaining: 12725</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -855,7 +861,7 @@ AphiaID.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">surv</span><span class="op">[[</span><span class="st">"HL"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Rank</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; species </span></span>
-<span><span class="co">#&gt;   84171</span></span></code></pre></div>
+<span><span class="co">#&gt;   84169</span></span></code></pre></div>
 <p>Set <code>correct_species = FALSE</code> to keep the original species
 assignments, for example when reproducing an earlier analysis or when
 comparing against the raw ICES extract.</p>
@@ -885,7 +891,7 @@ convenience:</p>
 <span><span class="co">#&gt; Haul duration: 0 - 40 minutes</span></span>
 <span><span class="co">#&gt; Valid hauls: 787 (24 invalid)</span></span>
 <span><span class="co">#&gt; Hauls with catch: 254 (zero catch: 557)</span></span>
-<span><span class="co">#&gt; Extraction: 3 source(s), extracted 2026-09-15, ICES calculation 2021-03-04 to 2026-06-25</span></span></code></pre></div>
+<span><span class="co">#&gt; Extraction: 3 source(s), extracted 2026-10-09, ICES calculation 2021-03-04 to 2022-04-07</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="modifying-or-omitting-steps">Modifying or omitting steps<a class="anchor" aria-label="anchor" href="#modifying-or-omitting-steps"></a>
@@ -993,7 +999,7 @@ different rule is wanted:</p>
 <span><span class="co">#&gt; Haul duration: 0 - 1470 minutes</span></span>
 <span><span class="co">#&gt; Valid hauls: 12515 (274 invalid)</span></span>
 <span><span class="co">#&gt; Hauls with catch: 6114 (zero catch: 6675)</span></span>
-<span><span class="co">#&gt; Extraction: 43 source(s), extracted 2026-09-15, ICES calculation 2016-04-16 to 2026-06-25</span></span></code></pre></div>
+<span><span class="co">#&gt; Extraction: 43 source(s), extracted 2026-10-09, ICES calculation 2016-04-16 to 2024-08-15</span></span></code></pre></div>
 <p>Compare the haul count with <code>surv</code> above to see what the
 relaxed rule buys, and decide whether the extra stations are usable for
 your purpose.</p>
@@ -1185,14 +1191,14 @@ like.</p>
 </h4>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_outliers.html">check_outliers</a></span><span class="op">(</span><span class="va">surv</span>, pct <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Detected 3321 flagged row(s) in 1632 haul(s). (includes percentile checks)</span></span>
+<span><span class="co">#&gt; Detected 3312 flagged row(s) in 1627 haul(s). (includes percentile checks)</span></span>
 <span><span class="co">#&gt;    table                   var severity  one</span></span>
 <span><span class="co">#&gt; 1     CA                   Age  extreme  115</span></span>
 <span><span class="co">#&gt; 2     HH                 Depth  extreme  246</span></span>
 <span><span class="co">#&gt; 3     HH            DoorSpread  extreme  139</span></span>
 <span><span class="co">#&gt; 4     HH               HaulDur  extreme  117</span></span>
-<span><span class="co">#&gt; 5     CA                IndWgt  extreme  455</span></span>
-<span><span class="co">#&gt; 6     CA              LngtClas  extreme 1041</span></span>
+<span><span class="co">#&gt; 5     CA                IndWgt  extreme  454</span></span>
+<span><span class="co">#&gt; 6     CA              LngtClas  extreme 1033</span></span>
 <span><span class="co">#&gt; 7     HL                LngtCm  extreme 1052</span></span>
 <span><span class="co">#&gt; 8     HH            WingSpread  extreme   70</span></span>
 <span><span class="co">#&gt; 9     HH            DoorSpread  invalid    7</span></span>
@@ -1206,7 +1212,7 @@ four attributes attached.</p>
 <code class="sourceCode R"><span><span class="co">## Every flagged record, one row each</span></span>
 <span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">surv</span>, <span class="st">"outlier_report"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">report</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 3321   13</span></span>
+<span><span class="co">#&gt; [1] 3312   13</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">report</span><span class="op">[</span><span class="va">report</span><span class="op">$</span><span class="va">severity</span> <span class="op">==</span> <span class="st">"invalid"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"table"</span>, <span class="st">"var"</span>, <span class="st">"value"</span>, <span class="st">"reason"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   table     var value                    reason</span></span>
 <span><span class="co">#&gt; 1    HH HaulDur     0 HaulDur outside 0-240 min</span></span>
@@ -1229,7 +1235,7 @@ four attributes attached.</p>
 <span>  invalid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">surv</span>, <span class="st">"outlier_hauls_invalid"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  extreme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">surv</span>, <span class="st">"outlier_hauls_extreme"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     all invalid extreme </span></span>
-<span><span class="co">#&gt;    1632      79    1572</span></span></code></pre></div>
+<span><span class="co">#&gt;    1627      79    1567</span></span></code></pre></div>
 <p>Which variables drive the flags:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">report</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">var</span>, <span class="va">severity</span><span class="op">)</span><span class="op">)</span></span>
@@ -1240,8 +1246,8 @@ four attributes attached.</p>
 <span><span class="co">#&gt;   DoorSpread                139       7</span></span>
 <span><span class="co">#&gt;   GroundSpeed                 0      17</span></span>
 <span><span class="co">#&gt;   HaulDur                   117      54</span></span>
-<span><span class="co">#&gt;   IndWgt                    455       0</span></span>
-<span><span class="co">#&gt;   LngtClas                 1041       0</span></span>
+<span><span class="co">#&gt;   IndWgt                    454       0</span></span>
+<span><span class="co">#&gt;   LngtClas                 1033       0</span></span>
 <span><span class="co">#&gt;   LngtCm                   1052       0</span></span>
 <span><span class="co">#&gt;   WingSpread                 70       2</span></span>
 <span><span class="co">#&gt;   WingSpread,DoorSpread       0       6</span></span></code></pre></div>
@@ -1350,7 +1356,7 @@ in <code>CA</code> and compares it with the lookup parameters in
 <span><span class="co">#&gt;   min  mean median max</span></span>
 <span><span class="co">#&gt; 1   4 52.16     42 245</span></span>
 <span><span class="co">#&gt; [1] "Estimated LW parameters:"</span></span>
-<span><span class="co">#&gt; [1] "a = 0.005 b = 3.113"</span></span>
+<span><span class="co">#&gt; [1] "a = 0.005 b = 3.122"</span></span>
 <span><span class="co">#&gt; [1] "Lookup LW parameters in the species_info table:"</span></span>
 <span><span class="co">#&gt; [1] "a = 0.004 b = 3.245"</span></span></code></pre></div>
 <div style="background:white; padding:0.5rem; display:inline-block;">
@@ -1362,7 +1368,7 @@ in <code>CA</code> and compares it with the lookup parameters in
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span>fitted <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">plaice</span>, <span class="st">"weight_check"</span><span class="op">)</span><span class="op">$</span><span class="va">parEst</span>,</span>
 <span>      lookup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">plaice</span>, <span class="st">"weight_check"</span><span class="op">)</span><span class="op">$</span><span class="va">parEmp</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                  a        b</span></span>
-<span><span class="co">#&gt; fitted 0.005179724 3.112856</span></span>
+<span><span class="co">#&gt; fitted 0.004996044 3.122263</span></span>
 <span><span class="co">#&gt; lookup 0.003900000 3.244550</span></span></code></pre></div>
 <p>A fitted exponent <em>b</em> far from 3, or a large discrepancy
 against the lookup values, usually indicates unit errors or contaminated
@@ -1377,12 +1383,12 @@ implausible observations before fitting:</p>
 <span><span class="co">#&gt;   min  mean median max</span></span>
 <span><span class="co">#&gt; 1   4 52.16     42 245</span></span>
 <span><span class="co">#&gt; [1] "Estimated LW parameters:"</span></span>
-<span><span class="co">#&gt; [1] "a = 0.005 b = 3.113"</span></span>
+<span><span class="co">#&gt; [1] "a = 0.005 b = 3.122"</span></span>
 <span><span class="co">#&gt; [1] "Lookup LW parameters in the species_info table:"</span></span>
 <span><span class="co">#&gt; [1] "a = 0.004 b = 3.245"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">plaice2</span>, <span class="st">"weight_check"</span><span class="op">)</span><span class="op">$</span><span class="va">parEst</span></span>
 <span><span class="co">#&gt;             a        b</span></span>
-<span><span class="co">#&gt; 1 0.005179724 3.112856</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 0.004996044 3.122263</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="add_swept_area">
@@ -1480,8 +1486,8 @@ automatically:</p>
 <span><span class="co">#&gt; Haul duration: 0 - 1470 minutes</span></span>
 <span><span class="co">#&gt; Valid hauls: 12506 (219 invalid)</span></span>
 <span><span class="co">#&gt; Hauls with catch: 6109 (zero catch: 6616)</span></span>
-<span><span class="co">#&gt; Outlier check: 1632 flagged haul(s) -- see summary() for details.</span></span>
-<span><span class="co">#&gt; Extraction: 43 source(s), extracted 2026-09-15, ICES calculation 2016-04-16 to 2026-06-25</span></span>
+<span><span class="co">#&gt; Outlier check: 1627 flagged haul(s) -- see summary() for details.</span></span>
+<span><span class="co">#&gt; Extraction: 43 source(s), extracted 2026-10-09, ICES calculation 2016-04-16 to 2024-08-15</span></span>
 <span><span class="co">#&gt; Number of hauls by year and quarter:</span></span>
 <span><span class="co">#&gt;       Quarter</span></span>
 <span><span class="co">#&gt; Year     1   2   3   4</span></span>
@@ -1494,6 +1500,7 @@ automatically:</p>
 <span><span class="co">#&gt; Haul duration:</span></span>
 <span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
 <span><span class="co">#&gt;    0.00   30.00   30.00   28.48   30.00 1470.00 </span></span>
+<span><span class="co">#&gt; Extra columns in HH: SurveyIndexArea </span></span>
 <span><span class="co">#&gt; Species:</span></span>
 <span><span class="co">#&gt;   Amblyraja radiata (AphiaID 105865)</span></span>
 <span><span class="co">#&gt;   Trisopterus esmarkii (AphiaID 126444)</span></span>
@@ -1502,14 +1509,14 @@ automatically:</p>
 <span><span class="co">#&gt;   Lepidorhombus whiffiagonis (AphiaID 127146) </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Outlier report:</span></span>
-<span><span class="co">#&gt;   Flagged hauls: 1632 (79 rule-based, 1572 percentile-based)</span></span>
+<span><span class="co">#&gt;   Flagged hauls: 1627 (79 rule-based, 1567 percentile-based)</span></span>
 <span><span class="co">#&gt;  table                   var severity    n</span></span>
 <span><span class="co">#&gt;     CA                   Age  extreme  115</span></span>
 <span><span class="co">#&gt;     HH                 Depth  extreme  246</span></span>
 <span><span class="co">#&gt;     HH            DoorSpread  extreme  139</span></span>
 <span><span class="co">#&gt;     HH               HaulDur  extreme  117</span></span>
-<span><span class="co">#&gt;     CA                IndWgt  extreme  455</span></span>
-<span><span class="co">#&gt;     CA              LngtClas  extreme 1041</span></span>
+<span><span class="co">#&gt;     CA                IndWgt  extreme  454</span></span>
+<span><span class="co">#&gt;     CA              LngtClas  extreme 1033</span></span>
 <span><span class="co">#&gt;     HL                LngtCm  extreme 1052</span></span>
 <span><span class="co">#&gt;     HH            WingSpread  extreme   70</span></span>
 <span><span class="co">#&gt;     HH            DoorSpread  invalid    7</span></span>
@@ -1519,19 +1526,19 @@ automatically:</p>
 <span><span class="co">#&gt;     HH WingSpread,DoorSpread  invalid    6</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Extraction:</span></span>
-<span><span class="co">#&gt;  survey year quarter date_of_calculation           extracted source</span></span>
-<span><span class="co">#&gt;    BITS 2015       1          2020-04-08 2026-09-15 12:38:52    api</span></span>
-<span><span class="co">#&gt;    BITS 2015       4          2026-03-17 2026-09-15 12:38:52    api</span></span>
-<span><span class="co">#&gt;    BITS 2016       1          2024-08-09 2026-09-15 12:39:08    api</span></span>
-<span><span class="co">#&gt;    BITS 2016       4          2024-08-14 2026-09-15 12:39:08    api</span></span>
-<span><span class="co">#&gt;    BITS 2017       1          2024-08-14 2026-09-15 12:39:27    api</span></span>
-<span><span class="co">#&gt;    BITS 2017       4          2024-08-15 2026-09-15 12:39:27    api</span></span>
-<span><span class="co">#&gt;    BITS 2018       1          2021-04-28 2026-09-15 12:39:46    api</span></span>
-<span><span class="co">#&gt;    BITS 2018       4          2026-03-17 2026-09-15 12:39:46    api</span></span>
-<span><span class="co">#&gt;    BITS 2019       1          2024-08-15 2026-09-15 12:40:04    api</span></span>
-<span><span class="co">#&gt;    BITS 2019       4          2022-04-27 2026-09-15 12:40:04    api</span></span>
-<span><span class="co">#&gt;    BITS 2020       1          2022-04-07 2026-09-15 12:40:20    api</span></span>
-<span><span class="co">#&gt;    BITS 2020       4          2024-07-12 2026-09-15 12:40:20    api</span></span>
+<span><span class="co">#&gt;  survey year quarter date_of_calculation           extracted       source</span></span>
+<span><span class="co">#&gt;    BITS 2015       1          2020-04-08 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2015       4          2022-04-22 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2016       1          2024-08-09 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2016       4          2024-08-14 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2017       1          2024-08-14 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2017       4          2024-08-15 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2018       1          2021-04-28 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2018       4          2024-08-15 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2019       1          2024-08-15 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2019       4          2022-04-27 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2020       1          2022-04-07 2026-10-09 13:12:59 download_api</span></span>
+<span><span class="co">#&gt;    BITS 2020       4          2024-07-12 2026-10-09 13:12:59 download_api</span></span>
 <span><span class="co">#&gt;   ... and 31 further source(s); see extraction() for the full record.</span></span></code></pre></div>
 <p>Things worth reading off this output: whether any year is missing
 from the series, whether the coordinate and depth ranges are plausible
@@ -1619,7 +1626,7 @@ or identification artefact rather than ecology.</p>
 <span></span>
 <span><span class="co">## Hauls that could not be attributed</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">surv_area</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Area_27</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1244</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 1243</span></span></code></pre></div>
 <p>The function reports how many hauls it matched. Hauls that cannot be
 matched to an ICES area usually have a coordinate problem that range
 checks alone will not catch.</p>
@@ -1655,13 +1662,13 @@ known about where the data came from:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/extraction.html">extraction</a></span><span class="op">(</span><span class="va">mini</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"survey"</span>, <span class="st">"year"</span>, <span class="st">"quarter"</span>, <span class="st">"date_of_calculation"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;     survey year quarter date_of_calculation</span></span>
 <span><span class="co">#&gt; 1     BITS 2015       1          2020-04-08</span></span>
-<span><span class="co">#&gt; 2     BITS 2015       4          2026-03-17</span></span>
+<span><span class="co">#&gt; 2     BITS 2015       4          2022-04-22</span></span>
 <span><span class="co">#&gt; 3     BITS 2016       1          2024-08-09</span></span>
 <span><span class="co">#&gt; 4     BITS 2016       4          2024-08-14</span></span>
 <span><span class="co">#&gt; 5     BITS 2017       1          2024-08-14</span></span>
 <span><span class="co">#&gt; 6     BITS 2017       4          2024-08-15</span></span>
 <span><span class="co">#&gt; 7     BITS 2018       1          2021-04-28</span></span>
-<span><span class="co">#&gt; 8     BITS 2018       4          2026-03-17</span></span>
+<span><span class="co">#&gt; 8     BITS 2018       4          2024-08-15</span></span>
 <span><span class="co">#&gt; 9     BITS 2019       1          2024-08-15</span></span>
 <span><span class="co">#&gt; 10    BITS 2019       4          2022-04-27</span></span>
 <span><span class="co">#&gt; 11    BITS 2020       1          2022-04-07</span></span>
@@ -1684,18 +1691,18 @@ known about where the data came from:</p>
 <span><span class="co">#&gt; 28   EVHOE 2018       4          2019-03-05</span></span>
 <span><span class="co">#&gt; 29   EVHOE 2019       4          2020-02-19</span></span>
 <span><span class="co">#&gt; 30   EVHOE 2020       4          2021-02-22</span></span>
-<span><span class="co">#&gt; 31 NS-IBTS 2015       1          2026-06-25</span></span>
+<span><span class="co">#&gt; 31 NS-IBTS 2015       1          2021-06-07</span></span>
 <span><span class="co">#&gt; 32 NS-IBTS 2015       2          2019-03-07</span></span>
 <span><span class="co">#&gt; 33 NS-IBTS 2015       3          2017-03-16</span></span>
-<span><span class="co">#&gt; 34 NS-IBTS 2016       1          2026-06-25</span></span>
+<span><span class="co">#&gt; 34 NS-IBTS 2016       1          2017-09-14</span></span>
 <span><span class="co">#&gt; 35 NS-IBTS 2016       3          2023-03-22</span></span>
-<span><span class="co">#&gt; 36 NS-IBTS 2017       1          2026-06-25</span></span>
+<span><span class="co">#&gt; 36 NS-IBTS 2017       1          2023-03-22</span></span>
 <span><span class="co">#&gt; 37 NS-IBTS 2017       3          2021-10-29</span></span>
-<span><span class="co">#&gt; 38 NS-IBTS 2018       1          2026-06-25</span></span>
+<span><span class="co">#&gt; 38 NS-IBTS 2018       1          2022-07-12</span></span>
 <span><span class="co">#&gt; 39 NS-IBTS 2018       3          2022-01-25</span></span>
-<span><span class="co">#&gt; 40 NS-IBTS 2019       1          2026-06-25</span></span>
+<span><span class="co">#&gt; 40 NS-IBTS 2019       1          2021-10-04</span></span>
 <span><span class="co">#&gt; 41 NS-IBTS 2019       3          2022-01-25</span></span>
-<span><span class="co">#&gt; 42 NS-IBTS 2020       1          2026-06-25</span></span>
+<span><span class="co">#&gt; 42 NS-IBTS 2020       1          2022-01-25</span></span>
 <span><span class="co">#&gt; 43 NS-IBTS 2020       3          2022-04-08</span></span></code></pre></div>
 <p>The bundled <code>mini</code> data set was created long before this
 information was recorded, yet the table is still populated: the survey,
@@ -1740,7 +1747,7 @@ narrows it rather than leaving stale entries behind:</p>
 <span><span class="co">#&gt;    survey year quarter date_of_calculation</span></span>
 <span><span class="co">#&gt; 1    BITS 2020       1          2022-04-07</span></span>
 <span><span class="co">#&gt; 2     BTS 2020       1          2021-03-04</span></span>
-<span><span class="co">#&gt; 3 NS-IBTS 2020       1          2026-06-25</span></span></code></pre></div>
+<span><span class="co">#&gt; 3 NS-IBTS 2020       1          2022-01-25</span></span></code></pre></div>
 <p><code>survey</code> and <code>extracted</code> are exactly the two
 fields the ICES citation format requires, so the record can be formatted
 straight into a data citation:</p>
@@ -1802,10 +1809,10 @@ says:</p>
 <span><span class="co">#&gt;                  table     kind   rows  generated status</span></span>
 <span><span class="co">#&gt; 1        spawning_info exported   1023 2026-09-15     ok</span></span>
 <span><span class="co">#&gt; 2         species_info exported   2064 2026-09-15     ok</span></span>
-<span><span class="co">#&gt; 3          survey_info exported     28 2026-09-15     ok</span></span>
-<span><span class="co">#&gt; 4 survey_info_full_raw exported 144401 2026-09-15     ok</span></span>
-<span><span class="co">#&gt; 5     ices_area_lookup internal   6758 2026-09-15     ok</span></span>
-<span><span class="co">#&gt; 6        spread_models internal     12 2026-09-15     ok</span></span></code></pre></div>
+<span><span class="co">#&gt; 3          survey_info exported     28 2026-10-03     ok</span></span>
+<span><span class="co">#&gt; 4 survey_info_full_raw exported 144401 2026-10-03     ok</span></span>
+<span><span class="co">#&gt; 5     ices_area_lookup internal   6758 2026-10-03     ok</span></span>
+<span><span class="co">#&gt; 6        spread_models internal     12 2026-10-03     ok</span></span></code></pre></div>
 <p><code>generated</code> is when each table entered the package, and
 <code>status</code> compares the table against the hash recorded in the
 package registry, so <code>changed</code> means a table was regenerated
@@ -1863,7 +1870,7 @@ is fully valid; others indicate partial or unusable records.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mini</span><span class="op">[[</span><span class="st">"HL"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">SpecVal</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     0     1     4     6     7 </span></span>
-<span><span class="co">#&gt;   383 84170     3     1     1</span></span></code></pre></div>
+<span><span class="co">#&gt;   383 84157     3     1     1</span></span></code></pre></div>
 <p><strong>Mixed reporting conventions.</strong> Check
 <code>DataType</code> per survey and year, not just overall (see Stage
 3).</p>

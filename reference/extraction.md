@@ -75,94 +75,94 @@ the survey data, see
 ## Reconstructed from the data even for objects created before this
 ## information was recorded
 extraction(mini)
-#>     survey year quarter date_of_calculation           extracted source
-#> 1     BITS 2015       1          2020-04-08 2026-09-15 12:38:52    api
-#> 2     BITS 2015       4          2026-03-17 2026-09-15 12:38:52    api
-#> 3     BITS 2016       1          2024-08-09 2026-09-15 12:39:08    api
-#> 4     BITS 2016       4          2024-08-14 2026-09-15 12:39:08    api
-#> 5     BITS 2017       1          2024-08-14 2026-09-15 12:39:27    api
-#> 6     BITS 2017       4          2024-08-15 2026-09-15 12:39:27    api
-#> 7     BITS 2018       1          2021-04-28 2026-09-15 12:39:46    api
-#> 8     BITS 2018       4          2026-03-17 2026-09-15 12:39:46    api
-#> 9     BITS 2019       1          2024-08-15 2026-09-15 12:40:04    api
-#> 10    BITS 2019       4          2022-04-27 2026-09-15 12:40:04    api
-#> 11    BITS 2020       1          2022-04-07 2026-09-15 12:40:20    api
-#> 12    BITS 2020       4          2024-07-12 2026-09-15 12:40:20    api
-#> 13     BTS 2015       1          2020-05-25 2026-09-15 12:35:56    api
-#> 14     BTS 2015       3          2022-04-11 2026-09-15 12:35:56    api
-#> 15     BTS 2016       1          2020-05-25 2026-09-15 12:36:17    api
-#> 16     BTS 2016       3          2022-04-11 2026-09-15 12:36:17    api
-#> 17     BTS 2017       1          2020-05-25 2026-09-15 12:36:40    api
-#> 18     BTS 2017       3          2022-04-11 2026-09-15 12:36:40    api
-#> 19     BTS 2018       1          2020-05-25 2026-09-15 12:37:01    api
-#> 20     BTS 2018       3          2021-12-09 2026-09-15 12:37:01    api
-#> 21     BTS 2019       1          2020-05-25 2026-09-15 12:37:23    api
-#> 22     BTS 2019       3          2021-12-09 2026-09-15 12:37:23    api
-#> 23     BTS 2020       1          2021-03-04 2026-09-15 12:37:48    api
-#> 24     BTS 2020       3          2021-12-09 2026-09-15 12:37:48    api
-#> 25   EVHOE 2015       4          2016-04-16 2026-09-15 12:38:08    api
-#> 26   EVHOE 2016       4          2018-05-07 2026-09-15 12:38:16    api
-#> 27   EVHOE 2017       4          2018-04-23 2026-09-15 12:38:24    api
-#> 28   EVHOE 2018       4          2019-03-05 2026-09-15 12:38:28    api
-#> 29   EVHOE 2019       4          2020-02-19 2026-09-15 12:38:37    api
-#> 30   EVHOE 2020       4          2021-02-22 2026-09-15 12:38:44    api
-#> 31 NS-IBTS 2015       1          2026-06-25 2026-09-15 12:31:57    api
-#> 32 NS-IBTS 2015       2          2019-03-07 2026-09-15 12:31:57    api
-#> 33 NS-IBTS 2015       3          2017-03-16 2026-09-15 12:31:57    api
-#> 34 NS-IBTS 2016       1          2026-06-25 2026-09-15 12:32:33    api
-#> 35 NS-IBTS 2016       3          2023-03-22 2026-09-15 12:32:33    api
-#> 36 NS-IBTS 2017       1          2026-06-25 2026-09-15 12:33:13    api
-#> 37 NS-IBTS 2017       3          2021-10-29 2026-09-15 12:33:13    api
-#> 38 NS-IBTS 2018       1          2026-06-25 2026-09-15 12:33:50    api
-#> 39 NS-IBTS 2018       3          2022-01-25 2026-09-15 12:33:50    api
-#> 40 NS-IBTS 2019       1          2026-06-25 2026-09-15 12:34:31    api
-#> 41 NS-IBTS 2019       3          2022-01-25 2026-09-15 12:34:31    api
-#> 42 NS-IBTS 2020       1          2026-06-25 2026-09-15 12:35:10    api
-#> 43 NS-IBTS 2020       3          2022-04-08 2026-09-15 12:35:10    api
-#>                                                     endpoint
-#> 1  https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 2  https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 3  https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 4  https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 5  https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 6  https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 7  https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 8  https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 9  https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 10 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 11 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 12 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 13 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 14 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 15 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 16 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 17 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 18 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 19 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 20 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 21 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 22 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 23 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 24 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 25 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 26 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 27 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 28 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 29 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 30 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 31 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 32 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 33 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 34 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 35 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 36 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 37 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 38 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 39 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 40 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 41 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 42 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
-#> 43 https://datras.ices.dk/WebServices/DATRASWebService.asmx/
+#>     survey year quarter date_of_calculation           extracted       source
+#> 1     BITS 2015       1          2020-04-08 2026-10-09 13:12:59 download_api
+#> 2     BITS 2015       4          2022-04-22 2026-10-09 13:12:59 download_api
+#> 3     BITS 2016       1          2024-08-09 2026-10-09 13:12:59 download_api
+#> 4     BITS 2016       4          2024-08-14 2026-10-09 13:12:59 download_api
+#> 5     BITS 2017       1          2024-08-14 2026-10-09 13:12:59 download_api
+#> 6     BITS 2017       4          2024-08-15 2026-10-09 13:12:59 download_api
+#> 7     BITS 2018       1          2021-04-28 2026-10-09 13:12:59 download_api
+#> 8     BITS 2018       4          2024-08-15 2026-10-09 13:12:59 download_api
+#> 9     BITS 2019       1          2024-08-15 2026-10-09 13:12:59 download_api
+#> 10    BITS 2019       4          2022-04-27 2026-10-09 13:12:59 download_api
+#> 11    BITS 2020       1          2022-04-07 2026-10-09 13:12:59 download_api
+#> 12    BITS 2020       4          2024-07-12 2026-10-09 13:12:59 download_api
+#> 13     BTS 2015       1          2020-05-25 2026-10-09 13:12:37 download_api
+#> 14     BTS 2015       3          2022-04-11 2026-10-09 13:12:37 download_api
+#> 15     BTS 2016       1          2020-05-25 2026-10-09 13:12:37 download_api
+#> 16     BTS 2016       3          2022-04-11 2026-10-09 13:12:37 download_api
+#> 17     BTS 2017       1          2020-05-25 2026-10-09 13:12:37 download_api
+#> 18     BTS 2017       3          2022-04-11 2026-10-09 13:12:37 download_api
+#> 19     BTS 2018       1          2020-05-25 2026-10-09 13:12:37 download_api
+#> 20     BTS 2018       3          2021-12-09 2026-10-09 13:12:37 download_api
+#> 21     BTS 2019       1          2020-05-25 2026-10-09 13:12:37 download_api
+#> 22     BTS 2019       3          2021-12-09 2026-10-09 13:12:37 download_api
+#> 23     BTS 2020       1          2021-03-04 2026-10-09 13:12:37 download_api
+#> 24     BTS 2020       3          2021-12-09 2026-10-09 13:12:37 download_api
+#> 25   EVHOE 2015       4          2016-04-16 2026-10-09 13:12:53 download_api
+#> 26   EVHOE 2016       4          2018-05-07 2026-10-09 13:12:53 download_api
+#> 27   EVHOE 2017       4          2018-04-23 2026-10-09 13:12:53 download_api
+#> 28   EVHOE 2018       4          2019-03-05 2026-10-09 13:12:53 download_api
+#> 29   EVHOE 2019       4          2020-02-19 2026-10-09 13:12:53 download_api
+#> 30   EVHOE 2020       4          2021-02-22 2026-10-09 13:12:53 download_api
+#> 31 NS-IBTS 2015       1          2021-06-07 2026-10-09 13:12:06 download_api
+#> 32 NS-IBTS 2015       2          2019-03-07 2026-10-09 13:12:06 download_api
+#> 33 NS-IBTS 2015       3          2017-03-16 2026-10-09 13:12:06 download_api
+#> 34 NS-IBTS 2016       1          2017-09-14 2026-10-09 13:12:06 download_api
+#> 35 NS-IBTS 2016       3          2023-03-22 2026-10-09 13:12:06 download_api
+#> 36 NS-IBTS 2017       1          2023-03-22 2026-10-09 13:12:06 download_api
+#> 37 NS-IBTS 2017       3          2021-10-29 2026-10-09 13:12:06 download_api
+#> 38 NS-IBTS 2018       1          2022-07-12 2026-10-09 13:12:06 download_api
+#> 39 NS-IBTS 2018       3          2022-01-25 2026-10-09 13:12:06 download_api
+#> 40 NS-IBTS 2019       1          2021-10-04 2026-10-09 13:12:06 download_api
+#> 41 NS-IBTS 2019       3          2022-01-25 2026-10-09 13:12:06 download_api
+#> 42 NS-IBTS 2020       1          2022-01-25 2026-10-09 13:12:06 download_api
+#> 43 NS-IBTS 2020       3          2022-04-08 2026-10-09 13:12:06 download_api
+#>                                                                endpoint
+#> 1  https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 2  https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 3  https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 4  https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 5  https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 6  https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 7  https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 8  https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 9  https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 10 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 11 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 12 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 13 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 14 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 15 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 16 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 17 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 18 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 19 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 20 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 21 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 22 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 23 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 24 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 25 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 26 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 27 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 28 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 29 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 30 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 31 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 32 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 33 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 34 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 35 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 36 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 37 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 38 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 39 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 40 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 41 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 42 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
+#> 43 https://datras.ices.dk/Data_products/Download/DATRASDownloadAPI.aspx
 #>                        file
 #> 1        BITS/BITS_2015.zip
 #> 2        BITS/BITS_2015.zip
@@ -208,137 +208,137 @@ extraction(mini)
 #> 42 NS-IBTS/NS-IBTS_2020.zip
 #> 43 NS-IBTS/NS-IBTS_2020.zip
 #>                                                        payload_hash
-#> 1  5b2d9f312bfcfe9ff78e06015b794f43f15a0972d29b2401ca9f705168261adb
-#> 2  5b2d9f312bfcfe9ff78e06015b794f43f15a0972d29b2401ca9f705168261adb
-#> 3  9f7a2732d342d0d28eca9d0247da5851c0a27a3bb9fb980792ce2da838807455
-#> 4  9f7a2732d342d0d28eca9d0247da5851c0a27a3bb9fb980792ce2da838807455
-#> 5  0ab6dd0063d629b7e41ff25b7e7332a1d74fbcfa0330f66fc917717585cd049e
-#> 6  0ab6dd0063d629b7e41ff25b7e7332a1d74fbcfa0330f66fc917717585cd049e
-#> 7  75bc8f5cde8f38b83d30bcaaf12cf18f279b548bfcf8186d998260842a314ec5
-#> 8  75bc8f5cde8f38b83d30bcaaf12cf18f279b548bfcf8186d998260842a314ec5
-#> 9  2010ecec2e43d98d403d48c4ed994acaee09c770050696032c38d29f570b96a9
-#> 10 2010ecec2e43d98d403d48c4ed994acaee09c770050696032c38d29f570b96a9
-#> 11 fde19598c498f90d43f6073b35c6342e07b03f08640564700d58f57185df0ef3
-#> 12 fde19598c498f90d43f6073b35c6342e07b03f08640564700d58f57185df0ef3
-#> 13 b47815092e8365d7bf03d1e795a4e0a254f1882434654c2ea2316dd7965c9a63
-#> 14 b47815092e8365d7bf03d1e795a4e0a254f1882434654c2ea2316dd7965c9a63
-#> 15 b09b195c376b95129caae56dec84866bc604e982b43b2935235570d75869c071
-#> 16 b09b195c376b95129caae56dec84866bc604e982b43b2935235570d75869c071
-#> 17 f5c4aa0441bcf8a78df5f0885614d05ca947075f14955d8bebfd6db8cbcf9295
-#> 18 f5c4aa0441bcf8a78df5f0885614d05ca947075f14955d8bebfd6db8cbcf9295
-#> 19 31ec6272ee821bc23e91ef57c6723880947b516d48a6a7af3e9f523035d68da2
-#> 20 31ec6272ee821bc23e91ef57c6723880947b516d48a6a7af3e9f523035d68da2
-#> 21 a11aa4466e2580f5c73c16ba9fc912502b9b343b497c8a3d76acd07d8a2504ca
-#> 22 a11aa4466e2580f5c73c16ba9fc912502b9b343b497c8a3d76acd07d8a2504ca
-#> 23 d3e01a50f8d1fc6c95203e8f5c40df26c77544bc58bad929063dc81ecd099fe3
-#> 24 d3e01a50f8d1fc6c95203e8f5c40df26c77544bc58bad929063dc81ecd099fe3
-#> 25 ec28f07b1892fad91f78e5d1613f10c2b7eff4d690cb28f3cc8b11023c09645a
-#> 26 69fa765fc936fd6045fc702cc857e8c1ccd2b11f49fe640c68c0a53d5afc7641
-#> 27 b3786e0dcc78f16b3ddd73f8cc7fd3f23443627727dce86abc0692a0c0286272
-#> 28 90893b25b934ab9615c6c718ebd10fc858d01721fb64b034d195e2d21217b8f0
-#> 29 aa5762202e83310c3f4337fe6f7e5ecf579481f38afede525e7ffc25bf16a9ae
-#> 30 825a2fa07859acbed0d19e1397ecd77bedb59917b3175af74fff3cdeab05523d
-#> 31 0e9c271181336b07412e953101a294f648c465330835a56827ddb9ad42083291
-#> 32 0e9c271181336b07412e953101a294f648c465330835a56827ddb9ad42083291
-#> 33 0e9c271181336b07412e953101a294f648c465330835a56827ddb9ad42083291
-#> 34 35b06b5cfb9fc0ebd9877a2d7bdb65cc346e6a38e4d85a8fb690b0ed6c30c9a2
-#> 35 35b06b5cfb9fc0ebd9877a2d7bdb65cc346e6a38e4d85a8fb690b0ed6c30c9a2
-#> 36 5227a537756b5bc5ea5b05e00025218826231f02c7f43418a312abdb4f762679
-#> 37 5227a537756b5bc5ea5b05e00025218826231f02c7f43418a312abdb4f762679
-#> 38 2f4562a067f908bc5e50ef17926e74b9bc465c71fe0232acb0d2ac5e4a5bb61b
-#> 39 2f4562a067f908bc5e50ef17926e74b9bc465c71fe0232acb0d2ac5e4a5bb61b
-#> 40 f9106bdbe04c744a03c2d158e46bd01a1043eb808320cfdae76bb5a7eb638fa1
-#> 41 f9106bdbe04c744a03c2d158e46bd01a1043eb808320cfdae76bb5a7eb638fa1
-#> 42 f448f5f4d9793a66c13b43f318c19639a2f26bff0a8ac4cc900e067a9336f286
-#> 43 f448f5f4d9793a66c13b43f318c19639a2f26bff0a8ac4cc900e067a9336f286
+#> 1  fb94a07bdc97434083d427472c6ac66a47b20c2bff452ee099cb546e49b8a3b2
+#> 2  fb94a07bdc97434083d427472c6ac66a47b20c2bff452ee099cb546e49b8a3b2
+#> 3  5ca226b9ab3d5003887f55552a57522ad7abe6af7372b39341976d88f8defa89
+#> 4  5ca226b9ab3d5003887f55552a57522ad7abe6af7372b39341976d88f8defa89
+#> 5  c86dfebf1e90af79451ac3002681e0e029e1c766df8881ae3e15ac722eb6a944
+#> 6  c86dfebf1e90af79451ac3002681e0e029e1c766df8881ae3e15ac722eb6a944
+#> 7  e66766d33529bca94bbcf5ea45551c8378d7bc2cbf383a8055f2933b799b0ade
+#> 8  e66766d33529bca94bbcf5ea45551c8378d7bc2cbf383a8055f2933b799b0ade
+#> 9  0cdb8a99d593570cf37b44b6fdead9e2173b842fd1194ee5be2e0f2b114f028f
+#> 10 0cdb8a99d593570cf37b44b6fdead9e2173b842fd1194ee5be2e0f2b114f028f
+#> 11 865649d39042e801fa1a72003410a71e3f493823d6fb4137e0c5b1ffefd498aa
+#> 12 865649d39042e801fa1a72003410a71e3f493823d6fb4137e0c5b1ffefd498aa
+#> 13 7547fa8592b47a78e3cb83bef299d3b701169012c1cecb0e2d255a23ca768d80
+#> 14 7547fa8592b47a78e3cb83bef299d3b701169012c1cecb0e2d255a23ca768d80
+#> 15 566daec17d6d56d13a147d8c2b7d0c60c74dd86005b63aadfffe8636f5619460
+#> 16 566daec17d6d56d13a147d8c2b7d0c60c74dd86005b63aadfffe8636f5619460
+#> 17 704d8b596394be58c4ad281bb4ce0148c087ae8f747ad433e83bc1859dca7635
+#> 18 704d8b596394be58c4ad281bb4ce0148c087ae8f747ad433e83bc1859dca7635
+#> 19 c7f24011e00a25091cb68d2fcc4c6fdbe12eb6ba5a65bdef725455ca3562d0ba
+#> 20 c7f24011e00a25091cb68d2fcc4c6fdbe12eb6ba5a65bdef725455ca3562d0ba
+#> 21 ae2a8e39e6089edbab45f8f31eaabee57380b8af2aa3a16396f594556bbff450
+#> 22 ae2a8e39e6089edbab45f8f31eaabee57380b8af2aa3a16396f594556bbff450
+#> 23 f5329bf79915013edf319e933f0637f03e04ddef7de8c5848cb50634502b7a68
+#> 24 f5329bf79915013edf319e933f0637f03e04ddef7de8c5848cb50634502b7a68
+#> 25 fc2cd22f4522d27775003d204cf77650f6b1023f13c784c617d267bdd2a45d8e
+#> 26 361a71d70ee68b334d2284e24a79289a789ce866e96dce8012dccb9960a32492
+#> 27 9c1845f672c064b7a1067eb349380015d7e9f99399eee7eac0a8d279359cb32a
+#> 28 e194e149f745fa63ef3cf947d665991bf5749bafd136296ea54dbdfa500d284b
+#> 29 b6fda204a74f3151aaa68ca58ca9d65f66bf96585a550e4d54787b3c9d017997
+#> 30 c8584f86e482a5163efbf32ea10857d1e4c0267715c86f050943a04345588592
+#> 31 adeb358516fd21f4b2a73bcd2c72c9e449c9b3113796ca77421bf518dac6c9c4
+#> 32 adeb358516fd21f4b2a73bcd2c72c9e449c9b3113796ca77421bf518dac6c9c4
+#> 33 adeb358516fd21f4b2a73bcd2c72c9e449c9b3113796ca77421bf518dac6c9c4
+#> 34 36a16e44438d155a8fe8ae147df76722bd3eb7b288e1f7d0d213e8b6078e4f18
+#> 35 36a16e44438d155a8fe8ae147df76722bd3eb7b288e1f7d0d213e8b6078e4f18
+#> 36 748f1385c91ee668b6f84b34148279843582d4fd18a4bf26497449aa4393b6bc
+#> 37 748f1385c91ee668b6f84b34148279843582d4fd18a4bf26497449aa4393b6bc
+#> 38 02066b19aaafe69e3ce00d1e9c34d6d9f67fd567f10543b96e6d88c4afb3bbc7
+#> 39 02066b19aaafe69e3ce00d1e9c34d6d9f67fd567f10543b96e6d88c4afb3bbc7
+#> 40 f016a76dd4d3b2055c6f5e7e4a11da7090df3b74c32976c6a6ee6021d520b4a1
+#> 41 f016a76dd4d3b2055c6f5e7e4a11da7090df3b74c32976c6a6ee6021d520b4a1
+#> 42 977f16918f1cceff4fcc8f9087433ee7308377fb3478dece0ae554e2ae806e35
+#> 43 977f16918f1cceff4fcc8f9087433ee7308377fb3478dece0ae554e2ae806e35
 #>                                                            zip_hash   algo
-#> 1  8a29ba5fec5e56911950e8c19a5f0c62476f2052c97dcf4e8b09bd447ce0e760 sha256
-#> 2  8a29ba5fec5e56911950e8c19a5f0c62476f2052c97dcf4e8b09bd447ce0e760 sha256
-#> 3  8375f58d67e80b07ab20d44c2332d30a35c45a1a46bb4fa981fbc1d4aeb2f539 sha256
-#> 4  8375f58d67e80b07ab20d44c2332d30a35c45a1a46bb4fa981fbc1d4aeb2f539 sha256
-#> 5  f4e514854d5a4388ba1b41618985af403d89c6b557a1d88bedb81e7489a36c68 sha256
-#> 6  f4e514854d5a4388ba1b41618985af403d89c6b557a1d88bedb81e7489a36c68 sha256
-#> 7  f3f88f24179945a508eeda75a77c865f5b930ccdfa3cd61dbcb5dd4a0ec49f3c sha256
-#> 8  f3f88f24179945a508eeda75a77c865f5b930ccdfa3cd61dbcb5dd4a0ec49f3c sha256
-#> 9  ebee98b5c1e408ca861ee8a498a924d1f6f43fef58924256d84d3855a024c6e0 sha256
-#> 10 ebee98b5c1e408ca861ee8a498a924d1f6f43fef58924256d84d3855a024c6e0 sha256
-#> 11 82a5bfae154142a3d4a53865740e8305bd2b6c04f097ee25a318153d79c2e78a sha256
-#> 12 82a5bfae154142a3d4a53865740e8305bd2b6c04f097ee25a318153d79c2e78a sha256
-#> 13 a36bf14dce3f889dda1d69efd4bb934bbd6e736180bdd503159eb7793a67d403 sha256
-#> 14 a36bf14dce3f889dda1d69efd4bb934bbd6e736180bdd503159eb7793a67d403 sha256
-#> 15 d3b55f66997bdf39164751b7bbabfe42b27ff50cd2f48d375517ba8720cd43aa sha256
-#> 16 d3b55f66997bdf39164751b7bbabfe42b27ff50cd2f48d375517ba8720cd43aa sha256
-#> 17 121efcf8dfc710d7a43c339b98bd0c8b608836772f06459f526781b78e6753fd sha256
-#> 18 121efcf8dfc710d7a43c339b98bd0c8b608836772f06459f526781b78e6753fd sha256
-#> 19 e25f0e0ff61a03409ff603dbcbe4f08745c506c74b91cf5c57d3787ad1602a6c sha256
-#> 20 e25f0e0ff61a03409ff603dbcbe4f08745c506c74b91cf5c57d3787ad1602a6c sha256
-#> 21 05375855ca059e90ba066df6fb307bd11ddf87b5fdebb58da03e4dc95409c91d sha256
-#> 22 05375855ca059e90ba066df6fb307bd11ddf87b5fdebb58da03e4dc95409c91d sha256
-#> 23 17d797ea80d2f283fae919dd12e7b8be16ff04916c07ac2ad709083cdf35231d sha256
-#> 24 17d797ea80d2f283fae919dd12e7b8be16ff04916c07ac2ad709083cdf35231d sha256
-#> 25 78a457bbe15f654a367d031ca113a9ef09a28a89680763b16a1a0690bea493d6 sha256
-#> 26 7cb7aa706bd1aa3d2d871be6fa8e696c3dad2f3dbf6cf8baca36c8823b26d4ea sha256
-#> 27 94403dde6b3f32d19e5189762d7fe28ead7d1c3fae6bc1278ee766d963e0b8be sha256
-#> 28 2bb4a3e6480f59a891934cf7ef2604b021af261c0ca6b6dbdb2f3b680144f247 sha256
-#> 29 fe0f7356c8afb4fead7e7d615399244a2dd09f8bc570c6eaad6c1b0d8a332930 sha256
-#> 30 0f88eab42ac063e15d428e56b79196d92074568b796872a67cec35beea202246 sha256
-#> 31 040d7ac37a42748f02a76a1b14eacc466c7aa11d619712d0e424a35215c76d52 sha256
-#> 32 040d7ac37a42748f02a76a1b14eacc466c7aa11d619712d0e424a35215c76d52 sha256
-#> 33 040d7ac37a42748f02a76a1b14eacc466c7aa11d619712d0e424a35215c76d52 sha256
-#> 34 0c0be3343d2d046f0b059fecca357a5153bf1c5d738aec48d5b83b371b74523a sha256
-#> 35 0c0be3343d2d046f0b059fecca357a5153bf1c5d738aec48d5b83b371b74523a sha256
-#> 36 dba7b67b41f2cb5bcaed4db710d4c628fdba6b6bb1c5187d589e73628f199618 sha256
-#> 37 dba7b67b41f2cb5bcaed4db710d4c628fdba6b6bb1c5187d589e73628f199618 sha256
-#> 38 32b67ea0542f68b75777808758884a2fe2d2f55478b3e6aaaaf37fdc37557bfc sha256
-#> 39 32b67ea0542f68b75777808758884a2fe2d2f55478b3e6aaaaf37fdc37557bfc sha256
-#> 40 f1c35327a8d31e6c5b1a16974c8c8aa9c7c48d6b92adcf78d7bd48746895c8b2 sha256
-#> 41 f1c35327a8d31e6c5b1a16974c8c8aa9c7c48d6b92adcf78d7bd48746895c8b2 sha256
-#> 42 2edd36f011fe06288e1eb1cb397d9b3b7f1516be69758eb416462fdc7306db80 sha256
-#> 43 2edd36f011fe06288e1eb1cb397d9b3b7f1516be69758eb416462fdc7306db80 sha256
+#> 1  a7d7a940cc7b30604dc7c75164507c2aaaeec5aede6c76ccb2de23f80b44340e sha256
+#> 2  a7d7a940cc7b30604dc7c75164507c2aaaeec5aede6c76ccb2de23f80b44340e sha256
+#> 3  1147725b72f4609fa6e5094441648ba029e6a4c5c433b284e234aa103eb9f81c sha256
+#> 4  1147725b72f4609fa6e5094441648ba029e6a4c5c433b284e234aa103eb9f81c sha256
+#> 5  b108d575b67c71bc7d2fb3f49843702c32b57fae7dd1ac8dfaf4e4a06108b1ec sha256
+#> 6  b108d575b67c71bc7d2fb3f49843702c32b57fae7dd1ac8dfaf4e4a06108b1ec sha256
+#> 7  44b379cb38f21079cde67c786a874b96d7ff8f05fd8857e72d5c78bcc0def691 sha256
+#> 8  44b379cb38f21079cde67c786a874b96d7ff8f05fd8857e72d5c78bcc0def691 sha256
+#> 9  d218536fbb06275a3537b607ceb56d6994f451e9bff717aed3c7280123e17e6b sha256
+#> 10 d218536fbb06275a3537b607ceb56d6994f451e9bff717aed3c7280123e17e6b sha256
+#> 11 4ebd53009fe1f19764d2da71e5667adb22a93c137223af1d14f7deb6ffc9ff4e sha256
+#> 12 4ebd53009fe1f19764d2da71e5667adb22a93c137223af1d14f7deb6ffc9ff4e sha256
+#> 13 2f75ee61ef4572844745a498e9427665f2a4b2baf061d1857fcf0172875b16b2 sha256
+#> 14 2f75ee61ef4572844745a498e9427665f2a4b2baf061d1857fcf0172875b16b2 sha256
+#> 15 4022cf0eecb39ff17fa26b75b0331e07c7b50c488966a20bcde4ed8c81c47f3a sha256
+#> 16 4022cf0eecb39ff17fa26b75b0331e07c7b50c488966a20bcde4ed8c81c47f3a sha256
+#> 17 780e987aeb4ea6239e2f3e08aa2ab3759dd4f212a10439bb1cef0117be02ee3f sha256
+#> 18 780e987aeb4ea6239e2f3e08aa2ab3759dd4f212a10439bb1cef0117be02ee3f sha256
+#> 19 fdbcf8de4d46a9cbc038a42da347f4bc875c2b9c41c5c231c89aac698debe337 sha256
+#> 20 fdbcf8de4d46a9cbc038a42da347f4bc875c2b9c41c5c231c89aac698debe337 sha256
+#> 21 4931804715cff0f1097f78d698c66224ad35b8997b44d068acf7654f9406851b sha256
+#> 22 4931804715cff0f1097f78d698c66224ad35b8997b44d068acf7654f9406851b sha256
+#> 23 de6671e21f2f7c35cbd634f2ba6e5ec3c7911cba5b39f3929712628e83940132 sha256
+#> 24 de6671e21f2f7c35cbd634f2ba6e5ec3c7911cba5b39f3929712628e83940132 sha256
+#> 25 70394cc363d907b01426a299d6ae15e728c51dd95de0ce58ae112eee6646bcb3 sha256
+#> 26 ae460376db453aa4d3dc68adf64d539afe33b4e81b0dae23d014aa3280eda2d2 sha256
+#> 27 a104a57f092110e317fe865a9a3819da9198fb8d055af7664a58bba558bb267d sha256
+#> 28 3904b7a429b0ad1f5c16812ad994bcb4308d0d2d766746804c92c3b925c76460 sha256
+#> 29 72f40fb7713ce913efa784051488eced663778194cfb30cb93f2fdedb6580ab3 sha256
+#> 30 d93a39be63c0aac88fa7e2544f13e85e24b88914d903b943b07fcc0845250cf3 sha256
+#> 31 7f60b0d3ab3be4f94c7bd21c6328db8f7ded65e735cd895ff521296994172d41 sha256
+#> 32 7f60b0d3ab3be4f94c7bd21c6328db8f7ded65e735cd895ff521296994172d41 sha256
+#> 33 7f60b0d3ab3be4f94c7bd21c6328db8f7ded65e735cd895ff521296994172d41 sha256
+#> 34 4d7764e7def16b4c6b461ad4226f5981e2183c6266f72ae223ea7daadbb2ef84 sha256
+#> 35 4d7764e7def16b4c6b461ad4226f5981e2183c6266f72ae223ea7daadbb2ef84 sha256
+#> 36 ec4d6b4d88083a64b30d8d825906c1fa4c5b2dba060c2f388dfeb408a8546f5b sha256
+#> 37 ec4d6b4d88083a64b30d8d825906c1fa4c5b2dba060c2f388dfeb408a8546f5b sha256
+#> 38 3474e82e2d54c27f5c12f0cf960c204a1b1977390abbdcfa6c58d67cbc36b969 sha256
+#> 39 3474e82e2d54c27f5c12f0cf960c204a1b1977390abbdcfa6c58d67cbc36b969 sha256
+#> 40 53b6d92445749501ac37e8376a8ed13c9376b4a7e60ae6de7c0ed788c0670ad2 sha256
+#> 41 53b6d92445749501ac37e8376a8ed13c9376b4a7e60ae6de7c0ed788c0670ad2 sha256
+#> 42 a21a784b63df9a407ed36770ff49f4557e455aa83f2a867d59ac38e861ff0066 sha256
+#> 43 a21a784b63df9a407ed36770ff49f4557e455aa83f2a867d59ac38e861ff0066 sha256
 #>                   read datrasextra datras icesdatras r_version
-#> 1  2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 2  2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 3  2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 4  2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 5  2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 6  2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 7  2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 8  2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 9  2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 10 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 11 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 12 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 13 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 14 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 15 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 16 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 17 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 18 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 19 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 20 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 21 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 22 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 23 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 24 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 25 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 26 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 27 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 28 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 29 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 30 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 31 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 32 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 33 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 34 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 35 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 36 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 37 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 38 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 39 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 40 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 41 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 42 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
-#> 43 2026-09-15 12:42:34       0.4.2  1.1.2      1.5.3     4.6.1
+#> 1  2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 2  2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 3  2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 4  2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 5  2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 6  2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 7  2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 8  2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 9  2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 10 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 11 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 12 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 13 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 14 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 15 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 16 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 17 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 18 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 19 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 20 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 21 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 22 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 23 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 24 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 25 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 26 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 27 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 28 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 29 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 30 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 31 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 32 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 33 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 34 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 35 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 36 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 37 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 38 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 39 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 40 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 41 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 42 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
+#> 43 2026-10-09 13:16:01       0.6.0  1.1.2      1.5.3     4.6.1
 
 if (FALSE) { # \dontrun{
 ## Format an ICES data citation

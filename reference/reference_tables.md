@@ -77,10 +77,10 @@ reference_tables()
 #>                  table     kind   rows columns  generated
 #> 1        spawning_info exported   1023       7 2026-09-15
 #> 2         species_info exported   2064      24 2026-09-15
-#> 3          survey_info exported     28       4 2026-09-15
-#> 4 survey_info_full_raw exported 144401       7 2026-09-15
-#> 5     ices_area_lookup internal   6758       8 2026-09-15
-#> 6        spread_models internal     12      NA 2026-09-15
+#> 3          survey_info exported     28       4 2026-10-03
+#> 4 survey_info_full_raw exported 144401       7 2026-10-03
+#> 5     ices_area_lookup internal   6758       8 2026-10-03
+#> 6        spread_models internal     12      NA 2026-10-03
 #>                             script
 #> 1    data-raw/make_spawning_info.R
 #> 2     data-raw/make_species_info.R
@@ -108,10 +108,10 @@ reference_tables(check = FALSE)
 #>                  table     kind   rows columns  generated
 #> 1        spawning_info exported   1023       7 2026-09-15
 #> 2         species_info exported   2064      24 2026-09-15
-#> 3          survey_info exported     28       4 2026-09-15
-#> 4 survey_info_full_raw exported 144401       7 2026-09-15
-#> 5     ices_area_lookup internal   6758       8 2026-09-15
-#> 6        spread_models internal     12      NA 2026-09-15
+#> 3          survey_info exported     28       4 2026-10-03
+#> 4 survey_info_full_raw exported 144401       7 2026-10-03
+#> 5     ices_area_lookup internal   6758       8 2026-10-03
+#> 6        spread_models internal     12      NA 2026-10-03
 #>                             script
 #> 1    data-raw/make_spawning_info.R
 #> 2     data-raw/make_species_info.R

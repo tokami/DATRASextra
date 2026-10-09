@@ -61,7 +61,7 @@ dab
 #> Haul duration: 5 - 34 minutes
 #> Valid hauls: 2660
 #> Hauls with catch: 2263 (zero catch: 397)
-#> Extraction: 8 source(s), extracted 2026-09-15, ICES calculation 2022-04-08 to 2026-06-25
+#> Extraction: 8 source(s), extracted 2026-10-09, ICES calculation 2022-01-25 to 2025-04-04
 ```
 
 ## Indexing
@@ -73,7 +73,7 @@ Use `[[ ]]` to reach a table:
 ## The haul table
 hh <- dab[["HH"]]
 dim(hh)
-#> [1] 2660   76
+#> [1] 2660   77
 ```
 
 Within a table, columns are accessed and assigned with `$` as usual:
@@ -122,7 +122,7 @@ q1
 #> Haul duration: 15 - 34 minutes
 #> Valid hauls: 1268
 #> Hauls with catch: 1133 (zero catch: 135)
-#> Extraction: 4 source(s), extracted 2026-09-15, ICES calculation 2026-06-25
+#> Extraction: 4 source(s), extracted 2026-10-09, ICES calculation 2022-01-25 to 2024-04-09
 ```
 
 ## Coded variables (ICES vocabulary)
@@ -187,18 +187,18 @@ dab <- add_weight_at_length(dab)
 dab[["HH"]][["Wgt"]][big, 13:17]
 #>                                    sizeGroup
 #> haul.id                               [15,16)   [16,17)   [17,18)   [18,19)
-#>   NS-IBTS:2021:3:DE:26D4:GOV:140:15  63737.80  70670.56 147078.61  74281.74
-#>   NS-IBTS:2020:1:SE:77SE:GOV:3:3    195515.27 163122.41 178501.37 109759.58
-#>   NS-IBTS:2021:3:GB:74E9:GOV:6:7     29059.52  52370.05  49799.75  53808.07
-#>   NS-IBTS:2020:3:DK:26D4:GOV:175:55  21509.31 109803.06 176682.49  63342.74
-#>   NS-IBTS:2022:3:GB:74E9:GOV:29:25   26645.21  36917.46  42461.50  32743.09
+#>   NS-IBTS:2021:3:DE:26D4:GOV:140:15  52445.62  58821.39 123673.47  63033.69
+#>   NS-IBTS:2020:1:SE:77SE:GOV:3:3    160876.58 135772.05 150095.82  93139.33
+#>   NS-IBTS:2021:3:GB:74E9:GOV:6:7     23911.16  43589.28  41874.94  45660.22
+#>   NS-IBTS:2020:3:DK:26D4:GOV:175:55  17698.59  91392.63 148566.39  53751.12
+#>   NS-IBTS:2022:3:GB:74E9:GOV:29:25   21924.58  30727.59  35704.45  27785.00
 #>                                    sizeGroup
 #> haul.id                               [19,20)
-#>   NS-IBTS:2021:3:DE:26D4:GOV:140:15  67556.18
-#>   NS-IBTS:2020:1:SE:77SE:GOV:3:3     42762.54
-#>   NS-IBTS:2021:3:GB:74E9:GOV:6:7     28594.75
-#>   NS-IBTS:2020:3:DK:26D4:GOV:175:55  21165.30
-#>   NS-IBTS:2022:3:GB:74E9:GOV:29:25   44317.54
+#>   NS-IBTS:2021:3:DE:26D4:GOV:140:15  57799.32
+#>   NS-IBTS:2020:1:SE:77SE:GOV:3:3     36586.53
+#>   NS-IBTS:2021:3:GB:74E9:GOV:6:7     24464.93
+#>   NS-IBTS:2020:3:DK:26D4:GOV:175:55  18108.48
+#>   NS-IBTS:2022:3:GB:74E9:GOV:29:25   37916.95
 ```
 
 Summing these matrices over their columns gives total numbers and weight

@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -148,7 +148,7 @@ three tables.</p>
 <span><span class="co">#&gt; Haul duration: 5 - 34 minutes</span></span>
 <span><span class="co">#&gt; Valid hauls: 2660</span></span>
 <span><span class="co">#&gt; Hauls with catch: 2263 (zero catch: 397)</span></span>
-<span><span class="co">#&gt; Extraction: 8 source(s), extracted 2026-09-15, ICES calculation 2022-04-08 to 2026-06-25</span></span></code></pre></div>
+<span><span class="co">#&gt; Extraction: 8 source(s), extracted 2026-10-09, ICES calculation 2022-01-25 to 2025-04-04</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="indexing">Indexing<a class="anchor" aria-label="anchor" href="#indexing"></a>
@@ -158,7 +158,7 @@ three tables.</p>
 <code class="sourceCode R"><span><span class="co">## The haul table</span></span>
 <span><span class="va">hh</span> <span class="op">&lt;-</span> <span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">hh</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 2660   76</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2660   77</span></span></code></pre></div>
 <p>Within a table, columns are accessed and assigned with <code>$</code>
 as usual:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -200,7 +200,7 @@ tables consistent (dropping a haul from <code>HH</code> also drops its
 <span><span class="co">#&gt; Haul duration: 15 - 34 minutes</span></span>
 <span><span class="co">#&gt; Valid hauls: 1268</span></span>
 <span><span class="co">#&gt; Hauls with catch: 1133 (zero catch: 135)</span></span>
-<span><span class="co">#&gt; Extraction: 4 source(s), extracted 2026-09-15, ICES calculation 2026-06-25</span></span></code></pre></div>
+<span><span class="co">#&gt; Extraction: 4 source(s), extracted 2026-10-09, ICES calculation 2022-01-25 to 2024-04-09</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="coded-variables-ices-vocabulary">Coded variables (ICES vocabulary)<a class="anchor" aria-label="anchor" href="#coded-variables-ices-vocabulary"></a>
@@ -258,18 +258,18 @@ a length-weight relationship and adds a matrix <code>Wgt</code> to
 <span><span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"Wgt"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">big</span>, <span class="fl">13</span><span class="op">:</span><span class="fl">17</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                                    sizeGroup</span></span>
 <span><span class="co">#&gt; haul.id                               [15,16)   [16,17)   [17,18)   [18,19)</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2021:3:DE:26D4:GOV:140:15  63737.80  70670.56 147078.61  74281.74</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2020:1:SE:77SE:GOV:3:3    195515.27 163122.41 178501.37 109759.58</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2021:3:GB:74E9:GOV:6:7     29059.52  52370.05  49799.75  53808.07</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2020:3:DK:26D4:GOV:175:55  21509.31 109803.06 176682.49  63342.74</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2022:3:GB:74E9:GOV:29:25   26645.21  36917.46  42461.50  32743.09</span></span>
+<span><span class="co">#&gt;   NS-IBTS:2021:3:DE:26D4:GOV:140:15  52445.62  58821.39 123673.47  63033.69</span></span>
+<span><span class="co">#&gt;   NS-IBTS:2020:1:SE:77SE:GOV:3:3    160876.58 135772.05 150095.82  93139.33</span></span>
+<span><span class="co">#&gt;   NS-IBTS:2021:3:GB:74E9:GOV:6:7     23911.16  43589.28  41874.94  45660.22</span></span>
+<span><span class="co">#&gt;   NS-IBTS:2020:3:DK:26D4:GOV:175:55  17698.59  91392.63 148566.39  53751.12</span></span>
+<span><span class="co">#&gt;   NS-IBTS:2022:3:GB:74E9:GOV:29:25   21924.58  30727.59  35704.45  27785.00</span></span>
 <span><span class="co">#&gt;                                    sizeGroup</span></span>
 <span><span class="co">#&gt; haul.id                               [19,20)</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2021:3:DE:26D4:GOV:140:15  67556.18</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2020:1:SE:77SE:GOV:3:3     42762.54</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2021:3:GB:74E9:GOV:6:7     28594.75</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2020:3:DK:26D4:GOV:175:55  21165.30</span></span>
-<span><span class="co">#&gt;   NS-IBTS:2022:3:GB:74E9:GOV:29:25   44317.54</span></span></code></pre></div>
+<span><span class="co">#&gt;   NS-IBTS:2021:3:DE:26D4:GOV:140:15  57799.32</span></span>
+<span><span class="co">#&gt;   NS-IBTS:2020:1:SE:77SE:GOV:3:3     36586.53</span></span>
+<span><span class="co">#&gt;   NS-IBTS:2021:3:GB:74E9:GOV:6:7     24464.93</span></span>
+<span><span class="co">#&gt;   NS-IBTS:2020:3:DK:26D4:GOV:175:55  18108.48</span></span>
+<span><span class="co">#&gt;   NS-IBTS:2022:3:GB:74E9:GOV:29:25   37916.95</span></span></code></pre></div>
 <p>Summing these matrices over their columns gives total numbers and
 weight per haul, via <code><a href="../reference/add_total_numbers_by_haul.html">add_total_numbers_by_haul()</a></code> and
 <code><a href="../reference/add_total_weight_by_haul.html">add_total_weight_by_haul()</a></code> (see the <a href="../articles/datrasextra-tutorial.html">step-by-step

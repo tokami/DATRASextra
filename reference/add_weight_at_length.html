@@ -15,7 +15,7 @@ a datras_raw / DATRASraw object."><meta property="og:image" content="https://tok
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,12 +93,11 @@ Observations above this value are excluded.</p></dd>
 
 
 <dt id="arg-plus-group">plus_group<a class="anchor" aria-label="anchor" href="#arg-plus-group"></a></dt>
-<dd><p>Logical. If <code>TRUE</code> the midlength for the weight
-calculation of the last length bin is not using the upper limit of this
-length bin, which might be <code>Inf</code> or arbitrarily high and result in an
-unrealistically high weight for that length bin. Instead the lower limit
-plus half of the size of the second last length bin is used to define the
-mid length of the largest length bin.</p></dd>
+<dd><p>Logical. If <code>TRUE</code> the mid length of the last length bin
+is not taken halfway to its upper limit, which might be <code>Inf</code> or
+arbitrarily high and result in an unrealistically high weight for that
+length bin. Instead the lower limit plus half of the size of the second
+last length bin is used. This is also done when the upper limit is <code>Inf</code>.</p></dd>
 
 
 <dt id="arg-lw-source">lw_source<a class="anchor" aria-label="anchor" href="#arg-lw-source"></a></dt>
@@ -143,10 +142,14 @@ Default: <code>FALSE</code>.</p></dd>
 (<code>lw_source = "lookup"</code>). Custom parameters in <code>lw_pars</code> take precedence
 over <code>lw_source</code> for the covered species.</p>
 <p>Weight at length is calculated as \(W = a \times L^b\), where \(L\) is
-the mid-length of each length bin defined by <code>attr(x, "cm.breaks")</code>.</p>
+the mid-length of each length bin defined by <code>attr(x, "cm.breaks")</code>,
+e.g. 7.5 cm for the bin <code>[7,8)</code>.</p>
 <p>When <code>lw_source = "ca"</code>, a linear model
 \(\log(W) = \alpha + b \log(L)\) is fitted to positive individual weights
-in <code>CA</code>, and the resulting parameters are used.</p>
+in <code>CA</code>, and the resulting parameters are used. Here \(L\) is the mid
+length of the measuring class of each record, i.e. <code>LngtCm</code> (the lower
+limit of the class) plus half the class width given by <code>LngtCode</code>, so that
+fitted and predicted lengths are on the same scale.</p>
 <p>When <code>lw_source = "lookup"</code>, parameters <code>a</code> and <code>b</code> are taken from the
 built-in <code>species_info</code> table, matched by <code>Valid_Aphia</code>.</p>
     </div>

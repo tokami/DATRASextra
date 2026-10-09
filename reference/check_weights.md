@@ -59,10 +59,14 @@ The function first calls
 [`DATRAS::checkSpectrum()`](https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html)
 and then works on the `CA` table of the input object.
 
-A linear model of the form \$\$ \log(IndWgt) = \alpha + b \log(LngtCm)
-\$\$ is fitted to the filtered observations, and the corresponding
-length-weight parameters are returned as: \$\$ a = \exp(\alpha) \$\$ and
-\$\$ b \$\$
+A linear model of the form \$\$ \log(IndWgt) = \alpha + b \log(L) \$\$
+is fitted to the filtered observations, where \\L\\ is the mid length of
+the measuring class of each record: `LngtCm` (the lower limit of the
+class) plus half the class width given by `LngtCode` (0.05 cm for `"."`,
+0.25 cm for `"0"`, 0.5 cm for `"1"`; 1 cm is assumed when `LngtCode` is
+missing). This matches the mid lengths of the length bins at which
+weights are predicted. The corresponding length-weight parameters are
+returned as: \$\$ a = \exp(\alpha) \$\$ and \$\$ b \$\$
 
 If available, lookup length-weight parameters are also retrieved from
 `species_info` for comparison.
@@ -89,12 +93,12 @@ dab <- check_weights(dab)
 #> 1   1 86.25     66 559
 
 #> [1] "Estimated LW parameters:"
-#> [1] "a = 0.013 b = 2.904"
+#> [1] "a = 0.009 b = 3.027"
 #> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.007 b = 3.119"
 attr(dab, "weight_check")$parEst
 #>            a        b
-#> 1 0.01344814 2.904176
+#> 1 0.00896146 3.026681
 
 ## Restrict to plausible values
 dab <- check_weights(dab, max_length = 100, max_weight = 10000)
@@ -105,7 +109,7 @@ dab <- check_weights(dab, max_length = 100, max_weight = 10000)
 #>   min  mean median max
 #> 1   1 86.25     66 559
 #> [1] "Estimated LW parameters:"
-#> [1] "a = 0.013 b = 2.904"
+#> [1] "a = 0.009 b = 3.027"
 #> [1] "Lookup LW parameters in the species_info table:"
 #> [1] "a = 0.007 b = 3.119"
 ```

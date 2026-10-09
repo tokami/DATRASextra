@@ -183,6 +183,32 @@
 
 ### Bug fixes
 
+- [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md)
+  and
+  [`add_total_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul.md)
+  weighed each length class at the mid length of the next larger class,
+  e.g. 8.5 cm instead of 7.5 cm for the class `[7,8)`. `Wgt` and
+  `HaulWgt` were therefore too high, by about 46% at 7.5 cm and 12% at
+  25 cm for 1 cm classes and `b = 3`, for every `lw_source` and for
+  custom `lw_pars`. Weights are now lower than with earlier versions.
+  With `lw_source = "lookup"`, `plus_group` is now also applied, and an
+  `Inf` upper limit no longer gives an infinite weight for the last
+  class.
+
+- With `lw_source = "ca"`,
+  [`add_weight_at_length()`](https://tokami.github.io/DATRASextra/reference/add_weight_at_length.md)
+  and
+  [`add_total_weight_by_haul()`](https://tokami.github.io/DATRASextra/reference/add_total_weight_by_haul.md)
+  fitted the length-weight model to the recorded `CA` lengths, which are
+  the lower limits of the measuring classes, but predicted weights at
+  the mid lengths of the length bins. This gave weights that were too
+  high, by about 20% at 7.5 cm and 6% at 25 cm for 1 cm classes and
+  `b = 3`. The model is now fitted to the mid lengths of the measuring
+  classes, i.e. `LngtCm` plus half the class width given by `LngtCode`
+  (1 cm is assumed when `LngtCode` is missing).
+  [`check_weights()`](https://tokami.github.io/DATRASextra/reference/check_weights.md)
+  fits and plots the same way, so its estimate of `a` changes.
+
 - [`read_datras()`](https://tokami.github.io/DATRASextra/reference/read_datras.md)
   no longer drops a whole exchange file because of an exact duplicate HH
   record. Such duplicates (e.g. in NS-IBTS 1991 as served by ICES) made

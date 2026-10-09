@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -223,7 +223,7 @@ inspect the available weight data:</p>
 <span><span class="co">#&gt;   min  mean median max</span></span>
 <span><span class="co">#&gt; 1   1 86.25     66 559</span></span>
 <span><span class="co">#&gt; [1] "Estimated LW parameters:"</span></span>
-<span><span class="co">#&gt; [1] "a = 0.013 b = 2.904"</span></span>
+<span><span class="co">#&gt; [1] "a = 0.009 b = 3.027"</span></span>
 <span><span class="co">#&gt; [1] "Lookup LW parameters in the species_info table:"</span></span>
 <span><span class="co">#&gt; [1] "a = 0.007 b = 3.119"</span></span></code></pre></div>
 <div style="background:white; padding:0.5rem; display:inline-block;">
@@ -303,12 +303,12 @@ separately:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"HaulWgt"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                 (0-17.75] (17.75-Inf]</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    915.684   18487.350</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2   1413.448   10274.518</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3  7498.031   19681.076</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  1577.837   10108.460</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5 11750.668   23250.572</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6     0.000      76.908</span></span></code></pre></div>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    827.351   17254.956</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2   1271.323    9564.190</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3  6791.159   18232.151</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  1431.634    9428.701</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5 10722.575   21479.931</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6     0.000      70.997</span></span></code></pre></div>
 <p>By default, the column names reflect the chosen cut points, but they
 can be renamed as needed:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -344,12 +344,12 @@ length groups:</p>
 <span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6      0       1       0        0</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dab</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"HaulWgt"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                  (0-10]   (10-20]   (20-30] (30-100]</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    0.000  3904.189 15498.845    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2  123.243  4278.710  7286.013    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3 115.514 17078.956  9984.637    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  35.156  3231.022  8114.143  305.976</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5   0.000 28859.317  6141.923    0.000</span></span>
-<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6   0.000    76.908     0.000    0.000</span></span></code></pre></div>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:6:1    0.000  3580.677 14501.630    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:8:2  101.731  3922.918  6810.864    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:10:3  97.553 15625.723  9300.034    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:11:4  28.778  2959.600  7581.233  290.724</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:19:5   0.000 26478.676  5723.830    0.000</span></span>
+<span><span class="co">#&gt; NS-IBTS:2020:1:DK:26D4:GOV:21:6   0.000    70.997     0.000    0.000</span></span></code></pre></div>
 <p>These summaries can then be used to explore whether the spatial
 distribution differs among size groups. For example, the following plot
 shows where hauls with positive catches occurred for each length class,

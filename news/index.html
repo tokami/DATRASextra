@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DATRASextra</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,7 +95,9 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-0-6-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-6-0"></a></h3>
-<ul><li>
+<ul><li><p><code><a href="../reference/add_weight_at_length.html">add_weight_at_length()</a></code> and <code><a href="../reference/add_total_weight_by_haul.html">add_total_weight_by_haul()</a></code> weighed each length class at the mid length of the next larger class, e.g. 8.5 cm instead of 7.5 cm for the class <code>[7,8)</code>. <code>Wgt</code> and <code>HaulWgt</code> were therefore too high, by about 46% at 7.5 cm and 12% at 25 cm for 1 cm classes and <code>b = 3</code>, for every <code>lw_source</code> and for custom <code>lw_pars</code>. Weights are now lower than with earlier versions. With <code>lw_source = "lookup"</code>, <code>plus_group</code> is now also applied, and an <code>Inf</code> upper limit no longer gives an infinite weight for the last class.</p></li>
+<li><p>With <code>lw_source = "ca"</code>, <code><a href="../reference/add_weight_at_length.html">add_weight_at_length()</a></code> and <code><a href="../reference/add_total_weight_by_haul.html">add_total_weight_by_haul()</a></code> fitted the length-weight model to the recorded <code>CA</code> lengths, which are the lower limits of the measuring classes, but predicted weights at the mid lengths of the length bins. This gave weights that were too high, by about 20% at 7.5 cm and 6% at 25 cm for 1 cm classes and <code>b = 3</code>. The model is now fitted to the mid lengths of the measuring classes, i.e. <code>LngtCm</code> plus half the class width given by <code>LngtCode</code> (1 cm is assumed when <code>LngtCode</code> is missing). <code><a href="../reference/check_weights.html">check_weights()</a></code> fits and plots the same way, so its estimate of <code>a</code> changes.</p></li>
+<li>
 <p><code><a href="../reference/read_datras.html">read_datras()</a></code> no longer drops a whole exchange file because of an exact duplicate HH record. Such duplicates (e.g. in NS-IBTS 1991 as served by ICES) made <code><a href="https://rdrr.io/pkg/DATRAS/man/DATRAS-internal.html" class="external-link">DATRAS::readICES()</a></code> stop with “Duplicated rows found in HH data”, so the year was skipped with only “Error with: <file>”. Identical HH lines are now removed before reading and reported. When a file still cannot be read, the message gives the reason.</file></p>
 <p>All inputs (a folder with or without <code>surveys</code>/<code>years</code>, or zip files) now go through the same reader, so <code>recursive</code>, <code>min_file_size</code> and the duplicated haul id check apply to all of them, and one unreadable file no longer stops the others from being read.</p>
 </li>
