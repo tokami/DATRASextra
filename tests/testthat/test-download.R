@@ -54,13 +54,10 @@ test_that("Download API fields map to the exchange names written to disk", {
             CA = .datras_api_to_exchange(read_fixture("CA"), "CA"))
   x <- .remove_extra_variables(.add_class_datras(x))
 
-  ## Every exchange column of the web service route is present, in the same
-  ## order; LiverWeight, SurveyIndexArea and ScientificName_WoRMS are exchange
-  ## fields the web service does not deliver
+  ## The exchange columns are those of the bundled archives, in the same order
   ref <- .remove_extra_variables(subset(mini, Survey == "EVHOE"))
-  extra <- c("LiverWeight", "SurveyIndexArea", "ScientificName_WoRMS")
   for (r in c("HH", "HL", "CA")) {
-    expect_equal(setdiff(names(x[[r]]), extra), names(ref[[r]]), info = r)
+    expect_equal(names(x[[r]]), names(ref[[r]]), info = r)
   }
 
   expect_equal(x$HH$StNo, c("A1490", "0094"))
