@@ -190,7 +190,7 @@ within the haul extent, and <code><a href="https://r-spatial.github.io/sf/refere
 polygons so they can be used in a spatial join:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## WFS GetFeature request, restricted to the haul bounding box</span></span>
-<span><span class="va">wfs</span>   <span class="op">&lt;-</span> <span class="st">"https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_open/ows"</span></span>
+<span><span class="va">wfs</span> <span class="op">&lt;-</span> <span class="st">"https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_open/ows"</span></span>
 <span><span class="va">layer</span> <span class="op">&lt;-</span> <span class="st">"emodnet_open:eusm2025_eunis2019_full"</span></span>
 <span></span>
 <span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
@@ -200,16 +200,16 @@ polygons so they can be used in a spatial join:</p>
 <span>  <span class="st">"&amp;srsName=EPSG:4326"</span>,</span>
 <span>  <span class="st">"&amp;bbox="</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">bb</span><span class="op">[</span><span class="st">"ymin"</span><span class="op">]</span>, <span class="va">bb</span><span class="op">[</span><span class="st">"xmin"</span><span class="op">]</span>, <span class="va">bb</span><span class="op">[</span><span class="st">"ymax"</span><span class="op">]</span>, <span class="va">bb</span><span class="op">[</span><span class="st">"xmax"</span><span class="op">]</span>, <span class="st">"urn:ogc:def:crs:EPSG::4326"</span>, sep <span class="op">=</span> <span class="st">","</span><span class="op">)</span>,</span>
 <span>  <span class="st">"&amp;outputFormat=application/json"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">habitat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">url</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">habitat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">url</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">habitat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/valid.html" class="external-link">st_make_valid</a></span><span class="op">(</span><span class="va">habitat</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Inspect the attributes and choose the habitat column you want to keep</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">habitat</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "id"         "objectid"   "oxygen"     "salinity"   "energy"    </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">habitat</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;  [1] "id"         "objectid"   "oxygen"     "salinity"   "energy"    </span></span>
 <span><span class="co">#&gt;  [6] "biozone"    "substrate"  "eunis2019c" "eunis2019d" "all2019d"  </span></span>
-<span><span class="co">#&gt; [11] "all2019dl2" "geometry"</span></span></code></pre></div>
+<span><span class="co">#&gt; [11] "all2019dl2" "geometry"</span></span></code></pre>
 <p>The key habitat attributes in this layer are <code>eunis2019c</code>
 (EUNIS 2019 code), <code>eunis2019d</code> (EUNIS 2019 description), and
 <code>all2019d</code> (full habitat description), alongside the
@@ -231,7 +231,7 @@ habitat layer’s CRS and join each point to the polygon it falls in. Keep
 only the habitat attribute(s) you want (here the seabed
 <code>substrate</code>; use <code>eunis2019d</code> for the full EUNIS
 habitat description):</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Name of the habitat attribute to keep (from names(habitat) above)</span></span>
 <span><span class="va">habitat_col</span> <span class="op">&lt;-</span> <span class="st">"substrate"</span></span>
 <span></span>
@@ -251,7 +251,7 @@ habitat description):</p>
 <p>Because polygon boundaries can overlap or hauls can sit on a border,
 make sure there is exactly one row per haul before writing back (keep
 the first match):</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Collapse to one row per haul.id</span></span>
 <span><span class="va">joined</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">joined</span><span class="op">)</span></span>
 <span><span class="va">joined</span> <span class="op">&lt;-</span> <span class="va">joined</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="va">joined</span><span class="op">$</span><span class="va">haul.id</span><span class="op">)</span>, <span class="op">]</span></span></code></pre></div>
@@ -263,7 +263,7 @@ the first match):</p>
 <code>haul.id</code> and store it as a new column. Matching by
 <code>haul.id</code> (rather than row order) is robust to any reordering
 during the join:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Add the habitat column to HH</span></span>
 <span><span class="va">box</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">habitat</span> <span class="op">&lt;-</span> <span class="va">joined</span><span class="op">[[</span><span class="va">habitat_col</span><span class="op">]</span><span class="op">]</span><span class="op">[</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">box</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">haul.id</span>, <span class="va">joined</span><span class="op">$</span><span class="va">haul.id</span><span class="op">)</span></span>
@@ -288,7 +288,7 @@ variable when summarising catch by habitat.</p>
 newly matched substrate. We turn the <code>HH</code> rows back into an
 <code>sf</code> point layer and let the <code>sf</code> plot method
 colour the points by the <code>habitat</code> column:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Selected hauls as points, carrying the matched substrate</span></span>
 <span><span class="va">hauls_hab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span></span>
 <span>  <span class="va">box</span><span class="op">[[</span><span class="st">"HH"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"haul.id"</span>, <span class="st">"lon"</span>, <span class="st">"lat"</span>, <span class="st">"habitat"</span><span class="op">)</span><span class="op">]</span>,</span>
@@ -301,7 +301,7 @@ colour the points by the <code>habitat</code> column:</p>
 <span>     main <span class="op">=</span> <span class="st">"Selected hauls coloured by EMODnet seabed substrate"</span><span class="op">)</span></span></code></pre></div>
 <div style="background:white; padding:0.5rem; display:inline-block;">
 <div class="rimage default">
-<img src="match-emodnet-habitats_files/figure-html/unnamed-chunk-10-1.png" alt="" width="768" class="plot">
+<img src="match-emodnet-habitats_files/figure-html/unnamed-chunk-14-1.png" alt="" width="768" class="plot">
 </div>
 </div>
 </div>

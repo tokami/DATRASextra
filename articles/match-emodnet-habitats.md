@@ -121,7 +121,7 @@ repairs the polygons so they can be used in a spatial join:
 ``` r
 
 ## WFS GetFeature request, restricted to the haul bounding box
-wfs   <- "https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_open/ows"
+wfs <- "https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_open/ows"
 layer <- "emodnet_open:eusm2025_eunis2019_full"
 
 url <- paste0(
@@ -132,16 +132,20 @@ url <- paste0(
   "&bbox=", paste(bb["ymin"], bb["xmin"], bb["ymax"], bb["xmax"], "urn:ogc:def:crs:EPSG::4326", sep = ","),
   "&outputFormat=application/json"
 )
+```
+
+``` r
 
 habitat <- st_read(url, quiet = TRUE)
 habitat <- st_make_valid(habitat)
 
 ## Inspect the attributes and choose the habitat column you want to keep
 names(habitat)
-#>  [1] "id"         "objectid"   "oxygen"     "salinity"   "energy"    
-#>  [6] "biozone"    "substrate"  "eunis2019c" "eunis2019d" "all2019d"  
-#> [11] "all2019dl2" "geometry"
 ```
+
+    #>  [1] "id"         "objectid"   "oxygen"     "salinity"   "energy"    
+    #>  [6] "biozone"    "substrate"  "eunis2019c" "eunis2019d" "all2019d"  
+    #> [11] "all2019dl2" "geometry"
 
 The key habitat attributes in this layer are `eunis2019c` (EUNIS 2019
 code), `eunis2019d` (EUNIS 2019 description), and `all2019d` (full
@@ -240,7 +244,7 @@ plot(hauls_hab["habitat"], pch = 19,
      main = "Selected hauls coloured by EMODnet seabed substrate")
 ```
 
-![](match-emodnet-habitats_files/figure-html/unnamed-chunk-10-1.png)
+![](match-emodnet-habitats_files/figure-html/unnamed-chunk-14-1.png)
 
 ## Summary
 
