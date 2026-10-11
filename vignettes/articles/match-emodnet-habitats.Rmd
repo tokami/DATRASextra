@@ -134,7 +134,7 @@ repairs the polygons so they can be used in a spatial join:
 
 ```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
 ## WFS GetFeature request, restricted to the haul bounding box
-wfs   <- "https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_open/ows"
+wfs <- "https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_open/ows"
 layer <- "emodnet_open:eusm2025_eunis2019_full"
 
 url <- paste0(
@@ -145,11 +145,39 @@ url <- paste0(
   "&bbox=", paste(bb["ymin"], bb["xmin"], bb["ymax"], bb["xmax"], "urn:ogc:def:crs:EPSG::4326", sep = ","),
   "&outputFormat=application/json"
 )
+```
 
+```{r, eval = FALSE, echo = TRUE, fig.alt = ""}
 habitat <- st_read(url, quiet = TRUE)
 habitat <- st_make_valid(habitat)
 
 ## Inspect the attributes and choose the habitat column you want to keep
+names(habitat)
+```
+
+```{r, include = FALSE}
+## Website build: the st_read() call above is shown but not run here. Download to a file
+## so that an unreachable EMODnet server skips the remaining chunks instead of
+## stopping the build.
+op <- options(timeout = max(300, getOption("timeout")))
+has_habitat <- tryCatch({
+  fn <- tempfile(fileext = ".geojson")
+  utils::download.file(url, fn, mode = "wb", quiet = TRUE)
+  habitat <- st_make_valid(st_read(fn, quiet = TRUE))
+  TRUE
+}, error = function(e) {
+  message("EMODnet download failed: ", conditionMessage(e))
+  FALSE
+})
+options(op)
+```
+
+```{r, echo = FALSE, results = "asis", eval = !has_habitat}
+cat("> **Note:** the EMODnet Seabed Habitats server could not be reached when",
+    "this page was built, so the output of the remaining code is not shown.\n")
+```
+
+```{r, echo = FALSE, eval = has_habitat}
 names(habitat)
 ```
 
@@ -172,7 +200,7 @@ layer's CRS and join each point to the polygon it falls in. Keep only the
 habitat attribute(s) you want (here the seabed `substrate`; use `eunis2019d` for
 the full EUNIS habitat description):
 
-```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+```{r, eval = has_habitat, echo = TRUE, fig.alt = ""}
 ## Name of the habitat attribute to keep (from names(habitat) above)
 habitat_col <- "substrate"
 
@@ -187,7 +215,7 @@ head(st_drop_geometry(joined))
 Because polygon boundaries can overlap or hauls can sit on a border, make sure
 there is exactly one row per haul before writing back (keep the first match):
 
-```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+```{r, eval = has_habitat, echo = TRUE, fig.alt = ""}
 ## Collapse to one row per haul.id
 joined <- st_drop_geometry(joined)
 joined <- joined[!duplicated(joined$haul.id), ]
@@ -200,7 +228,7 @@ Finally, match the habitat back onto `HH` by `haul.id` and store it as a new
 column. Matching by `haul.id` (rather than row order) is robust to any reordering
 during the join:
 
-```{r, eval = TRUE, echo = TRUE, fig.alt = ""}
+```{r, eval = has_habitat, echo = TRUE, fig.alt = ""}
 ## Add the habitat column to HH
 box[["HH"]]$habitat <- joined[[habitat_col]][
   match(box[["HH"]]$haul.id, joined$haul.id)
@@ -223,7 +251,7 @@ Finally, a quick base-R map of the selected hauls coloured by their newly
 matched substrate. We turn the `HH` rows back into an `sf` point layer and let
 the `sf` plot method colour the points by the `habitat` column:
 
-```{r, eval = TRUE, echo = TRUE, fig.alt = "Map of the selected hauls coloured by their matched EMODnet seabed substrate"}
+```{r, eval = has_habitat, echo = TRUE, fig.alt = "Map of the selected hauls coloured by their matched EMODnet seabed substrate"}
 ## Selected hauls as points, carrying the matched substrate
 hauls_hab <- st_as_sf(
   box[["HH"]][, c("haul.id", "lon", "lat", "habitat")],
