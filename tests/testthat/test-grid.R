@@ -106,7 +106,56 @@ test_that("add_grid_support without a year column uses all hauls", {
   expect_true(all(out$coverage == 1))
 })
 
+test_that("add_grid_support by group, with depth range and minimum coverage", {
+  skip_if_not_installed("RANN")
+
+  grid <- expand.grid(X = 0:10, Y = 0)
+  grid$Depth <- grid$X * 10
+  ## quarter 1 hauls at x = 2 (3 years) and x = 6 (1 year); quarter 3 at x = 8
+  hx <- c(2, 2, 2, 6, 8, 8)
+  hy <- rep(0, 6)
+  yr <- c(2001, 2002, 2003, 2001, 2001, 2002)
+  q <- c(1, 1, 1, 1, 3, 3)
+
+  out <- add_grid_support(grid, hx, hy, yr, max_dist = 1, by = q)
+  expect_equal(names(out), c("X", "Y", "Depth", "supported_1", "coverage_1",
+                             "supported_3", "coverage_3"))
+  ## quarter 1: three years, the node at x = 6 is covered in one of them
+  expect_equal(out$coverage_1, c(0, 1, 1, 1, 0, 1/3, 1/3, 1/3, 0, 0, 0))
+  expect_equal(out$coverage_3, c(rep(0, 7), 1, 1, 1, 0))
+
+  ## the same as running each quarter alone
+  q1 <- add_grid_support(grid, hx[q == 1], hy[q == 1], yr[q == 1], max_dist = 1)
+  expect_equal(out$coverage_1, q1$coverage)
+  expect_equal(out$supported_1, q1$supported)
+
+  ## minimum coverage drops the node covered in one of three years
+  out2 <- add_grid_support(grid, hx, hy, yr, max_dist = 1, by = q,
+                           min_coverage = 0.5)
+  expect_equal(which(out2$supported_1) - 1, 1:3)
+
+  ## depth range of the hauls of each quarter (20-60 m and 80 m)
+  out3 <- add_grid_support(grid, hx, hy, yr, max_dist = 1, by = q,
+                           depth = hx * 10)
+  expect_equal(which(out3$in_depth_range_1) - 1, 2:6)
+  expect_equal(which(out3$supported_1) - 1, c(2, 3, 5, 6))
+  expect_equal(which(out3$supported_3) - 1, 8)
+
+  ## NA in by: hauls not used
+  out4 <- add_grid_support(grid, hx, hy, yr, max_dist = 1, by = ifelse(q == 3, NA, q))
+  expect_false(any(grepl("_3$", names(out4))))
+
+  ## running again replaces the columns
+  expect_equal(add_grid_support(out, hx, hy, yr, max_dist = 1, by = q), out)
+})
+
 test_that("add_grid_support checks its inputs", {
+  expect_error(add_grid_support(data.frame(X = 1, Y = 1), 1, 1, 1, max_dist = 1,
+                                by = 1:2), "by must have")
+  expect_error(add_grid_support(data.frame(X = 1, Y = 1), 1, 1, 1, max_dist = 1,
+                                depth = 1), "column 'Depth'")
+  expect_error(add_grid_support(data.frame(X = 1, Y = 1), 1, 1, 1, max_dist = 1,
+                                min_coverage = 2), "between 0 and 1")
   expect_error(add_grid_support(data.frame(a = 1), 1, 1, 1, max_dist = 1), "X and Y")
   expect_error(add_grid_support(data.frame(X = 1, Y = 1), 1:2, 1, 1, max_dist = 1),
                "same length")
@@ -139,7 +188,13 @@ test_that("add_bathymetry adds positive depth, NA on land and outside", {
   expect_true(all(y[["HH"]]$DepthNOAA == 80))
   expect_equal(y[["HH"]]$Depth, x[["HH"]]$Depth)
 
+  ## clamp: depths outside the range set to its limits, land stays NA
+  out2 <- add_bathymetry(d, bathy = bathy, depth_range = c(50, 150), clamp = TRUE)
+  expect_equal(out2$Depth, c(NA, 80, 150, NA, NA))
+  expect_equal(out2$depth_ok, out$depth_ok)
+
   expect_error(add_bathymetry(d, bathy = bathy, depth_range = 1), "length 2")
+  expect_error(add_bathymetry(d, bathy = bathy, clamp = TRUE), "requires depth_range")
 })
 
 

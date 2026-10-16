@@ -500,7 +500,8 @@ make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL,
 ##' [make_survey_grid()].
 ##'
 ##' @param grid A data frame with columns `X` and `Y` on a regular grid, and
-##'   optionally `year`, e.g. from [make_survey_grid()].
+##'   optionally `year` and a depth column, e.g. from [make_survey_grid()] and
+##'   [add_bathymetry()].
 ##' @param x,y Numeric vectors of haul coordinates, in the units of the grid.
 ##' @param time Vector of haul years, the same length as `x`.
 ##' @param max_dist,fill_gaps Distances as in [make_survey_grid()].
@@ -509,23 +510,40 @@ make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL,
 ##'   itself and the years before and after.
 ##' @param resolution Grid spacing. If `NULL` (default), taken from the
 ##'   spacing of `grid`.
+##' @param by Optional vector the same length as `x`, e.g. the quarter of each
+##'   haul. The columns are then computed separately for the hauls of each
+##'   value, and named with the value as suffix (e.g. `coverage_1`,
+##'   `coverage_3`). Hauls with `NA` in `by` are not used.
+##' @param depth Optional numeric vector of haul depths, the same length as
+##'   `x`. When given, the column `in_depth_range` is added, whether the depth
+##'   of the node (column `depth_col`) lies within the depth range of the
+##'   hauls, and `supported` also requires it.
+##' @param depth_probs Probabilities of [stats::quantile()] for the depth
+##'   range. Default `c(0, 1)`: from the shallowest to the deepest haul.
+##' @param depth_col Name of the depth column of `grid`. Default `"Depth"`.
+##' @param min_coverage Optional number between 0 and 1. When given,
+##'   `supported` also requires `coverage >= min_coverage`, e.g. to keep the
+##'   nodes the survey covers regularly.
 ##'
 ##' @details
 ##' `coverage` is computed per node from the hauls of each year alone,
 ##' without `window`.  The years counted are those in `grid$year` when the
 ##' grid has a `year` column, so that years without hauls count as not
-##' covered, and those in `time` otherwise.  A threshold such as
-##' `coverage >= 0.25` keeps the nodes the survey covers regularly.
+##' covered, and those in `time` otherwise (with `by`, those of the hauls of
+##' each value).
 ##'
 ##' Surveys sampled in several quarters usually cover different areas in
-##' each.  Run the function per quarter, with the hauls of that quarter (see
-##' the examples).
+##' each.  Use `by` with the quarter of the hauls, or run the function per
+##' quarter (see the examples).  With `by`, only the columns by value are
+##' added; call the function once more without `by` for the columns of all
+##' hauls together.
 ##'
-##' @return `grid` with the columns `supported` (logical; only when `grid`
-##'   has a `year` column, otherwise coverage by all hauls) and `coverage`
-##'   (numeric between 0 and 1) added.
+##' @return `grid` with the columns `in_depth_range` (logical; only when
+##'   `depth` is given), `supported` (logical; only when `grid` has a `year`
+##'   column, otherwise coverage by all hauls) and `coverage` (numeric between
+##'   0 and 1) added, with a suffix for each value of `by` when given.
 ##'
-##' @seealso [make_survey_grid()]
+##' @seealso [make_survey_grid()], [add_grid_occupancy()]
 ##'
 ##' @examples
 ##' if (requireNamespace("RANN", quietly = TRUE)) {
@@ -543,11 +561,22 @@ make_survey_grid <- function(x, y, resolution, max_dist = NULL, time = NULL,
 ##'
 ##'   ## Nodes covered in at least a quarter of the years
 ##'   core <- g1[g1$coverage >= 0.25, ]
+##'
+##'   ## Each quarter, without years: nodes covered in at least a quarter of
+##'   ## the years and within the 1-99 % depth range of the hauls
+##'   nodes <- unique(grid[, c("X", "Y")])
+##'   nodes$Depth <- 20 + 30 * (nodes$X - min(nodes$X)) / diff(range(nodes$X))
+##'   gq <- add_grid_support(nodes, hh$lon, hh$lat, years, max_dist = 0.3,
+##'                          by = hh$Quarter, depth = hh$Depth,
+##'                          depth_probs = c(0.01, 0.99), min_coverage = 0.25)
+##'   head(gq)
 ##' }
 ##'
 ##' @export
 add_grid_support <- function(grid, x, y, time, max_dist, fill_gaps = NULL,
-                             window = 1, resolution = NULL) {
+                             window = 1, resolution = NULL, by = NULL,
+                             depth = NULL, depth_probs = c(0, 1),
+                             depth_col = "Depth", min_coverage = NULL) {
   if (!all(c("X", "Y") %in% names(grid))) stop("grid must have columns X and Y.")
   if (length(y) != length(x) || length(time) != length(x)) {
     stop("x, y and time must have the same length.")
@@ -555,11 +584,26 @@ add_grid_support <- function(grid, x, y, time, max_dist, fill_gaps = NULL,
   if (!is.numeric(window) || length(window) != 1 || window < 0) {
     stop("window must be a single non-negative number.")
   }
+  if (!is.null(by) && length(by) != length(x)) {
+    stop("by must have the same length as x.")
+  }
+  if (!is.null(depth)) {
+    if (length(depth) != length(x)) stop("depth must have the same length as x.")
+    if (!depth_col %in% names(grid)) stop("grid must have the column '", depth_col, "'.")
+  }
+  if (!is.null(min_coverage) &&
+      (!is.numeric(min_coverage) || length(min_coverage) != 1 ||
+       min_coverage < 0 || min_coverage > 1)) {
+    stop("min_coverage must be a single number between 0 and 1.")
+  }
   time <- as.numeric(as.character(time))
 
   nodes <- unique(grid[, c("X", "Y")])
   if (is.null(resolution)) resolution <- .grid_resolution(nodes)
   node_of <- match(paste(grid$X, grid$Y), paste(nodes$X, nodes$Y))
+
+  has_year <- "year" %in% names(grid)
+  gy <- if (has_year) as.numeric(as.character(grid$year)) else NULL
 
   covered <- function(sel) {
     if (!any(sel)) return(rep(FALSE, nrow(nodes)))
@@ -567,26 +611,51 @@ add_grid_support <- function(grid, x, y, time, max_dist, fill_gaps = NULL,
                    max_dist = max_dist, fill_gaps = fill_gaps)
   }
 
-  has_year <- "year" %in% names(grid)
-  years <- if (has_year) sort(unique(as.numeric(as.character(grid$year)))) else
-    sort(unique(time[!is.na(time)]))
+  ## the columns for the hauls 'use'
+  support <- function(use) {
+    years <- if (has_year) sort(unique(gy)) else sort(unique(time[use & !is.na(time)]))
+    by_year <- vapply(years, function(yr) covered(use & !is.na(time) & time == yr),
+                      logical(nrow(nodes)))
+    by_year <- matrix(by_year, nrow = nrow(nodes))
+    coverage <- if (length(years) > 0) rowMeans(by_year)[node_of] else
+      rep(0, nrow(grid))
 
-  by_year <- vapply(years, function(yr) covered(!is.na(time) & time == yr),
-                    logical(nrow(nodes)))
-  by_year <- matrix(by_year, nrow = nrow(nodes))
-  grid$coverage <- rowMeans(by_year)[node_of]
+    if (has_year) {
+      sup <- vapply(years, function(yr) {
+        covered(use & !is.na(time) & abs(time - yr) <= window)
+      }, logical(nrow(nodes)))
+      sup <- matrix(sup, nrow = nrow(nodes))
+      supported <- sup[cbind(node_of, match(gy, years))]
+    } else {
+      supported <- covered(use)[node_of]
+    }
+    if (!is.null(min_coverage)) supported <- supported & coverage >= min_coverage
 
-  if (has_year) {
-    gy <- as.numeric(as.character(grid$year))
-    sup <- vapply(years, function(yr) covered(!is.na(time) & abs(time - yr) <= window),
-                  logical(nrow(nodes)))
-    sup <- matrix(sup, nrow = nrow(nodes))
-    grid$supported <- sup[cbind(node_of, match(gy, years))]
-  } else {
-    grid$supported <- covered(rep(TRUE, length(x)))[node_of]
+    out <- list()
+    if (!is.null(depth)) {
+      r <- stats::quantile(depth[use], depth_probs, na.rm = TRUE, names = FALSE)
+      gd <- grid[[depth_col]]
+      out$in_depth_range <- !is.na(gd) & gd >= r[1] & gd <= r[2]
+      supported <- supported & out$in_depth_range
+    }
+    out$supported <- supported
+    out$coverage <- coverage
+    out
   }
 
-  grid[, c(setdiff(names(grid), c("supported", "coverage")), "supported", "coverage")]
+  if (is.null(by)) {
+    res <- support(rep(TRUE, length(x)))
+  } else {
+    res <- list()
+    for (v in sort(unique(by[!is.na(by)]))) {
+      r <- support(!is.na(by) & by == v)
+      names(r) <- paste0(names(r), "_", v)
+      res <- c(res, r)
+    }
+  }
+  grid <- grid[, setdiff(names(grid), names(res)), drop = FALSE]
+  grid[names(res)] <- res
+  grid
 }
 
 

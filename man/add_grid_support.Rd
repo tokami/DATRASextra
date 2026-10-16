@@ -12,12 +12,18 @@ add_grid_support(
   max_dist,
   fill_gaps = NULL,
   window = 1,
-  resolution = NULL
+  resolution = NULL,
+  by = NULL,
+  depth = NULL,
+  depth_probs = c(0, 1),
+  depth_col = "Depth",
+  min_coverage = NULL
 )
 }
 \arguments{
 \item{grid}{A data frame with columns \code{X} and \code{Y} on a regular grid, and
-optionally \code{year}, e.g. from \code{\link[=make_survey_grid]{make_survey_grid()}}.}
+optionally \code{year} and a depth column, e.g. from \code{\link[=make_survey_grid]{make_survey_grid()}} and
+\code{\link[=add_bathymetry]{add_bathymetry()}}.}
 
 \item{x, y}{Numeric vectors of haul coordinates, in the units of the grid.}
 
@@ -31,11 +37,31 @@ itself and the years before and after.}
 
 \item{resolution}{Grid spacing. If \code{NULL} (default), taken from the
 spacing of \code{grid}.}
+
+\item{by}{Optional vector the same length as \code{x}, e.g. the quarter of each
+haul. The columns are then computed separately for the hauls of each
+value, and named with the value as suffix (e.g. \code{coverage_1},
+\code{coverage_3}). Hauls with \code{NA} in \code{by} are not used.}
+
+\item{depth}{Optional numeric vector of haul depths, the same length as
+\code{x}. When given, the column \code{in_depth_range} is added, whether the depth
+of the node (column \code{depth_col}) lies within the depth range of the
+hauls, and \code{supported} also requires it.}
+
+\item{depth_probs}{Probabilities of \code{\link[stats:quantile]{stats::quantile()}} for the depth
+range. Default \code{c(0, 1)}: from the shallowest to the deepest haul.}
+
+\item{depth_col}{Name of the depth column of \code{grid}. Default \code{"Depth"}.}
+
+\item{min_coverage}{Optional number between 0 and 1. When given,
+\code{supported} also requires \code{coverage >= min_coverage}, e.g. to keep the
+nodes the survey covers regularly.}
 }
 \value{
-\code{grid} with the columns \code{supported} (logical; only when \code{grid}
-has a \code{year} column, otherwise coverage by all hauls) and \code{coverage}
-(numeric between 0 and 1) added.
+\code{grid} with the columns \code{in_depth_range} (logical; only when
+\code{depth} is given), \code{supported} (logical; only when \code{grid} has a \code{year}
+column, otherwise coverage by all hauls) and \code{coverage} (numeric between
+0 and 1) added, with a suffix for each value of \code{by} when given.
 }
 \description{
 Adds two columns to a prediction grid from \code{\link[=make_survey_grid]{make_survey_grid()}} that show
@@ -52,12 +78,14 @@ of them, after filling gaps with \code{fill_gaps}, exactly as in
 \code{coverage} is computed per node from the hauls of each year alone,
 without \code{window}.  The years counted are those in \code{grid$year} when the
 grid has a \code{year} column, so that years without hauls count as not
-covered, and those in \code{time} otherwise.  A threshold such as
-\code{coverage >= 0.25} keeps the nodes the survey covers regularly.
+covered, and those in \code{time} otherwise (with \code{by}, those of the hauls of
+each value).
 
 Surveys sampled in several quarters usually cover different areas in
-each.  Run the function per quarter, with the hauls of that quarter (see
-the examples).
+each.  Use \code{by} with the quarter of the hauls, or run the function per
+quarter (see the examples).  With \code{by}, only the columns by value are
+added; call the function once more without \code{by} for the columns of all
+hauls together.
 }
 \examples{
 if (requireNamespace("RANN", quietly = TRUE)) {
@@ -75,9 +103,18 @@ if (requireNamespace("RANN", quietly = TRUE)) {
 
   ## Nodes covered in at least a quarter of the years
   core <- g1[g1$coverage >= 0.25, ]
+
+  ## Each quarter, without years: nodes covered in at least a quarter of
+  ## the years and within the 1-99 \% depth range of the hauls
+  nodes <- unique(grid[, c("X", "Y")])
+  nodes$Depth <- 20 + 30 * (nodes$X - min(nodes$X)) / diff(range(nodes$X))
+  gq <- add_grid_support(nodes, hh$lon, hh$lat, years, max_dist = 0.3,
+                         by = hh$Quarter, depth = hh$Depth,
+                         depth_probs = c(0.01, 0.99), min_coverage = 0.25)
+  head(gq)
 }
 
 }
 \seealso{
-\code{\link[=make_survey_grid]{make_survey_grid()}}
+\code{\link[=make_survey_grid]{make_survey_grid()}}, \code{\link[=add_grid_occupancy]{add_grid_occupancy()}}
 }

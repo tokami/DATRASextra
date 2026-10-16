@@ -12,6 +12,7 @@ add_bathymetry(
   resolution = 1,
   path = NULL,
   depth_range = NULL,
+  clamp = FALSE,
   col = "Depth"
 )
 }
@@ -36,11 +37,15 @@ and looked up again on later calls, so that it is downloaded only once.}
 logical column \code{depth_ok} is added that is \code{TRUE} where the depth lies
 within the range.}
 
+\item{clamp}{Logical. If \code{TRUE}, depths outside \code{depth_range} are set to
+its nearest limit, e.g. so that a model of depth is not extrapolated.
+\code{depth_ok} still shows where they lay outside. Default \code{FALSE}.}
+
 \item{col}{Name of the depth column to add. Default \code{"Depth"}, as in \code{HH}.}
 }
 \value{
 \code{d} with the depth column, and \code{depth_ok} when \code{depth_range} is
-given, added.
+given, added. Positions on land keep \code{NA} with \code{clamp = TRUE}.
 }
 \description{
 Adds the sea depth at each position of a data frame, for example the

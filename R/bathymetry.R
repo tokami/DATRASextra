@@ -23,6 +23,9 @@
 ##' @param depth_range Optional numeric vector of length 2. When given, a
 ##'   logical column `depth_ok` is added that is `TRUE` where the depth lies
 ##'   within the range.
+##' @param clamp Logical. If `TRUE`, depths outside `depth_range` are set to
+##'   its nearest limit, e.g. so that a model of depth is not extrapolated.
+##'   `depth_ok` still shows where they lay outside. Default `FALSE`.
 ##' @param col Name of the depth column to add. Default `"Depth"`, as in `HH`.
 ##'
 ##' @details
@@ -41,7 +44,7 @@
 ##' reported by the survey are replaced. Use another `col` to compare them.
 ##'
 ##' @return `d` with the depth column, and `depth_ok` when `depth_range` is
-##'   given, added.
+##'   given, added. Positions on land keep `NA` with `clamp = TRUE`.
 ##'
 ##' @seealso [make_survey_grid()], [add_grid_support()], [add_xy()]
 ##'
@@ -66,6 +69,7 @@ add_bathymetry <- function(d,
                            resolution = 1,
                            path = NULL,
                            depth_range = NULL,
+                           clamp = FALSE,
                            col = "Depth") {
 
   if (!requireNamespace("marmap", quietly = TRUE)) {
@@ -75,11 +79,13 @@ add_bathymetry <- function(d,
   if (!is.null(depth_range) && (!is.numeric(depth_range) || length(depth_range) != 2)) {
     stop("depth_range must be a numeric vector of length 2.")
   }
+  if (isTRUE(clamp) && is.null(depth_range)) stop("clamp = TRUE requires depth_range.")
 
   if (inherits(d, "datras_raw") || inherits(d, "DATRASraw")) {
     d[["HH"]] <- add_bathymetry(d[["HH"]], lon = lon, lat = lat, bathy = bathy,
                                 resolution = resolution, path = path,
-                                depth_range = depth_range, col = col)
+                                depth_range = depth_range, clamp = clamp,
+                                col = col)
     return(d)
   }
 
@@ -117,6 +123,7 @@ add_bathymetry <- function(d,
   if (!is.null(depth_range)) {
     r <- sort(depth_range)
     d$depth_ok <- !is.na(depth) & depth >= r[1] & depth <= r[2]
+    if (isTRUE(clamp)) d[[col]] <- pmin(pmax(depth, r[1]), r[2])
   }
   d
 }

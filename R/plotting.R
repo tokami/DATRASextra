@@ -1080,6 +1080,254 @@ plot_species_composition <- function(x,
 }
 
 
+#' Map columns of a prediction grid
+#'
+#' @description
+#' Draws one map per column of a regular prediction grid, e.g. depth, survey
+#' coverage or where a model predicts, with land, the boundaries of ICES areas
+#' and hauls. Numeric columns are shown in classes of a continuous palette,
+#' logical, character and factor columns as categories.
+#'
+#' @param grid A data frame with one row per grid node and the columns named
+#'   by `coords` on a regular grid, e.g. from [make_survey_grid()].
+#' @param vars Names of the columns to map, one panel each.
+#' @param hauls Optional hauls to add as points: a data frame or `datras_raw`
+#'   object with the columns named by `coords` (e.g. from [add_xy()]), or a
+#'   list of them with one element per panel.
+#' @param coords Names of the coordinate columns. Default `c("X", "Y")`.
+#' @param crs Coordinate reference system of `coords`, as an EPSG code.
+#'   Default 3035, as from [add_xy()]; 4326 for longitude and latitude.
+#' @param units Units of projected coordinates, `"km"` (default, as from
+#'   [add_xy()]) or `"m"`.
+#' @param areas Optional name of a column of area codes, e.g. `"Area_27"`
+#'   from [add_ices_areas()]. Boundaries are drawn along the cell edges where
+#'   the area changes.
+#' @param area_labels Logical. Label the areas of `areas`. Default `TRUE`.
+#' @param plot_map Logical. Draw land, from [get_land()] (needs \pkg{sf}).
+#'   Default `TRUE`.
+#' @param map_scale Scale of the land polygons, 50 (default) or 110.
+#' @param col Optional colours. For numeric columns, colours that are
+#'   interpolated to the number of classes; for categorical columns, one
+#'   colour per category, best named by category. Logical columns default
+#'   to teal for `TRUE` and sand for `FALSE`. A list gives the
+#'   colours of each panel, by position or named by column; `NULL` elements
+#'   take the defaults.
+#' @param n_breaks Approximate number of classes of numeric columns. Default 7.
+#' @param breaks Optional class limits of numeric columns, in the units of the
+#'   column.
+#' @param transform Transform of numeric columns before the classes are made:
+#'   `"none"` (default), `"sqrt"`, `"log1p"` or `"log10"`. The legend shows the
+#'   untransformed values.
+#' @param main Optional panel titles, one per column of `vars`. Default: the
+#'   column names.
+#' @param xlim,ylim Optional map limits, in the units of `coords`. Default:
+#'   the extent of the grid.
+#' @param nrow Number of rows of panels. Default: one row for up to three
+#'   panels.
+#' @param legend Logical. Draw a legend in each panel. Default `TRUE`.
+#' @param legend_pos Position of the legend, as in [graphics::legend()].
+#'   Default `"topright"`.
+#' @param logical_labels Legend labels of `TRUE` and `FALSE` in logical
+#'   columns, e.g. `c("predicted", "not predicted")`.
+#' @param xlab,ylab Axis titles. Default: `"X (km)"` and `"Y (km)"` for
+#'   projected coordinates, `"Longitude"` and `"Latitude"` for `crs = 4326`.
+#' @param hauls_col,hauls_cex Colour and size of the haul points.
+#' @param resolution Grid spacing. If `NULL` (default), taken from the
+#'   spacing of `grid`.
+#' @param add Logical. If `FALSE` (default), the panels are arranged with
+#'   `par(mfrow)`, which is restored afterwards; the panels share the axis
+#'   titles, and the tick labels are drawn only along the left and bottom
+#'   panels. If `TRUE`, the panels are drawn into the current layout, e.g.
+#'   one set up with [graphics::layout()], each with its own axes.
+#'
+#' @details
+#' The grid must have one row per node; subset a year first when it has a
+#' `year` column. Missing values are left blank. Land is transformed to `crs`
+#' and drawn over the cells, so that cells along the coast do not hide it.
+#'
+#' @return Invisibly, a list with one element per panel, with the class
+#'   limits (`breaks`, numeric columns only), `labels` and `col` of the
+#'   legend.
+#'
+#' @seealso [make_survey_grid()], [add_grid_support()],
+#'   [add_grid_occupancy()], [plot_datras_overview()]
+#'
+#' @examples
+#' if (requireNamespace("RANN", quietly = TRUE)) {
+#'   hh <- dab[["HH"]]
+#'   grid <- make_survey_grid(hh$lon, hh$lat, resolution = 0.1, max_dist = 0.2)
+#'   grid <- add_grid_support(grid, hh$lon, hh$lat, hh$Year, max_dist = 0.2)
+#'   names(grid)[1:2] <- c("lon", "lat")
+#'   grid <- add_ices_areas(grid, vars = "Area_27", verbose = FALSE)
+#'
+#'   ## a grid in longitude and latitude, with the ICES areas
+#'   plot_grid(grid, c("coverage", "supported"), coords = c("lon", "lat"),
+#'             crs = 4326, areas = "Area_27", hauls = hh)
+#' }
+#'
+#' @export
+plot_grid <- function(grid,
+                      vars,
+                      hauls = NULL,
+                      coords = c("X", "Y"),
+                      crs = 3035,
+                      units = c("km", "m"),
+                      areas = NULL,
+                      area_labels = TRUE,
+                      plot_map = TRUE,
+                      map_scale = 50,
+                      col = NULL,
+                      n_breaks = 7,
+                      breaks = NULL,
+                      transform = c("none", "sqrt", "log1p", "log10"),
+                      main = NULL,
+                      xlim = NULL,
+                      ylim = NULL,
+                      nrow = NULL,
+                      legend = TRUE,
+                      legend_pos = "topright",
+                      logical_labels = c("TRUE", "FALSE"),
+                      xlab = NULL,
+                      ylab = NULL,
+                      hauls_col = "#D55E00",
+                      hauls_cex = 0.3,
+                      resolution = NULL,
+                      add = FALSE) {
+
+  units <- match.arg(units)
+  transform <- match.arg(transform)
+  if (!is.data.frame(grid)) stop("grid must be a data frame.")
+  missing_cols <- setdiff(c(coords, vars, areas), names(grid))
+  if (length(missing_cols) > 0) {
+    stop("Column(s) not found in grid: ", paste(missing_cols, collapse = ", "))
+  }
+  if (length(logical_labels) != 2 || anyDuplicated(logical_labels)) {
+    stop("logical_labels must be two different labels, for TRUE and FALSE.")
+  }
+  if (!is.null(main) && length(main) != length(vars)) {
+    stop("main must have one title per column of vars.")
+  }
+  gx <- as.numeric(grid[[coords[1]]])
+  gy <- as.numeric(grid[[coords[2]]])
+  if (anyDuplicated(paste(gx, gy))) {
+    stop("grid must have one row per node; subset a year first.")
+  }
+
+  ## hauls: one set for all panels, or one per panel
+  single <- is.null(hauls) || is.data.frame(hauls) ||
+    inherits(hauls, c("datras_raw", "DATRASraw"))
+  if (!single && length(hauls) != length(vars)) {
+    stop("hauls must be a data frame, a datras_raw object or a list with one ",
+         "element per column of vars.")
+  }
+  hauls <- if (single) rep(list(hauls), length(vars)) else hauls
+  hauls <- lapply(hauls, function(h) {
+    if (is.null(h)) return(NULL)
+    if (inherits(h, c("datras_raw", "DATRASraw"))) h <- h[["HH"]]
+    if (!all(coords %in% names(h))) {
+      stop("hauls must have the columns '", coords[1], "' and '", coords[2],
+           "' (see add_xy()).")
+    }
+    h
+  })
+
+  ## cells on a regular lattice, for image()
+  if (is.null(resolution)) resolution <- .grid_resolution(data.frame(X = gx, Y = gy))
+  xs <- seq(min(gx), max(gx) + resolution / 2, by = resolution)
+  ys <- seq(min(gy), max(gy) + resolution / 2, by = resolution)
+  ix <- round((gx - xs[1]) / resolution) + 1L
+  iy <- round((gy - ys[1]) / resolution) + 1L
+
+  geographic <- identical(as.numeric(crs), 4326)
+  if (is.null(xlim)) xlim <- range(gx) + c(-1, 1) * resolution
+  if (is.null(ylim)) ylim <- range(gy) + c(-1, 1) * resolution
+  asp <- if (geographic) 1 / cos(mean(ylim) * pi / 180) else 1
+
+  land <- if (isTRUE(plot_map)) {
+    .grid_land(crs = crs, scale = if (geographic || units == "m") 1 else 1000,
+               map_scale = map_scale)
+  }
+  edges <- if (!is.null(areas)) .grid_area_edges(grid[[areas]], ix, iy, xs, ys, resolution)
+
+  if (is.null(xlab)) xlab <- if (geographic) "Longitude" else paste0("X (", units, ")")
+  if (is.null(ylab)) ylab <- if (geographic) "Latitude" else paste0("Y (", units, ")")
+
+  ## panels side by side share the axis titles (outer margin) and tick labels
+  n <- length(vars)
+  if (is.null(nrow)) nrow <- if (n <= 3) 1 else ceiling(n / 3)
+  ncol <- ceiling(n / nrow)
+  if (!isTRUE(add)) {
+    op <- graphics::par(mfrow = c(nrow, ncol), mar = c(0.6, 0.6, 2, 0.6),
+                        oma = c(3.5, 4.5, 0.5, 0.5), mgp = c(2, 0.6, 0))
+    on.exit(graphics::par(op), add = TRUE)
+  }
+
+  if (is.list(col)) {
+    if (!is.null(names(col))) {
+      col <- col[vars]
+    } else if (length(col) != length(vars)) {
+      stop("A list of colours must have one element per column of vars.")
+    }
+  } else {
+    col <- rep(list(col), length(vars))
+  }
+
+  use_raster <- identical(grDevices::dev.capabilities("rasterImage")$rasterImage, "yes")
+
+  out <- vector("list", length(vars))
+  names(out) <- vars
+  for (k in seq_along(vars)) {
+    cls <- .grid_classes(grid[[vars[k]]], col = col[[k]], n_breaks = n_breaks,
+                         breaks = breaks, transform = transform,
+                         logical_labels = logical_labels)
+    mat <- matrix(NA_integer_, length(xs), length(ys))
+    mat[cbind(ix, iy)] <- cls$class
+
+    graphics::plot(NA, xlim = xlim, ylim = ylim, asp = asp, xlab = "", ylab = "",
+                   axes = FALSE, main = if (is.null(main)) vars[k] else main[k])
+    ## tick labels: left column and bottom panels, or all panels with add
+    graphics::axis(1, labels = isTRUE(add) || k + ncol > n, xpd = NA)
+    graphics::axis(2, labels = isTRUE(add) || (k - 1) %% ncol == 0, las = 1,
+                   xpd = NA)
+    if (isTRUE(add)) graphics::title(xlab = xlab, ylab = ylab, line = 2)
+    if (length(cls$col) > 0) {
+      ## as a raster where the device can: drawn as rectangles, the cells can
+      ## leave thin seams between them
+      graphics::image(xs, ys, mat, add = TRUE, col = cls$col,
+                      breaks = seq_len(length(cls$col) + 1) - 0.5,
+                      useRaster = use_raster)
+    }
+    if (!is.null(edges)) {
+      graphics::segments(edges$x0, edges$y0, edges$x1, edges$y1,
+                         col = "grey20", lwd = 0.8)
+    }
+    if (!is.null(land)) {
+      graphics::plot(land, add = TRUE, col = grDevices::grey(0.85),
+                     border = grDevices::grey(0.6), lwd = 0.5)
+    }
+    if (!is.null(areas) && isTRUE(area_labels)) {
+      .grid_area_labels(grid[[areas]], gx, gy)
+    }
+    if (!is.null(hauls[[k]])) {
+      graphics::points(hauls[[k]][[coords[1]]], hauls[[k]][[coords[2]]],
+                       pch = 16, cex = hauls_cex, col = hauls_col)
+    }
+    if (isTRUE(legend) && length(cls$col) > 0) {
+      graphics::legend(legend_pos, legend = cls$labels, fill = cls$col,
+                       border = NA, cex = 0.7, bg = "white", box.lwd = 0.5)
+    }
+    graphics::box()
+    out[[k]] <- cls[c("breaks", "labels", "col")]
+  }
+  if (!isTRUE(add)) {
+    graphics::mtext(xlab, side = 1, line = 2, outer = TRUE, cex = 0.9)
+    graphics::mtext(ylab, side = 2, line = 3.2, outer = TRUE, cex = 0.9)
+  }
+
+  invisible(out)
+}
+
+
 ## Internal functions ------------------------------------------------------------
 
 ## Map length cut points (in cm) to barplot x-coordinates.
@@ -1667,4 +1915,125 @@ plot_species_composition <- function(x,
                      x.intersp = -0.3)
   }
   box(lwd = 1.2)
+}
+
+
+## plot_grid helpers -------------------------------------------------------------
+
+## Classes and colours of a grid column: numeric values in classes of a
+## continuous palette, logical, character and factor values as categories.
+## Returns the class of each value (integer, NA for missing), the colours and
+## legend labels of the classes, and the class limits of numeric values.
+.grid_classes <- function(v, col = NULL, n_breaks = 7, breaks = NULL,
+                          transform = "none", logical_labels = c("TRUE", "FALSE")) {
+
+  if (is.logical(v)) {
+    v <- factor(ifelse(v, logical_labels[1], logical_labels[2]),
+                levels = logical_labels)
+    if (is.null(col)) {
+      col <- stats::setNames(.colours_datrasextra_continuous(6)[c(5, 1)],
+                             logical_labels)
+    } else if (!all(logical_labels %in% names(col))) {
+      ## colours named TRUE and FALSE, or the first two for TRUE and FALSE
+      col <- if (all(c("TRUE", "FALSE") %in% names(col))) col[c("TRUE", "FALSE")] else
+        col[1:2]
+      col <- stats::setNames(unname(col), logical_labels)
+    }
+  }
+
+  if (is.character(v) || is.factor(v)) {
+    v <- if (is.factor(v)) v else factor(v)
+    lev <- levels(v)
+    pal <- if (!is.null(names(col)) && all(lev %in% names(col))) {
+      unname(col[lev])
+    } else if (!is.null(col) && length(col) >= length(lev)) {
+      col[seq_along(lev)]
+    } else {
+      .colours_datrasextra_discrete(max(1, length(lev)))[seq_along(lev)]
+    }
+    return(list(class = as.integer(v), col = pal, labels = lev, breaks = NULL))
+  }
+
+  fwd <- function(z) {
+    switch(transform, sqrt = sqrt(z), log1p = log1p(z), log10 = log10(z), z)
+  }
+  tv <- suppressWarnings(fwd(as.numeric(v)))
+  tv[!is.finite(tv)] <- NA_real_
+  if (all(is.na(tv))) {
+    return(list(class = rep(NA_integer_, length(v)), col = character(0),
+                labels = character(0), breaks = NULL))
+  }
+
+  b <- if (!is.null(breaks)) fwd(sort(breaks)) else {
+    r <- range(tv, na.rm = TRUE)
+    if (r[1] == r[2]) r <- r + c(-0.5, 0.5)
+    pretty(r, n = n_breaks)
+  }
+  cls <- findInterval(tv, b, rightmost.closed = TRUE, all.inside = TRUE)
+  cls[is.na(tv)] <- NA_integer_
+  ## values outside user breaks are left blank
+  if (!is.null(breaks)) cls[!is.na(tv) & (tv < min(b) | tv > max(b))] <- NA_integer_
+
+  nb <- length(b) - 1
+  pal <- if (!is.null(col)) grDevices::colorRampPalette(col)(nb) else
+    .colours_datrasextra_continuous(nb)
+  lim <- signif(.back_transform(b, transform), 3)
+  labels <- paste0(format(lim[-length(lim)], trim = TRUE), " - ",
+                   format(lim[-1], trim = TRUE))
+  list(class = cls, col = pal, labels = labels, breaks = .back_transform(b, transform))
+}
+
+
+## Land polygons in the coordinates of the grid: crs, divided by 'scale' (1000
+## for km). NULL with a warning when sf is not available.
+.grid_land <- function(crs, scale = 1, map_scale = 50) {
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    warning("Package 'sf' is required to draw land; use plot_map = FALSE.",
+            call. = FALSE)
+    return(NULL)
+  }
+  land <- tryCatch(sf::st_geometry(get_land(download_map = FALSE, scale = map_scale)),
+                   error = function(e) NULL)
+  if (is.null(land)) return(NULL)
+  if (!identical(as.numeric(crs), 4326)) land <- sf::st_transform(land, crs)
+  if (scale != 1) {
+    land <- land / scale
+    sf::st_crs(land) <- NA
+  }
+  land
+}
+
+
+## Cell edges between neighbouring cells of different areas, as segments.
+## Only edges between two cells of the grid are drawn: the outer edge of the
+## grid (e.g. along the coast) is not an area boundary.
+.grid_area_edges <- function(area, ix, iy, xs, ys, resolution) {
+  a <- matrix(NA_character_, length(xs), length(ys))
+  a[cbind(ix, iy)] <- as.character(area)
+  h <- resolution / 2
+  nx <- length(xs)
+  ny <- length(ys)
+
+  ## between columns i and i + 1: vertical edges
+  v <- which(!is.na(a[-nx, , drop = FALSE]) & !is.na(a[-1, , drop = FALSE]) &
+               a[-nx, , drop = FALSE] != a[-1, , drop = FALSE], arr.ind = TRUE)
+  ## between rows j and j + 1: horizontal edges
+  w <- which(!is.na(a[, -ny, drop = FALSE]) & !is.na(a[, -1, drop = FALSE]) &
+               a[, -ny, drop = FALSE] != a[, -1, drop = FALSE], arr.ind = TRUE)
+
+  data.frame(x0 = c(xs[v[, 1]] + h, xs[w[, 1]] - h),
+             y0 = c(ys[v[, 2]] - h, ys[w[, 2]] + h),
+             x1 = c(xs[v[, 1]] + h, xs[w[, 1]] + h),
+             y1 = c(ys[v[, 2]] + h, ys[w[, 2]] + h))
+}
+
+
+## Area labels at the cell of each area nearest to the centre of its cells.
+.grid_area_labels <- function(area, gx, gy) {
+  area <- as.character(area)
+  for (a in sort(unique(area[!is.na(area)]))) {
+    s <- which(area == a)
+    k <- s[which.min((gx[s] - mean(gx[s]))^2 + (gy[s] - mean(gy[s]))^2)]
+    graphics::text(gx[k], gy[k], a, cex = 0.7, font = 2, col = "grey10")
+  }
 }

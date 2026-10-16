@@ -14,6 +14,12 @@
 
 * New `get_grid_distance()` returns the distance from each haul to the nearest grid node, e.g. to fit a model only to the hauls near the area of prediction.
 
+* `add_grid_support()` gains `by`, to compute the columns separately for groups of hauls such as quarters (e.g. `coverage_1`, `coverage_3`); `depth` and `depth_probs`, to add `in_depth_range`, whether a node lies within the depth range of the hauls, which `supported` then also requires; and `min_coverage`, so that `supported` requires `coverage >= min_coverage`. On the 23,515 nodes of a North Sea grid, `by = Quarter` with these arguments gave the same columns as running the function per quarter and combining them by hand. Without the new arguments the result is unchanged.
+
+* `add_bathymetry()` gains `clamp`, which sets depths outside `depth_range` to its nearest limit, so that a model of depth is not extrapolated.
+
+* New `plot_grid()` maps columns of a prediction grid, one panel each: numeric columns in classes of a continuous palette (optionally transformed), logical, character and factor columns as categories. It adds land from `get_land()`, transformed to the coordinates of the grid (by default EPSG:3035 in km, as from `add_xy()`), hauls, and the boundaries of ICES areas, drawn along the cell edges where a column such as `Area_27` changes, so no area shapefile is needed.
+
 ## Bug fixes
 
 * The rectangle to area lookup of `add_ices_areas()` took the area at the centre of each rectangle, so that rectangles with their centre on land had no area (e.g. 45F7 in the Skagerrak and 41G0 in the Kattegat; 1,201 of 6,758 rectangles, against 587 now) and rectangles split between areas could get the smaller one (41G2 was 3.b.23, though 84 % of its sea is in 3.a.21). The lookup now takes the area with the largest share of the sea in the rectangle. It also covers rectangles missing from the ICES rectangle shapefile that hold sea, such as the Limfjord. `data-raw/make_ices_area_lookup.R` loaded the old `R/sysdata.rda` after building the new lookup, which overwrote it, so rebuilds did not take effect.
