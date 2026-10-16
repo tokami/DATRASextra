@@ -1,3 +1,18 @@
+# DATRASextra (development version)
+
+## New features
+
+* New `get_statrec()` returns the ICES statistical rectangle of positions, and `get_statrec_coords()` the midpoint or corner of rectangles, following the ICES definition (rows `01`-`99` from 36 N, columns `A0`-`A3` and `B0`-`M8`, no letter `I`). `get_statrec()` reproduces all 6,758 rectangles of the ICES rectangle shapefile. `plot_datras_overview(spatial_basis = "statrec")` now uses `get_statrec_coords()` instead of `DATRAS::icesSquare2coord()`.
+
+* `add_ices_areas()` assigns areas by position (new argument `by = "position"`, the default). Most rectangles lie in one area, and positions in the 506 rectangles that cross an area boundary (e.g. between the Skagerrak, the Kattegat and the North Sea) are assigned by point in polygon, from the area boundaries within these rectangles. No spatial packages are needed. On 100,000 random positions in the ICES area and the 23,515 cells of a North Sea prediction grid, the areas agreed with a point-in-polygon query on the full ICES area shapefile for every position in an area. `by = "statrec"` assigns the area of the rectangle, as before.
+
+  `add_ices_areas()` also works on data frames, such as prediction grids, and on data without a `StatRec` column, such as surveys from other sources; `vars = "StatRec"` adds the rectangle of the position.
+
+## Bug fixes
+
+* The rectangle to area lookup of `add_ices_areas()` took the area at the centre of each rectangle, so that rectangles with their centre on land had no area (e.g. 45F7 in the Skagerrak and 41G0 in the Kattegat; 1,201 of 6,758 rectangles, against 587 now) and rectangles split between areas could get the smaller one (41G2 was 3.b.23, though 84 % of its sea is in 3.a.21). The lookup now takes the area with the largest share of the sea in the rectangle. It also covers rectangles missing from the ICES rectangle shapefile that hold sea, such as the Limfjord. `data-raw/make_ices_area_lookup.R` loaded the old `R/sysdata.rda` after building the new lookup, which overwrote it, so rebuilds did not take effect.
+
+
 # DATRASextra 0.6.0
 
 ## New features

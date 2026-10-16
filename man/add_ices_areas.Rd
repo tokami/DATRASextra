@@ -2,53 +2,91 @@
 % Please edit documentation in R/ices_areas.R
 \name{add_ices_areas}
 \alias{add_ices_areas}
-\title{Add ICES area information to a \code{datras_raw} object}
+\title{Add ICES areas to hauls or grid cells}
 \usage{
 add_ices_areas(
   x,
   vars = c("Area_Full", "Area_27", "Ecoregion"),
+  by = c("position", "statrec"),
+  lon = "lon",
+  lat = "lat",
   verbose = TRUE
 )
 }
 \arguments{
-\item{x}{A \code{datras_raw} object with a \code{StatRec} column in \code{HH}.}
+\item{x}{A \code{datras_raw} object or a data frame with the columns named by
+\code{lon} and \code{lat}, or a \code{StatRec} column.}
 
-\item{vars}{Character vector naming which area columns to add. Allowed
-values are any subset of \code{"Area_Full"}, \code{"Area_27"}, \code{"SubArea"},
-\code{"Division"}, \code{"SubDivisio"}, \code{"Ecoregion"}. Defaults to
+\item{vars}{Character vector naming the columns to add. Any of
+\code{"Area_Full"}, \code{"Area_27"}, \code{"SubArea"}, \code{"Division"}, \code{"SubDivisio"},
+\code{"Ecoregion"} and \code{"StatRec"}. Defaults to
 \code{c("Area_Full", "Area_27", "Ecoregion")}.}
 
+\item{by}{\code{"position"} (default) assigns the area of the position, and
+\code{"statrec"} the area that covers most of the sea surface of the
+rectangle. See Details.}
+
+\item{lon, lat}{Names of the longitude and latitude columns (decimal
+degrees). Default \code{"lon"} and \code{"lat"}.}
+
 \item{verbose}{Logical; if \code{TRUE} (default), prints a message summarising
-how many hauls were matched.}
+how many rows were matched.}
 }
 \value{
-The input object \code{x} with the requested columns added (or
-overwritten) in \code{HH}.
+\code{x} with the requested columns added (or overwritten), in \code{HH} for
+a \code{datras_raw} object.
 }
 \description{
-Appends ICES area columns to the \code{HH} table of a \code{datras_raw} object by
-matching \code{HH$StatRec} (ICES statistical rectangle codes, e.g. \code{"39F0"})
-against an internal lookup table derived from the official ICES shapefiles.
-
-The lookup is purely table-based and requires no spatial packages at
-runtime.
+Adds ICES area columns (e.g. \code{Area_27} such as \code{"4.a"} or \code{"3.a.20"}) to
+the \code{HH} table of a \code{datras_raw} object or to a data frame such as a
+prediction grid. Areas are assigned from the position (\code{lon}, \code{lat}) or
+from the ICES statistical rectangle (\code{StatRec}), using internal tables
+derived from the ICES area and rectangle shapefiles, so no spatial
+packages are needed.
 }
 \details{
-The function matches on the \code{StatRec} column of \code{HH}. Hauls whose
-\code{StatRec} code is not found in the lookup table (e.g. for surveys outside
-the ICES area) receive \code{NA} in the added columns.
+Most ICES statistical rectangles lie in one area. With \code{by = "position"},
+positions in the rectangles that cross an area boundary (e.g. between the
+Skagerrak, the Kattegat and the North Sea) are assigned by point in
+polygon, using the area boundaries within these rectangles simplified to
+100 m. A position on land in such a rectangle gets the nearest area. A
+position exactly on an area boundary that is also a rectangle boundary
+(e.g. 57 30'N between 4.a and 4.b) gets the area of the rectangle to its
+north or east. Rows without a position fall back to the \code{StatRec} column,
+if there is one.
 
-If a requested column already exists in \code{HH}, it is overwritten.
+With \code{by = "statrec"}, every row gets the area that covers most of the sea
+surface of its rectangle, taken from the \code{StatRec} column or, if there is
+none, from the position (see \code{\link[=get_statrec]{get_statrec()}}). This matches the areas
+used for data reported by rectangle, but assigns the hauls near an area
+boundary to the area of the rectangle.
+
+\code{Ecoregion} is always assigned by rectangle, as in the ICES rectangle
+shapefile. \code{"StatRec"} in \code{vars} adds the rectangle of the position, for
+example for data without rectangles; an existing \code{StatRec} column is then
+overwritten. Rectangles without sea surface and positions outside the
+rectangles get \code{NA}.
+
+The tables were derived from \code{ICES_Areas_20160601_cut_dense_3857} and
+\code{ICES_Statistical_Rectangles_Eco} (\url{https://gis.ices.dk}); see
+\code{\link[=reference_tables]{reference_tables()}}.
+
+If a requested column already exists, it is overwritten.
 }
 \examples{
 ## Add default columns (Area_Full, Area_27, Ecoregion)
 dab2 <- add_ices_areas(dab)
 head(dab2$HH[, c("StatRec", "Area_Full", "Area_27", "Ecoregion")])
 
-## Add only Area_27
-dab3 <- add_ices_areas(dab, vars = "Area_27")
+## Add only Area_27, from the reported rectangles
+dab3 <- add_ices_areas(dab, vars = "Area_27", by = "statrec")
+
+## A data frame of positions (e.g. a prediction grid): Skagerrak, Kattegat
+## and northern North Sea in the same rectangle (44G0, 44F7)
+pos <- data.frame(lon = c(10.2, 10.8, 7.2, 7.8), lat = c(57.8, 57.6, 57.7, 57.9))
+add_ices_areas(pos, vars = c("StatRec", "Area_27"))
 
 }
 \seealso{
-\code{\link[=add_species_info]{add_species_info()}}
+\code{\link[=get_statrec]{get_statrec()}}, \code{\link[=add_species_info]{add_species_info()}}
 }

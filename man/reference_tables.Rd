@@ -31,7 +31,8 @@ way \code{\link[=extraction]{extraction()}} does for the survey data itself.
 Two kinds of table are reported. Tables marked \code{"exported"} are documented
 data sets that users can load directly, such as \link{species_info}. Tables
 marked \code{"internal"} are used by the package but not exported, such as the
-statistical-rectangle to ICES-area lookup used by \code{\link[=add_ices_areas]{add_ices_areas()}}.
+statistical-rectangle to ICES-area lookup and the area boundaries within
+rectangles used by \code{\link[=add_ices_areas]{add_ices_areas()}}.
 
 The example survey data sets (\code{dab}, \code{mini}, \code{wolffish}) are not reference
 tables and are not reported here; use \code{\link[=extraction]{extraction()}} on those.

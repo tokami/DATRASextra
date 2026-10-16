@@ -21,7 +21,8 @@
 ##' Two kinds of table are reported. Tables marked `"exported"` are documented
 ##' data sets that users can load directly, such as [species_info]. Tables
 ##' marked `"internal"` are used by the package but not exported, such as the
-##' statistical-rectangle to ICES-area lookup used by [add_ices_areas()].
+##' statistical-rectangle to ICES-area lookup and the area boundaries within
+##' rectangles used by [add_ices_areas()].
 ##'
 ##' The example survey data sets (`dab`, `mini`, `wolffish`) are not reference
 ##' tables and are not reported here; use [extraction()] on those.
@@ -166,6 +167,12 @@ reference_tables <- function(check = TRUE) {
                      "https://github.com/federico-maioli/length_at_maturity")
     ),
     ices_area_lookup = list(
+      kind = "internal",
+      file = "R/sysdata.rda",
+      script = "data-raw/make_ices_area_lookup.R",
+      source = "ICES statistical rectangle and area shapefiles, https://gis.ices.dk"
+    ),
+    ices_area_split = list(
       kind = "internal",
       file = "R/sysdata.rda",
       script = "data-raw/make_ices_area_lookup.R",

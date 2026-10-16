@@ -11,7 +11,7 @@ test_that("reference_tables reports the bundled tables", {
                     "script", "source", "hash", "status") %in% names(r)))
 
   expect_true(all(c("species_info", "survey_info", "survey_info_full_raw",
-                    "spawning_info", "ices_area_lookup",
+                    "spawning_info", "ices_area_lookup", "ices_area_split",
                     "spread_models") %in% r$table))
 
   expect_s3_class(r$generated, "Date")

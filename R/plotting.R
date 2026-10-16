@@ -1292,33 +1292,17 @@ plot_species_composition <- function(x,
     stop("`spatial_basis = 'statrec'` requires HH column `StatRec`.", call. = FALSE)
   }
 
-  coord_fun <- NULL
-  if (exists("icesSquare2coord", mode = "function")) {
-    coord_fun <- get("icesSquare2coord", mode = "function")
-  } else if (requireNamespace("DATRAS", quietly = TRUE) && exists("icesSquare2coord", envir = asNamespace("DATRAS"), inherits = FALSE)) {
-    coord_fun <- get("icesSquare2coord", envir = asNamespace("DATRAS"), inherits = FALSE)
-  }
-  if (is.null(coord_fun)) {
-    stop("`spatial_basis = 'statrec'` requires `icesSquare2coord` (install/load package DATRAS).", call. = FALSE)
-  }
-
   hh$StatRec <- trimws(as.character(hh$StatRec))
   bad_code <- is.na(hh$StatRec) | !nzchar(hh$StatRec) | hh$StatRec == "-9"
   hh <- hh[!bad_code, , drop = FALSE]
 
   sq <- unique(hh$StatRec)
-  mid_list <- lapply(sq, function(code) {
-    one <- tryCatch(coord_fun(code, "midpoint"), error = function(e) NULL)
-    if (is.null(one)) return(NULL)
-    df <- as.data.frame(one, stringsAsFactors = FALSE)
-    df$StatRec <- code
-    df
-  })
-  mid_list <- Filter(Negate(is.null), mid_list)
-  if (length(mid_list) == 0) {
+  mid <- get_statrec_coords(sq)
+  mid$StatRec <- sq
+  mid <- mid[!is.na(mid$lon), , drop = FALSE]
+  if (nrow(mid) == 0) {
     stop("Failed to convert any StatRec values to midpoint coordinates.", call. = FALSE)
   }
-  mid <- do.call(rbind, mid_list)
   dropped <- setdiff(sq, mid$StatRec)
   if (length(dropped) > 0) {
     warning(sprintf("Dropped %s invalid StatRec code(s) during midpoint conversion.", length(dropped)), call. = FALSE)
