@@ -8,6 +8,12 @@
 
   `add_ices_areas()` also works on data frames, such as prediction grids, and on data without a `StatRec` column, such as surveys from other sources; `vars = "StatRec"` adds the rectangle of the position.
 
+* New `drop_sparse_levels()` removes the hauls of levels of categorical variables, such as gears or ships, with fewer than `min_positive` positive hauls, whose effects in a model of catch rates are not estimable. The checks are repeated until nothing changes, since removing a ship lowers the counts of its gear. The removed levels are returned in the attribute `"dropped"`.
+
+* New `add_grid_occupancy()` flags the prediction grid nodes where a species occurs: `occupied_years`, the number of years with a positive haul within `max_dist`, and `occupied`, whether this is at least `min_years` and the node lies within the depth range of the positive hauls. Restricting the prediction to these nodes avoids predictions far from any catch, which are near zero but very uncertain, and patches around single positive hauls.
+
+* New `get_grid_distance()` returns the distance from each haul to the nearest grid node, e.g. to fit a model only to the hauls near the area of prediction.
+
 ## Bug fixes
 
 * The rectangle to area lookup of `add_ices_areas()` took the area at the centre of each rectangle, so that rectangles with their centre on land had no area (e.g. 45F7 in the Skagerrak and 41G0 in the Kattegat; 1,201 of 6,758 rectangles, against 587 now) and rectangles split between areas could get the smaller one (41G2 was 3.b.23, though 84 % of its sea is in 3.a.21). The lookup now takes the area with the largest share of the sea in the rectangle. It also covers rectangles missing from the ICES rectangle shapefile that hold sea, such as the Limfjord. `data-raw/make_ices_area_lookup.R` loaded the old `R/sysdata.rda` after building the new lookup, which overwrote it, so rebuilds did not take effect.

@@ -590,6 +590,173 @@ add_grid_support <- function(grid, x, y, time, max_dist, fill_gaps = NULL,
 }
 
 
+##' Flag grid nodes near the hauls with catch
+##'
+##' Adds columns to a prediction grid that show where a species occurs:
+##' `occupied_years`, the number of years with a positive haul within
+##' `max_dist` of a node, and `occupied`, whether this is at least
+##' `min_years` and the node lies within the depth range of the positive
+##' hauls.  Predictions far from any positive haul are near zero but very
+##' uncertain, and with few positive hauls an isolated haul can create a patch
+##' of high density with a wide interval; restricting the prediction grid to
+##' the occupied nodes avoids both.
+##'
+##' @param grid A data frame with the columns named by `coords`, and
+##'   optionally `year` and a depth column, e.g. from [make_survey_grid()]
+##'   and [add_bathymetry()].
+##' @param x,y Numeric vectors of the coordinates of the positive hauls, in
+##'   the units of `coords`.
+##' @param time Vector of haul years, the same length as `x`. If `NULL`, all
+##'   hauls count as one year.
+##' @param max_dist Distance, in the units of `coords`, within which a
+##'   positive haul occupies a node.
+##' @param min_years Minimum number of years with a positive haul within
+##'   `max_dist` for a node to be `occupied`. Default 1.
+##' @param depth Optional numeric vector of the depths of the positive hauls,
+##'   the same length as `x`. When given, `occupied` also requires the depth
+##'   of the node (column `depth_col`) to lie within the range of `depth`.
+##' @param depth_probs Probabilities of [stats::quantile()] for the depth
+##'   range. Default `c(0, 1)`: from the shallowest to the deepest positive
+##'   haul.
+##' @param depth_col Name of the depth column of `grid`. Default `"Depth"`.
+##' @param coords Names of the coordinate columns of `grid`. Default
+##'   `c("X", "Y")`, as from [add_xy()].
+##' @param fill_gaps,resolution As in [add_grid_support()].
+##'
+##' @details
+##' Distances are measured in the units of `coords`.  With
+##' `coords = c("lon", "lat")` they are in degrees, in which a degree of
+##' longitude is shorter than a degree of latitude; project the coordinates
+##' first (e.g. with [add_xy()]) when distances should be equal in all
+##' directions.  Hauls with missing coordinates are ignored.
+##'
+##' When `grid` has a `year` column, `occupied_years` and `occupied` are the
+##' same for all years of a node.
+##'
+##' @return `grid` with the columns `occupied_years` (integer),
+##'   `in_depth_range` (logical; only when `depth` is given) and `occupied`
+##'   (logical) added.
+##'
+##' @seealso [add_grid_support()] for the coverage by all hauls,
+##'   [get_grid_distance()], [make_survey_grid()]
+##'
+##' @examples
+##' if (requireNamespace("RANN", quietly = TRUE)) {
+##'   x <- add_total_numbers_by_haul(dab)
+##'   hh <- x[["HH"]]
+##'   grid <- make_survey_grid(hh$lon, hh$lat, resolution = 0.2, max_dist = 0.3)
+##'
+##'   ## nodes within 0.5 degrees of positive hauls from at least 2 years
+##'   pos <- hh[rowSums(as.matrix(hh$HaulN)) > 0, ]
+##'   grid <- add_grid_occupancy(grid, pos$lon, pos$lat, pos$Year,
+##'                              max_dist = 0.5, min_years = 2)
+##'   table(grid$occupied_years)
+##'   grid <- grid[grid$occupied, ]
+##' }
+##'
+##' @export
+add_grid_occupancy <- function(grid, x, y, time = NULL, max_dist,
+                               min_years = 1, depth = NULL,
+                               depth_probs = c(0, 1), depth_col = "Depth",
+                               coords = c("X", "Y"), fill_gaps = NULL,
+                               resolution = NULL) {
+  if (!all(coords %in% names(grid))) {
+    stop("grid must have the columns '", coords[1], "' and '", coords[2], "'.")
+  }
+  if (length(y) != length(x)) stop("x and y must have the same length.")
+  if (is.null(time)) time <- rep(1, length(x))
+  if (length(time) != length(x)) stop("x, y and time must have the same length.")
+  if (!is.numeric(min_years) || length(min_years) != 1 || min_years < 0) {
+    stop("min_years must be a single non-negative number.")
+  }
+  if (!is.null(depth)) {
+    if (length(depth) != length(x)) stop("x, y and depth must have the same length.")
+    if (!depth_col %in% names(grid)) stop("grid must have the column '", depth_col, "'.")
+  }
+  time <- as.character(time)
+
+  gx <- grid[[coords[1]]]
+  gy <- grid[[coords[2]]]
+  nodes <- unique(data.frame(X = gx, Y = gy))
+  if (is.null(resolution) && !is.null(fill_gaps)) {
+    resolution <- .grid_resolution(nodes)
+  }
+  node_of <- match(paste(gx, gy), paste(nodes$X, nodes$Y))
+
+  years <- sort(unique(time[!is.na(time)]))
+  n_years <- integer(nrow(nodes))
+  for (yr in years) {
+    sel <- !is.na(time) & time == yr
+    n_years <- n_years + .grid_coverage(nodes$X, nodes$Y, x[sel], y[sel],
+                                        resolution = resolution,
+                                        max_dist = max_dist,
+                                        fill_gaps = fill_gaps)
+  }
+  grid$occupied_years <- as.integer(n_years[node_of])
+  grid$occupied <- grid$occupied_years >= min_years
+
+  if (!is.null(depth)) {
+    r <- stats::quantile(depth, depth_probs, na.rm = TRUE, names = FALSE)
+    gd <- grid[[depth_col]]
+    grid$in_depth_range <- !is.na(gd) & gd >= r[1] & gd <= r[2]
+    grid$occupied <- grid$occupied & grid$in_depth_range
+  }
+
+  new <- intersect(c("occupied_years", "in_depth_range", "occupied"), names(grid))
+  grid[, c(setdiff(names(grid), new), new)]
+}
+
+
+##' Distance from hauls to the nearest grid node
+##'
+##' Returns, for each haul, the distance to the nearest node of a prediction
+##' grid, e.g. to fit a model only to the hauls near the area of prediction.
+##' Hauls far from it add zeros that pull the spatial field down without
+##' informing the prediction.
+##'
+##' @param x,y Numeric vectors of haul coordinates, in the units of `coords`.
+##' @param grid A data frame with the columns named by `coords`.
+##' @param coords Names of the coordinate columns of `grid`. Default
+##'   `c("X", "Y")`, as from [add_xy()].
+##'
+##' @return A numeric vector of distances, in the units of the coordinates,
+##'   the same length as `x`; `NA` for hauls with missing coordinates.
+##'
+##' @seealso [add_grid_occupancy()], [make_survey_grid()]
+##'
+##' @examples
+##' if (requireNamespace("RANN", quietly = TRUE)) {
+##'   hh <- dab[["HH"]]
+##'   grid <- make_survey_grid(hh$lon, hh$lat, resolution = 0.2, max_dist = 0.3)
+##'   grid <- grid[grid$Y > 55, ]
+##'
+##'   ## hauls within 0.5 degrees of the grid
+##'   d <- get_grid_distance(hh$lon, hh$lat, grid)
+##'   x <- subset(dab, haul.id %in% hh$haul.id[d <= 0.5])
+##' }
+##'
+##' @export
+get_grid_distance <- function(x, y, grid, coords = c("X", "Y")) {
+  if (!requireNamespace("RANN", quietly = TRUE)) {
+    stop("Package 'RANN' is required for get_grid_distance(). Install with install.packages('RANN').")
+  }
+  if (length(y) != length(x)) stop("x and y must have the same length.")
+  if (!all(coords %in% names(grid))) {
+    stop("grid must have the columns '", coords[1], "' and '", coords[2], "'.")
+  }
+  nodes <- unique(stats::na.omit(cbind(grid[[coords[1]]], grid[[coords[2]]])))
+  if (nrow(nodes) == 0) stop("grid has no nodes with coordinates.")
+
+  out <- rep(NA_real_, length(x))
+  ok <- is.finite(x) & is.finite(y)
+  if (any(ok)) {
+    out[ok] <- RANN::nn2(data = nodes, query = cbind(x[ok], y[ok]),
+                         k = 1L)$nn.dists[, 1L]
+  }
+  out
+}
+
+
 
 
 ## Internal functions ------------------------------------------------------------

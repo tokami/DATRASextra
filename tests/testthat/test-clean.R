@@ -90,3 +90,69 @@ test_that("the check runs before the species filter", {
   hh <- out[["HH"]]
   expect_true(all(absent %in% paste(hh$Survey, hh$Year, hh$Quarter)))
 })
+
+
+## drop_sparse_levels -------------------------------------------------------------
+
+## Ships S1 and S3 have 2 positive hauls each; once they are removed, gear G2
+## is left with the single positive haul of S2. The haul without a ship stays.
+sparse_hauls <- function() {
+  data.frame(haul.id = paste0("h", 1:15),
+             Ship = factor(c(rep("S1", 5), rep("S2", 4), "S2", "S3", "S3",
+                             NA, "S2", "S2")),
+             Gear = c(rep("G1", 9), rep("G2", 3), "G1", "G1", "G1"),
+             N = c(1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0))
+}
+
+test_that("drop_sparse_levels repeats the checks until nothing changes", {
+
+  hh <- sparse_hauls()
+  out <- drop_sparse_levels(hh, "N", vars = c("Gear", "Ship"),
+                            min_positive = 3, verbose = FALSE)
+
+  expect_equal(out$haul.id, paste0("h", c(6:9, 13:15)))
+  expect_equal(attr(out, "dropped"),
+               data.frame(variable = c("Ship", "Ship", "Gear"),
+                          level = c("S1", "S3", "G2"),
+                          hauls = c(5L, 2L, 1L), positive = c(2L, 2L, 1L)))
+  expect_equal(levels(out$Ship), "S2")
+
+  ## a logical vector gives the same
+  out2 <- drop_sparse_levels(hh, hh$N > 0, vars = c("Gear", "Ship"),
+                             min_positive = 3, verbose = FALSE)
+  expect_equal(out2, out)
+
+  ## nothing to drop
+  out3 <- drop_sparse_levels(hh, "N", vars = "Gear", min_positive = 1,
+                             verbose = FALSE)
+  expect_equal(nrow(out3), nrow(hh))
+  expect_equal(nrow(attr(out3, "dropped")), 0)
+})
+
+
+test_that("drop_sparse_levels works on datras_raw objects", {
+
+  x <- suppressWarnings(add_total_numbers_by_haul(dab))
+  pos <- x$HH$HaulN > 0
+  n_pos <- tapply(pos, x$HH$Ship, sum)
+  low <- names(n_pos)[n_pos < 150]
+
+  expect_message(out <- drop_sparse_levels(x, "HaulN", vars = "Ship",
+                                           min_positive = 150),
+                 "Removed")
+  expect_s3_class(out, "datras_raw")
+  expect_false(any(out$HH$Ship %in% low))
+  expect_equal(nrow(out$HH), sum(!x$HH$Ship %in% low))
+  expect_true(all(out$HL$haul.id %in% out$HH$haul.id))
+  expect_setequal(attr(out, "dropped")$level, low)
+})
+
+
+test_that("drop_sparse_levels checks its inputs", {
+
+  hh <- sparse_hauls()
+  expect_error(drop_sparse_levels(hh, "nope"), "not found")
+  expect_error(drop_sparse_levels(hh, c(TRUE, FALSE)), "one element per haul")
+  expect_error(drop_sparse_levels(hh, "N", vars = "Country"), "not found")
+  expect_error(drop_sparse_levels(1:3, "N"), "data frame")
+})

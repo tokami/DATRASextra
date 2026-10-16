@@ -507,6 +507,124 @@ drop_ca <- function(x) {
 }
 
 
+##' Remove hauls of levels with few positive hauls
+##'
+##' Removes the hauls of the levels of categorical variables (e.g. gears or
+##' ships) that have fewer than `min_positive` positive hauls.  The effects of
+##' such levels in a model of catch rates are not estimable, or rest on one
+##' or two hauls.
+##'
+##' @param x A `datras_raw` object or a data frame of hauls (e.g. its `HH`).
+##' @param positive Which hauls caught the species: a logical vector with one
+##'   element per haul, or the name of a column of the hauls. A numeric
+##'   column counts as positive where it is above zero, and a matrix column
+##'   (e.g. `HaulN` by length class) where any of its columns is.
+##' @param vars Names of the categorical variables to check. Default
+##'   `c("Gear", "Ship")`.
+##' @param min_positive Minimum number of positive hauls a level must have.
+##'   Default 3.
+##' @param verbose Logical; if `TRUE` (default), prints the removed levels.
+##'
+##' @details
+##' The variables are checked in turn, and the checks repeated until no level
+##' is removed, because removing the hauls of one variable's level (e.g. a
+##' ship) lowers the counts of the levels of the others (e.g. the gear the
+##' ship used).  Hauls with a missing value in a variable are kept.  Factor
+##' columns among `vars` lose their unused levels.
+##'
+##' @return `x` without the hauls of the removed levels (and their `HL` and
+##'   `CA` records), with the attribute `"dropped"`: a data frame with one row
+##'   per removed level and the columns `variable`, `level`, `hauls` and
+##'   `positive`, the numbers of hauls and positive hauls of the level when
+##'   it was removed.
+##'
+##' @seealso [prune_datras()], [add_total_numbers_by_haul()]
+##'
+##' @examples
+##' x <- add_total_numbers_by_haul(dab)
+##' ## ships with fewer than 150 hauls that caught dab
+##' x <- drop_sparse_levels(x, "HaulN", vars = c("Gear", "Ship"),
+##'                         min_positive = 150)
+##' attr(x, "dropped")
+##'
+##' @export
+drop_sparse_levels <- function(x, positive, vars = c("Gear", "Ship"),
+                               min_positive = 3, verbose = TRUE) {
+
+  is_datras <- inherits(x, c("datras_raw", "DATRASraw"))
+  if (is_datras) {
+    .check_class_datras(x)
+    hh <- x[["HH"]]
+  } else if (is.data.frame(x)) {
+    hh <- x
+  } else {
+    stop("'x' must be a 'datras_raw' object or a data frame.")
+  }
+
+  if (is.character(positive) && length(positive) == 1) {
+    if (!positive %in% names(hh)) stop("Column '", positive, "' not found.")
+    p <- hh[[positive]]
+    positive <- if (is.logical(p)) p else
+      rowSums(as.matrix(p) > 0, na.rm = TRUE) > 0
+  }
+  if (!is.logical(positive) || length(positive) != nrow(hh)) {
+    stop("'positive' must be a logical vector with one element per haul, ",
+         "or the name of a column.")
+  }
+  positive[is.na(positive)] <- FALSE
+  missing_vars <- setdiff(vars, names(hh))
+  if (length(missing_vars) > 0) {
+    stop("Column(s) not found: ", paste(missing_vars, collapse = ", "))
+  }
+
+  keep <- rep(TRUE, nrow(hh))
+  dropped <- data.frame(variable = character(0), level = character(0),
+                        hauls = integer(0), positive = integer(0))
+  repeat {
+    n_dropped <- nrow(dropped)
+    for (v in vars) {
+      lev <- as.character(hh[[v]])
+      sel <- keep & !is.na(lev)
+      n_pos <- tapply(positive[sel], lev[sel], sum)
+      low <- names(n_pos)[n_pos < min_positive]
+      if (length(low) == 0) next
+      dropped <- rbind(dropped, data.frame(
+        variable = v, level = low,
+        hauls = as.integer(table(lev[sel])[low]),
+        positive = as.integer(n_pos[low])))
+      keep <- keep & !(lev %in% low)
+    }
+    if (nrow(dropped) == n_dropped) break
+  }
+  rownames(dropped) <- NULL
+
+  if (verbose) {
+    if (nrow(dropped) == 0) {
+      message("No levels with fewer than ", min_positive, " positive hauls.")
+    } else {
+      message("Removed ", sum(!keep), " of ", length(keep), " hauls (",
+              sum(positive & !keep), " positive) of levels with fewer than ",
+              min_positive, " positive hauls:\n",
+              paste(utils::capture.output(print(dropped, row.names = FALSE)),
+                    collapse = "\n"))
+    }
+  }
+
+  if (is_datras) {
+    keep_ids <- hh$haul.id[keep]
+    x <- subset(x, haul.id %in% keep_ids)
+    hh <- x[["HH"]]
+  } else {
+    hh <- hh[keep, , drop = FALSE]
+  }
+  for (v in vars) if (is.factor(hh[[v]])) hh[[v]] <- droplevels(hh[[v]])
+  if (is_datras) x[["HH"]] <- hh else x <- hh
+
+  attr(x, "dropped") <- dropped
+  x
+}
+
+
 ##' Standardize and correct species information in a `datras_raw` object
 ##'
 ##' Correct selected species names, Aphia IDs, and taxonomic ranks in the `CA`

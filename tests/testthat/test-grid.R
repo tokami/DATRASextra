@@ -196,3 +196,73 @@ test_that("add_xy projects and back-transforms coordinates", {
 
   expect_error(add_xy(data.frame(a = 1)), "lon")
 })
+
+
+## add_grid_occupancy and get_grid_distance ---------------------------------------
+
+test_that("add_grid_occupancy counts the years with positive hauls nearby", {
+  skip_if_not_installed("RANN")
+
+  grid <- expand.grid(X = 0:10, Y = 0:2)
+  grid$Depth <- grid$X * 10
+  ## year 1 at x = 2 and 8; year 2 at x = 2; year 3 at x = 2.5
+  x <- c(2, 8, 2, 2.5)
+  y <- c(1, 1, 1, 1)
+  yr <- c(1, 1, 2, 3)
+
+  g <- add_grid_occupancy(grid, x, y, yr, max_dist = 1)
+  n <- g$occupied_years[g$Y == 1]
+  expect_equal(n, c(0, 2, 3, 3, 0, 0, 0, 1, 1, 1, 0))
+  expect_equal(g$occupied, g$occupied_years >= 1)
+  expect_false("in_depth_range" %in% names(g))
+
+  ## at least 2 years: the patch around the single haul at x = 8 goes
+  g2 <- add_grid_occupancy(grid, x, y, yr, max_dist = 1, min_years = 2)
+  expect_equal(sort(unique(g2$X[g2$occupied])), 1:3)
+
+  ## depth range of the positive hauls (20 to 80 m)
+  g3 <- add_grid_occupancy(grid, x, y, yr, max_dist = 1, depth = x * 10)
+  expect_equal(sort(unique(g3$X[g3$occupied])), c(2, 3, 7, 8))
+  expect_equal(g3$in_depth_range, g3$Depth >= 20 & g3$Depth <= 80)
+
+  ## without time: all hauls count as one year
+  g4 <- add_grid_occupancy(grid, x, y, max_dist = 1)
+  expect_equal(max(g4$occupied_years), 1)
+})
+
+
+test_that("add_grid_occupancy uses other coordinates and keeps grid years", {
+  skip_if_not_installed("RANN")
+
+  hh <- dab[["HH"]]
+  pos <- hh[hh$Year %in% c("2020", "2021"), ]
+  grid <- make_survey_grid(hh$lon, hh$lat, resolution = 0.5,
+                           time = c(2020, 2021))
+  names(grid)[1:2] <- c("lon", "lat")
+
+  g <- add_grid_occupancy(grid, pos$lon, pos$lat, pos$Year, max_dist = 0.3,
+                          coords = c("lon", "lat"))
+  expect_equal(nrow(g), nrow(grid))
+  expect_true(all(g$occupied_years %in% 0:2))
+  ## the same for both years of a node
+  expect_equal(g$occupied_years[g$year == 2020], g$occupied_years[g$year == 2021])
+  expect_true(any(g$occupied) && !all(g$occupied))
+
+  expect_error(add_grid_occupancy(grid, 1, 1, max_dist = 1), "columns 'X'")
+  expect_error(add_grid_occupancy(g, 1, 1, max_dist = 1, coords = c("lon", "lat"),
+                                  depth = 1), "column 'Depth'")
+})
+
+
+test_that("get_grid_distance returns the distance to the nearest node", {
+  skip_if_not_installed("RANN")
+
+  grid <- expand.grid(X = 0:2, Y = 0:2)
+  d <- get_grid_distance(c(1, 5, 2.5, NA), c(1, 2, 2.5, 0), grid)
+  expect_equal(d, c(0, 3, sqrt(0.5), NA))
+
+  grid2 <- data.frame(lon = 0, lat = 0)
+  expect_equal(get_grid_distance(3, 4, grid2, coords = c("lon", "lat")), 5)
+  expect_error(get_grid_distance(1, 1, grid2), "columns 'X'")
+  expect_error(get_grid_distance(1:2, 1, grid), "same length")
+})
