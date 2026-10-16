@@ -482,6 +482,144 @@ get_accuracy_cm <- function(x) {
 
 
 
+##' Catch per haul of selected length classes
+##'
+##' Returns the numbers or weight per haul from the columns added by
+##' [add_total_numbers_by_haul()] and [add_total_weight_by_haul()], summed
+##' over all or selected length classes, e.g. the response of a model of catch
+##' rates.
+##'
+##' @param x A `datras_raw` object or a data frame of hauls (e.g. its `HH`).
+##' @param var Name of the column: `"HaulN"` (default) or `"HaulWgt"`, or any
+##'   numeric column or matrix column of the hauls.
+##' @param length_class Length classes to sum: names of the columns of `var`
+##'   (e.g. `"(35-Inf]"`) or their positions. `NULL` (default) sums all.
+##'
+##' @return A numeric vector with one element per haul.
+##'
+##' @seealso [summarise_catch()], [add_total_numbers_by_haul()],
+##'   [as_surveyindex()]
+##'
+##' @examples
+##' x <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
+##' colnames(x[["HH"]]$HaulN)
+##' total <- get_haul_catch(x)
+##' large <- get_haul_catch(x, length_class = "(20-Inf]")
+##' mean(large > 0)
+##'
+##' @export
+get_haul_catch <- function(x, var = "HaulN", length_class = NULL) {
+
+  m <- .haul_matrix(x, var)
+  if (is.null(length_class)) return(unname(rowSums(m)))
+
+  if (is.character(length_class)) {
+    bad <- setdiff(length_class, colnames(m))
+    if (length(bad) > 0) {
+      stop("Length class(es) not found in '", var, "': ", paste(bad, collapse = ", "),
+           ". Available: ", paste(colnames(m), collapse = ", "))
+    }
+  } else if (!is.numeric(length_class) || any(abs(length_class) > ncol(m)) ||
+             any(length_class == 0)) {
+    stop("length_class must be names or positions (1 to ", ncol(m),
+         ") of the columns of '", var, "'.")
+  }
+  unname(rowSums(m[, length_class, drop = FALSE]))
+}
+
+
+##' Positive hauls and mean catch by group and length class
+##'
+##' Summarises the hauls by groups such as year, survey or quarter: the number
+##' of hauls, the number and percentage of hauls that caught the species, and
+##' the mean catch (per unit of effort with `offset`, i.e. the nominal catch
+##' rate), for each length class of [add_total_numbers_by_haul()] or
+##' [add_total_weight_by_haul()] and for all length classes together.
+##'
+##' @param x A `datras_raw` object or a data frame of hauls (e.g. its `HH`).
+##' @param by Names of the columns to group by, e.g. `"Year"` (default) or
+##'   `c("Year", "Survey")`. `NULL` for all hauls together.
+##' @param var Name of the catch column, `"HaulN"` (default) or `"HaulWgt"`,
+##'   as in [get_haul_catch()].
+##' @param offset Optional name of a column of effort, e.g.
+##'   `"SweptArea_median"` from [add_swept_area()]; `mean` is then the mean
+##'   catch per unit of effort. Hauls with missing or zero effort are left out
+##'   of `mean`.
+##'
+##' @return A data frame with the columns of `by`, `length_class` (a factor:
+##'   the length classes of `var` and `"all"`), `hauls`, `positive`,
+##'   `pct_positive` and `mean`, with one row per group and length class.
+##'   [stats::xtabs()] gives a table of one of them, e.g.
+##'   `xtabs(positive ~ Year + length_class, s)`.
+##'
+##' @seealso [get_haul_catch()], [calc_stratified_index()]
+##'
+##' @examples
+##' x <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
+##' s <- summarise_catch(x, by = "Year")
+##' head(s)
+##' xtabs(pct_positive ~ Year + length_class, s)
+##'
+##' ## nominal catch rate (numbers per km2) by year and quarter
+##' x <- add_swept_area(x)
+##' s <- summarise_catch(x, by = c("Year", "Quarter"), offset = "SweptArea_median")
+##' xtabs(mean ~ Year + Quarter, s[s$length_class == "all", ])
+##'
+##' @export
+summarise_catch <- function(x, by = "Year", var = "HaulN", offset = NULL) {
+
+  m <- .haul_matrix(x, var)
+  hh <- if (inherits(x, c("datras_raw", "DATRASraw"))) x[["HH"]] else x
+  missing_cols <- setdiff(c(by, offset), names(hh))
+  if (length(missing_cols) > 0) {
+    stop("Column(s) not found: ", paste(missing_cols, collapse = ", "))
+  }
+
+  vals <- if (ncol(m) > 1) {
+    c(lapply(seq_len(ncol(m)), function(j) m[, j]), list(rowSums(m)))
+  } else {
+    list(m[, 1])
+  }
+  classes <- if (ncol(m) > 1) c(colnames(m), "all") else "all"
+
+  eff <- if (is.null(offset)) rep(1, nrow(hh)) else as.numeric(hh[[offset]])
+  eff[!is.na(eff) & eff == 0] <- NA
+
+  if (is.null(by)) {
+    key <- rep("all", nrow(hh))
+    groups <- data.frame(row.names = 1)
+  } else {
+    key <- do.call(paste, c(lapply(hh[by], as.character), sep = "\r"))
+    groups <- hh[!duplicated(key), by, drop = FALSE]
+    groups <- groups[do.call(order, unname(as.list(groups))), , drop = FALSE]
+  }
+  gkey <- if (is.null(by)) "all" else
+    do.call(paste, c(lapply(groups, as.character), sep = "\r"))
+  idx <- match(key, gkey)
+
+  out <- lapply(seq_along(vals), function(k) {
+    v <- vals[[k]]
+    hauls <- tabulate(idx, length(gkey))
+    positive <- as.vector(rowsum(as.numeric(!is.na(v) & v > 0), idx))
+    val <- v / eff
+    ok <- !is.na(val)
+    n_ok <- as.vector(rowsum(as.numeric(ok), idx))
+    mean_v <- as.vector(rowsum(ifelse(ok, val, 0), idx)) / n_ok
+    mean_v[n_ok == 0] <- NA_real_
+    d <- data.frame(length_class = rep(classes[k], length(gkey)),
+                    hauls = hauls, positive = as.integer(positive),
+                    pct_positive = 100 * positive / hauls, mean = mean_v)
+    if (!is.null(by)) d <- cbind(groups, d)
+    d
+  })
+  out <- do.call(rbind, out)
+  out$length_class <- factor(out$length_class, levels = classes)
+  if (!is.null(by)) out <- out[do.call(order, unname(as.list(out[by]))), , drop = FALSE]
+  rownames(out) <- NULL
+  out
+}
+
+
 ## Internal functions -------------------------------------------------------------
 
 ## Length class width in cm by LngtCode
@@ -544,4 +682,29 @@ get_accuracy_cm <- function(x) {
   }
 
   out
+}
+
+
+## The catch column 'var' of the hauls as a matrix with one column per length
+## class (one column "all" for a vector)
+.haul_matrix <- function(x, var) {
+  hh <- if (inherits(x, c("datras_raw", "DATRASraw"))) {
+    x[["HH"]]
+  } else if (is.data.frame(x)) {
+    x
+  } else {
+    stop("'x' must be a 'datras_raw' object or a data frame.")
+  }
+  if (!var %in% names(hh)) {
+    stop("Column '", var, "' not found; add it with add_total_numbers_by_haul() ",
+         "or add_total_weight_by_haul().")
+  }
+  m <- hh[[var]]
+  if (!is.numeric(m)) stop("Column '", var, "' must be numeric.")
+  if (is.null(dim(m))) {
+    m <- matrix(m, ncol = 1, dimnames = list(NULL, "all"))
+  } else if (is.null(colnames(m))) {
+    colnames(m) <- paste0("class", seq_len(ncol(m)))
+  }
+  m
 }

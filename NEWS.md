@@ -20,6 +20,14 @@
 
 * New `plot_grid()` maps columns of a prediction grid, one panel each: numeric columns in classes of a continuous palette (optionally transformed), logical, character and factor columns as categories. It adds land from `get_land()`, transformed to the coordinates of the grid (by default EPSG:3035 in km, as from `add_xy()`), hauls, and the boundaries of ICES areas, drawn along the cell edges where a column such as `Area_27` changes, so no area shapefile is needed.
 
+* New `get_haul_catch()` returns the numbers or weight per haul from `add_total_numbers_by_haul()` or `add_total_weight_by_haul()`, summed over all or selected length classes, e.g. the response of a model of catch rates.
+
+* New `summarise_catch()` summarises the hauls by groups such as year, survey or quarter: hauls, positive hauls, their percentage and the mean catch (per unit of effort with `offset`: the nominal catch rate), for each length class and all together.
+
+* New `as_surveyindex()` prepares a `datras_raw` object for `surveyIndex::getSurveyIdx()`: the response matrix `Nage` (total, selected length classes, or one column per length class), `ctime`, and factors without unused levels.
+
+* New `as_index_table()` turns an index from `surveyIndex::getSurveyIdx()` or `calc_stratified_index()` into a table with the standard deviation of the log index and the time of the survey, as used by surplus production models such as SPiCT.
+
 ## Bug fixes
 
 * The rectangle to area lookup of `add_ices_areas()` took the area at the centre of each rectangle, so that rectangles with their centre on land had no area (e.g. 45F7 in the Skagerrak and 41G0 in the Kattegat; 1,201 of 6,758 rectangles, against 587 now) and rectangles split between areas could get the smaller one (41G2 was 3.b.23, though 84 % of its sea is in 3.a.21). The lookup now takes the area with the largest share of the sea in the rectangle. It also covers rectangles missing from the ICES rectangle shapefile that hold sea, such as the Limfjord. `data-raw/make_ices_area_lookup.R` loaded the old `R/sysdata.rda` after building the new lookup, which overwrote it, so rebuilds did not take effect.

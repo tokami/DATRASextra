@@ -510,6 +510,173 @@ plot_stratified_index <- function(x,
 }
 
 
+## Model-based indices (surveyIndex) and index tables ---------------------------
+
+#' Prepare a `datras_raw` object for the surveyIndex package
+#'
+#' Sets the variables that `surveyIndex::getSurveyIdx()` expects: the matrix
+#' `Nage` with the response of each haul, `ctime` (the year as a number) and
+#' factors of the categorical variables without unused levels.
+#'
+#' @param x A `datras_raw` object, with the catch column `var` (see
+#'   [add_total_numbers_by_haul()] and [add_total_weight_by_haul()]).
+#' @param var Name of the catch column: `"HaulN"` (default) or `"HaulWgt"`.
+#' @param length_class Length classes to use, as in [get_haul_catch()].
+#'   `NULL` (default): all.
+#' @param by_length_class Logical. If `FALSE` (default), `Nage` has one
+#'   column, the catch summed over `length_class`. If `TRUE`, one column per
+#'   length class, so that `surveyIndex::getSurveyIdx()` gives an index for
+#'   each (as for age groups).
+#' @param scale Number the catch is multiplied by, e.g. `1 / 1000` for the
+#'   weight in kg from `HaulWgt` in g. Default 1.
+#' @param factors Columns of `HH` to turn into factors without unused levels.
+#'   Default `c("Year", "Gear", "Ship", "Quarter")`; columns that are missing
+#'   are skipped.
+#' @param drop Columns of `HH` to remove, by default the numbers and weight at
+#'   length (`N`, `Wgt`) that are not needed by the model and take memory.
+#'
+#' @details
+#' `surveyIndex::getSurveyIdx()` treats the columns of `Nage` as age groups,
+#' named by numbers. With `by_length_class = TRUE` the columns are named `1`,
+#' `2`, ... and the attribute `"length_classes"` of `Nage` gives the length
+#' class of each.
+#'
+#' @return `x` with the columns `Nage` (a matrix) and `ctime` added to `HH`.
+#'
+#' @seealso [as_index_table()], [get_haul_catch()]
+#'
+#' @examples
+#' x <- add_total_numbers_by_haul(dab, length_cuts = c(0, 20, Inf))
+#' xs <- as_surveyindex(x, length_class = "(20-Inf]")
+#' head(xs[["HH"]]$Nage)
+#'
+#' ## one "age group" per length class
+#' xs <- as_surveyindex(x, by_length_class = TRUE)
+#' attr(xs[["HH"]]$Nage, "length_classes")
+#'
+#' \dontrun{
+#' fit <- surveyIndex::getSurveyIdx(xs, ages = 1:2, predD = grid, ...)
+#' }
+#'
+#' @export
+as_surveyindex <- function(x, var = "HaulN", length_class = NULL,
+                           by_length_class = FALSE, scale = 1,
+                           factors = c("Year", "Gear", "Ship", "Quarter"),
+                           drop = c("N", "Wgt")) {
+  .check_class_datras(x)
+  hh <- x[["HH"]]
+
+  if (by_length_class) {
+    m <- .haul_matrix(x, var)
+    if (!is.null(length_class)) {
+      if (is.character(length_class)) {
+        bad <- setdiff(length_class, colnames(m))
+        if (length(bad) > 0) {
+          stop("Length class(es) not found in '", var, "': ", paste(bad, collapse = ", "))
+        }
+      }
+      m <- m[, length_class, drop = FALSE]
+    }
+    classes <- colnames(m)
+    nage <- unname(m) * scale
+    colnames(nage) <- seq_len(ncol(nage))
+    attr(nage, "length_classes") <- stats::setNames(classes, colnames(nage))
+  } else {
+    y <- get_haul_catch(x, var = var, length_class = length_class)
+    nage <- matrix(y * scale, ncol = 1, dimnames = list(NULL, "1"))
+  }
+
+  hh$Nage <- nage
+  hh$ctime <- as.numeric(as.character(hh$Year))
+  for (v in intersect(factors, names(hh))) hh[[v]] <- droplevels(factor(hh[[v]]))
+  hh <- hh[, setdiff(names(hh), drop), drop = FALSE]
+  x[["HH"]] <- hh
+  x
+}
+
+
+#' Table of an abundance index, e.g. for SPiCT
+#'
+#' Turns a model-based index from `surveyIndex::getSurveyIdx()` or a
+#' design-based index from [calc_stratified_index()] into a data frame with
+#' one row per year (and group), with the standard deviation of the log index
+#' and the time of the survey, as used by surplus production models such as
+#' SPiCT.
+#'
+#' @param index A `surveyIdx` object, or a data frame from
+#'   [calc_stratified_index()].
+#' @param quarter Optional quarter of the survey. The time is then the middle
+#'   of the quarter, e.g. 2020.125 for quarter 1 of 2020.
+#' @param time_of_year Optional time of the survey as a fraction of the year,
+#'   e.g. 0.125. Overrides `quarter`.
+#'
+#' @details
+#' For a `surveyIdx` object, `sd_log` is derived from the bootstrap interval,
+#' `(log(up) - log(lo)) / (2 * z)` with `z` the normal quantile of its
+#' confidence level. For a stratified index it is derived from the
+#' coefficient of variation, `sqrt(log(1 + cv^2))`.
+#'
+#' In SPiCT, the index, time and `sd_log` of a survey go into `inp$obsI`,
+#' `inp$timeI` and, relative to each other, `inp$stdevfacI`.
+#'
+#' @return A data frame with the columns `year`, `group` (the age group or
+#'   length class of a `surveyIdx` object, the group of a stratified index),
+#'   `index`, `lo`, `up`, `sd_log` and, when `quarter` or `time_of_year` is
+#'   given, `time`.
+#'
+#' @seealso [as_surveyindex()], [calc_stratified_index()]
+#'
+#' @examples
+#' x <- add_swept_area(add_total_numbers_by_haul(dab))
+#' si <- calc_stratified_index(x)
+#' as_index_table(si, quarter = 1)
+#'
+#' @export
+as_index_table <- function(index, quarter = NULL, time_of_year = NULL) {
+
+  if (inherits(index, "surveyIdx")) {
+    years <- as.integer(rownames(index$idx))
+    groups <- colnames(index$idx)
+    if (is.null(groups)) groups <- as.character(seq_len(ncol(index$idx)))
+    level <- if (is.null(index$CIlevel)) 0.95 else index$CIlevel
+    z <- stats::qnorm(1 - (1 - level) / 2)
+    out <- data.frame(year = rep(years, length(groups)),
+                      group = rep(groups, each = length(years)),
+                      index = as.vector(index$idx),
+                      lo = as.vector(index$lo),
+                      up = as.vector(index$up))
+    out$sd_log <- (log(out$up) - log(out$lo)) / (2 * z)
+  } else if (is.data.frame(index) &&
+             all(c("index", "cv", "ci_lower", "ci_upper") %in% names(index))) {
+    ycol <- intersect(c("Year", "year"), names(index))
+    if (length(ycol) == 0) stop("The stratified index must have a column 'Year'.")
+    out <- data.frame(year = as.integer(as.character(index[[ycol[1]]])),
+                      group = if ("group" %in% names(index)) index$group else "all",
+                      index = index$index, lo = index$ci_lower,
+                      up = index$ci_upper,
+                      sd_log = sqrt(log(1 + index$cv^2)))
+  } else {
+    stop("index must be a 'surveyIdx' object or a data frame from ",
+         "calc_stratified_index().")
+  }
+
+  if (is.null(time_of_year) && !is.null(quarter)) {
+    q <- as.numeric(as.character(quarter))
+    if (length(q) != 1 || !q %in% 1:4) stop("quarter must be one of 1 to 4.")
+    time_of_year <- (q - 1) / 4 + 0.125
+  }
+  if (!is.null(time_of_year)) {
+    if (!is.numeric(time_of_year) || length(time_of_year) != 1 ||
+        time_of_year < 0 || time_of_year >= 1) {
+      stop("time_of_year must be a single number in [0, 1).")
+    }
+    out$time <- out$year + time_of_year
+  }
+  rownames(out) <- NULL
+  out
+}
+
+
 ## Helpers ---------------------------------------------------------------------
 
 .make_composite_key <- function(df, cols) {
